@@ -25,6 +25,12 @@ for i,file in enumerate(frames):
     else:run=0
     max_identical=max(max_identical,run);previous=a
 assert max_identical<15,'Unintended long identical-frame freeze'
+independent_errors={}
+for f in [27,79,143,230]:
+    with Image.open(OUT/'gate-a'/f'frame-{f:03}.png') as im:reference=np.asarray(im.convert('RGB'),dtype=np.int16)
+    with Image.open(frames[f]) as im:decoded=np.asarray(im.convert('RGB'),dtype=np.int16)
+    mae=float(np.mean(np.abs(reference-decoded)));independent_errors[str(f)]=mae
+    assert mae<3.0, f'Independent keyframe disagrees with full render at {f}: MAE={mae}'
 runtime=json.loads((OUT/'full-render-audits.json').read_text());assert not runtime['errors']
 audits={a['frame']:a for a in runtime['audits']};assert set(audits)==set(range(240))
 visibility_issues=[]
@@ -37,7 +43,7 @@ assert not visibility_issues,visibility_issues
 for gate in ['A','B']:
     review=json.loads((OUT/f'GATE_{gate}_APPROVED.json').read_text());assert review['sourceHash']==runtime['sourceHash']
 subprocess.run(['git','diff','--exit-code','08b67e6','--','src/v2/cafe','src/v2/cats','src/videos/bridge'],check=True,stdout=subprocess.DEVNULL)
-metrics={'video':{k:v.get(k) for k in ['codec_name','width','height','avg_frame_rate','nb_frames','pix_fmt']},'duration':probe['format']['duration'],'audioStreams':0,'decodedFrames':240,'uniquePixelFrames':len(set(hashes)),'longestIdenticalFrameRun':max_identical+1,'minimumFrameStdDev':min(s['std'] for s in statistics),'runtimeAuditedFrames':len(audits),'visibilityIssues':visibility_issues,'sourceHash':runtime['sourceHash'],'frames':statistics}
+metrics={'video':{k:v.get(k) for k in ['codec_name','width','height','avg_frame_rate','nb_frames','pix_fmt']},'duration':probe['format']['duration'],'audioStreams':0,'decodedFrames':240,'uniquePixelFrames':len(set(hashes)),'longestIdenticalFrameRun':max_identical+1,'minimumFrameStdDev':min(s['std'] for s in statistics),'independentKeyframeMAE':independent_errors,'runtimeAuditedFrames':len(audits),'visibilityIssues':visibility_issues,'sourceHash':runtime['sourceHash'],'frames':statistics}
 (OUT/'qa-metrics.json').write_text(json.dumps(metrics,indent=2))
 notes=(OUT/'VISUAL_REVIEW.md').read_text() if (OUT/'VISUAL_REVIEW.md').exists() else 'Final visual review remains pending.'
 report=f'''# In This Town — A Little Light: animation QA
@@ -50,6 +56,7 @@ Milestone: first silent eight-second animation test. User visual approval is pen
 - No audio streams; no narration, music or SFX.
 - Every frame was decoded and checked: **240 / 240**, with {len(set(hashes))} distinct pixel frames. Longest identical-frame run: {max_identical+1}. Minimum downsampled full-frame standard deviation: {min(s['std'] for s in statistics):.2f}; no blank frames.
 - Actual browser runtime audits cover all **240 frames**, with zero browser errors, camera-inside-geometry cases, out-of-frame required face/prop centers or obstructed required sightlines. Frustum/raycast checks supplement the visual review, not replace it.
+- Independent native keyframes agree with the sequential MP4 render within H.264 conversion tolerance: maximum RGB mean absolute error {max(independent_errors.values()):.3f}/255 across frames 27, 79, 143 and 230.
 - Source-bound Gate A and B technical reviews match the exact animation source used for this final render.
 
 ## Gate A — storyboard
