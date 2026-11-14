@@ -19,7 +19,7 @@ for(const id of ['19','20','21','22','24','44','51','52','56']){
 }
 for(const [id,actor] of [['48','latte'],['50','mocha'],['51','mocha'],['52','essie'],['56','latte']]){const shot=shots.find(s=>s.id===id),walking=t.stateAt(shot.start,shots)[actor].moving;for(let frame=shot.start;frame<shot.end;frame++)check(t.stateAt(frame,shots)[actor].moving===walking,'Abrupt seated/walking artwork swap inside shot '+id);}
 {const dt=1e-4,r=109.25,left=(t.doorAngleAt(r)-t.doorAngleAt(r-dt))/dt,right=(t.doorAngleAt(r+dt)-t.doorAngleAt(r))/dt;check(Math.abs(left-right)<.002,'Door velocity jumps at paw release');let prior=Infinity;for(let u=r+.01;u<111;u+=.04){const speed=(t.doorAngleAt(u+dt)-t.doorAngleAt(u))/dt;check(speed>=0&&speed<prior,'Door accelerates after paw release');prior=speed;}check(Math.abs(t.doorAngleAt(111)-Math.PI/2)<1e-9,'Door does not settle open');}
-const seenFeet=new Map(),events=[],stateRows=[];let last,stepNo=0;
+const seenFeet=new Map(),otherFootCues=new Set(),events=[],stateRows=[];let last,stepNo=0,kittenCycles;
 for(let frame=0;frame<manifest.durationInFrames;frame++){
  const s=t.stateAt(frame,shots);check(JSON.stringify(s)===JSON.stringify(t.stateAt(frame,shots)),'Non-deterministic frame '+frame);
  check([...s.camera,...s.target,...s.latte.position,...s.mocha.position,...s.essie.position,...s.kitten,...s.bowl].every(Number.isFinite),'Invalid transform');
@@ -32,8 +32,12 @@ for(let frame=0;frame<manifest.durationInFrames;frame++){
  }
  if(s.latte.moving&&!s.flashback){s.latte.feet.forEach((foot,i)=>{
   const key=s.latte.footKeys[i];if(!key.endsWith('stance'))return;
-  const prior=seenFeet.get(key);if(prior)check(t.distance(prior,foot)<1e-9,'Planted foot slides');else{seenFeet.set(key,foot);if(i<2&&s.t>39&&s.t<56)events.push({frame,type:'run-step',index:stepNo++});}
+  const prior=seenFeet.get(key);if(prior)check(t.distance(prior,foot)<1e-9,'Planted foot slides');else{seenFeet.set(key,foot);if(i<2&&s.t>39&&s.t<56)events.push({frame,type:'run-step',index:stepNo++});if(i===0&&(s.t>=94.5&&s.t<99||s.t>=124&&s.t<126))events.push({frame,type:'soft-step',actor:'latte',contact:key});}
  });}
+ if(!s.flashback){
+  for(const id of ['mocha','essie']){const a=s[id],audible=id==='mocha'?s.t>=112&&s.t<114.5:s.t>=113.5&&s.t<117;const key=id+':'+a.footKeys[0];if(a.moving&&audible&&a.footKeys[0].endsWith('stance')&&!otherFootCues.has(key)){otherFootCues.add(key);events.push({frame,type:'soft-step',actor:id,contact:a.footKeys[0]});}}
+  if(s.kittenWalking){const cycles=[0,.5].map(offset=>Math.floor(s.kittenTravel/.18+offset));if(kittenCycles)cycles.forEach((step,i)=>{if(step>kittenCycles[i])events.push({frame,type:'soft-step',actor:'kitten',paw:i});});kittenCycles=cycles;}else kittenCycles=undefined;
+ }
  if(frame===s.shot.start||frame===s.shot.end-1||frame===s.shot.start+Math.floor((s.shot.end-s.shot.start)/2))stateRows.push({frame,shot:s.shot.id,latte:s.latte.position,mocha:s.mocha.position,essie:s.essie.position,kitten:s.kitten,bowl:s.bowl,failed:s.failed,camera:s.camera,clock:s.clock});
  last=s;
 }
@@ -54,7 +58,6 @@ for(const base of [79.0,84.0,112.8])one(base,'blanket-rustle');
 {const callback=shots.find(s=>s.id==='58C');events.push({frame:callback.start+3,type:'door-hinge'});}
 one(48.1,'slip');one(55.6,'door-slam');one(57.0,'switch-click');one(109.1,'door-hinge');one(118.5,'bowl-contact');one(120.5,'blanket-rustle');one(131.7,'warm-accent');
 for(let base=88;base<93;base+=1.1)one(base,'blanket-rustle');
-for(let base=121.8;base<126;base+=.43)one(base,'soft-step');
 events.sort((a,b)=>a.frame-b.frame);await fs.writeFile(path.join(out,'SFX_CUES.json'),JSON.stringify({fps:30,duration:manifest.durationInFrames/30,rainStart:t.actualAt(26.5*30,shots)/30,events},null,2)+'\n');
 await fs.writeFile(path.join(out,'STRUCTURAL_QA.json'),JSON.stringify({checks,passed:true,shots:shots.length,frames:manifest.durationInFrames,maximumShotFrames:Math.max(...shots.map(s=>s.end-s.start)),protectedHashes:Object.keys(baseline).length,plantedFootTargets:seenFeet.size,states:stateRows},null,2)+'\n');
 console.log(`${checks} episode timing, continuity, contact, lamp and asset checks passed; ${events.length} synchronized sound cues.`);

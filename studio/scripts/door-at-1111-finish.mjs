@@ -15,10 +15,16 @@ let musicAvailable=true;try{await fs.access(preset.privateFile);}catch{musicAvai
 if(musicAvailable){
  report.music.sourceSHA256=createHash('sha256').update(await fs.readFile(preset.privateFile)).digest('hex');report.music.source=await audio.inspectAudio(preset.privateFile);
  if(report.music.source.duration<duration)throw Error('Supplied recording is too short; looping is not silently enabled.');
- const filters=`[0:a]atrim=end=${duration},asetpts=PTS-STARTPTS,aresample=48000,aformat=sample_fmts=fltp:channel_layouts=stereo,volume=${preset.gainDB}dB,afade=t=in:d=0.05,afade=t=out:st=${duration-preset.fadeOutSeconds}:d=${preset.fadeOutSeconds}[m];[1:a]aresample=48000,aformat=sample_fmts=fltp:channel_layouts=stereo,apad=whole_dur=${duration},atrim=end=${duration}[key];[m][key]sidechaincompress=threshold=0.03:ratio=3:attack=50:release=450:makeup=1[out]`;
- ff(['-y','-i',preset.privateFile,'-i',narration,'-filter_complex',filters,'-map','[out]','-c:a','pcm_f32le',music]);
+ const samples=Math.round(duration*48000),guard=Math.round((duration+Math.min(2,Math.max(0,report.music.source.duration-duration-.05)))*48000);
+ // Normalize timestamps before sidechain processing. A short unused source tail prevents EOF
+ // differences between decoder frame sizes from shortening the exact-length deliverable.
+ const filters=`[0:a]aresample=48000,asetpts=N/SR/TB,atrim=end_sample=${guard},aformat=sample_fmts=fltp:channel_layouts=stereo,volume=${preset.gainDB}dB[m];[1:a]aresample=48000,asetpts=N/SR/TB,aformat=sample_fmts=fltp:channel_layouts=stereo,apad=whole_len=${guard},atrim=end_sample=${guard}[key];[m][key]sidechaincompress=threshold=0.03:ratio=3:attack=50:release=450:makeup=1,apad=whole_len=${samples},atrim=end_sample=${samples},asetpts=N/SR/TB,afade=t=in:d=0.05,afade=t=out:st=${duration-preset.fadeOutSeconds}:d=${preset.fadeOutSeconds}[out]`;
+ const pending=music+'.partial.wav';ff(['-y','-i',preset.privateFile,'-i',narration,'-filter_complex',filters,'-map','[out]','-ar','48000','-ac','2','-c:a','pcm_f32le',pending]);
+ const info=await audio.inspectAudio(pending);if(Math.abs(info.duration-duration)>1/48000)throw Error('Music stem is not the exact edit length.');await fs.rename(pending,music);
  report.music.processing='Original tempo/pitch, no loop; -10 dB starting gain, gentle 3:1 narration-priority ducking, four-second ending fade.';
 }
+report.stemFormats={narration:await audio.inspectAudio(narration),sfx:await audio.inspectAudio(sfx),...(musicAvailable?{music:await audio.inspectAudio(music)}:{})};
+for(const [name,info] of Object.entries(report.stemFormats))if(Math.abs(info.duration-duration)>1/48000||info.sampleRate!==48000)throw Error('Incorrect stem duration/sample rate: '+name);
 async function mix(name,withMusic){
  const raw=path.join(out,name+'-float.wav'),master=path.join(out,name+'.wav');
  await audio.mixTracks({narration,sfx:{file:sfx,duck:false},...(withMusic?{music:{file:music,duck:false}}:{})},raw);

@@ -53,7 +53,7 @@ The music-inclusive master uses the exact supplied TEMPOREX “Numbers — Instr
 
 The music starts at frame zero, preserves original tempo and pitch, uses a ${audio.music.gainDB} dB starting gain and gentle 3:1 narration-priority ducking, and fades out over the final ${audio.music.fadeOutSeconds} seconds. It is not looped. Music is selected by the reusable in_this_town series preset and mixed after video rendering.
 
-SFX are original deterministic procedural synthesis, with frame-indexed cues and seed 1111. Bus, clock, latch/hinges, electrical failures, rain, footsteps/splashes, slip, switch, glass taps, kitten vocalizations, cloth, bowl contact and the restrained final accent have separate cue/provenance records. The kitten meow is synthesized, not a recorded animal performance. Narration, SFX and music are exported as separate 48 kHz stereo stems.
+SFX are original deterministic procedural synthesis, with frame-indexed cues and seed 1111. Bus, clock, latch/hinges, electrical failures, rain, footsteps/splashes, slip, switch, glass taps, kitten vocalizations, cloth, bowl contact and the restrained final accent have separate cue/provenance records. The kitten meow is synthesized, not a recorded animal performance. All stems are 48 kHz float PCM. Narration is mono; SFX and music are stereo.
 
 ## Encoded final measurements
 
