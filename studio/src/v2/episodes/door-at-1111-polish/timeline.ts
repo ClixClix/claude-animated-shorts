@@ -180,14 +180,21 @@ function setCamera(s:EpisodeState){
  case 37:set([.83,1.65,14.52],[.85,1.28,13.14],37,['latte-ear']);break;
  case 38:latteHome(v>0);if(!v)s.required=['home-blanket'];break;
  case 39:set(v?[.5,2.10,5.72]:[-.45,1.45,6.55],[-.90,2.0,4.24],v?48:64,['shadow']);break;
- case 40:set([-.85,2.86,5.45],[-.90,2.84,4.24],53,['shadow-top']);break;
- case 41:set([.50,.85,3.95],[-.85,.01,3.85],35,['blanket-shadow']);break;
+ // Frame both ear tips together with the head, rather than an empty window strip.
+ case 40:set([-.96,2.55,6.35],[-.96,2.42,4.26],70,['shadow-top','shadow']);break;
+ // Include the dragging cloth and the floor around its full travel.
+ case 41:set([1.35,2.15,4.05],[-.85,.30,3.48],91,['blanket-shadow']);break;
  case 42:set([1.4,.64,14.6],[.95,.60,13.24],43,['latte-paws']);break;
  case 43:set([3.8,1.5,15.35],latte,54,['latte']);break;
  case 44:set([4.35,1.1,s.latte.position[2]-1.7],latte,52,['latte']);break;
  case 45:set([4.35,1.17,6.1],latte,51,['latte']);break;
  case 46:set([1.25,.64,5.55],kitten,45,['kitten']);break;
- case 47:set([2.2,.68,5.35],[3.05,.42,4.62],78,['kitten','tap']);break;
+ case 47:{
+  // Establish the kitten, tilt to the unreachable handle, then return to the kitten.
+  const up=beat(u,.16,.40)*(1-beat(u,.64,.88));
+  set([2.18,.92,6.25],mix(kitten,[2.73,1.37,4.39],up),66,up>.85?['handle']:up<.08?['kitten']:[]);
+  break;
+ }
  case 48:set([-2.0,1.6,9.0],[.7,1.4,4.23],105,['kitten','shadow']);break;
  case 49:set([3.4,1.4,7.25],latte,64,['latte'],2);break;
  case 50:set([3.10,1.35,5.62],mocha,65,['mocha']);break;
