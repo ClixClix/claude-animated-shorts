@@ -8,6 +8,8 @@ import { CafeShot } from "./v2/cafe/Cafe";
 
 import { ALittleLight } from "./v2/animation/ALittleLight";
 
+import { NarrationComposition } from "./v2/narration/NarratedPreview";
+
 // One <Composition> per short. Copy src/videos/bridge to src/videos/<name> and register it here.
 export const Root: React.FC = () => (
   <>
@@ -22,5 +24,6 @@ export const Root: React.FC = () => (
     <Composition id="V2CafeCounter" component={CafeShot} defaultProps={{shot:"counter-interaction" as const}} durationInFrames={1} fps={30} width={1080} height={1920} />
     <Composition id="V2CafeCloseup" component={CafeShot} defaultProps={{shot:"essie-closeup" as const}} durationInFrames={1} fps={30} width={1080} height={1920} />
     <Composition id="InThisTownV2ALittleLight" component={ALittleLight} durationInFrames={240} fps={30} width={1080} height={1920} />
+    <NarrationComposition />
   </>
 );

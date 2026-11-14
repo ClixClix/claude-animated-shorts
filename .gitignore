@@ -11,3 +11,6 @@ studio/shorts/*/audio/*.wav
 studio/shorts/*/audio/stems/
 .env
 studio/shorts/molasses/
+
+# Generated narration audio/metadata for Remotion; never commit credentials or provider outputs.
+studio/public/v2-narration/
