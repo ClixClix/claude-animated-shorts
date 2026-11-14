@@ -5,14 +5,14 @@ import {cardShade} from '../../videos/bridge/cardshade';
 const W=420,H=520,GROUND=482;
 export const KITTEN_CARD_HEIGHT=0.79;
 /** New story character only. The three approved adult drawings are never edited. */
-function drawKitten(g:CanvasRenderingContext2D,s:StoryState,feet?:{x:number;y:number}[]){
+function drawKitten(g:CanvasRenderingContext2D,s:StoryState,feet?:{x:number;y:number}[],motionFrame=s.frame){
  const fear=s.kittenFear,smile=s.kittenSmile;const coat='#c6ad87',shade='#a18b73',cream='#fff0d1',mark='#85725f';
  const path=(d:string,c:string,w=4)=>{g.fillStyle=c;const p=new Path2D(d);g.fill(p);if(w){g.strokeStyle=INK;g.lineWidth=w;g.stroke(p);}};
  const line=(d:string,c=INK,w=3)=>{g.strokeStyle=c;g.lineWidth=w;g.stroke(new Path2D(d));};
  const ell=(x:number,y:number,rx:number,ry:number,c:string,w=0)=>{g.beginPath();g.ellipse(x,y,rx,ry,0,0,Math.PI*2);g.fillStyle=c;g.fill();if(w){g.strokeStyle=INK;g.lineWidth=w;g.stroke();}};
  g.save();g.translate(210,0);g.lineCap='round';g.lineJoin='round';
- const breath=Math.sin(s.frame/30*3.2)*(fear?1.4:1.0);
- g.save();g.translate(51,425);g.rotate(Math.sin(s.frame/30*1.1)*0.035+fear*0.13);
+ const breath=Math.sin(motionFrame/30*3.2)*(fear?1.4:1.0);
+ g.save();g.translate(51,425);g.rotate(Math.sin(motionFrame/30*1.1)*0.035+fear*0.13);
  path('M -4 28 Q 103 52 99 -23 Q 98 -55 80 -55 Q 64 -51 72 -25 Q 89 14 17 4 Z',coat);line('M 78 -27 q 14 4 19 0',mark,10);g.restore();
  path(`M -53 294 Q -99 324 -86 414 L -95 423 L -82 422 Q -87 474 -30 474 L 52 474 Q 101 470 83 415 L 92 418 L 82 400 Q 81 318 45 295 Z`,shade);
  path('M -58 303 Q 0 279 58 307 L 55 347 L 39 342 L 32 365 L 18 355 L 2 380 L -10 360 L -29 371 L -34 351 L -54 356 Z',cream,0);
@@ -56,7 +56,7 @@ export function createKitten(){
  const material=cardShade(new T.MeshLambertMaterial({map:texture,alphaTest:0.25,side:T.DoubleSide}));
  const geo=new T.PlaneGeometry(KITTEN_CARD_HEIGHT*W/H,KITTEN_CARD_HEIGHT);geo.translate(0,KITTEN_CARD_HEIGHT*(GROUND/H-0.5),0);
  const mesh=new T.Mesh(geo,material);mesh.name='story-kitten';mesh.castShadow=mesh.receiveShadow=true;
- return {mesh,update:(s:StoryState)=>{g.setTransform(2,0,0,2,0,0);g.clearRect(0,0,W,H);const root=new T.Vector3(...s.kitten),cam=new T.Vector3(...s.camera);
+ return {mesh,update:(s:StoryState,motionFrame=s.frame)=>{g.setTransform(2,0,0,2,0,0);g.clearRect(0,0,W,H);const root=new T.Vector3(...s.kitten),cam=new T.Vector3(...s.camera);
    const normal=cam.clone().sub(root);normal.y=0;normal.normalize();const right=new T.Vector3(normal.z,0,-normal.x);
    // Foot targets are planted in WORLD space. Perspective-project them onto the upright card,
    // so the visible toe stays on its ground contact as the body advances and camera pushes in.
@@ -69,5 +69,5 @@ export function createKitten(){
      const local=cam.clone().addScaledVector(ray,k).sub(root);
      return {x:local.dot(right)*H/KITTEN_CARD_HEIGHT,y:GROUND-local.y*H/KITTEN_CARD_HEIGHT};
    }):undefined;
-   drawKitten(g,s,feet);texture.needsUpdate=true;},dispose:()=>{mesh.removeFromParent();geo.dispose();material.dispose();texture.dispose();}};
+   drawKitten(g,s,feet,motionFrame);texture.needsUpdate=true;},dispose:()=>{mesh.removeFromParent();geo.dispose();material.dispose();texture.dispose();}};
 }

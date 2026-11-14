@@ -95,6 +95,34 @@ without time stretching, and all timings are shifted with inserted silence.
 
 ## Narration-driven timing and the separate preview
 
+The approved three-sentence Sawyer audition has its own four-shot preview workflow:
+
+```sh
+node scripts/v2-narrated-test.mjs prepare
+node scripts/v2-narrated-test.mjs stills
+# Inspect the actual stills before the complete render:
+node scripts/v2-narrated-test.mjs render
+/workspace/.venvs/animated-shorts/bin/python scripts/v2-narrated-qa.py
+```
+
+These commands make no provider requests. They verify the approved recording's hash, stage
+an identical public copy and use actual word alignment. The first cut follows “appeared”;
+the cup offer and emotional ending play without narration because the approved script only
+describes the arrival. The 8.777-second recording stays at 1.0× inside a 14.133-second,
+424-frame preview. `townAudition.ts` keeps original action trajectories while sampling source
+time continuously. Breathing, blinking, tail and steam retain their own real-time clock.
+The original silent component's default behavior is preserved.
+
+The actual native MP4 and storyboard are written to `out/v2-animation-test/`. Full video
+decode, every-frame visibility/contact audits, source-to-encoded audio correlation and
+encoded true peak are checked. Narrator defaults and archived auditions are untouched.
+The complete 19-test narration command includes three regressions for this timing map.
+The final mux decodes the approved MP3 directly and copies the rendered H.264 video,
+avoiding the render engine's AAC priming offset. `node scripts/v2-narrated-test.mjs audio`
+can repeat this local audio-only stage without rerendering visuals or calling the provider.
+
+The following generic five-sentence workflow remains available for the earlier full script:
+
 ```sh
 node scripts/v2-narration.mjs plan --metadata out/v2-narration/in-this-town-timestamps.json
 # Review the real measured duration/shot lengths; approve both samples and the pacing plan first:
