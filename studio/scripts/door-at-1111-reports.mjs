@@ -51,7 +51,7 @@ The complete ${manifest.narration.sourceDuration.toFixed(6)}-second processed ta
 
 The music-inclusive master uses the exact supplied TEMPOREX “Numbers — Instrumental Intro Loop” recording. Source duration ${audio.music.source.duration.toFixed(6)} seconds; ${audio.music.source.sampleRate} Hz, ${audio.music.source.channels} channels. SHA-256: ${audio.music.sourceSHA256}.
 
-The music starts at frame zero, preserves original tempo and pitch, uses a ${audio.music.gainDB} dB starting gain and gentle 3:1 narration-priority ducking, and fades out over the final ${audio.music.fadeOutSeconds} seconds. It is not looped. Music is selected by the reusable in_this_town series preset and mixed after video rendering.
+The music starts at frame zero, preserves original tempo and pitch, uses a ${audio.music.gainDB} dB starting gain and gentle 3:1 narration-priority ducking, and fades out over the final ${audio.music.fadeOutSeconds} seconds. Per the user's later direction, only the opening ${audio.music.loop.sourceEndSeconds.toFixed(6)} seconds are used, repeated with ${(audio.music.cleanLoop.crossfadeSeconds*1000).toFixed(0)}ms crossfades; later source material containing the reported whistle is excluded. The loop period is ${(audio.music.loop.periodSamples/48000).toFixed(6)} seconds. Music is selected by the reusable in_this_town series preset and mixed after video rendering.
 
 SFX are original deterministic procedural synthesis, with frame-indexed cues and seed 1111. Bus, clock, latch/hinges, electrical failures, rain, footsteps/splashes, slip, switch, glass taps, kitten vocalizations, cloth, bowl contact and the restrained final accent have separate cue/provenance records. The kitten meow is synthesized, not a recorded animal performance. All stems are 48 kHz float PCM. Narration is mono; SFX and music are stereo.
 
@@ -94,7 +94,7 @@ Immutable café geometry is batched only for rendering. Stable source IDs and po
 
 ## Validation
 
-TypeScript passed; existing suites passed (104 café layout checks, 2167 original animation checks, 24 narration tests), plus 66 actual Canvas rig checks and ${structure.checks} episode checks. All ${manifest.durationInFrames} native frames were rendered through Remotion, assembled without video reencoding, fully decoded and inspected using native storyboard/motion evidence. See the separate visual and audio QA reports for scope and limitations.
+TypeScript passed; existing suites passed (104 café layout checks, 2167 original animation checks, 25 narration tests including a real FFmpeg clean-loop regression), plus 66 actual Canvas rig checks and ${structure.checks} episode checks. All ${manifest.durationInFrames} native frames were rendered through Remotion, assembled without video reencoding, fully decoded and inspected using native storyboard/motion evidence. See the separate visual and audio QA reports for scope and limitations.
 
 ## Reproduction
 
