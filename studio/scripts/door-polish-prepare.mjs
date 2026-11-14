@@ -27,7 +27,7 @@ const groups=[group([1,2,3,4],[0]),group([5],[1,2]),group([6],[3]),group([7,8,9]
  group([13,14],[7]),group([15],[8]),group([16],[9]),group([17],[10]),group([18]),group([20],[11]),group([21],['12a']),group([22],['12b']),group([23,24],['12c']),group([25]),group([26],[13,14,15]),group([27],[16]),
  group([28,29],[17,18]),group([30],[19]),group([31],[20]),group([32],[21]),group([34],[22,23]),group([36],[24,25]),group([37],[26]),group([38],[27,28]),group([39],[29,30]),group([40],[31]),group([41],[32,33]),group([42],[34,35]),group([43,44],[36]),
  group([45],[37]),group([46],[38]),group([47],[39]),group([48],[40]),group([49],[41]),group([50,51],[42]),group([52,53],[43]),group([54],[44]),group([55,56],[45]),group([57],[46,47]),group([58],[48]),group([59],[49,50]),group([60],[51,52,53])];
-const editorialFrames=s=>Math.round((board[s.number-1].end-board[s.number-1].start)*([2,3,5,7,8,9,11,13,15,16,17,23,29,30,31,33,34,35,37,39,40,41,48,49,57,58].includes(s.number)?.70:.90));
+const editorialFrames=s=>s.number===1?100:Math.round((board[s.number-1].end-board[s.number-1].start)*([2,3,5,7,8,9,11,13,15,16,17,23,29,30,31,33,34,35,37,39,40,41,48,49,57,58].includes(s.number)?.70:.90));
 let frame=0,previousSource=0,previousTarget=0;const shots=[],placements=[],pauses=[];
 for(const g of groups){
  if(!g.ids.length)continue; // Redundant unvoiced inserts never delay the narration.
@@ -47,13 +47,14 @@ for(const g of groups){
  previousSource=to;previousTarget=to;
  entries.forEach((s,j)=>{
   const end=j===entries.length-1?start+length:start+Math.round(length*entries.slice(0,j+1).reduce((n,x)=>n+editorialFrames(x),0)/baseDuration);
-  const pieces=s.number===58?4:s.number===11?3:s.number===59?3:[38,39,50,57,60].includes(s.number)?2:Math.ceil((end-frame)/120),originalStart=frame;
+  const pieces=s.number===57?5:[58].includes(s.number)?4:[11,59,60].includes(s.number)?3:[1,38,39,42,45,50].includes(s.number)?2:Math.ceil((end-frame)/120),originalStart=frame;
   for(let k=0;k<pieces;k++){
    const cuts=Array.from({length:pieces+1},(_,i)=>originalStart+Math.round((end-originalStart)*i/pieces));
    const placement=placements.at(-1);
    const atWord=(text,from)=>{const w=meta.timing.words.find(w=>w.text===text&&w.start>=from);if(!w)throw Error('Missing editorial word '+text);return Math.round((placement.targetStart+w.start-placement.sourceStart)*30);};
    if(s.number===50)cuts[1]=atWord('there',79.9);
-   if(s.number===57)cuts[1]=atWord('It',92.3);
+   if(s.number===57){cuts[1]=atWord('Latte',90.8);cuts[2]=atWord('It',92.3);cuts[3]=atWord('If',93.3);cuts[4]=atWord('come',94.8);}
+   if(s.number===60){cuts[1]=atWord('The',108.1);cuts[2]=atWord('But',109.3);}
    if(s.number===58){cuts[1]=atWord('at',97.9);cuts[2]=atWord('just',98.8);cuts[3]=atWord('in',100.4);}
    if(s.number===59){cuts[1]=atWord('He',103.7);cuts[2]=atWord('anyone',104.7);}
    const a=cuts[k],b=cuts[k+1];

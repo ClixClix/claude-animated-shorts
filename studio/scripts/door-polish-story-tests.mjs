@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import {pathToFileURL} from 'node:url';
 import path from 'node:path';
 const out=path.resolve('out/v2-episodes/door-at-1111-polish');
-await build({stdin:{contents:"export * from './timeline';export * from './shelter';export {FIXTURES} from '../../cafe/config';",resolveDir:path.resolve('src/v2/episodes/door-at-1111-polish'),loader:'ts'},outfile:path.join(out,'story-tools.mjs'),bundle:true,platform:'node',format:'esm'});
+await build({stdin:{contents:"export * from './timeline';export * from './shelter';export * from './contacts';export {FIXTURES} from '../../cafe/config';",resolveDir:path.resolve('src/v2/episodes/door-at-1111-polish'),loader:'ts'},outfile:path.join(out,'story-tools.mjs'),bundle:true,platform:'node',format:'esm'});
 const t=await import(pathToFileURL(path.join(out,'story-tools.mjs')).href);
 const plan=JSON.parse(await fs.readFile(path.join(out,'The_Door_At_1111_Polish_Shot_Manifest.json'),'utf8')),shots=plan.shots;
 const captions=JSON.parse(await fs.readFile('src/v2/episodes/door-at-1111-polish/captions.json','utf8'));
@@ -19,17 +19,29 @@ const shot=id=>{const q=shots.find(s=>s.id===id);check(!!q,'Missing new acting b
 const first=t.stateAt(shot('50A').start,shots),last=t.stateAt(shot('50A').end-1,shots);
 check(first.required.includes('latte')&&first.latte.pose.blink>.95&&last.latte.pose.blink<.05,'Latte must visibly reopen eyes before Mocha');
 check(t.stateAt(shot('50B').start,shots).required.includes('mocha'),'Mocha reveal must follow eyes opening');
-check(t.stateAt(shot('57A').end-1,shots).latte.pose.gazeX<-.8,'Latte must look off screen toward the sign');
-check(t.stateAt(shot('57B').start,shots).required.includes('sign'),'Show sign after Latte notices it');
+check(t.stateAt(shot('57B').end-1,shots).latte.pose.gazeX<-.8,'Latte must look off screen toward the sign');
+check(t.stateAt(shot('57C').start,shots).required.includes('sign'),'Show sign after Latte notices it');
 const decode=file=>execFileSync('ffmpeg',['-nostdin','-v','error','-i',file,'-ar','48000','-ac','1','-f','f32le','pipe:1'],{maxBuffer:64*1024*1024});
 const original=decode(plan.narration.source),stem=decode(path.join(out,'Narration_Stem.wav'));
 check(stem.subarray(0,original.length).equals(original),'Narration contains changed, repeated or interrupted samples');
 check(stem.length>=original.length&&(stem.length-original.length)/4/48000<.05,'Excessive final padding after decoded MP3');
 check((await fs.readFile(path.join(out,'Polish_Narration_Flow.mp3'))).equals(await fs.readFile(plan.narration.source)),'Listening copy differs from approved cache');
+for(let frame=0;frame<plan.durationInFrames;frame++){
+ const s=t.stateAt(frame,shots);
+ check(t.kittenRevealed(s)===(s.shot.number>=46),'Mystery kitten appears before its reveal');
+ if(s.t>=29)check(!t.streetActivity(s),'Crowds remain out after curfew');
+ if(s.shot.number===41)check(s.camera[2]>4.5&&s.required.includes('cloth-silhouette'),'Dragged shape must be seen through fogged glass');
+ if(s.shot.number===47&&s.u>.42&&s.u<.62)check(s.kittenTap>.95&&s.target[1]>1.0,'Handle pan must coincide with attempted reach');
+ if(s.bowlContact){const mouth=t.mouthAnchor(s,'essie');check(Math.abs(s.bowl[1]+.115-mouth[1])<1e-9,'Bowl rim must meet mouth while carried');check(Math.abs(Math.hypot(s.bowl[0]-mouth[0],s.bowl[2]-mouth[2])-.17)<1e-9,'Bowl must be held at the rim, not through its center');}
+}
+for(const start of [4,15,67])check(t.doorAngleAt(start+.45)>1.1&&t.doorAngleAt(start)===0,'Door swing must be fast and begin closed');
+check(t.stateAt(shot('57A').start,shots).required.includes('flowerpot'),'Flowerpot must precede Latte and the sign');
+check(t.stateAt(shot('57D').start,shots).required.includes('alley-kitten'),'Dark-street clause must show hidden kitten');
+const beforePlace=shots.find(s=>s.number===53);const placementStates=Array.from({length:beforePlace.end-beforePlace.start},(_,i)=>t.stateAt(beforePlace.start+i,shots));const heldLast=placementStates.filter(s=>s.bowlContact).at(-1),releasedFirst=placementStates.find(s=>!s.bowlContact);check(t.distance(heldLast.bowl,releasedFirst.bowl)<.001,'Bowl jumps after mouth releases it');
 const prior=new Map();
 for(let frame=shot('58A').start;frame<plan.durationInFrames;frame++){
  const s=t.stateAt(frame,shots);
- for(let i=0;i<3;i++){
+ for(let i=0;i<4;i++){
   const a=t.shelterState(s,i),previous=prior.get(i);
   check(JSON.stringify(a)===JSON.stringify(t.shelterState(s,i)),'Non-deterministic supporting actor');
   if(previous)check(t.distance(a.position,previous.position)<.16,'Shelter guest teleported across a cut');

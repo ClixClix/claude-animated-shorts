@@ -9,9 +9,10 @@ const py=(name,...args)=>run(python,['scripts/door-polish-'+name+'.py',...args])
 if(!['preview','all','qa'].includes(stage))throw Error('Use preview, all or qa.');
 if(stage!=='qa'){node('prepare');node('tests');node('story-tests');}
 if(stage==='preview'){
- node('render','motion','--shots','01,04,23,27,28,34,39A,39B,40,41,47,48,49,50A,50B,57A,57B,58A,58B,58C,58D,59A,59B,59C,60B','--concurrency',String(c));
- console.log('Polish preview clips are in out/v2-episodes/door-at-1111-polish/motion. They include one-word subtitles; preview audio is not mixed. Listen to ../Polish_Narration_Flow.mp3 for the continuous cached voice track.');
- if(process.platform==='win32')spawnSync('explorer.exe',[path.join(studioRoot,'out/v2-episodes/door-at-1111-polish/motion')]);
+ node('render','motion','--concurrency',String(c));
+ node('preview-assemble');
+ console.log('Review the complete 540x960 movie with continuous narration: out/v2-episodes/door-at-1111-polish/Polish_Narrated_Review_540p.mp4');
+ if(process.platform==='win32')spawnSync('explorer.exe',['/select,',path.join(studioRoot,'out/v2-episodes/door-at-1111-polish/Polish_Narrated_Review_540p.mp4')]);
 }else{
  if(stage==='all'){py('sfx');node('render','render','--concurrency',String(c));node('assemble');node('finish');}
  py('video-qa');py('boards');py('motion-boards','--native');node('reports');

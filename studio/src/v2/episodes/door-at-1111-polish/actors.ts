@@ -1,4 +1,5 @@
 import * as T from 'three';
+import {headDropPixels} from './contacts';
 import {createCatCard} from '../../cats/Cat';
 import {drawCat} from '../../cats/drawCat';
 import {CatId} from '../../cats/designs';
@@ -27,7 +28,7 @@ export function createEpisodeCat(id:CatId){
     const index=leg++,foot=new T.Vector3(...actor.feet[index]),ray=foot.clone().sub(camera),k=normal.dot(root.clone().sub(camera))/normal.dot(ray),local=camera.clone().addScaledVector(ray,k).sub(root);
     const phase=[0,Math.PI,Math.PI,0][index],lift=Math.max(0,Math.cos((pose.gait??0)+phase))*13;
     original(local.dot(right)*550/1.52/sign,480-local.y*550/1.52-(483-lift));
-   }else original(x,y);
+   }else original(x,y+(id==='essie'&&y>190&&y<245&&x>=0&&x<100?headDropPixels(s,'essie'):0));
   };
   try{drawCat(ctx,id,pose);}finally{ctx.translate=original;ctx.rotate=nativeRotate;}
  }
