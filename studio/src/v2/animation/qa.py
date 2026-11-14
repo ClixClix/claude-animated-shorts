@@ -42,7 +42,13 @@ for f,a in audits.items():
 assert not visibility_issues,visibility_issues
 for gate in ['A','B']:
     review=json.loads((OUT/f'GATE_{gate}_APPROVED.json').read_text());assert review['sourceHash']==runtime['sourceHash']
-subprocess.run(['git','diff','--exit-code','08b67e6','--','src/v2/cafe','src/v2/cats','src/videos/bridge'],check=True,stdout=subprocess.DEVNULL)
+# Validate immutable sources without requiring a restored .git directory.
+baseline=json.loads(Path('out/v2-episodes/door-at-1111/PRESERVATION_BASELINE.json').read_text())
+adjustments=json.loads(Path('../PORTABILITY_ADJUSTMENTS.json').read_text())
+for file,expected in baseline.items():
+    allowed=adjustments.get(file)
+    if allowed:assert allowed['originalSHA256']==expected
+    assert hashlib.sha256((Path('..')/file).read_bytes()).hexdigest()==(allowed['portableSHA256'] if allowed else expected),file
 metrics={'video':{k:v.get(k) for k in ['codec_name','width','height','avg_frame_rate','nb_frames','pix_fmt']},'duration':probe['format']['duration'],'audioStreams':0,'decodedFrames':240,'uniquePixelFrames':len(set(hashes)),'longestIdenticalFrameRun':max_identical+1,'minimumFrameStdDev':min(s['std'] for s in statistics),'independentKeyframeMAE':independent_errors,'runtimeAuditedFrames':len(audits),'visibilityIssues':visibility_issues,'sourceHash':runtime['sourceHash'],'frames':statistics}
 (OUT/'qa-metrics.json').write_text(json.dumps(metrics,indent=2))
 notes=(OUT/'VISUAL_REVIEW.md').read_text() if (OUT/'VISUAL_REVIEW.md').exists() else 'Final visual review remains pending.'
@@ -89,7 +95,7 @@ Every consecutive sample frame was decoded into a review board, for **192 sample
 
 ## Locked foundation and intentional story overrides
 
-Approved assets were committed **before animation work** as `08b67e612becb48242ddaa2311fe2ac2656c22eb`, then the development branch `v2-a-little-light-animation` was created. `git diff` against that checkpoint confirms no changes to `src/v2/cafe/`, `src/v2/cats/` or `src/videos/bridge/`. The permanent scene is instantiated by the same approved factory; furniture, counters, lights, texture data, palettes and adult art source are unchanged.
+Approved assets were committed **before animation work** as `08b67e612becb48242ddaa2311fe2ac2656c22eb`, then the development branch `v2-a-little-light-animation` was created. Recorded source hashes against the preserved baseline confirm no creative changes to `src/v2/cafe/`, `src/v2/cats/` or `src/videos/bridge/`. The permanent scene is instantiated by the same approved factory; furniture, counters, lights, texture data, palettes and adult art source are unchanged.
 
 Only animation-layer behavior is added: a separate original kitten visitor, a transient hinge for the existing entrance leaf, staging/sliding the existing serving mug, restrained cup steam, Essie's articulated reaching paw and support-bound body movement, expression/gaze/ear/tail/breathing performances, and deliberate cameras using the approved rendering pipeline. No new background furniture or V1 assets were imported. The original three cats remain present; Mocha and Latte retain their approved anchors.
 

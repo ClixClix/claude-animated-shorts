@@ -103,7 +103,13 @@ for f in keyframes:
 with Image.open(WORK/'silent-regression-143.png') as im:a=np.asarray(im.convert('RGB'),dtype=float)
 with Image.open(OUT/'gate-a/frame-143.png') as im:b=np.asarray(im.convert('RGB'),dtype=float)
 silent_mae=float(np.mean(np.abs(a-b)));assert silent_mae<0.01,'Original silent rendering changed'
-subprocess.run(['git','diff','--exit-code','3a81f38','--','src/v2/cafe','src/v2/cats','src/videos/bridge','src/v2/narration/config.ts','src/v2/narration/server/audio.ts','src/v2/narration/server/cache.ts'],check=True,stdout=subprocess.DEVNULL)
+# Validate immutable sources without requiring a restored .git directory.
+baseline=json.loads(Path('out/v2-episodes/door-at-1111/PRESERVATION_BASELINE.json').read_text())
+adjustments=json.loads(Path('../PORTABILITY_ADJUSTMENTS.json').read_text())
+for file,expected in baseline.items():
+    allowed=adjustments.get(file)
+    if allowed:assert allowed['originalSHA256']==expected
+    assert hashlib.sha256((Path('..')/file).read_bytes()).hexdigest()==(allowed['portableSHA256'] if allowed else expected),file
 metrics={'video':{'width':v['width'],'height':v['height'],'fps':v['avg_frame_rate'],'frames':len(files),'duration':float(probe['format']['duration'])},'uniqueFrames':len(set(hashes)),'longestIdenticalRun':longest+1,'runtimeAuditedFrames':len(audits),'visibilityIssues':0,'audio':{'approvedSHA256':plan['audioSHA256'],'correlation':coefficient,'shiftSeconds':lag/16000,'quietTailPeak':tail_peak,'encodedMastering':master},'independentKeyframeMAE':mae,'originalSilentFrameMAE':silent_mae,'frames':stats}
 (WORK/'qa-metrics.json').write_text(json.dumps(metrics,indent=2)+'\n')
 report=f'''# In This Town V2 — narrated test QA

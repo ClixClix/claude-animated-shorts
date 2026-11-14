@@ -28,7 +28,7 @@ All 37 transferred MP4s are byte-identical to their cloud originals and were ful
 
 Approved creative TypeScript source is unchanged: café geometry/furniture, adult cat drawings, original animation/Bridge modules and permanent narrator settings retain their existing identities. The native visual hash remains `d59d3b41acad447f57d706df59f776e167848ed8f88c97d61a392b86a936abe8`.
 
-Of the 44 original baseline files, 42 remain byte-identical. Two non-creative utility files change only font path/command documentation or file-URL handling for Windows; exact original/new hashes are audited in `PORTABILITY_ADJUSTMENTS.json`. The old animation test's Git-only preservation check now uses source hashes so tests also work in an extracted ZIP before history restoration.
+Of the 44 original baseline files, 42 remain byte-identical. Two non-creative utility files change only font path/command documentation or file-URL handling for Windows; exact original/new hashes are audited in `PORTABILITY_ADJUSTMENTS.json`. The old animation test and legacy QA utilities now use source hashes for preservation checks so they also work in an extracted ZIP before history restoration.
 
 Browser detection, ANGLE defaults, bounded configurable concurrency, canonical cache keys, a separate native-sample directory, environment/private-asset paths, font lookup and offline production orchestration are portability changes. Rendering and music finishing remain separate. No permanent scene redesign or V1 import occurred.
 
