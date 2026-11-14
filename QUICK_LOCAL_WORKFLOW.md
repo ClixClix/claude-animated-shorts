@@ -6,6 +6,8 @@ After asking ChatGPT to implement and sync an update, double-click **Sync-and-Op
 
 Use Remotion's composition selector and timeline to preview changes immediately. Use **Start-Local-Studio.cmd** when you only need to open the current local version. Close the old Studio terminal before using Sync-and-Open again so there is one server on port 3000. Stop any active render before syncing code.
 
+Double-click **Render-Current-Episode.cmd** for the complete final pipeline, including cached narration, sound effects and the configured soundtrack. Remotion Studio is the visual preview/editor; its direct composition render does not replace the separate final audio-finishing stage.
+
 The sync excludes studio/out, node_modules, private music/photos, local .env files and Git data. Approved render caches remain on disk; the existing renderer validates whether each cache still matches changed visual source. A visual code change can require rerendering affected caches even though files are retained.
 
 Source backups are under studio/backup/code-updates. Avoid modifying the same source locally and through ChatGPT at the same time; backups provide recovery, not automatic merging.
