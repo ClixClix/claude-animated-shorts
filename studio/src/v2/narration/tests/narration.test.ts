@@ -19,7 +19,7 @@ function fake(audio?:Buffer,script='Hello, café. Warm now.'){
  const fetcher:typeof fetch=async(input,init)=>{
   const url=String(input);calls.push({url,method:init?.method??'GET',body:init?.body?JSON.parse(String(init.body)):null});
   if(url.endsWith('/models'))return response(models);
-  if(url.includes('/voices/')){const voice_id=url.split('/').pop();return response({voice_id,name:voice_id===NARRATORS.in_this_town.voiceId?'Sawyer':'Daniel'});}
+  if(url.includes('/voices/')){const voice_id=url.split('/').pop();return response({voice_id,name:voice_id===NARRATORS.in_this_town.voiceId?'Adam':'Daniel'});}
   return response({audio_base64:audio?.toString('base64'),alignment:alignment(script,0.04)});
  };
  return {client:new ElevenLabsClient({apiKey:'unit-test-secret-not-real',rotationConfirmed:true,fetcher}),calls};
@@ -31,10 +31,10 @@ test.before(async()=>{
 });
 test.after(async()=>{await fs.rm(root,{recursive:true,force:true});});
 test('series select exact permanent voices; overrides leave defaults intact',()=>{
- assert.equal(narratorFor('in_this_town').voiceId,'8dEUmyPMdDdK91vboYih');assert.equal(narratorFor('what_if_cats').voiceId,'onwK4e9ZLuTAKqWW03F9');
- assert.deepEqual(narratorFor('in_this_town').settings,{stability:0.60,similarity_boost:0.75,style:0.15,use_speaker_boost:true,speed:1});
+ assert.equal(narratorFor('in_this_town').voiceId,'pNInz6obpgDQGcFmaJgB');assert.equal(narratorFor('what_if_cats').voiceId,'onwK4e9ZLuTAKqWW03F9');
+ assert.deepEqual(narratorFor('in_this_town').settings,{stability:0.50,similarity_boost:0.75,style:0,use_speaker_boost:true,speed:1});
  assert.deepEqual(narratorFor('what_if_cats').settings,{stability:0.72,similarity_boost:0.70,style:0,use_speaker_boost:true,speed:1});
- assert.equal(narratorFor('in_this_town',{settings:{stability:0.8}}).settings.stability,0.8);assert.equal(NARRATORS.in_this_town.settings.stability,0.6);
+ assert.equal(narratorFor('in_this_town',{settings:{stability:0.8}}).settings.stability,0.8);assert.equal(NARRATORS.in_this_town.settings.stability,0.5);
  assert.throws(()=>narratorFor('unknown'));assert.throws(()=>narratorFor('in_this_town',{settings:{speed:1.2}}));assert.throws(()=>narratorFor('what_if_cats',{settings:{style:NaN}}));
 });
 test('missing/old credentials fail before transport; raw provider secrets never enter error text',()=>{
@@ -47,13 +47,13 @@ test('verification checks both exact IDs and generation uses timestamps API at 1
  const f=fake(fixtureBytes);const v=await f.client.verify();assert.equal(v.voices.length,2);
  await assert.rejects(f.client.synthesize(narratorFor('in_this_town'),'Hello.',DEFAULT_PARAMETERS,v,false),/authorization/);
  await f.client.synthesize(narratorFor('in_this_town'),'Hello.',DEFAULT_PARAMETERS,v,true);
- const post=f.calls.find(c=>c.method==='POST')!;assert.ok(post.url.includes('/8dEUmyPMdDdK91vboYih/with-timestamps?output_format=mp3_44100_128'));assert.equal((post.body as {voice_settings:{speed:number}}).voice_settings.speed,1);
+ const post=f.calls.find(c=>c.method==='POST')!;assert.ok(post.url.includes('/pNInz6obpgDQGcFmaJgB/with-timestamps?output_format=mp3_44100_128'));assert.equal((post.body as {voice_settings:{speed:number}}).voice_settings.speed,1);
 });
 test('unavailable voices/models/settings and unsupported markup fail without paid requests',async()=>{
  const f=fake(),v=await f.client.verify(),n=narratorFor('in_this_town');
  assert.throws(()=>f.client.validate({...n,modelId:'unknown'},'Hello.',v,DEFAULT_PARAMETERS));
  assert.throws(()=>f.client.validate(n,'<speak>Hello</speak>',v,DEFAULT_PARAMETERS));
- assert.throws(()=>f.client.validate(n,'Hello.',{...v,models:[{...models[0],can_use_style:false}]},DEFAULT_PARAMETERS));
+ assert.throws(()=>f.client.validate({...n,settings:{...n.settings,style:0.15}},'Hello.',{...v,models:[{...models[0],can_use_style:false}]},DEFAULT_PARAMETERS));
  const bad=new ElevenLabsClient({apiKey:'not-real',rotationConfirmed:true,fetcher:async()=>response({detail:{message:'never-log-this'}},404)});await assert.rejects(bad.verify(),/unavailable/);assert.ok(!f.calls.some(c=>c.method==='POST'));
 });
 test('full-script Unicode words/sentences, ellipsis, monotonic bounds, pauses and frames',()=>{

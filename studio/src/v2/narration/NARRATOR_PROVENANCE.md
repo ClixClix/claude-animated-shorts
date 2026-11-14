@@ -1,12 +1,14 @@
 # Permanent narrator selection
 
-Updated November 14, 2026. In This Town keeps Sawyer. What If Cats restores the exact
+Updated November 14, 2026. In This Town selects Adam with the approved straight offline 1.35× speed-up;
+Sawyer remains the explicit archival fallback. What If Cats keeps the exact
 original V1 Daniel voice, recovered from source and actual generation metadata rather
 than selected by display name.
 
 | Series | Active voice ID | Model | Stability | Similarity | Speed | Audition status |
 |---|---|---|---:|---:|---:|---|
-| In This Town — Sawyer | `8dEUmyPMdDdK91vboYih` | `eleven_multilingual_v2` | .60 | .75 | 1.0 | Sawyer_Test.mp3 approved by the user |
+| In This Town — Adam | `pNInz6obpgDQGcFmaJgB` | `eleven_multilingual_v2` | .50 | .75 | 1.0 synthesis | Original cached; straight 1.35× audition approved |
+| In This Town fallback — Sawyer | `8dEUmyPMdDdK91vboYih` | `eleven_multilingual_v2` | .60 | .75 | 1.0 | Sawyer_Test.mp3 remains approved and unchanged |
 | What If Cats — original Daniel | `onwK4e9ZLuTAKqWW03F9` | `eleven_multilingual_v2` | .72 | .70 | 1.0 | Original identity/settings recovered; no new audition generated |
 
 ## Original Daniel evidence
@@ -32,7 +34,7 @@ Sawyer's existing style .15 and boost true remain unchanged.
 
 V1 requested raw PCM 48 kHz. The V2 MP3 generation/mastering pipeline remains unchanged;
 only narrator identity and voice controls are restored. Series creative direction remains
-playful and conversational. No speech is accelerated to fit a visual duration.
+playful and conversational. Daniel retains natural tempo and zero pitch shift. Adam's offline creative preset is separate from the generation settings.
 
 Live read-only `GET /v1/voices/onwK4e9ZLuTAKqWW03F9` returned HTTP 200, exact ID match,
 with the current display name **Daniel - Steady Broadcaster**. Display name alone was
@@ -52,3 +54,19 @@ has a different cache identity; no Darian entry is deleted, relabeled or reused 
 The default What If Cats output basename is now `what-if-cats-daniel`; explicit episode
 names still work as before. Historical audition plans/results remain records of the original
 Sawyer/Darian requests and must not be interpreted as active narrator configuration.
+
+## Selected Adam processing provenance
+
+The user approved Adam ID `pNInz6obpgDQGcFmaJgB` with straight 1.35× sample-rate speed-up
+and no independent pitch shift. Tempo and pitch rise together (about +5.20 semitones).
+This supersedes the earlier independent 1.30×/+5 trial, whose output/cache is retained.
+The natural original `Adam_Source_Test.mp3` has SHA256
+`d4a5bea7840702f7f1d20846dad8806dd471a794c6b9a4c566b7c492834dc028`.
+Its existing multilingual-v2 synthesis settings are stability .50, similarity .75, style0,
+boost true, speed1. These settings are preserved in the active Adam generation profile.
+The approved audition uses `asetrate=59535,aresample=48000` on the 44.1 kHz original,
+never a previous processed comparison. The engine preserves the same processing and
+source loudness target, followed by its existing peak-safe constant-gain mastering. No API request or paid generation is part of
+this preset update. Sawyer's full configuration is exported as `SAWYER_FALLBACK`.
+The previous three Adam comparisons, Sawyer/Darian recordings, Daniel settings, and all
+approved rendered visuals are retained. User steering limits this delivery to MP3 only.

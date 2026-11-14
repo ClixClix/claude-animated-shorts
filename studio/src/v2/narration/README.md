@@ -6,8 +6,9 @@ composition. No music is selected or generated. No extra package dependencies ar
 
 ## Current status and production gates
 
-The active narrators are **Sawyer for In This Town** and the **exact original V1 Daniel for
-What If Cats**. Both IDs are account-accessible. Sawyer's cached audition is approved;
+The active narrators are **Adam for In This Town** and the **exact original V1 Daniel for
+What If Cats**. Adam uses the approved straight offline 1.35× speed-up, with no separate pitch shift.
+Sawyer's approved cached audition and exact profile remain an explicit archival fallback;
 Darian's audition is preserved as an inactive reference. Daniel's identity and explicit
 settings were recovered from the old locked configuration and multiple generation records,
 then verified with read-only API requests. See [NARRATOR_PROVENANCE.md](NARRATOR_PROVENANCE.md).
@@ -42,12 +43,12 @@ history before deliberately retrying an uncertain request.
 
 | Series | Voice | Exact ID | Model candidate | Stability | Similarity | Style | Boost | Speed |
 |---|---|---|---|---:|---:|---:|---|---:|
-| in_this_town | Sawyer — Midnight Storyteller | 8dEUmyPMdDdK91vboYih | eleven_multilingual_v2 | .60 | .75 | .15 | true | 1.0 |
+| in_this_town | Adam — In This Town | pNInz6obpgDQGcFmaJgB | eleven_multilingual_v2 | .50 | .75 | 0 | true | 1.0 |
 | what_if_cats | Daniel — Original What If Cats narrator | onwK4e9ZLuTAKqWW03F9 | eleven_multilingual_v2 | .72 | .70 | 0 | true | 1.0 |
 
 V1 explicitly set Daniel's stability, similarity and speed. It omitted style and boost;
 the explicit V2 values above match the API's verified current defaults. Sawyer's settings
-remain unchanged. Default output stems are `in-this-town-sawyer` and `what-if-cats-daniel`.
+remain unchanged in `SAWYER_FALLBACK`. Default output stems are `in-this-town-adam` and `what-if-cats-daniel`.
 
 Defaults are frozen. `narratorFor(series, overrides)` creates a validated per-episode copy.
 Direction descriptions guide script/punctuation and human review; they are not sent as invented
@@ -93,9 +94,53 @@ controls output/normalization/seed; `--pauses file.json` accepts a list such as
 already guides pauses; listen before adding extra silence. Audio samples are cut/concatenated
 without time stretching, and all timings are shifted with inserted silence.
 
+## Independent offline playback and source cache
+
+`PLAYBACK` and `playbackFor(series, overrides)` control speed and pitch independently of
+ElevenLabs `settings.speed`, which remains 1.0 for natural source takes. Defaults:
+
+| Series | Offline tempo | Pitch shift |
+|---|---:|---:|
+| In This Town | 1.35× straight speed-up | 0 additional (pitch rises naturally) |
+| What If Cats | 1.0× | 0 semitones |
+
+`server/processing.ts` supports two explicit modes. The approved In This Town preset
+uses `mode: "varispeed"`: sample-rate speed-up raises tempo and pitch together, matching
+the selected 1.35× audition. There is no separate pitch shift or formant preservation.
+For `mode: "independent"` (or omitted mode on series with independent defaults), Rubber Band
+first adjusts tempo with pitch=1, then applies the separate pitch pass at tempo=1 with
+preserved formants. Intermediate WAVs use float PCM. Constant-gain mastering and final encoded true-peak verification follow.
+The API/source cache is unchanged at `out/v2-narration/cache/`; derived files use
+`out/v2-narration/processed-cache/`, keyed by original hash/cache identity, playback,
+filter order, implementation version and mastering settings. Original metadata/hash
+are verified; processed takes are rejected as inputs. Source bytes are never edited.
+Identity playback (Daniel) copies the source exactly without a new encode.
+
+```sh
+# Cache-only offline processing; never constructs an ElevenLabs client:
+node scripts/v2-narration.mjs process \
+  --input out/v2-narration/Adam_Source_Test.mp3 \
+  --metadata out/v2-narration/Adam_Source_Test-timestamps.json \
+  --name InThisTown_Adam_Approved
+```
+
+Optional `--playback file.json` accepts `{"speed":1.35,"pitchSemitones":0,"mode":"varispeed"}` for either
+`process` or `generate`. Use `mode: "independent"` to configure separate tempo/pitch controls.
+`generate` retains `NAME-original.mp3` and original timing
+metadata separately before producing `NAME.mp3` and transformed timing metadata.
+Provider timings are divided by playback speed and labeled as transformed alignment,
+not a newly verified transcription. Processing cannot trigger synthesis.
+
+`SAWYER_FALLBACK` retains voice ID `8dEUmyPMdDdK91vboYih`, model, direction, stability .60,
+similarity .75, style .15, boost true, generation speed1 and identity playback1/0.
+Use `process --fallback sawyer` with the untouched Sawyer recording and metadata to
+select that archival profile explicitly. An unavailable voice never silently falls back.
+The user approved `Adam_1.35x_Straight_Speedup.mp3`. Its original and previous Adam
+auditions remain unchanged. No new video or paid audio is produced for this selection.
+
 ## Narration-driven timing and the separate preview
 
-The approved three-sentence Sawyer audition has its own four-shot preview workflow:
+The archived approved three-sentence Sawyer audition retains its original four-shot preview workflow (these commands reproduce the Sawyer reference):
 
 ```sh
 node scripts/v2-narrated-test.mjs prepare
@@ -115,8 +160,8 @@ The original silent component's default behavior is preserved.
 
 The actual native MP4 and storyboard are written to `out/v2-animation-test/`. Full video
 decode, every-frame visibility/contact audits, source-to-encoded audio correlation and
-encoded true peak are checked. Narrator defaults and archived auditions are untouched.
-The complete 19-test narration command includes three regressions for this timing map.
+encoded true peak are checked. Archived recordings and their original preview are preserved.
+The narration test command includes regressions for this timing map and independent offline playback/cache behavior.
 The final mux decodes the approved MP3 directly and copies the rendered H.264 video,
 avoiding the render engine's AAC priming offset. `node scripts/v2-narrated-test.mjs audio`
 can repeat this local audio-only stage without rerendering visuals or calling the provider.
@@ -124,11 +169,11 @@ can repeat this local audio-only stage without rerendering visuals or calling th
 The following generic five-sentence workflow remains available for the earlier full script:
 
 ```sh
-node scripts/v2-narration.mjs plan --metadata out/v2-narration/in-this-town-timestamps.json
+node scripts/v2-narration.mjs plan --metadata out/v2-narration/in-this-town-adam-timestamps.json
 # Review the real measured duration/shot lengths; approve both samples and the pacing plan first:
 node scripts/v2-narration.mjs prepare-preview \
-  --metadata out/v2-narration/in-this-town-timestamps.json \
-  --audio out/v2-narration/in-this-town-sawyer.mp3 --samples-approved --pacing-approved
+  --metadata out/v2-narration/in-this-town-adam-timestamps.json \
+  --audio out/v2-narration/in-this-town-adam.mp3 --samples-approved --pacing-approved
 node scripts/v2-narration-render.mjs
 ```
 
@@ -138,7 +183,7 @@ seconds, frame conversion, named markers, pauses and shot ranges are exported. `
 remaps existing poses/actions into each narration window and then holds the action endpoint;
 long expansions are flagged for pacing review. It is a preview adapter, not automatic proof that
 slow actions or long holds are artistically appropriate. Real preview duration remains unknown
-until Sawyer's actual audio is measured. No silent composition or permanent visual asset is edited.
+until the selected recording is measured. No silent composition or permanent visual asset is edited.
 
 Only mastered public MP3 and timing/approval props are staged into ignored `public/v2-narration/`.
 The browser imports no server client or credential handling. The full render initially writes an

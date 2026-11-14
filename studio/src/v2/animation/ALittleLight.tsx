@@ -14,7 +14,7 @@ import {CHAR} from '../../videos/bridge/shade';
 import {InkPass,NOINK} from '../../videos/bridge/ink';
 import {LensBlur} from '../../videos/bridge/lensblur';
 import {GradeEffect,GradeParams} from '../../videos/bridge/grade';
-import {createKitten} from './kitten';
+import {createKitten,KittenActing} from './kitten';
 import {createEssieActing,createPaw} from './acting';
 import {storyAt,StoryState} from './timeline';
 const GRADE:GradeParams={ky:[0.015,0.09,0.26,0.52,0.77,0.92,1],sat:[0.92,0.98,0.90],tintS:[0.008,0.002],tintM:[0,0.002],tintH:[-0.003,0.002],vig:[0.10,0.4]};
@@ -31,8 +31,8 @@ function doorRig(env:CafeEnvironment){
  for(const child of leaf)pivot.attach(child);
  return {pivot,parts:leaf};
 }
-type SceneTiming={state?:StoryState;motionFrame?:number};
-const Inner:React.FC<SceneTiming>=({state,motionFrame})=>{
+type SceneTiming={state?:StoryState;motionFrame?:number;kittenActing?:KittenActing;kittenSupportHeight?:number;kittenShadowOpacity?:number;required?:string[]};
+const Inner:React.FC<SceneTiming>=({state,motionFrame,kittenActing,kittenSupportHeight,kittenShadowOpacity,required})=>{
  const renderFrame=useCurrentFrame(),s=state??storyAt(renderFrame),frame=s.frame,ambientFrame=motionFrame??frame;const {camera,scene,gl}=useThree();
  const world=useMemo(()=>{
    const env=new CafeEnvironment();const door=doorRig(env);const cup=env.fixtures.get('service-mug')!;
@@ -58,22 +58,22 @@ const Inner:React.FC<SceneTiming>=({state,motionFrame})=>{
    c.card.mesh.rotation.y=Math.atan2(cam.position.x-c.card.mesh.position.x,cam.position.z-c.card.mesh.position.z);
    c.shadow.mesh.position.set(c.card.mesh.position.x,c.card.mesh.position.y+0.008,c.card.mesh.position.z);
  }
- world.kitten.update(s,ambientFrame);world.kitten.mesh.position.set(...s.kitten);world.kitten.mesh.rotation.y=Math.atan2(cam.position.x-s.kitten[0],cam.position.z-s.kitten[2]);
- world.kittenShadow.mesh.position.set(s.kitten[0],(frame>=105?1.12:0)+0.008,s.kitten[2]);world.kittenShadow.mesh.visible=!(frame>=81&&frame<104);
+ world.kitten.update(s,ambientFrame,kittenActing);world.kitten.mesh.position.set(...s.kitten);world.kitten.mesh.rotation.y=Math.atan2(cam.position.x-s.kitten[0],cam.position.z-s.kitten[2]);
+ world.kittenShadow.mesh.position.set(s.kitten[0],(kittenSupportHeight??(frame>=105?1.12:0))+0.008,s.kitten[2]);world.kittenShadow.mesh.visible=kittenSupportHeight!==undefined||!(frame>=81&&frame<104);world.kittenShadow.mesh.material.opacity=kittenShadowOpacity??1;
  world.paw.update(s);world.steam.position.set(s.cup[0],s.cup[1]+0.205,s.cup[2]);
  world.steam.children.forEach((o,i)=>{const points=(o as T.Line).geometry.getAttribute('position');for(let j=0;j<points.count;j++){const t=j/(points.count-1);points.setXYZ(j,(i-1)*0.035+Math.sin(t*5-ambientFrame/30*1.2+i)*0.012*t,t*0.15,0.01*i);}points.needsUpdate=true;});
  useEffect(()=>{
    world.env.root.updateMatrixWorld(true);world.cast.forEach(c=>c.card.mesh.updateMatrixWorld(true));world.kitten.mesh.updateMatrixWorld(true);
    const points=[{id:'kitten',v:new T.Vector3(s.kitten[0],s.kitten[1]+0.36,s.kitten[2])},
      {id:'essie',v:new T.Vector3(s.essie[0],s.essie[1]+0.77,s.essie[2])},{id:'cup',v:new T.Vector3(s.cup[0],s.cup[1]+0.13,s.cup[2])}];
-   const req=s.shot===1?['kitten']:s.shot===2?['essie']:['kitten','essie','cup'];
+   const req=required??(s.shot===1?['kitten']:s.shot===2?['essie']:['kitten','essie','cup']);
    const visibility=points.filter(p=>req.includes(p.id)).map(p=>{
      const n=p.v.clone().project(cam);const d=p.v.clone().sub(cam.position);const distance=d.length();const ray=new T.Raycaster(cam.position,d.normalize(),0.08,distance-0.04);
      const hits=ray.intersectObjects(world.env.blockers,false).filter(h=>{let o:T.Object3D|null=h.object;while(o){if(o===world.cup&&p.id==='cup')return false;o=o.parent;}return true;});
      return {id:p.id,inFrame:Math.abs(n.x)<0.94&&Math.abs(n.y)<0.94&&n.z<1,ndc:[n.x,n.y],occluder:hits[0]?.object.name??null};
    });
    const cameraHits=world.env.blockers.filter(m=>new T.Box3().setFromObject(m).containsPoint(cam.position)).map(m=>m.name);
-   const audit={frame,renderFrame,shot:s.shot,visibility,cameraHits,cup:s.cup,kitten:s.kitten,essie:s.essie,paw:s.paw,contact:s.contact,reach:s.reach,door:s.door};
+   const audit={frame,renderFrame,shot:s.shot,visibility,cameraHits,cup:s.cup,kitten:s.kitten,essie:s.essie,paw:s.paw,contact:s.contact,reach:s.reach,door:s.door,...(kittenActing?.feet?{feet:kittenActing.feet}:{}),...(kittenSupportHeight!==undefined?{kittenSupportHeight}:{} )};
    (window as unknown as {__ANIM_AUDIT:unknown}).__ANIM_AUDIT=audit;console.log('ANIM_AUDIT '+JSON.stringify(audit));
  },[frame,renderFrame,world,cam]);
  useEffect(()=>()=>{world.env.dispose();world.cast.forEach(c=>{c.card.dispose();c.shadow.dispose();});world.acting.dispose();world.kitten.dispose();world.kittenShadow.dispose();world.paw.dispose();world.steam.children.forEach(o=>(o as T.Line).geometry.dispose());world.steamMat.dispose();fx.ink.dispose();fx.lens.pre.dispose();fx.lens.main.dispose();fx.bloom.dispose();fx.tone.dispose();fx.grade.dispose();},[world,fx]);
