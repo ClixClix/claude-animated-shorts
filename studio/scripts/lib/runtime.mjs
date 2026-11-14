@@ -6,6 +6,10 @@ import {fileURLToPath} from 'node:url';
 export const studioRoot=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 if(Number(process.versions.node.split('.')[0])!==24)throw Error('Use Node.js 24.x; this handoff was tested with 24.22.1.');
 process.chdir(studioRoot);
+// Project JSON/reports are UTF-8 on every platform, including Windows PowerShell 5.1.
+// Inherit this in every Python child (QA, boards, Foley); never use the Windows ACP.
+process.env.PYTHONUTF8='1';
+process.env.PYTHONIOENCODING='utf-8';
 for(const name of ['.env','.env.local'])if(fs.existsSync(path.join(studioRoot,name)))process.loadEnvFile(path.join(studioRoot,name));
 const candidates=process.platform==='win32'?[
  path.join(process.env.PROGRAMFILES??'C:\\Program Files','Google/Chrome/Application/chrome.exe'),
