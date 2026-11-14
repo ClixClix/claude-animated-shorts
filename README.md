@@ -1,3 +1,5 @@
+> **What If Cats V2 local production:** start with [START_HERE.md](START_HERE.md). Use Setup-V2.ps1 and Render-Episode.ps1 for this handoff. The original repository documentation is preserved below.
+
 # Claude Animated Shorts: ready to run
 
 Make 60-second animated story shorts with Claude Code: flat cartoon characters in a colourful 3D world, ink

@@ -7,7 +7,7 @@ root=Path('out/v2-episodes/door-at-1111')
 native='--native' in sys.argv
 source=root/('segments' if native else 'motion')
 ids=['19','26','31','41','47','48','51','53','54','55','60B']
-font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',16)
+font=ImageFont.truetype(str(Path(__file__).resolve().parents[1] / 'assets/fonts/DejaVuSans.ttf'),16)
 for shot in ids:
     file=source/(shot+'.mp4')
     if not file.exists():continue

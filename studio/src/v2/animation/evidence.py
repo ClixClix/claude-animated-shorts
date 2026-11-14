@@ -4,7 +4,7 @@ All boards use rendered frames or frames decoded from the actual MP4s.
 from pathlib import Path
 from PIL import Image,ImageDraw,ImageFont,ImageOps
 import json,subprocess,sys
-OUT=Path('out/v2-animation-test');FONT='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+OUT=Path('out/v2-animation-test');FONT=str(Path(__file__).resolve().parents[3] / 'assets/fonts/DejaVuSans.ttf')
 font=lambda n:ImageFont.truetype(FONT,n)
 def board(files,labels,name,title,cols=4,tile=(270,480),crop=None):
     rows=(len(files)+cols-1)//cols;w,h=tile;gap=18;top=76;cell_h=h+38

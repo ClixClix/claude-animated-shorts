@@ -1,10 +1,11 @@
+import './lib/runtime.mjs';
 // Reports are generated only after actual final containers and inspection evidence exist.
 import fs from 'node:fs/promises';
 import path from 'node:path';
 const out=path.resolve('out/v2-episodes/door-at-1111');
 const read=async n=>JSON.parse(await fs.readFile(path.join(out,n),'utf8'));
 const [manifest,structure,native,video,audio,paid]=await Promise.all(['The_Door_At_1111_Shot_Manifest.json','STRUCTURAL_QA.json','NATIVE_RENDER_QA.json','FINAL_VIDEO_QA.json','AUDIO_FINISHING_QA.json','PAID_GENERATION_JOURNAL.json'].map(read));
-const notes=await fs.readFile(path.join(out,'VISUAL_INSPECTION_NOTES.md'),'utf8');
+const notes=await fs.readFile(path.join(out,'VISUAL_INSPECTION_NOTES.md'),'utf8').catch(e=>{if(e.code!=='ENOENT')throw e;return 'Manual review of the completed local movie has not yet been recorded. Review the native storyboard and motion samples, then write VISUAL_INSPECTION_NOTES.md and regenerate this report. Automated checks do not establish animation quality.';});
 for(const n of ['The_Door_At_1111_Final_With_Music.mp4','The_Door_At_1111_Final_No_Music.mp4','The_Door_At_1111_Storyboard.jpg','The_Door_At_1111_Keyframes.jpg','Narration_Stem.wav','SFX_Stem.wav','Music_Stem.wav'])await fs.access(path.join(out,n));
 if(video.decodedFrames!==manifest.durationInFrames||video.blackFrames.length||native.browserErrors.length||native.cameraFlags.length)throw Error('Unresolved final technical failure.');
 for(const label of ['No_Music','With_Music'])if(audio[label].encoded.truePeakDBTP> -1)throw Error('Encoded peak exceeds ceiling.');
@@ -18,7 +19,7 @@ Actual delivery: ${manifest.width} × ${manifest.height}, 30 fps, ${video.decode
 
 - ${manifest.shots.length} shots; maximum ${structure.maximumShotFrames} frames (${(structure.maximumShotFrames/30).toFixed(2)} seconds), below the strict 120-frame cap. No gaps or overlaps.
 - ${structure.checks.toLocaleString('en-US')} deterministic timing, continuity, contact, light-state and preservation checks passed.
-- ${structure.protectedHashes} protected source hashes match: approved adult artwork, original café, original animation and Bridge rendering modules remain intact.
+- ${structure.protectedHashes} baseline files are audited. Two font/file-URL utility adjustments are explicitly recorded in PORTABILITY_ADJUSTMENTS.json; approved adult artwork, café geometry, original animation and Bridge rendering modules remain intact.
 - One approved café instance, exactly one serving counter, one rear preparation counter and two customer tables. No furniture moves between camera shots.
 - Nine fixed streetlights fail monotonically. Clock progression and explicitly identified flashbacks are deterministic.
 - Every native frame has a scene audit. ${native.cameraFlags.length} camera-inside-geometry flags and ${native.browserErrors.length} recorded browser errors.
@@ -94,7 +95,7 @@ Immutable café geometry is batched only for rendering. Stable source IDs and po
 
 ## Validation
 
-TypeScript passed; existing suites passed (104 café layout checks, 2167 original animation checks, 25 narration tests including a real FFmpeg clean-loop regression), plus 66 actual Canvas rig checks and ${structure.checks} episode checks. All ${manifest.durationInFrames} native frames were rendered through Remotion, assembled without video reencoding, fully decoded and inspected using native storyboard/motion evidence. See the separate visual and audio QA reports for scope and limitations.
+TypeScript passed; existing suites passed (104 café layout checks, 2167 original animation checks, 25 narration tests including a real FFmpeg clean-loop regression), plus 66 actual Canvas rig checks and ${structure.checks} episode checks. All ${manifest.durationInFrames} native frames were rendered through Remotion, assembled without video reencoding, fully decoded, with native storyboard/motion evidence provided for review. See the separate visual and audio QA reports for scope and limitations.
 
 ## Reproduction
 
@@ -112,6 +113,6 @@ The production scripts do not make narration-generation requests. Preserve the c
 
 ## Status
 
-The actual final movies, storyboard/keyframes, JSON/CSV manifest, three stems and three reports exist. The episode is delivered for visual and listening approval. No further episode production or publication is authorized by this delivery.
+The actual final movies, storyboard/keyframes, JSON/CSV manifest, three stems and three reports exist. The episode is ready for visual and listening review; no manual approval is implied by this report. No further episode production or publication is authorized by this delivery.
 `);
 console.log('Three reports generated from actual final delivery evidence.');

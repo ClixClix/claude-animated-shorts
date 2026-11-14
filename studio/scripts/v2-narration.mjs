@@ -1,3 +1,4 @@
+import './lib/runtime.mjs';
 // No new dependencies: the project already includes esbuild through its Remotion toolchain.
 import {build} from 'esbuild';
 import {spawnSync} from 'node:child_process';

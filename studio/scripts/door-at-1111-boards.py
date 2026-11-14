@@ -2,7 +2,7 @@ from pathlib import Path
 from PIL import Image,ImageDraw,ImageFont
 import json,math,sys
 root=Path('out/v2-episodes/door-at-1111');plan=json.loads((root/'The_Door_At_1111_Shot_Manifest.json').read_text());draft='--draft' in sys.argv;source=root/('draft-storyboard' if draft else 'storyboard')
-font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',13)
+font=ImageFont.truetype(str(Path(__file__).resolve().parents[1] / 'assets/fonts/DejaVuSans.ttf'),13)
 def sheet(shots,file,cols=6,w=180):
  h=round(w*1920/1080);rows=math.ceil(len(shots)/cols);cv=Image.new('RGB',(cols*w,rows*(h+35)+45),'#101e2c');d=ImageDraw.Draw(cv);d.text((12,12),'THE DOOR AT 11:11 — '+('DRAFT ' if draft else '')+'ACTUAL RENDERED FRAMES',font=font,fill='#edd6ae')
  for i,s in enumerate(shots):

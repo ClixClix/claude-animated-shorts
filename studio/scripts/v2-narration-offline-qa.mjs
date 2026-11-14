@@ -1,3 +1,4 @@
+import {browserExecutable,chromiumOptions,renderConcurrency} from './lib/runtime.mjs';
 // Non-billable integration exercise. All audio here is clearly labeled synthetic test tone, not narration.
 import {build} from 'esbuild';import {bundle} from '@remotion/bundler';
 import {openBrowser,selectComposition,renderStill,renderMedia} from '@remotion/renderer';
@@ -17,13 +18,13 @@ await fs.writeFile(out+'/offline-preview-props.json',JSON.stringify(props,null,2
 execFileSync('ffmpeg',['-nostdin','-v','error','-y','-f','lavfi','-i','color=c=black:s=16x16:r=30:d=6','-i',master,'-c:v','libx264','-c:a','aac','-shortest',out+'/offline-fixture-unmastered.mp4']);
 const encoded=await audio.finalizeVideoAudio(out+'/offline-fixture-unmastered.mp4',out+'/offline-fixture-encoded.mp4');
 const serveUrl=await bundle({entryPoint:path.resolve('src/index.ts')});
-const browser=await openBrowser('chrome',{browserExecutable:'/usr/bin/chromium',chromiumOptions:{gl:'swangle'}});
+const browser=await openBrowser('chrome',{browserExecutable,chromiumOptions});
 const errors=[];
 try{
  const composition=await selectComposition({serveUrl,id:'InThisTownV2Narrated',inputProps:props,puppeteerInstance:browser,logLevel:'error',onBrowserLog:()=>{}});
  if(composition.durationInFrames!==plan.durationInFrames)throw new Error('Narration duration not propagated to Remotion.');
  await renderStill({serveUrl,composition,inputProps:props,frame:Math.min(30,composition.durationInFrames-1),output:out+'/offline-remotion-smoke.png',imageFormat:'png',puppeteerInstance:browser,logLevel:'error',timeoutInMilliseconds:180000,onBrowserLog:l=>{if(l.type==='error')errors.push(l.text);}});
- await renderMedia({serveUrl,composition,inputProps:props,frameRange:[15,20],codec:'h264',outputLocation:out+'/offline-remotion-audio-smoke.mp4',scale:0.5,concurrency:2,puppeteerInstance:browser,logLevel:'error',chromiumOptions:{gl:'swangle'},timeoutInMilliseconds:180000,onBrowserLog:l=>{if(l.type==='error')errors.push(l.text);}});
+ await renderMedia({serveUrl,composition,inputProps:props,frameRange:[15,20],codec:'h264',outputLocation:out+'/offline-remotion-audio-smoke.mp4',scale:0.5,concurrency:renderConcurrency(),puppeteerInstance:browser,logLevel:'error',chromiumOptions,timeoutInMilliseconds:180000,onBrowserLog:l=>{if(l.type==='error')errors.push(l.text);}});
  const silent=await selectComposition({serveUrl,id:'InThisTownV2ALittleLight',puppeteerInstance:browser,logLevel:'error',onBrowserLog:()=>{}});
  if(silent.durationInFrames!==240||silent.fps!==30)throw new Error('Original silent composition changed.');
  if(errors.length)throw new Error('Offline browser smoke test failed.');

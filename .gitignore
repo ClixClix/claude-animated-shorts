@@ -14,3 +14,19 @@ studio/shorts/molasses/
 
 # Generated narration audio/metadata for Remotion; never commit credentials or provider outputs.
 studio/public/v2-narration/
+
+# Local-only Windows tooling and secrets
+.venv/
+.env.*
+!.env.example
+**/.env.local
+*.bundle
+HANDOFF_FILE_MANIFEST.json
+__pycache__/
+*.pyc
+
+# Machine-generated handoff evidence (included in ZIP only)
+PORTABILITY_QA.json
+CREDENTIAL_EXPORT_SCAN.json
+TRANSFERRED_SHOTS_QA.json
+PRIVATE_ASSET_MANIFEST.json

@@ -7,7 +7,11 @@
     "studio": "remotion studio src/index.ts",
     "stills": "node scripts/bridge-stills.mjs",
     "models": "node scripts/get-models.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:v2": "node scripts/v2-tests.mjs",
+    "episode": "node scripts/produce-episode.mjs all",
+    "episode:status": "node scripts/produce-episode.mjs status",
+    "episode:audio": "node scripts/produce-episode.mjs audio"
   },
   "dependencies": {
     "@react-three/fiber": "9.1.2",
@@ -27,5 +31,9 @@
     "@types/react": "19.0.0",
     "@types/three": "0.176.0",
     "typescript": "5.8.2"
-  }
+  },
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "packageManager": "npm@11.9.0"
 }

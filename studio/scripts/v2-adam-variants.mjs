@@ -1,3 +1,4 @@
+import './lib/runtime.mjs';
 // Offline audio processing only. No provider client, credentials or synthesis requests.
 import fs from 'node:fs/promises';
 import path from 'node:path';

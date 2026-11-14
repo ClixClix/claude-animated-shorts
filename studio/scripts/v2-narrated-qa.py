@@ -69,7 +69,7 @@ tail_peak=float(np.max(np.abs(tail))) if len(tail) else 0
 assert tail_peak<0.001,'Unexpected audio after the approved narration'
 master=json.loads((WORK/'encoded-audio-qa.json').read_text());assert master['after']['truePeakDBTP']<=-1
 
-font=lambda n:ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',n)
+font=lambda n:ImageFont.truetype(str(Path(__file__).resolve().parents[1] / 'assets/fonts/DejaVuSans.ttf'),n)
 def board(indices,labels,name,title,cols=4,tile=(432,768),crop=None):
     w,h=tile;gap=16;top=70;cell=h+34;rows=(len(indices)+cols-1)//cols
     im=Image.new('RGB',(cols*(w+gap)+gap,top+rows*cell+gap),'#152a31');d=ImageDraw.Draw(im)

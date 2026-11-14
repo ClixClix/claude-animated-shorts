@@ -1,3 +1,4 @@
+import './lib/runtime.mjs';
 // Reusable post-render finishing: revise audio without rendering any animation again.
 import fs from 'node:fs/promises';
 import path from 'node:path';

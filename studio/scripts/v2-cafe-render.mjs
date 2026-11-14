@@ -1,3 +1,4 @@
+import {browserExecutable,chromiumOptions,renderConcurrency} from './lib/runtime.mjs';
 // From studio/: node scripts/v2-cafe-render.mjs [--draft] [Exterior|Wide|Counter|Closeup]
 import {bundle} from '@remotion/bundler';
 import {openBrowser,renderStill,selectComposition} from '@remotion/renderer';
@@ -5,7 +6,7 @@ import fs from 'node:fs';import path from 'node:path';import crypto from 'node:c
 const draft=process.argv.includes('--draft');const pick=process.argv.find(x=>['Exterior','Wide','Counter','Closeup'].includes(x));
 const output=path.resolve('out/v2-cafe'+(draft?'/draft':''));fs.mkdirSync(output,{recursive:true});
 const serveUrl=await bundle({entryPoint:path.resolve('src/index.ts')});
-const browser=await openBrowser('chrome',{browserExecutable:process.env.CHROME||'/usr/bin/chromium',chromiumOptions:{gl:'swangle'}});
+const browser=await openBrowser('chrome',{browserExecutable,chromiumOptions});
 const shots=[['Exterior','01-exterior.png'],['Wide','02-interior-wide.png'],['Counter','03-counter-interaction.png'],['Closeup','04-essie-closeup.png']];
 const sceneSourceHashes=Object.fromEntries(fs.readdirSync('src/v2/cafe').filter(x=>/\.tsx?$/.test(x)).map(x=>[x,crypto.createHash('sha256').update(fs.readFileSync('src/v2/cafe/'+x)).digest('hex')]));
 const sourceHashes=Object.fromEntries(fs.readdirSync('src/v2/cats').filter(x=>/\.tsx?$/.test(x)).map(x=>[x,crypto.createHash('sha256').update(fs.readFileSync('src/v2/cats/'+x)).digest('hex')]));

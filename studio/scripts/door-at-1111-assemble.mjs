@@ -1,3 +1,5 @@
+import './lib/runtime.mjs';
+import {hash,visualSourceHash,probe} from './lib/render-cache.mjs';
 // Offline assembly of independently rendered, native-resolution Remotion shot segments.
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -6,14 +8,10 @@ import {execFileSync} from 'node:child_process';
 
 const out=path.resolve('out/v2-episodes/door-at-1111');
 const manifest=JSON.parse(await fs.readFile(path.join(out,'The_Door_At_1111_Shot_Manifest.json'),'utf8'));
-const hash=b=>createHash('sha256').update(b).digest('hex');
 const props=JSON.parse(await fs.readFile(path.join(out,'render-props.json'),'utf8'));
 props.optimize=true;props.previewScale=1;
 const propsHash=hash(JSON.stringify(props));
-const roots=['src/v2/episodes/door-at-1111','src/v2/cats','src/v2/cafe','src/v2/animation','src/videos/bridge'];
-const sources=(await Promise.all(roots.map(async root=>(await fs.readdir(root,{recursive:true})).filter(f=>/\.tsx?$/.test(f)&&!f.startsWith('audio/')).sort().map(f=>path.join(root,f))))).flat();
-const sourceHash=hash((await Promise.all(sources.map(async p=>p+'\n'+await fs.readFile(p,'utf8')))).join('\n'));
-const probe=file=>JSON.parse(execFileSync('ffprobe',['-v','error','-show_streams','-show_format','-of','json',file],{encoding:'utf8'}));
+const sourceHash=await visualSourceHash();
 const report={sourceHash,propsHash,durationInFrames:manifest.durationInFrames,segments:[],visibilityFlags:[],cameraFlags:[],browserErrors:[]};
 let cursor=0;
 for(const shot of manifest.shots){
@@ -21,6 +19,7 @@ for(const shot of manifest.shots){
  if(shot.start!==cursor||shot.end-shot.start>120)throw Error('Invalid cut boundary '+shot.id);
  if(saved.sourceHash!==sourceHash||saved.propsHash!==propsHash)throw Error('Stale render '+shot.id);
  if(saved.range.join()!==[shot.start,shot.end-1].join())throw Error('Partial render '+shot.id);
+ if(saved.videoSHA256&&hash(await fs.readFile(file))!==saved.videoSHA256)throw Error('Video integrity mismatch '+shot.id);
  if(v.width!==1080||v.height!==1920||v.r_frame_rate!=='30/1'||Number(v.nb_frames)!==shot.end-shot.start||v.codec_name!=='h264')throw Error('Incorrect native segment '+shot.id);
  const seen=new Set(saved.audits.map(a=>a.frame));
  for(let f=shot.start;f<shot.end;f++)if(!seen.has(f))throw Error('Missing per-frame scene audit '+shot.id+' '+f);
@@ -33,7 +32,7 @@ for(const shot of manifest.shots){
 }
 if(cursor!==manifest.durationInFrames||report.browserErrors.length)throw Error('Incomplete episode or browser errors.');
 const list=path.join(out,'native-segments.txt');
-await fs.writeFile(list,report.segments.map(s=>"file '"+s.file.replaceAll("'","'\\''")+"'").join('\n')+'\n');
+await fs.writeFile(list,report.segments.map(s=>"file '"+s.file.replaceAll('\\','/').replaceAll("'","'\\''")+"'").join('\n')+'\n');
 const master=path.join(out,'The_Door_At_1111_Visual_Master.mp4');
 execFileSync('ffmpeg',['-nostdin','-hide_banner','-v','error','-y','-f','concat','-safe','0','-i',list,'-map','0:v:0','-c:v','copy','-an','-movflags','+faststart',master]);
 const media=probe(master),video=media.streams.find(s=>s.codec_type==='video');

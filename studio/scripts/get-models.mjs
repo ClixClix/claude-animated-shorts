@@ -1,3 +1,4 @@
+import './lib/runtime.mjs';
 // usage: node scripts/get-models.mjs
 // Downloads the two free Kenney CC0 kits the bridge template uses (Nature Kit + Fantasy Town Kit) and copies the
 // .glb models it loads into public/bridge/kenney/. Safe to run again: models already there are skipped.

@@ -1,3 +1,4 @@
+import {browserExecutable,chromiumOptions,renderConcurrency} from './lib/runtime.mjs';
 // All-frame structural visibility against the actual Three.js world, without expensive GPU draws.
 // This does not replace native visual/motion review or the final alpha-tested card audits.
 import fs from 'node:fs/promises';
@@ -24,7 +25,7 @@ export function run(props){
  }
  w.dispose();return {frames:props.shots.at(-1).end,geometryFlags:flags,cameraFlags,missingAssets:assets,roles,characterAlphaOcclusionChecked:false};
 }`,resolveDir:path.resolve('src/v2/episodes/door-at-1111'),loader:'ts'},bundle:true,write:false,platform:'browser',format:'iife',globalName:'DoorCameraPreflight',target:'chrome120'});
-const browser=await openBrowser('chrome',{browserExecutable:'/usr/bin/chromium',chromiumOptions:{gl:'swangle'}});
+const browser=await openBrowser('chrome',{browserExecutable,chromiumOptions});
 try{
  const page=await browser.newPage({context:()=>null,logLevel:'error',indent:false,pageIndex:0,onBrowserLog:l=>{if(l.text.startsWith('CAMERA_PREFLIGHT'))console.log(l.text);},onLog:()=>{}});
  await page.evaluate(code=>{(0,eval)(code);},script.outputFiles[0].text);

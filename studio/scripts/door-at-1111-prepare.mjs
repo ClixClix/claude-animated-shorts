@@ -1,3 +1,4 @@
+import './lib/runtime.mjs';
 // Offline editorial preparation from the single approved, cached Adam take. No provider client.
 import fs from 'node:fs/promises';
 import path from 'node:path';

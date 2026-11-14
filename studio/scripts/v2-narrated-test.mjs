@@ -1,3 +1,4 @@
+import {browserExecutable,chromiumOptions,renderConcurrency} from './lib/runtime.mjs';
 // Offline only. This renderer imports no TTS client and never calls ElevenLabs.
 // From studio/: node scripts/v2-narrated-test.mjs prepare|stills|render|audio
 import fs from 'node:fs/promises';
@@ -52,7 +53,7 @@ async function muxApprovedAudio() {
 if(mode==='audio'){await muxApprovedAudio();process.exit(0);}
 
 const serveUrl=await bundle({entryPoint:path.resolve('src/index.ts')});
-const browser=await openBrowser('chrome',{browserExecutable:process.env.CHROME||'/usr/bin/chromium',chromiumOptions:{gl:'swangle'}});
+const browser=await openBrowser('chrome',{browserExecutable,chromiumOptions});
 try {
   const composition=await selectComposition({serveUrl,id:'InThisTownV2Narrated',inputProps:props,puppeteerInstance:browser,logLevel:'error',onBrowserLog:()=>{}});
   const silent=await selectComposition({serveUrl,id:'InThisTownV2ALittleLight',puppeteerInstance:browser,logLevel:'error',onBrowserLog:()=>{}});
@@ -72,7 +73,7 @@ try {
   } else {
     const audits=[],errors=[];let last=0;
     const intermediate=path.join(work,'narrated-unmastered.mp4');
-    await renderMedia({serveUrl,composition,inputProps:props,codec:'h264',outputLocation:intermediate,concurrency:3,imageFormat:'png',crf:18,pixelFormat:'yuv420p',puppeteerInstance:browser,chromiumOptions:{gl:'swangle'},timeoutInMilliseconds:180000,logLevel:'error',
+    await renderMedia({serveUrl,composition,inputProps:props,codec:'h264',outputLocation:intermediate,concurrency:renderConcurrency(),imageFormat:'png',crf:18,pixelFormat:'yuv420p',puppeteerInstance:browser,chromiumOptions,timeoutInMilliseconds:180000,logLevel:'error',
       onBrowserLog:l=>{if(l.text.startsWith('ANIM_AUDIT '))audits.push(JSON.parse(l.text.slice(11)));else if(l.type==='error')errors.push(l.text);},
       onProgress:p=>{if(p.renderedFrames-last>=12){last=p.renderedFrames;console.log(`Rendered ${last}/${composition.durationInFrames} frames`);}}});
     await fs.writeFile(path.join(work,'render-audits.json'),JSON.stringify({audits,errors},null,2));

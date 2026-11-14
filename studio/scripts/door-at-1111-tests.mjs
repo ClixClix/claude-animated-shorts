@@ -1,3 +1,4 @@
+import './lib/runtime.mjs';
 import {build} from 'esbuild';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -42,7 +43,8 @@ for(let frame=0;frame<manifest.durationInFrames;frame++){
  last=s;
 }
 const baseline=JSON.parse(await fs.readFile(path.join(out,'PRESERVATION_BASELINE.json'),'utf8'));
-for(const [p,sha] of Object.entries(baseline)){const actual=createHash('sha256').update(await fs.readFile(path.resolve('..',p))).digest('hex');check(actual===sha,'Approved asset or narrator changed: '+p);}
+const portability=JSON.parse(await fs.readFile('../PORTABILITY_ADJUSTMENTS.json','utf8'));
+for(const [p,sha] of Object.entries(baseline)){const actual=createHash('sha256').update(await fs.readFile(path.resolve('..',p))).digest('hex'),adjustment=portability[p];if(adjustment)check(adjustment.originalSHA256===sha,'Unrecognized portability baseline: '+p);check(actual===(adjustment?.portableSHA256??sha),'Approved asset or narrator changed: '+p);}
 for(const mutation of [shots.map((s,i)=>i===0?{...s,end:s.start+121}:s),shots.map((s,i)=>i===1?{...s,start:s.start+1}:s),shots.slice(1)])assert.throws(()=>t.validateShots(mutation));
 const extraTaps=[99.8,103.8,104.8].map(x=>Math.round(t.actualAt(x*30,shots)));
 const props=JSON.parse(await fs.readFile(path.join(out,'render-props.json'),'utf8'));props.cues.taps=[...manifest.cues.taps.slice(0,3),...extraTaps];await fs.writeFile(path.join(out,'render-props.json'),JSON.stringify(props,null,2)+'\n');

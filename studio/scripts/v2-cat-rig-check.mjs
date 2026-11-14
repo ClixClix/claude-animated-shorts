@@ -1,10 +1,11 @@
+import {browserExecutable,chromiumOptions,renderConcurrency} from './lib/runtime.mjs';
 // Checks the real Canvas output in Chromium, without creating an animation or altering sheets.
 import fs from 'node:fs';
 import ts from 'typescript';
 import {openBrowser} from '@remotion/renderer';
 const files=['src/videos/bridge/toon.ts','src/v2/cats/designs.ts','src/v2/cats/pose.ts','src/v2/cats/drawCat.ts'];
 const sources=Object.fromEntries(files.map(file=>[file.replace(/.*\//,'').replace('.ts',''),ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText]));
-const browser=await openBrowser('chrome',{browserExecutable:process.env.CHROME||'/usr/bin/chromium',chromiumOptions:{gl:'swangle'}});
+const browser=await openBrowser('chrome',{browserExecutable,chromiumOptions});
 try{
  const page=await browser.newPage({context:()=>null,logLevel:'error',indent:false,pageIndex:0,onBrowserLog:null,onLog:()=>{}});
  const result=await page.evaluate((sources)=>{

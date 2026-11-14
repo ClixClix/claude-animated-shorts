@@ -1,6 +1,8 @@
+import path from 'node:path';
+import os from 'node:os';
 /** Private user-supplied recording. Never copied into public/ or committed. */
 export const SERIES_MUSIC={
- in_this_town:{title:'Numbers — Instrumental Intro Loop',artist:'TEMPOREX',privateFile:'/workspace/v2-private-audio/temporex-numbers-intro.mp3',gainDB:-10,fadeOutSeconds:4,tempo:1,pitchSemitones:0,reviewOnly:true,cleanLoop:{startSeconds:0,periodSeconds:10.228662,crossfadeSeconds:0.06,reason:'User requested opening music only, excluding the later whistle passage, looped as needed.'}},
+ in_this_town:{title:'Numbers — Instrumental Intro Loop',artist:'TEMPOREX',privateFile:process.env.V2_MUSIC_FILE||path.join(process.env.V2_PRIVATE_ASSETS||path.join(os.homedir(),'WhatIfCatsPrivate'),'audio','temporex-numbers-intro.mp3'),gainDB:-10,fadeOutSeconds:4,tempo:1,pitchSemitones:0,reviewOnly:true,cleanLoop:{startSeconds:0,periodSeconds:10.228662,crossfadeSeconds:0.06,reason:'User requested opening music only, excluding the later whistle passage, looped as needed.'}},
  what_if_cats:null,
 } as const;
 

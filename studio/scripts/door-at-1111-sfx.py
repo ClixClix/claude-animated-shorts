@@ -60,5 +60,5 @@ fade=np.clip((D-time)/1.1,0,1);mix*=fade[:,None]
 peak=float(np.abs(mix).max());assert peak<.90 and np.isfinite(mix).all()
 file=ROOT/'SFX_Stem.wav'
 subprocess.run(['ffmpeg','-nostdin','-v','error','-y','-f','f32le','-ar',str(SR),'-ac','2','-i','pipe:0','-c:a','pcm_f32le',str(file)],input=mix.astype('<f4').tobytes(),check=True)
-(ROOT/'SFX_PROVENANCE.json').write_text(json.dumps({'license':'Original procedural synthesis created for this project; no third-party SFX recordings','sampleRate':SR,'channels':2,'duration':D,'seed':1111,'samplePeak':peak,'events':results},indent=2)+'\n')
+(ROOT/'SFX_PROVENANCE.json').write_text(json.dumps({'license':'Original procedural synthesis created for this project; no third-party SFX recordings','sampleRate':SR,'channels':2,'duration':D,'seed':1111,'samplePeak':peak,'events':results,'cuesSHA256':hashlib.sha256((ROOT/'SFX_CUES.json').read_bytes()).hexdigest(),'sourceSHA256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'audioSHA256':hashlib.sha256(file.read_bytes()).hexdigest()},indent=2)+'\n')
 print(json.dumps({'file':str(file),'duration':D,'events':len(results),'samplePeak':peak}))

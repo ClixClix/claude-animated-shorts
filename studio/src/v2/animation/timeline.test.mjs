@@ -1,3 +1,5 @@
+import path from 'node:path';
+import {createHash} from 'node:crypto';
 // From studio/: node src/v2/animation/timeline.test.mjs
 import fs from 'node:fs';import ts from 'typescript';import assert from 'node:assert/strict';import * as THREE from 'three';import {execFileSync} from 'node:child_process';
 const source=ts.transpileModule(fs.readFileSync('src/v2/animation/timeline.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText;
@@ -31,5 +33,6 @@ check(dist(storyAt(44).kitten,storyAt(45).kitten)<0.01,'Discontinuity at first c
 check(dist(storyAt(104).kitten,storyAt(105).kitten)<0.001,'Discontinuity at counter arrival');
 check(storyAt(27).kittenFear===1&&storyAt(230).kittenSmile===1,'Emotional arc incomplete');
 // Explicit immutable checkpoint: no permanent asset, approved drawing or Bridge source is modified.
-execFileSync('git',['diff','--exit-code','08b67e6','--','src/v2/cafe','src/v2/cats','src/videos/bridge'],{stdio:'pipe'});
-console.log(`${checks} animation timeline/contact/continuity checks passed; locked assets match 08b67e6`);
+const baseline=JSON.parse(fs.readFileSync('out/v2-episodes/door-at-1111/PRESERVATION_BASELINE.json','utf8'));
+for(const [file,digest] of Object.entries(baseline))if(/studio\/src\/(v2\/(cafe|cats)|videos\/bridge)\/.*\.tsx?$/.test(file))assert.equal(createHash('sha256').update(fs.readFileSync(path.resolve('..',file))).digest('hex'),digest,'Locked creative source changed: '+file);
+console.log(`${checks} animation timeline/contact/continuity checks passed; locked creative source hashes match the preserved baseline`);

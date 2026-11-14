@@ -1,3 +1,4 @@
+import {browserExecutable,chromiumOptions,renderConcurrency} from './lib/runtime.mjs';
 // From studio/: node scripts/v2-animation-render.mjs storyboard|motion|full|frames [frames...]
 import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';
 import {bundle} from '@remotion/bundler';
@@ -6,14 +7,14 @@ const sourceHash=crypto.createHash('sha256').update(fs.readdirSync('src/v2/anima
 const mode=process.argv[2]||'storyboard';const out=path.resolve('out/v2-animation-test');fs.mkdirSync(out,{recursive:true});
 const gate=path.join(out,mode==='storyboard'?'gate-a':mode==='motion'?'gate-b':'frames');fs.mkdirSync(gate,{recursive:true});
 const serveUrl=await bundle({entryPoint:path.resolve('src/index.ts')});
-const browser=await openBrowser('chrome',{browserExecutable:process.env.CHROME||'/usr/bin/chromium',chromiumOptions:{gl:'swangle'}});
+const browser=await openBrowser('chrome',{browserExecutable,chromiumOptions});
 const composition=await selectComposition({serveUrl,id:'InThisTownV2ALittleLight',puppeteerInstance:browser,logLevel:'error',onBrowserLog:()=>{}});
 try{
  if(mode==='motion'){
    const samples=[['first-step',19,38],['head-turn',49,82],['arrival',81,104],['contact-slide-release',117,164],['emotional-change',174,239]];
    for(const [name,a,b] of samples){
      const audits=[],errors=[];
-     await renderMedia({serveUrl,composition,codec:'h264',outputLocation:path.join(gate,name+'.mp4'),frameRange:[a,b],scale:0.5,concurrency:2,puppeteerInstance:browser,chromiumOptions:{gl:'swangle'},imageFormat:'png',crf:18,timeoutInMilliseconds:180000,logLevel:'error',
+     await renderMedia({serveUrl,composition,codec:'h264',outputLocation:path.join(gate,name+'.mp4'),frameRange:[a,b],scale:0.5,concurrency:renderConcurrency(),puppeteerInstance:browser,chromiumOptions,imageFormat:'png',crf:18,timeoutInMilliseconds:180000,logLevel:'error',
        onBrowserLog:l=>{if(l.text.startsWith('ANIM_AUDIT '))audits.push(JSON.parse(l.text.slice(11)));else if(l.type==='error')errors.push(l.text);}});
      fs.writeFileSync(path.join(gate,name+'.json'),JSON.stringify({sourceHash,start:a,end:b,audits,errors},null,2));
      if(errors.length)throw new Error(JSON.stringify(errors));console.log(`Motion sample ${name}: frames ${a}-${b}`);
@@ -21,7 +22,7 @@ try{
  }else if(mode==='full'){
    for(const name of ['GATE_A_APPROVED.json','GATE_B_APPROVED.json']){if(!fs.existsSync(path.join(out,name))||JSON.parse(fs.readFileSync(path.join(out,name),'utf8')).sourceHash!==sourceHash)throw new Error('Current gate review missing: '+name);}
    const audits=[],errors=[];let last=0;
-   await renderMedia({serveUrl,composition,codec:'h264',outputLocation:path.join(out,'InThisTown_V2_8Second_Test.mp4'),fps:30,imageFormat:'png',crf:18,pixelFormat:'yuv420p',concurrency:3,puppeteerInstance:browser,chromiumOptions:{gl:'swangle'},timeoutInMilliseconds:180000,logLevel:'error',
+   await renderMedia({serveUrl,composition,codec:'h264',outputLocation:path.join(out,'InThisTown_V2_8Second_Test.mp4'),fps:30,imageFormat:'png',crf:18,pixelFormat:'yuv420p',concurrency:renderConcurrency(),puppeteerInstance:browser,chromiumOptions,timeoutInMilliseconds:180000,logLevel:'error',
      onBrowserLog:l=>{if(l.text.startsWith('ANIM_AUDIT '))audits.push(JSON.parse(l.text.slice(11)));else if(l.type==='error')errors.push(l.text);},
      onProgress:p=>{if(p.renderedFrames-last>=15){console.log(`Rendered ${p.renderedFrames}/240 frames`);last=p.renderedFrames;}}});
    fs.writeFileSync(path.join(out,'full-render-audits.json'),JSON.stringify({sourceHash,audits,errors},null,2));

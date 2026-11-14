@@ -27,7 +27,7 @@ assert len({a['geometrySignature'] for a in audits})==1,'Permanent scene graph d
 assert len({json.dumps(a['fixtureTransforms'],sort_keys=True) for a in audits})==1
 assert len({json.dumps(a['cats'],sort_keys=True) for a in audits})==1
 assert len({json.dumps(a['approvedCatSourceHashes'],sort_keys=True) for a in audits})==1
-font_path='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+font_path=str(Path(__file__).resolve().parents[3] / 'assets/fonts/DejaVuSans.ttf')
 font=lambda n:ImageFont.truetype(font_path,n)
 board=Image.new('RGB',(2320,1150),'#142831');d=ImageDraw.Draw(board)
 d.text((36,24),'WHAT IF CATS  /  THE PERMANENT CAFÉ',font=font(30),fill='#f3ddbc')
@@ -86,7 +86,7 @@ npm run typecheck
 node src/v2/cafe/layout.test.mjs
 node scripts/v2-cat-rig-check.mjs
 node scripts/v2-cafe-render.mjs
-/workspace/.venvs/animated-shorts/bin/python src/v2/cafe/build_storyboard.py
+python src/v2/cafe/build_storyboard.py
 ```
 
 Source: `src/v2/cafe/config.ts`, `environment.ts`, `Cafe.tsx`, `layout.ts`, `layout.test.mjs` and `build_storyboard.py`. The café compositions are one frame long to keep this milestone still-only. Each PNG has a companion `.audit.json` containing measured checks and source hashes. Draft images live in `draft/` and are not deliverables.

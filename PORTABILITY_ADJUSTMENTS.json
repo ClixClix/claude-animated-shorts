@@ -1,0 +1,12 @@
+{
+  "studio/src/v2/cafe/build_storyboard.py": {
+    "originalSHA256": "6ca977a7b3ef8b9f25d64eb7565217d31215ce7f4fe85da0d445cee2d1e15f79",
+    "portableSHA256": "f7af992b2d2eec5a7811da13cd5ff008a13c93f609cfdc510b2b85e8a29cfb6b",
+    "reason": "Windows-safe font path or file URL handling only; no creative asset changes."
+  },
+  "studio/src/v2/cafe/layout.test.mjs": {
+    "originalSHA256": "a197bdd09fdd829ef8ff6b8ae4ba0aeaf42014aeeff0415d409f46932952c367",
+    "portableSHA256": "d5c0bc13061d4001f8b86c28fc24bb0dfe4ecae4b8d7975ddc7cd7bad6f309b5",
+    "reason": "Windows-safe font path or file URL handling only; no creative asset changes."
+  }
+}
