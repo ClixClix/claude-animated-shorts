@@ -43,6 +43,8 @@ for(const base of [30.5,32.5,35])one(base,'electric-buzz');
 for(const base of t.BLACKOUT_TIMES)one(base,'light-fail');
 for(const f of props.cues.taps)events.push({frame:f,type:'window-tap'});
 for(const base of [83.0,94.0,122.7])one(base,'kitten-meow');
+for(const base of [79.0,84.0,112.8])one(base,'blanket-rustle');
+{const callback=shots.find(s=>s.id==='58B');events.push({frame:callback.start+Math.round((callback.end-callback.start)*.2),type:'clock-tick'});}
 one(48.1,'slip');one(55.6,'door-slam');one(57.0,'switch-click');one(109.1,'door-hinge');one(118.5,'bowl-contact');one(120.5,'blanket-rustle');one(131.7,'warm-accent');
 for(let base=88;base<93;base+=1.1)one(base,'blanket-rustle');
 for(let base=121.8;base<126;base+=.43)one(base,'soft-step');

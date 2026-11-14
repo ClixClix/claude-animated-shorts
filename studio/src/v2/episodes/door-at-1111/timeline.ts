@@ -121,7 +121,7 @@ function setCamera(s:EpisodeState){
  const set=(camera:V3,target:V3,fov:number,required:string[]=[],blur=0)=>Object.assign(s,{camera,target,fov,required,blur});
  const latteHome=(close=false)=>set(close?[1.00,1.30,14.6]:[2.55,1.55,15.35],latte,close?35:48,['latte'],close?3:0);
  switch(n){
- case 1:set([8.2-u*.25,6.0,11.7],[-.8,1.7,5.4],83,['cafe']);break;
+ case 1:set([-8.5+u*.16,5.0,13.5-u*.18],[-1.7,1.7,6.5],105,['cafe',...(t<.65?['bus']:[])]);break;
  case 2:set([1.02,2.92,5.65-u*.07],CLOCK,35,['clock']);break;
  case 3:set([3.08,1.37,5.22],[2.66,1.27,4.19],43,['handle']);break;
  case 4:set([2.48,1.00,6.95-u*.12],[2.25,1.45,4.2],53,['door']);break;
