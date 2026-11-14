@@ -4,7 +4,9 @@ export type VoiceSettings={stability:number;similarity_boost:number;style:number
 export type Narrator={provider:'elevenlabs';voiceName:string;voiceId:string;modelId:string;direction:string;settings:VoiceSettings};
 export const NARRATORS:Readonly<Record<Series,Narrator>>={
  in_this_town:{provider:'elevenlabs',voiceName:'Sawyer — Midnight Storyteller',voiceId:'8dEUmyPMdDdK91vboYih',modelId:'eleven_multilingual_v2',direction:'Intimate, cinematic, warm; natural punctuation and suspense, never theatrical.',settings:{stability:0.60,similarity_boost:0.75,style:0.15,use_speaker_boost:true,speed:1}},
- what_if_cats:{provider:'elevenlabs',voiceName:'Darian — Warm Grounded Storyteller',voiceId:'gOupLcAkjEnguROwi4oS',modelId:'eleven_multilingual_v2',direction:'Conversational, playful; preserve setup and punchline pauses without exaggeration.',settings:{stability:0.50,similarity_boost:0.75,style:0.20,use_speaker_boost:true,speed:1}},
+ // Recovered from V1's locked narrator_voice.json and generation metadata at 3dd6cd0.
+ // V1 explicitly sent stability, similarity and speed; style/boost inherit API defaults.
+ what_if_cats:{provider:'elevenlabs',voiceName:'Daniel — Original What If Cats narrator',voiceId:'onwK4e9ZLuTAKqWW03F9',modelId:'eleven_multilingual_v2',direction:'Conversational, playful; preserve setup and punchline pauses without exaggeration.',settings:{stability:0.72,similarity_boost:0.70,style:0,use_speaker_boost:true,speed:1}},
 };
 for(const n of Object.values(NARRATORS)){Object.freeze(n.settings);Object.freeze(n);}Object.freeze(NARRATORS);
 export const TEST_SCRIPTS:Record<Series,string>={

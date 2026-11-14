@@ -19,7 +19,7 @@ function fake(audio?:Buffer,script='Hello, café. Warm now.'){
  const fetcher:typeof fetch=async(input,init)=>{
   const url=String(input);calls.push({url,method:init?.method??'GET',body:init?.body?JSON.parse(String(init.body)):null});
   if(url.endsWith('/models'))return response(models);
-  if(url.includes('/voices/')){const voice_id=url.split('/').pop();return response({voice_id,name:voice_id===NARRATORS.in_this_town.voiceId?'Sawyer':'Darian'});}
+  if(url.includes('/voices/')){const voice_id=url.split('/').pop();return response({voice_id,name:voice_id===NARRATORS.in_this_town.voiceId?'Sawyer':'Daniel'});}
   return response({audio_base64:audio?.toString('base64'),alignment:alignment(script,0.04)});
  };
  return {client:new ElevenLabsClient({apiKey:'unit-test-secret-not-real',rotationConfirmed:true,fetcher}),calls};
@@ -31,7 +31,9 @@ test.before(async()=>{
 });
 test.after(async()=>{await fs.rm(root,{recursive:true,force:true});});
 test('series select exact permanent voices; overrides leave defaults intact',()=>{
- assert.equal(narratorFor('in_this_town').voiceId,'8dEUmyPMdDdK91vboYih');assert.equal(narratorFor('what_if_cats').voiceId,'gOupLcAkjEnguROwi4oS');
+ assert.equal(narratorFor('in_this_town').voiceId,'8dEUmyPMdDdK91vboYih');assert.equal(narratorFor('what_if_cats').voiceId,'onwK4e9ZLuTAKqWW03F9');
+ assert.deepEqual(narratorFor('in_this_town').settings,{stability:0.60,similarity_boost:0.75,style:0.15,use_speaker_boost:true,speed:1});
+ assert.deepEqual(narratorFor('what_if_cats').settings,{stability:0.72,similarity_boost:0.70,style:0,use_speaker_boost:true,speed:1});
  assert.equal(narratorFor('in_this_town',{settings:{stability:0.8}}).settings.stability,0.8);assert.equal(NARRATORS.in_this_town.settings.stability,0.6);
  assert.throws(()=>narratorFor('unknown'));assert.throws(()=>narratorFor('in_this_town',{settings:{speed:1.2}}));assert.throws(()=>narratorFor('what_if_cats',{settings:{style:NaN}}));
 });

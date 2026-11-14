@@ -6,10 +6,14 @@ composition. No music is selected or generated. No extra package dependencies ar
 
 ## Current status and production gates
 
-The engine and non-billable tests are implemented. The exact approved voices are configured,
-not yet account-verified. This machine has **no ELEVENLABS_API_KEY** and outbound access to
-`api.elevenlabs.io` is blocked. Official request/settings schemas were checked against the
-current official SDK on GitHub; see [API_REFERENCES.md](API_REFERENCES.md).
+The active narrators are **Sawyer for In This Town** and the **exact original V1 Daniel for
+What If Cats**. Both IDs are account-accessible. Sawyer's cached audition is approved;
+Darian's audition is preserved as an inactive reference. Daniel's identity and explicit
+settings were recovered from the old locked configuration and multiple generation records,
+then verified with read-only API requests. See [NARRATOR_PROVENANCE.md](NARRATOR_PROVENANCE.md).
+The current environment has a secure key binding and API access; neither credentials nor
+generated audio belong in source control. Request/settings schemas are documented in
+[API_REFERENCES.md](API_REFERENCES.md). A new paid Daniel audition requires separate approval.
 
 1. Revoke the previously exposed key and create a new ElevenLabs key. Do not reuse the exposed
    value. Give it only the necessary voice/model-read and TTS permissions.
@@ -39,7 +43,11 @@ history before deliberately retrying an uncertain request.
 | Series | Voice | Exact ID | Model candidate | Stability | Similarity | Style | Boost | Speed |
 |---|---|---|---|---:|---:|---:|---|---:|
 | in_this_town | Sawyer — Midnight Storyteller | 8dEUmyPMdDdK91vboYih | eleven_multilingual_v2 | .60 | .75 | .15 | true | 1.0 |
-| what_if_cats | Darian — Warm Grounded Storyteller | gOupLcAkjEnguROwi4oS | eleven_multilingual_v2 | .50 | .75 | .20 | true | 1.0 |
+| what_if_cats | Daniel — Original What If Cats narrator | onwK4e9ZLuTAKqWW03F9 | eleven_multilingual_v2 | .72 | .70 | 0 | true | 1.0 |
+
+V1 explicitly set Daniel's stability, similarity and speed. It omitted style and boost;
+the explicit V2 values above match the API's verified current defaults. Sawyer's settings
+remain unchanged. Default output stems are `in-this-town-sawyer` and `what-if-cats-daniel`.
 
 Defaults are frozen. `narratorFor(series, overrides)` creates a validated per-episode copy.
 Direction descriptions guide script/punctuation and human review; they are not sent as invented
@@ -50,8 +58,9 @@ closed. Flash/turbo v2.5 adapters can be chosen explicitly, but require compatib
 
 Default generation uses timestamped MP3 44.1 kHz / 128 kbps, text normalization `auto`, no latency
 optimization, no fabricated emotion markup, no seed unless explicitly provided, and natural speed.
-The live API must still confirm account access and the voice/model pairing. Defaults are conservative
-starting values, not a claim of completed voice audition.
+Every new generation still verifies live account access and model capabilities. Sawyer's
+performance is approved; Daniel's explicit controls reproduce the recovered V1 configuration.
+No new Daniel recording has been generated as part of this narrator update.
 
 ## Commands (from studio/)
 

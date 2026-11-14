@@ -27,7 +27,7 @@ async function main(){
   // Cache reuse is allowed offline. A new client/key is only used on an explicitly paid-enabled attempt.
   const c=has('allow-paid')?client():undefined;
   const result=await generateNarration({series:series as Series,script,override,parameters:value('parameters')?await readJSON(value('parameters')):undefined,pauses:value('pauses')?await readJSON(value('pauses')):[],regenerate:has('regenerate'),paidApproved:has('allow-paid')},{cache:new NarrationCache(path.join(output,'cache')),client:c});
-  const stem=customName??(series==='in_this_town'?'in-this-town-sawyer':'what-if-cats-darian');
+  const stem=customName??(series==='in_this_town'?'in-this-town-sawyer':'what-if-cats-daniel');
   const file=path.join(output,stem+'.mp3');await fs.copyFile(result.audio,file);
   await atomicJSON(path.join(output,customName?customName+'-timestamps.json':series==='in_this_town'?'in-this-town-timestamps.json':'what-if-cats-timestamps.json'),result.metadata);
   console.log(JSON.stringify({audio:file,duration:result.metadata.duration,cached:result.cached,voiceId:result.metadata.narrator.voiceId,truePeakDBTP:result.metadata.mastering.after.truePeakDBTP}));return;
