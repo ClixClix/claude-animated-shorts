@@ -1,0 +1,51 @@
+import './lib/runtime.mjs';
+import {hash,visualSourceHash,probe} from './lib/polish-cache.mjs';
+// Offline assembly of independently rendered, native-resolution Remotion shot segments.
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+
+const out=path.resolve('out/v2-episodes/door-at-1111-polish');
+const manifest=JSON.parse(await fs.readFile(path.join(out,'The_Door_At_1111_Polish_Shot_Manifest.json'),'utf8'));
+const props=JSON.parse(await fs.readFile(path.join(out,'render-props.json'),'utf8'));
+props.optimize=true;props.previewScale=1;
+const propsHash=hash(JSON.stringify(props));
+const sourceHash=await visualSourceHash();
+const report={sourceHash,propsHash,durationInFrames:manifest.durationInFrames,segments:[],visibilityFlags:[],cameraFlags:[],browserErrors:[]};
+let cursor=0;
+for(const shot of manifest.shots){
+ const file=path.join(out,'segments',shot.id+'.mp4'),saved=JSON.parse(await fs.readFile(file.replace('.mp4','.json'),'utf8')),media=probe(file),v=media.streams.find(s=>s.codec_type==='video');
+ if(shot.start!==cursor||shot.end-shot.start>120)throw Error('Invalid cut boundary '+shot.id);
+ if(saved.sourceHash!==sourceHash||saved.propsHash!==propsHash)throw Error('Stale render '+shot.id);
+ if(saved.range.join()!==[shot.start,shot.end-1].join())throw Error('Partial render '+shot.id);
+ if(saved.videoSHA256&&hash(await fs.readFile(file))!==saved.videoSHA256)throw Error('Video integrity mismatch '+shot.id);
+ if(v.width!==1080||v.height!==1920||v.r_frame_rate!=='30/1'||Number(v.nb_frames)!==shot.end-shot.start||v.codec_name!=='h264')throw Error('Incorrect native segment '+shot.id);
+ const seen=new Set(saved.audits.map(a=>a.frame));
+ for(let f=shot.start;f<shot.end;f++)if(!seen.has(f))throw Error('Missing per-frame scene audit '+shot.id+' '+f);
+ for(const a of saved.audits){
+  if(a.cameraHits.length)report.cameraFlags.push({frame:a.frame,shot:shot.id,hits:a.cameraHits});
+  for(const p of a.visibility)if(!p.inFrame||p.occluder)report.visibilityFlags.push({frame:a.frame,shot:shot.id,...p});
+ }
+ report.browserErrors.push(...saved.errors);
+ report.segments.push({id:shot.id,file,frames:Number(v.nb_frames),seconds:saved.seconds,sha256:hash(await fs.readFile(file))});cursor=shot.end;
+}
+if(cursor!==manifest.durationInFrames||report.browserErrors.length)throw Error('Incomplete episode or browser errors.');
+const list=path.join(out,'native-segments.txt');
+await fs.writeFile(list,report.segments.map(s=>"file '"+s.file.replaceAll('\\','/').replaceAll("'","'\\''")+"'").join('\n')+'\n');
+const master=path.join(out,'The_Door_At_1111_Polish_Visual_Master.mp4');
+execFileSync('ffmpeg',['-nostdin','-hide_banner','-v','error','-y','-f','concat','-safe','0','-i',list,'-map','0:v:0','-c:v','copy','-an','-movflags','+faststart',master]);
+const media=probe(master),video=media.streams.find(s=>s.codec_type==='video');
+if(Number(video.nb_frames)!==cursor||Math.abs(Number(media.format.duration)-cursor/30)>.04)throw Error('Assembly duration mismatch.');
+report.master={file:master,frames:Number(video.nb_frames),duration:Number(media.format.duration),width:video.width,height:video.height,fps:video.r_frame_rate,sha256:hash(await fs.readFile(master))};
+await fs.mkdir(path.join(out,'storyboard'),{recursive:true});
+for(const shot of manifest.shots){
+ const ratios={'01':.15,'02':.95,'04':.85,'07':.95,'26':.50,'30':.95,'54':.85,'58A':.15,'58B':.85,'60B':.80};
+ let f=shot.start+Math.floor((shot.end-shot.start)*(ratios[shot.id]??.60));
+ if(shot.id==='47')f=Math.max(...props.cues.taps.filter(f=>f>=shot.start&&f<shot.end));
+ if(shot.id==='53'){const a=JSON.parse(await fs.readFile(path.join(out,'segments/53.json'),'utf8'));f=Math.min(...a.audits.filter(a=>a.bowl[1]===0).map(a=>a.frame));}
+ execFileSync('ffmpeg',['-nostdin','-hide_banner','-v','error','-y','-i',path.join(out,'segments',shot.id+'.mp4'),'-vf',`select=eq(n\\,${f-shot.start})`,'-frames:v','1','-update','1',path.join(out,'storyboard',shot.id+'.png')]);
+ await fs.writeFile(path.join(out,'storyboard',shot.id+'.json'),JSON.stringify({shot,frame:f,sourceSegmentSHA256:report.segments.find(s=>s.id===shot.id).sha256,actualNativeRender:true},null,2)+'\n');
+}
+await fs.writeFile(path.join(out,'NATIVE_RENDER_QA.json'),JSON.stringify(report,null,2)+'\n');
+console.log(JSON.stringify({master:report.master,shots:report.segments.length,visibilityFlags:report.visibilityFlags.length,cameraFlags:report.cameraFlags.length}));

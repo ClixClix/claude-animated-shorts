@@ -1,0 +1,18 @@
+import {studioRoot,renderConcurrency} from './lib/runtime.mjs';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+const stage=(process.argv[2]??'preview').toLowerCase(),c=renderConcurrency();
+const python=process.env.V2_PYTHON||path.join(studioRoot,'..','.venv',process.platform==='win32'?'Scripts/python.exe':'bin/python');
+function run(program,args){const r=spawnSync(program,args,{stdio:'inherit',cwd:studioRoot});if(r.error)throw r.error;if(r.status!==0)throw Error('Polish stage failed: '+args.join(' ')+'. Original finished movies are preserved.');}
+const node=(name,...args)=>run(process.execPath,['scripts/door-polish-'+name+'.mjs',...args]);
+const py=(name,...args)=>run(python,['scripts/door-polish-'+name+'.py',...args]);
+if(!['preview','all','qa'].includes(stage))throw Error('Use preview, all or qa.');
+if(stage!=='qa'){node('prepare');node('tests');}
+if(stage==='preview'){
+ node('render','motion','--shots','01,06,18,28,49,53,57B,60B','--sample','30','--concurrency',String(c));
+ console.log('Polish preview clips are in out/v2-episodes/door-at-1111-polish/motion. They include subtitles; preview audio is not mixed.');
+ if(process.platform==='win32')spawnSync('explorer.exe',[path.join(studioRoot,'out/v2-episodes/door-at-1111-polish/motion')]);
+}else{
+ if(stage==='all'){py('sfx');node('render','render','--concurrency',String(c));node('assemble');node('finish');}
+ py('video-qa');py('boards');py('motion-boards','--native');node('reports');
+}
