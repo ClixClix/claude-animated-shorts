@@ -13,6 +13,12 @@ check(shots.length>=60,'Complete storyboard');check(shots.at(-1).end===manifest.
 check(manifest.durationInFrames<=5400,'Maximum three minutes');check(t.STREETLIGHTS.length===9&&new Set(t.STREETLIGHTS.map(JSON.stringify)).size===9,'Nine stable lamps');
 for(const [id,property] of [['58A','t'],['58C','door']]){const shot=shots.find(s=>s.id===id);check(t.stateAt(shot.end-1,shots)[property]>t.stateAt(shot.start,shots)[property],'Frozen callback '+id);}
 {const shot=shots.find(s=>s.id==='58B');check(t.stateAt(shot.end-1,shots).clock==='11:11','Callback clock must explain 11:11');}
+for(const id of ['19','20','21','22','24','44','51','52','56']){
+ const shot=shots.find(s=>s.id===id),frame=shot.start+Math.floor((shot.end-shot.start)*.6),s=t.stateAt(frame,shots),before=t.stateAt(frame-1,shots),after=t.stateAt(frame+1,shots);
+ for(const actor of ['latte','mocha','essie']){const a=s[actor];if(!a.moving)continue;const dx=after[actor].position[0]-before[actor].position[0],dz=after[actor].position[2]-before[actor].position[2],cx=s.camera[0]-a.position[0],cz=s.camera[2]-a.position[2];check(a.pose.yaw*(dx*cz-dz*cx)>=-1e-6,actor+' faces opposite actual travel in '+id);if(Math.abs(dx*cz-dz*cx)>1e-4)check(a.pose.yaw*(dx*cz-dz*cx)>0,actor+' has no readable travel facing in '+id);}
+}
+for(const [id,actor] of [['48','latte'],['50','mocha'],['51','mocha'],['52','essie'],['56','latte']]){const shot=shots.find(s=>s.id===id),walking=t.stateAt(shot.start,shots)[actor].moving;for(let frame=shot.start;frame<shot.end;frame++)check(t.stateAt(frame,shots)[actor].moving===walking,'Abrupt seated/walking artwork swap inside shot '+id);}
+{const dt=1e-4,r=109.25,left=(t.doorAngleAt(r)-t.doorAngleAt(r-dt))/dt,right=(t.doorAngleAt(r+dt)-t.doorAngleAt(r))/dt;check(Math.abs(left-right)<.002,'Door velocity jumps at paw release');let prior=Infinity;for(let u=r+.01;u<111;u+=.04){const speed=(t.doorAngleAt(u+dt)-t.doorAngleAt(u))/dt;check(speed>=0&&speed<prior,'Door accelerates after paw release');prior=speed;}check(Math.abs(t.doorAngleAt(111)-Math.PI/2)<1e-9,'Door does not settle open');}
 const seenFeet=new Map(),events=[],stateRows=[];let last,stepNo=0;
 for(let frame=0;frame<manifest.durationInFrames;frame++){
  const s=t.stateAt(frame,shots);check(JSON.stringify(s)===JSON.stringify(t.stateAt(frame,shots)),'Non-deterministic frame '+frame);
@@ -45,6 +51,7 @@ for(const f of props.cues.taps)events.push({frame:f,type:'window-tap'});
 for(const base of [83.0,94.0,122.7])one(base,'kitten-meow');
 for(const base of [79.0,84.0,112.8])one(base,'blanket-rustle');
 {const callback=shots.find(s=>s.id==='58B');events.push({frame:callback.start+Math.round((callback.end-callback.start)*.2),type:'clock-tick'});}
+{const callback=shots.find(s=>s.id==='58C');events.push({frame:callback.start+3,type:'door-hinge'});}
 one(48.1,'slip');one(55.6,'door-slam');one(57.0,'switch-click');one(109.1,'door-hinge');one(118.5,'bowl-contact');one(120.5,'blanket-rustle');one(131.7,'warm-accent');
 for(let base=88;base<93;base+=1.1)one(base,'blanket-rustle');
 for(let base=121.8;base<126;base+=.43)one(base,'soft-step');

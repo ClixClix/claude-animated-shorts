@@ -54,6 +54,7 @@ export class EpisodeWorld{
   const pane=leaf.find(o=>o.name.endsWith('/glass')) as T.Mesh|undefined;if(pane){const mat=new T.MeshStandardMaterial({color:'#d5c5a4',roughness:1,side:T.DoubleSide,transparent:true,opacity:.985,emissive:'#7b552c',emissiveIntensity:.10});this.materials.push(mat);pane.material=mat;}
   this.props.set('door',pivot);return pivot;
  }
+ pushPoint(){this.root.updateMatrixWorld(true);return new T.Vector3(.90,.52,-.07).applyMatrix4(this.door.matrixWorld);}
  handle(){this.root.updateMatrixWorld(true);return new T.Vector3(1.205,1.27,.10).applyMatrix4(this.door.matrixWorld);}
  tapPoint(){this.root.updateMatrixWorld(true);return new T.Vector3(1.39,.50,0).applyMatrix4(this.door.matrixWorld);}
  private home(){
@@ -150,15 +151,15 @@ export class EpisodeWorld{
    const held:V3=[s.mocha.position[0]+x*2.5,s.mocha.position[1]+(.58+Math.sin(s.t*5)*.055*beat(s.t,111.5,112)*(1-beat(s.t,114.2,114.5)))*(1-u)+.004*u+.055*Math.sin(x*15+s.t*3)*(1-u)*u,Math.min(3.85,s.mocha.position[2]+.16)+u*Math.min(.50,4.08-Math.min(3.85,s.mocha.position[2]+.16))];
    const spread:V3=[2.22+x*1.9,.004+.012*Math.sin(x*16)**2*Math.sin(u*Math.PI),2.72+u*1.32];
    const v=mix(held,spread,s.blanketLay);p.setXYZ(i,...v);
-  }p.needsUpdate=true;this.blanket.geometry.computeVertexNormals();this.blanket.visible=s.t>=18;
+  }p.needsUpdate=true;this.blanket.geometry.computeVertexNormals();this.blanket.geometry.computeBoundingBox();this.blanket.geometry.computeBoundingSphere();this.blanket.visible=s.t>=18;
   // A cloth dome over the body, with a lowered front opening for the listening reaction.
-  const cover=beat(s.t,78,80.5)*(1-beat(s.t,83.5,86));this.homeBlanket.visible=cover>.01;this.homeBlanket.position.set(.85,.20,13.1);this.homeBlanket.rotation.x=0;
-  const hp=this.homeBlanket.geometry.getAttribute('position');for(let i=0;i<hp.count;i++){const x=(i%21)/20-.5,z=Math.floor(i/21)/16-.5;hp.setXYZ(i,x*1.25,.08+cover*.97*Math.cos(x*Math.PI)*(.65+.35*Math.cos(z*Math.PI*1.5)),z*1.45);}hp.needsUpdate=true;this.homeBlanket.geometry.computeVertexNormals();
+  const cover=beat(s.t,78,80.5)*(1-beat(s.t,83.15,84.30));this.homeBlanket.visible=s.t>=78;this.homeBlanket.position.set(.85,.20,13.1);this.homeBlanket.rotation.x=0;
+  const hp=this.homeBlanket.geometry.getAttribute('position');for(let i=0;i<hp.count;i++){const x=(i%21)/20-.5,z=Math.floor(i/21)/16-.5;hp.setXYZ(i,x*1.25,.004+cover*(.08+.97*Math.cos(x*Math.PI)*(.65+.35*Math.cos(z*Math.PI*1.5))),z*1.45);}hp.needsUpdate=true;this.homeBlanket.geometry.computeVertexNormals();this.homeBlanket.geometry.computeBoundingBox();this.homeBlanket.geometry.computeBoundingSphere();
   this.rain.visible=s.rain>.01;const ra=this.rain.geometry.getAttribute('position');for(let i=0;i<240;i++){
    const hash=(n:number)=>{const a=Math.sin(n*75.31+16.7)*43758.5453;return a-Math.floor(a);};
    const x=-8+hash(i)*16,z=4.8+hash(i+110)*7.1,y=((hash(i+300)*7-s.frame/30*4)%7+7)%7;
    ra.setXYZ(i*2,x,y,z);ra.setXYZ(i*2+1,x+.035,y+.30,z+.03);
-  }ra.needsUpdate=true;
+  }ra.needsUpdate=true;this.rain.geometry.computeBoundingSphere();
  }
  dispose(){this.cafe.dispose();this.root.traverse(o=>{if(o instanceof T.Mesh||o instanceof T.LineSegments)o.geometry.dispose();if(o instanceof T.Light)o.dispose();});this.materials.forEach(m=>m.dispose());this.textures.forEach(t=>t.dispose());}
 }

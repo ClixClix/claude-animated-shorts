@@ -41,8 +41,12 @@ if(Number(video.nb_frames)!==cursor||Math.abs(Number(media.format.duration)-curs
 report.master={file:master,frames:Number(video.nb_frames),duration:Number(media.format.duration),width:video.width,height:video.height,fps:video.r_frame_rate,sha256:hash(await fs.readFile(master))};
 await fs.mkdir(path.join(out,'storyboard'),{recursive:true});
 for(const shot of manifest.shots){
- const f=shot.start+Math.floor((shot.end-shot.start)*.60);
+ const ratios={'01':.15,'02':.95,'04':.85,'07':.95,'26':.50,'30':.95,'54':.85,'58A':.15,'58B':.85,'60B':.80};
+ let f=shot.start+Math.floor((shot.end-shot.start)*(ratios[shot.id]??.60));
+ if(shot.id==='47')f=Math.max(...props.cues.taps.filter(f=>f>=shot.start&&f<shot.end));
+ if(shot.id==='53'){const a=JSON.parse(await fs.readFile(path.join(out,'segments/53.json'),'utf8'));f=Math.min(...a.audits.filter(a=>a.bowl[1]===0).map(a=>a.frame));}
  execFileSync('ffmpeg',['-nostdin','-hide_banner','-v','error','-y','-i',path.join(out,'segments',shot.id+'.mp4'),'-vf',`select=eq(n\\,${f-shot.start})`,'-frames:v','1','-update','1',path.join(out,'storyboard',shot.id+'.png')]);
+ await fs.writeFile(path.join(out,'storyboard',shot.id+'.json'),JSON.stringify({shot,frame:f,sourceSegmentSHA256:report.segments.find(s=>s.id===shot.id).sha256,actualNativeRender:true},null,2)+'\n');
 }
 await fs.writeFile(path.join(out,'NATIVE_RENDER_QA.json'),JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify({master:report.master,shots:report.segments.length,visibilityFlags:report.visibilityFlags.length,cameraFlags:report.cameraFlags.length}));
