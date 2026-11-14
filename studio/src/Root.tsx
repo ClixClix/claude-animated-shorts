@@ -9,6 +9,7 @@ import { CafeShot } from "./v2/cafe/Cafe";
 import { ALittleLight } from "./v2/animation/ALittleLight";
 
 import { NarrationComposition } from "./v2/narration/NarratedPreview";
+import {DoorEpisodeComposition} from "./v2/episodes/door-at-1111/Episode";
 import { PolishComposition } from "./v2/polish/Polish";
 
 // One <Composition> per short. Copy src/videos/bridge to src/videos/<name> and register it here.
@@ -27,5 +28,6 @@ export const Root: React.FC = () => (
     <Composition id="InThisTownV2ALittleLight" component={ALittleLight} durationInFrames={240} fps={30} width={1080} height={1920} />
     <NarrationComposition />
     <PolishComposition />
+    <DoorEpisodeComposition />
   </>
 );

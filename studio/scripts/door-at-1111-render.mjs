@@ -1,0 +1,47 @@
+// Actual Remotion/Three.js renders, resumable by shot; no audio service requests.
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+import {bundle} from '@remotion/bundler';
+import {openBrowser,selectComposition,renderStill,renderMedia} from '@remotion/renderer';
+const mode=process.argv[2]??'stills',draft=process.argv.includes('--draft');
+const after=k=>{const i=process.argv.indexOf(k);return i<0?undefined:process.argv[i+1];};
+const unbatched=process.argv.includes('--unbatched');
+const out=path.resolve('out/v2-episodes/door-at-1111'),props=JSON.parse(await fs.readFile(path.join(out,'render-props.json'),'utf8'));
+props.optimize=!unbatched;props.previewScale=draft||mode==='motion'?.5:1;
+const pick=after('--shots')?.split(',');const selected=props.shots.filter(s=>!pick||pick.includes(s.id)||pick.includes(String(s.number)));
+const serveUrl=await bundle({entryPoint:path.resolve('src/index.ts')});
+const browser=await openBrowser('chrome',{browserExecutable:'/usr/bin/chromium',chromiumOptions:{gl:'swangle'}});
+const hash=b=>createHash('sha256').update(b).digest('hex');
+const sourcePaths=['src/v2/episodes/door-at-1111','src/v2/cats','src/v2/cafe','src/v2/animation','src/videos/bridge'];
+const sourceFiles=(await Promise.all(sourcePaths.map(p=>fs.readdir(p,{recursive:true}).then(items=>items.filter(f=>/\.tsx?$/.test(f)&&!f.startsWith('audio/')).sort().map(f=>path.join(p,f)))))).flat();
+const sourceHash=hash((await Promise.all(sourceFiles.map(async p=>p+'\n'+await fs.readFile(p,'utf8')))).join('\n'));
+const propsHash=hash(JSON.stringify(props));
+const audits=[],errors=[];const log=l=>{if(l.text.startsWith('EPISODE_AUDIT '))audits.push(JSON.parse(l.text.slice(14)));else if(l.type==='error'){errors.push(l.text);console.error(l.text.slice(0,350));}};
+try{
+ const composition=await selectComposition({serveUrl,id:'InThisTownTheDoorAt1111',inputProps:props,puppeteerInstance:browser,logLevel:'error',onBrowserLog:log});
+ if(mode==='stills'){
+  const dir=path.join(out,(draft?'draft-storyboard':'storyboard')+(unbatched?'-unbatched':''));await fs.mkdir(dir,{recursive:true});
+  for(const shot of selected){
+   const frame=shot.start+Math.floor((shot.end-shot.start)*.60),start=Date.now(),file=path.join(dir,shot.id+'.png');
+   await renderStill({serveUrl,composition,inputProps:props,frame,output:file,imageFormat:'png',scale:draft?.5:1,puppeteerInstance:browser,logLevel:'error',timeoutInMilliseconds:240000,onBrowserLog:log});
+   const audit=audits.filter(a=>a.frame===frame).at(-1);await fs.writeFile(path.join(dir,shot.id+'.json'),JSON.stringify({shot,frame,audit,errors},null,2));
+   console.log(JSON.stringify({shot:shot.id,frame,seconds:(Date.now()-start)/1000,visibility:audit?.visibility,cameraHits:audit?.cameraHits}));
+  }
+ }else if(mode==='motion'||mode==='render'){
+  const dir=path.join(out,mode==='motion'?'motion':'segments');await fs.mkdir(dir,{recursive:true});
+  for(const shot of selected){
+   const file=path.join(dir,shot.id+'.mp4');
+   const sample=Number(after('--sample')??0),middle=shot.start+Math.round((shot.end-shot.start)*Number(after('--at')??.55));
+   const range=sample?[Math.max(shot.start,middle-Math.floor(sample/2)),Math.min(shot.end-1,middle+Math.ceil(sample/2)-1)]:[shot.start,shot.end-1];
+   if(!process.argv.includes('--force')){try{const saved=JSON.parse(await fs.readFile(file.replace('.mp4','.json'),'utf8'));const probe=JSON.parse(execFileSync('ffprobe',['-v','error','-select_streams','v:0','-show_entries','stream=nb_frames,width,height','-of','json',file],{encoding:'utf8'})).streams[0];if(saved.sourceHash===sourceHash&&saved.propsHash===propsHash&&saved.range.join()===range.join()&&Number(probe.nb_frames)===range[1]-range[0]+1&&probe.width===(mode==='motion'?540:1080)&&probe.height===(mode==='motion'?960:1920)){console.log('Verified cached segment '+shot.id);continue;}}catch{}}
+   let last=0;const start=Date.now(),before=audits.length;
+   await renderMedia({serveUrl,composition,inputProps:props,frameRange:range,outputLocation:file+'.partial.mp4',codec:'h264',crf:18,pixelFormat:'yuv420p',imageFormat:'jpeg',jpegQuality:95,scale:mode==='motion'?.5:1,concurrency:Number(after('--concurrency')??2),puppeteerInstance:browser,chromiumOptions:{gl:'swangle'},logLevel:'error',timeoutInMilliseconds:240000,onBrowserLog:log,onProgress:p=>{if(p.renderedFrames-last>=15){last=p.renderedFrames;console.log(`${shot.id}: ${last}/${shot.end-shot.start} frames`);}}});
+   await fs.rename(file+'.partial.mp4',file);
+   await fs.writeFile(file.replace('.mp4','.json'),JSON.stringify({shot,range,sourceHash,propsHash,seconds:(Date.now()-start)/1000,audits:audits.slice(before),errors},null,2));console.log(JSON.stringify({completed:shot.id,seconds:(Date.now()-start)/1000}));
+  }
+ }else throw Error('Use stills, motion or render.');
+ await fs.writeFile(path.join(out,`${mode}${draft?'-draft':''}-render-log.json`),JSON.stringify({audits,errors},null,2));
+ if(errors.length)throw Error('Browser render errors were recorded.');
+}finally{await browser.close({silent:true});}
