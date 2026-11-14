@@ -18,7 +18,9 @@ export function validateShots(shots:EpisodeShot[]){
   const s=shots[i];if(!Number.isInteger(s.start)||!Number.isInteger(s.end)||s.start!==(i?shots[i-1].end:0)||s.end<=s.start||s.end-s.start>120||ids.has(s.id))throw Error('Shot duration, coverage, gap or ID violation.');ids.add(s.id);
   if(s.number<1||s.number>60||s.sourceEnd<=s.sourceStart)throw Error('Invalid source shot.');
  }
- if(new Set(shots.map(s=>s.number)).size!==60||shots.at(-1)!.end>5400)throw Error('Missing storyboard shot or excessive duration.');return shots;
+ const omitted=new Set([7,8,9,18,19,25,33,35]);
+ for(let n=1;n<=60;n++)if(!omitted.has(n)&&!shots.some(s=>s.number===n))throw Error('Missing required story beat '+n);
+ if(shots.at(-1)!.end>5400)throw Error('Excessive duration.');return shots;
 }
 export function sourceAt(frame:number,shots:EpisodeShot[]){
  const s=shots.find(s=>frame>=s.start&&frame<s.end)??shots.at(-1)!;
@@ -30,7 +32,7 @@ export const STREETLIGHTS:V3[]=[[-6,0,6.5],[6,0,6.5],...[-4.5,-3,-1.5,0,1.5,3,4.
 export const DOOR_PUSH_WINDOWS=[[4,6],[15,17],[67,69],[109,109.25]] as const;
 /** Acceleration under the paw, then continuous-velocity coasting with friction after release. */
 export function doorAngleAt(t:number){
- const [a,b]=DOOR_PUSH_WINDOWS[t<13?0:t<26.5?1:2],small=.18,wide=Math.PI/2;
+ const [a,b]=DOOR_PUSH_WINDOWS[t<13?0:t<26.5?1:2],small=.42,wide=Math.PI/2;
  if(t<109)return small*beat(t,a,b);
  const [start,release]=DOOR_PUSH_WINDOWS[3],end=111,total=end-start;
  const atRelease=small+(wide-small)*(release-start)/total;
@@ -63,7 +65,7 @@ const LATTE_PATH:Key[]=[
  {time:46.5,position:[-1.80,0.03,8.25]}, {time:49,position:[-0.70,0.03,9.0]},
  {time:51.5,position:[2.0,0.03,10.8]}, {time:54,position:[3.15,0.20,12.08]},
  {time:56,position:[3.68,0.20,13.10]}, {time:58.5,position:[3.68,0.20,13.10]},
- {time:60.5,position:[0.85,0.20,13.14]}, {time:94.5,position:[0.85,0.20,13.14]},
+ {time:60.5,position:[0.85,0.20,13.14]}, {time:85.9,position:[0.85,0.20,13.14]}, {time:87.1,position:[1.45,0.20,13.85]}, {time:89.1,position:[0.85,0.20,13.14]}, {time:94.5,position:[0.85,0.20,13.14]},
  {time:95.25,position:[2.15,0.20,13.65]}, {time:95.85,position:[3.30,0.20,13.65]},
  {time:96.5,position:[3.30,0.20,12.55]}, {time:97.0,position:[3.30,0.18,11.56]}, {time:97.15,position:[3.30,0.03,11.30]},
  {time:99,position:[3.80,0.03,5.55]}, {time:104,position:[3.80,0.03,5.55]},
@@ -102,17 +104,21 @@ function actor(t:number,keys:Key[],seed:number):Actor{
  const feet=feetAt(p.travel,keys);for(const foot of feet)foot.position[1]=supportHeight(foot.position,seed)+foot.lift;
  return {feet:feet.map(f=>f.position),footKeys:feet.map(f=>f.key),position:p.position,travel:p.travel,moving,emotion:0,pose:{walking:moving,gait:p.travel/0.32*Math.PI*2,breath:Math.sin(t*1.8+seed)*.22,tail:Math.sin(t*.9+seed)*.10,blink:Math.max(0,1-Math.abs(((t+seed)%4.1)-3.9)/.085),earLeft:0,earRight:0,headTilt:0,yaw:0,headTurn:0,gazeX:0,gazeY:0}};
 }
-export type EpisodeState={shot:EpisodeShot;frame:number;t:number;u:number;camera:V3;target:V3;fov:number;blur:number;required:string[];latte:Actor;mocha:Actor;essie:Actor;kitten:V3;kittenFear:number;kittenSmile:number;kittenTap:number;kittenWalking:number;kittenTravel:number;door:number;homeDoor:number;switchReach:number;blanketLay:number;bowl:V3;bowlContact:boolean;rain:number;failed:boolean[];clock:string;flashback:boolean};
+export type EpisodeState={shot:EpisodeShot;editShots?:EpisodeShot[];frame:number;t:number;u:number;camera:V3;target:V3;fov:number;blur:number;required:string[];latte:Actor;mocha:Actor;essie:Actor;kitten:V3;kittenFear:number;kittenSmile:number;kittenTap:number;kittenWalking:number;kittenTravel:number;door:number;homeDoor:number;switchReach:number;blanketLay:number;bowl:V3;bowlContact:boolean;rain:number;failed:boolean[];clock:string;flashback:boolean};
 export function stateAt(frame:number,shots:EpisodeShot[]=DRAFT_SHOTS):EpisodeState{
  const sample=sourceAt(frame,shots),n=sample.shot.number,base=sample.frame/30;
  let t=base;
- if(n===58)t=sample.shot.variant===0?.05+sample.u*1.45:sample.shot.variant===1?66.7+sample.u*.5:sample.shot.variant===2?4.05+sample.u*1.7:126+sample.u*.4;
+ // The ending remains in the present: guests enter the same open doorway.
+ if(n===58)t=base;
  const latte=actor(t,LATTE_PATH,0),mocha=actor(t,MOCHA_PATH,1),essie=actor(t,ESSIE_PATH,2);
 
  latte.emotion=t>=23.5&&t<26.5?lerp(1,.35,beat(t,23.5,26)):1-beat(t,108,124);latte.pose={...latte.pose,yaw:latte.moving?-.9:-.05,headTurn:-.25*beat(t,28,37),gazeX:-.6,earLeft:.35*latte.emotion,earRight:.35*latte.emotion,headTilt:-.04*latte.emotion};
  if(t>=46.5&&t<49){latte.pose.headTilt=(latte.pose.headTilt??0)-.17*Math.sin(Math.PI*clamp((t-46.5)/2.5));latte.pose.tail=.45*Math.sin(Math.PI*clamp((t-46.5)/2.5));}
- if(t>=107.5&&t<110)latte.pose.blink=1;
+ if(n===49)latte.pose.blink=beat(sample.u,.12,.35);
+ if(n===50&&sample.shot.variant===0)latte.pose.blink=1-beat(sample.u,.15,.65);
+ if(n===59)mocha.pose.expression='happy';
  if(t>=117){latte.pose.headTurn=.20;latte.pose.gazeX=.42;latte.pose.gazeY=.6;}
+ if(n===57&&sample.shot.variant===0){latte.pose.headTurn=-.60*beat(sample.u,.08,.60);latte.pose.gazeX=-.92;latte.pose.gazeY=-.18;}
  mocha.emotion=.32*beat(t,108,125);mocha.pose.yaw=.23;mocha.pose.headTilt=-.03+.05*Math.sin((t-112)*3)*beat(t,112,112.2)*(1-beat(t,114.3,114.5));if(t>=112&&t<114.5)mocha.pose.gazeY=.65;
  essie.emotion=.65*beat(t,114,128);essie.pose.yaw=-.30;essie.pose.gazeY=.5;
  const k=pathAt(t,KITTEN_PATH);k.position[1]=.03*(1-beat(4.25-k.position[2],0,.15));
@@ -120,7 +126,7 @@ export function stateAt(frame:number,shots:EpisodeShot[]=DRAFT_SHOTS):EpisodeSta
  const kittenTap=Math.max(tapAt(72.0),tapAt(74.3),tapAt(76.8),tapAt(99.8),tapAt(103.9));
  const door=doorAngleAt(t);
  const blanketLay=beat(t,119,121.5),bowlDrop=beat(t,117.35,118.5),bowl=mix([essie.position[0]-.22,essie.position[1]+.45,essie.position[2]-.02],BOWL_REST,bowlDrop);
- const s:EpisodeState={shot:sample.shot,frame,t,u:sample.u,camera:[0,1,7],target:[0,1,4],fov:48,blur:0,required:[],latte,mocha,essie,kitten:k.position,kittenFear:1-beat(t,119,130),kittenSmile:beat(t,123,131),kittenTap,kittenWalking:k.velocity>0.01?1:0,kittenTravel:k.travel,door,homeDoor:(1-beat(t,55.3,56))*beat(t,51.5,53)+beat(t,94.5,96)*(1-beat(t,98,99)),switchReach:beat(t,56.1,57)*(1-beat(t,57.5,58.3)),blanketLay,bowl,bowlContact:t>=100&&t<118.65,rain:beat(t,26.5,29),failed:BLACKOUT_TIMES.map(time=>t>=time),clock:t<3.25?'11:10':t<13?'11:11':t<14.25?'11:10':t<26.5?'11:11':t<66.15?'11:10':t<126.8?'11:11':'11:12',flashback:n===58};
+ const s:EpisodeState={shot:sample.shot,editShots:shots,frame,t,u:sample.u,camera:[0,1,7],target:[0,1,4],fov:48,blur:0,required:[],latte,mocha,essie,kitten:k.position,kittenFear:1-beat(t,119,130),kittenSmile:beat(t,123,131),kittenTap,kittenWalking:k.velocity>0.01?1:0,kittenTravel:k.travel,door,homeDoor:(1-beat(t,55.3,56))*beat(t,51.5,53)+beat(t,94.5,96)*(1-beat(t,98,99)),switchReach:beat(t,56.1,57)*(1-beat(t,57.5,58.3)),blanketLay,bowl,bowlContact:t>=100&&t<118.65,rain:beat(t,26.5,29),failed:BLACKOUT_TIMES.map(time=>t>=time),clock:t<3.25?'11:10':t<13?'11:11':t<14.25?'11:10':t<26.5?'11:11':t<66.15?'11:10':t<126.8?'11:11':'11:12',flashback:n===58&&sample.shot.variant===2};
  setCamera(s);
  // Use the approved viewing angles to face actual travel in the current camera's screen plane.
  // A short central sample anticipates corners and avoids an abrupt left/right profile flip.
@@ -143,7 +149,7 @@ function setCamera(s:EpisodeState){
  switch(n){
  case 1:set([-8.5+u*.16,5.0,13.5-u*.18],[-1.7,1.7,6.5],105,['cafe',...(t<.65?['bus']:[])]);break;
  case 2:set([1.02,2.92,5.65-u*.07],CLOCK,65,['clock']);break;
- case 3:set([3.08,1.37,5.22],[2.66,1.27,4.19],62,['handle']);break;
+ case 3:set([3.4,1.5,6.4],[2.65,1.27,4.65],65,['handle']);break;
  case 4:set([2.48,1.00,6.95-u*.12],[2.25,1.45,4.2],53,['door']);break;
  case 5:set([3.05,1.1,4.85],[3.05,1.0,9.7],68,['pavement']);break;
  case 6:set([1.2,1.4,8.2],latte,49,['latte']);break;
@@ -167,19 +173,19 @@ function setCamera(s:EpisodeState){
  case 24:set([5.25,.85,10.85],latte,57,['latte']);break;
  case 25:set([2.35,1.2,14.55],[3.12,1.1,12.3],57,['home-door']);break;
  case 26:set([4.0,1.16,12.65],HOME.switch,80,['switch']);break;
- case 27:latteHome();break;
- case 28:latteHome(true);break;
+ case 27:set([0,11.5,14],[0,.5,8.6],100,['light-1','light-2','light-6']);break;
+ case 28:set(mix([0,11.5,14],[0,6.8,10.8],ease(u)),[0,1.9,4.2],82,['cafe']);break;
  case 29:set([.85,1.28,13.03],[.8,1.7,4.22],51,['cafe']);break;
  case 30:set([1.12,2.86,5.55],CLOCK,65,['clock']);break;
  case 31:set([2.4,1.1,6.7],[2.25,1.50,4.2],52,['door']);break;
  case 32:latteHome(true);break;
  case 33:set([2.80,.73,3.60],[2.80,.63,4.47],55,['tap']);break;
- case 34:set([2.92,.52,3.57],[2.88,.50,4.47],55,['tap']);break;
+ case 34:set([2.0,.52,5.6],[2.78,.50,4.76],62,['tap']);break;
  case 35:latteHome(true);break;
  case 36:latteHome();s.required=['home-blanket'];break;
  case 37:set([.83,1.65,14.52],[.85,1.28,13.14],37,['latte-ear']);break;
  case 38:latteHome(v>0);if(!v)s.required=['home-blanket'];break;
- case 39:set(v?[.5,2.10,5.72]:[-.45,1.45,6.55],[-.90,2.0,4.24],v?48:64,['shadow']);break;
+ case 39:if(!v)set(mix([-.45,1.65,6.65],[-.65,1.85,5.95],ease(u)),[-.90,2.0,4.24],64,['shadow']);else set([2.75,1.45,15.65],latte,60,['latte']);break;
  // Frame both ear tips together with the head, rather than an empty window strip.
  case 40:set([-.96,2.55,6.35],[-.96,2.42,4.26],70,['shadow-top','shadow']);break;
  // Include the dragging cloth and the floor around its full travel.
@@ -188,29 +194,32 @@ function setCamera(s:EpisodeState){
  case 43:set([3.8,1.5,15.35],latte,54,['latte']);break;
  case 44:set([4.35,1.1,s.latte.position[2]-1.7],latte,52,['latte']);break;
  case 45:set([4.35,1.17,6.1],latte,51,['latte']);break;
- case 46:set([1.25,.64,5.55],kitten,45,['kitten']);break;
+ case 46:set([3.65,.85,6.3],kitten,65,['kitten']);break;
  case 47:{
   // Establish the kitten, tilt to the unreachable handle, then return to the kitten.
   const up=beat(u,.16,.40)*(1-beat(u,.64,.88));
   set([2.18,.92,6.25],mix(kitten,[2.73,1.37,4.39],up),66,up>.85?['handle']:up<.08?['kitten']:[]);
   break;
  }
- case 48:set([-2.0,1.6,9.0],[.7,1.4,4.23],105,['kitten','shadow']);break;
+ case 48:set(mix([-1.2,1.65,7.35],[-.9,1.8,6.3],ease(u)),[-.90,2.0,4.26],68,['shadow']);break;
  case 49:set([3.4,1.4,7.25],latte,64,['latte'],2);break;
- case 50:set([3.10,1.35,5.62],mocha,65,['mocha']);break;
+ case 50:if(!v)set([3.4,1.4,7.25],latte,60,['latte']);else set([3.10,1.35,5.62],mocha,65,['mocha']);break;
  case 51:set([s.mocha.position[0]+1.65,1.27,s.mocha.position[2]+1.48],[s.mocha.position[0]+.15,.70,s.mocha.position[2]+.05],57,['mocha','blanket']);break;
  case 52:set([2.42,1.40,4.10],essie,70,['essie','bowl']);break;
  case 53:set([2.45,.70,4.28],[3.12,.62,3.49],89,['bowl','essie']);break;
  case 54:set([3.65,1.75,4.08],[2.0,.36,3.32],64,['blanket','mocha']);break;
  case 55:set([1.8,.78,2.7],kitten,54,['kitten']);break;
  case 56:set([2.25,1.7,7.2],[(s.latte.position[0]+s.kitten[0])/2,(s.latte.position[1]+.84+s.kitten[1]+.39)/2,(s.latte.position[2]+s.kitten[2])/2],62,['latte','kitten']);break;
- case 57:set(v?[3.85,1.4,5.9]:[-2.15,.72,1.44],v?latte:SIGN,v?48:47,v?['latte']:['sign']);break;
+ case 57:if(!v)set([3.85,1.4,5.9],latte,56,['latte']);else set([-2.15,.72,1.44],SIGN,47,['sign']);break;
  case 58:
-  if(v===0)set([-8.5+u*.16,5.0,13.5-u*.18],[-1.7,1.7,6.5],105,['cafe',...(t<.65?['bus']:[])]);
-  else if(v===1)set([1.02,2.92,5.62],CLOCK,65,['clock']);
-  else if(v===2)set([3.65,1.35,2.75],[2.25,.85,4.3],85,['mocha','handle','push-point']);
-  else set([-.25,.63,3.67],[-.96,.36,2.62],42,['lantern']);break;
- case 59:set(v?[.10,1.4,2.35]:[3.8,2.35,1.05],v?mocha:[2.14,.75,3.36],v?65:78,v?['mocha']:['latte','kitten','mocha']);break;
+  if(v===0)set([4.35,2.05,7.35],[2.25,.80,4.40],84,['door','shelter-guest']);
+  else if(v===1)set([-.35,1.8,3.9],[.65,.5,3.1],90,['shelter-guest']);
+  else if(v===2){const x=-2.8-u*3.4;set([x+1.4,3.6,7.2],[x,.95,8.3],78,['bus']);}
+  else set([6.4,1.35,7.65],[4.95,.46,5.65],65,['hesitant-cat']);break;
+ case 59:
+  if(v===0)set(mix([3.8,2.35,1.05],[3.55,2.18,1.25],ease(u)),[2.14,.75,3.36],78,['latte','kitten','mocha']);
+  else if(v===1)set([.10,1.4,2.35],mocha,65,['mocha']);
+  else set([5.8,1.45,7.45],[3.7,.48,5.3],78,['hesitant-cat','door']);break;
  case 60:set(v?[2.10,1.22,5.9]:[3.8,2.35,1.05],v?[2.23,.64,3.28]:[2.23,.77,3.30],v?65:94,v?['latte','kitten']:['latte','kitten','mocha','essie'],v?2:0);break;
  }
  // A restrained push supports selected reactions; tracking uses actor world position above.

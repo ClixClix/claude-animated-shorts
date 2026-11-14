@@ -22,7 +22,7 @@ def bus(at,d=2.6):
  put(x,at,.045,-.40)
 bus(0)
 manifest=json.loads((ROOT/'The_Door_At_1111_Polish_Shot_Manifest.json').read_text())
-callback=next(s for s in manifest['shots'] if s['id']=='58A');bus(callback['start']/30,1.5)
+callback=next(s for s in manifest['shots'] if s['id']=='58C');bus(callback['start']/30,(callback['end']-callback['start'])/30)
 results=[]
 for i,event in enumerate(plan['events']):
  kind=event['type'];d=.22

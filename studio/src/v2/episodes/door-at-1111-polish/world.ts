@@ -18,11 +18,11 @@ export class EpisodeWorld{
  readonly shadowScreen:T.Mesh;readonly rainPositions:Float32Array;
  constructor(optimize=true){
   this.root.name='door-at-1111-extensions';this.root.add(this.cafe.root);this.door=this.rigDoor();
-  this.home();this.street();this.busStop();this.makeBus();
+  this.home();this.street();this.busStop();this.makeBus();this.parkedCars();
   this.clockCanvas.width=this.clockCanvas.height=512;this.clockTexture=new T.CanvasTexture(this.clockCanvas);this.clockTexture.colorSpace=T.SRGBColorSpace;this.textures.push(this.clockTexture);
   const clockGroup=new T.Group();clockGroup.name='episode-clock';clockGroup.position.set(...CLOCK);this.root.add(clockGroup);this.props.set('clock',clockGroup);
   this.cylinder(clockGroup,.34,.34,.085,[0,0,-.04],'#ac8c55').rotation.x=Math.PI/2;
-  const clock=new T.Mesh(new T.PlaneGeometry(.61,.61),new T.MeshBasicMaterial({map:this.clockTexture}));clock.position.z=.02;clock.layers.set(NOINK);clockGroup.add(clock);this.materials.push(clock.material);
+  const clock=new T.Mesh(new T.CircleGeometry(.305,64),new T.MeshBasicMaterial({map:this.clockTexture,transparent:true,alphaTest:.05}));clock.position.z=.02;clock.layers.set(NOINK);clockGroup.add(clock);this.materials.push(clock.material);
   const fog=this.box(this.root,[4.40,2.78,.008],[-1.45,2.22,4.247],'#dac6a0',false);fog.name='rain-fogged-cafe-window';fog.material=new T.MeshStandardMaterial({color:'#cbbd9b',roughness:1,transparent:true,opacity:.985,emissive:'#7b552c',emissiveIntensity:.16,side:T.DoubleSide});this.materials.push(fog.material);fog.receiveShadow=true;fog.layers.set(NOINK);this.props.set('shadow',fog);
   const screen=new T.Mesh(new T.PlaneGeometry(1,1),new T.MeshBasicMaterial({transparent:true,opacity:0}));screen.visible=false;this.root.add(screen);this.shadowScreen=screen;
   this.sign();this.lanternLight=this.lantern();
@@ -62,8 +62,10 @@ export class EpisodeWorld{
   this.box(g,[4.6,.2,3.8],[2.25,.1,14.2],'#81725e');
   this.box(g,[.16,3.4,3.8],[-.13,1.9,14.2],color);this.box(g,[.16,3.4,3.8],[4.63,1.9,14.2],color);this.box(g,[4.6,3.4,.16],[2.25,1.9,16.18],color);this.box(g,[4.9,.20,4.1],[2.25,3.7,14.2],'#324655');
   this.box(g,[2.1,.50,.15],[.85,.45,12.3],color);this.box(g,[4.6,.7,.15],[2.25,3.24,12.3],color);
-  for(const [x,w] of [[-.05,.15],[2.05,.45],[4.10,.90]])this.box(g,[w,2.45,.15],[x,1.85,12.3],color);
-  this.box(g,[.55,.75,.15],[2.40,.95,12.3],color);
+  // Solid piers run from the floor to the header, framing one intentional doorway.
+  for(const [x,w] of [[-.05,.15],[2.05,.45],[2.425,.45],[4.125,.85]])this.box(g,[w,2.69,.15],[x,1.545,12.3],color);
+  this.box(g,[1.05,.18,.15],[3.175,2.84,12.3],color);
+  this.box(g,[2.1,.24,.15],[.85,2.78,12.3],color);
   const window=new T.Group();window.name='home-window';window.position.set(.85,0,12.2);g.add(window);
   for(const x of [-1.0,1.0])this.box(window,[.08,1.95,.10],[x,1.65,0],'#b5a785');
   for(const y of [.675,2.625])this.box(window,[2.08,.08,.10],[0,y,0],'#b5a785');
@@ -100,10 +102,36 @@ export class EpisodeWorld{
   this.box(g,[1.45,.10,.44],[.40,.48,-.35],'#997c56');for(const x of [-.1,.9])this.box(g,[.08,.45,.27],[x,.225,-.35],'#344b50');this.props.set('bus-stop',g);
  }
  private makeBus(){
-  this.bus.name='last-bus';this.root.add(this.bus);this.box(this.bus,[2.8,1.20,1.30],[0,.91,0],'#ba8d55');this.box(this.bus,[2.78,.22,1.28],[0,1.62,0],'#d4ba87');
-  for(const x of [-.82,-.22,.38,.98])this.box(this.bus,[.48,.50,.025],[x,1.18,.663],'#6b8998',false);
-  for(const x of [-.94,.94])for(const z of [-.55,.55]){const wheel=this.cylinder(this.bus,.29,.29,.19,[x,.29,z],'#263340');wheel.rotation.x=Math.PI/2;}
-  this.label(this.bus,'LAST BUS',1.1,.22,[0,1.62,.66],'#344c51','#eedab0',96);this.props.set('bus',this.bus);
+  // Front faces -X, matching its departure. Wheels meet the road; both sides have windows.
+  const g=this.bus;g.name='last-bus';this.root.add(g);
+  this.box(g,[3.9,1.30,1.38],[0,1.02,0],'#b38a53');this.box(g,[3.86,.20,1.37],[0,1.77,0],'#d6c099');
+  this.box(g,[3.86,.14,1.41],[0,.65,0],'#6c7d7b');
+  for(const z of [-.704,.704]){
+   for(const x of [-1.37,-.70,-.03,.64,1.31])this.box(g,[.53,.61,.025],[x,1.29,z],'#516d7c',false);
+   for(const x of [-1.68,-1.03,-.36,.31,.98,1.65])this.box(g,[.055,.72,.035],[x,1.29,z],'#d2bb91');
+  }
+  // Broad driver windshield, destination panel, passenger folding door, mirrors and bumpers.
+  this.box(g,[.035,.64,1.12],[-1.97,1.30,0],'#567687',false);
+  this.box(g,[.07,.045,1.21],[-1.995,.94,0],'#33434a');
+  for(const z of [-.35,0,.35])this.box(g,[.04,.50,.025],[-2.0,1.30,z],'#cab78f');
+  this.label(g,'NIGHT 11',.94,.19,[-1.99,1.72,0],'#233943','#e6d6ae',84).rotation.y=-Math.PI/2;
+  for(const x of [-1.48,-1.19])this.box(g,[.24,.96,.035],[x,.99,.733],'#405b68',false);
+  this.box(g,[.04,1.02,.055],[-1.335,.99,.76],'#c5b085');
+  for(const x of [-1.22,1.22])for(const z of [-.64,.64]){const wheel=this.cylinder(g,.30,.30,.18,[x,.30,z],'#25313a');wheel.rotation.x=Math.PI/2;const hub=this.cylinder(g,.13,.13,.19,[x,.30,z*1.04],'#a2a9a4');hub.rotation.x=Math.PI/2;}
+  for(const x of [-2.0,2.0])this.box(g,[.14,.17,1.43],[x,.46,0],'#455762');
+  for(const z of [-.48,.48]){this.box(g,[.06,.18,.23],[-2.08,.72,z],'#f2dfaa',false);this.box(g,[.05,.21,.16],[2.08,.74,z],'#a15b45',false);this.box(g,[.15,.20,.10],[-1.83,1.39,z<0?-.87:.87],'#344a55');}
+  this.props.set('bus',g);
+ }
+ private parkedCars(){
+  for(const [i,x] of [-6,6].entries()){
+   const g=new T.Group();g.name='parked-car-'+(i+1);g.position.set(x,.03,10.8);this.root.add(g);this.props.set(g.name,g);
+   const color=i?'#607c7c':'#946b58';
+   this.box(g,[2.4,.46,1.16],[0,.47,0],color);this.box(g,[1.35,.44,1.03],[.10,.91,0],color);
+   for(const z of [-.527,.527]){this.box(g,[1.12,.28,.025],[.1,.96,z],'#435d70',false);this.box(g,[.055,.34,.04],[.1,.96,z],'#b19d7f');}
+   for(const x of [-.60,.80])this.box(g,[.03,.27,.89],[x,.96,0],'#526d7c',false);
+   for(const wheelX of [-.77,.77])for(const z of [-.53,.53]){const wheel=this.cylinder(g,.22,.22,.14,[wheelX,.22,z],'#28333c');wheel.rotation.x=Math.PI/2;}
+   for(const end of [-1.23,1.23]){this.box(g,[.10,.13,1.13],[end,.39,0],'#74858a');for(const z of [-.39,.39])this.box(g,[.03,.12,.22],[end,.57,z],end<0?'#d4c5a0':'#95594b',false);}
+  }
  }
  private sign(){
   const g=new T.Group();g.name='welcome-sign';g.position.set(...SIGN);g.rotation.y=Math.PI;this.root.add(g);
@@ -125,7 +153,7 @@ export class EpisodeWorld{
  update(s:EpisodeState){
   const clouds=this.props.get('clouds');if(clouds){clouds.visible=s.t>=26.5;clouds.position.x=-10.8+3*beat(s.t,26.5,28.5);}
   this.door.rotation.y=-s.door;this.homeDoor.rotation.y=-s.homeDoor*1.35;
-  const busX=s.t<2?-4.5-s.t*2.9:-15;this.bus.position.set(busX,.03,8.3);this.bus.visible=s.t<3||s.shot.number===58&&s.shot.variant===0;
+  const busCallback=s.shot.number===58&&s.shot.variant===2;const busX=busCallback?-2.8-s.u*3.4:s.t<2?-4.5-s.t*2.9:-15;this.bus.position.set(busX,.03,8.3);this.bus.visible=s.t<3||busCallback;
   for(let i=0;i<9;i++){
    const l=this.lights[i],fail=s.failed[i],flicker=i===0&&s.t>30.5&&s.t<31.8?(.5+.5*Math.sin(s.t*47)):1;
    l.point.visible=!fail;l.point.intensity=fail?0:(i<2?20:8)*flicker;l.bulb.emissiveIntensity=fail?0:1.1*flicker;l.bulb.color.set(fail?'#5a6266':'#dfc084');

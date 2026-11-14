@@ -21,7 +21,7 @@ Actual delivery: ${manifest.width} × ${manifest.height}, 30 fps, ${video.decode
 - ${structure.checks.toLocaleString('en-US')} deterministic timing, continuity, contact, light-state and preservation checks passed.
 - ${structure.protectedHashes} baseline files are audited. Two font/file-URL utility adjustments are explicitly recorded in PORTABILITY_ADJUSTMENTS.json; approved adult artwork, café geometry, original animation and Bridge rendering modules remain intact.
 - One approved café instance, exactly one serving counter, one rear preparation counter and two customer tables. No furniture moves between camera shots.
-- Nine fixed streetlights fail monotonically. Clock progression and explicitly identified flashbacks are deterministic.
+- Nine fixed streetlights fail monotonically. Clock progression, supporting-cat routes and the departing-bus insert are deterministic.
 - Every native frame has a scene audit. ${native.cameraFlags.length} camera-inside-geometry flags and ${native.browserErrors.length} recorded browser errors.
 - Full movie decode found ${video.blackFrames.length} black frames. Static detail inserts are distinguished from acting shots; image differences alone are not treated as proof of good animation.
 - ${native.visibilityFlags.length} visibility-marker flags are retained in NATIVE_RENDER_QA.json for inspection; any intentional occlusion is described below.
@@ -87,7 +87,7 @@ Complete ${video.expectedSeconds}-second episode, native 1080×1920 at 30 fps, H
 | --- | --- | --- |
 ${acts}
 
-The initial 60-shot plan expands to 70 cuts to accommodate actual narration and purposeful detail inserts while keeping every shot under four seconds. The edit is synchronized to the cached recording's actual character timestamps and deliberate action pauses.
+The revised edit has ${manifest.shots.length} cuts, each under four seconds. Camera cuts follow the continuous cached narration and its actual word timestamps; no editorial pauses are inserted between lines.
 
 ## Preservation and implementation
 

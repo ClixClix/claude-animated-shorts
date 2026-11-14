@@ -6,7 +6,7 @@ from PIL import Image,ImageDraw,ImageFont
 root=Path('out/v2-episodes/door-at-1111-polish')
 native='--native' in sys.argv
 source=root/('segments' if native else 'motion')
-ids=['19','26','31','41','47','48','51','53','54','55','60B']
+ids=['04','20','26','27','28','31','34','39A','39B','40','41','47','48','49','50A','50B','51','53','54','55','57A','57B','58A','58B','58C','58D','59A','59B','59C','60B']
 font=ImageFont.truetype(str(Path(__file__).resolve().parents[1] / 'assets/fonts/DejaVuSans.ttf'),16)
 for shot in ids:
     file=source/(shot+'.mp4')

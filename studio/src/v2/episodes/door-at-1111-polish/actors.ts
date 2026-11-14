@@ -32,7 +32,7 @@ export function createEpisodeCat(id:CatId){
   try{drawCat(ctx,id,pose);}finally{ctx.translate=original;ctx.rotate=nativeRotate;}
  }
  return {...card,texture,updateActor:(a:Actor,s:EpisodeState)=>{
-  const amount=a.emotion,pose={...a.pose,expression:'neutral' as const,...(id==='latte'?{}:{blink:Math.max(a.pose.blink??0,amount*.7)})};render(g,a,s,pose);
+  const amount=a.emotion,pose={...a.pose,expression:(id==='mocha'&&s.shot.number>=59?'happy':'neutral') as 'happy'|'neutral',...(id==='latte'?{}:{blink:Math.max(a.pose.blink??0,amount*.7)})};render(g,a,s,pose);
   if(id==='latte'&&amount>0){render(h,a,s,{...pose,expression:'scared'});g.setTransform(1,0,0,1,0,0);g.globalCompositeOperation='destination-in';g.fillStyle=`rgba(0,0,0,${1-amount})`;g.fillRect(0,0,1000,1100);g.globalCompositeOperation='lighter';g.globalAlpha=amount;g.drawImage(other,0,0);g.globalAlpha=1;g.globalCompositeOperation='source-over';}
   texture.needsUpdate=true;card.mesh.position.set(...a.position);card.mesh.rotation.y=Math.atan2(s.camera[0]-a.position[0],s.camera[2]-a.position[2]);
  },dispose:()=>{texture.dispose();card.dispose();}};

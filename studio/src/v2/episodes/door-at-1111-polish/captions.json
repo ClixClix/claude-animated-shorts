@@ -1,547 +1,1822 @@
 [
   {
-    "start": 2,
-    "end": 35,
-    "text": "In this town every"
+    "start": 0,
+    "end": 3,
+    "text": "In"
   },
   {
-    "start": 35,
-    "end": 65,
-    "text": "night at exactly eleven"
+    "start": 3,
+    "end": 9,
+    "text": "this"
   },
   {
-    "start": 65,
-    "end": 108,
-    "text": "eleven the little café"
+    "start": 9,
+    "end": 21,
+    "text": "town"
   },
   {
-    "start": 108,
-    "end": 132,
-    "text": "door opened"
+    "start": 26,
+    "end": 33,
+    "text": "every"
   },
   {
-    "start": 209,
-    "end": 226,
-    "text": "No one could see"
+    "start": 33,
+    "end": 40,
+    "text": "night"
   },
   {
-    "start": 226,
-    "end": 254,
-    "text": "who opened it And"
+    "start": 40,
+    "end": 43,
+    "text": "at"
   },
   {
-    "start": 254,
-    "end": 278,
-    "text": "nobody knew why"
+    "start": 43,
+    "end": 55,
+    "text": "exactly"
   },
   {
-    "start": 296,
-    "end": 326,
-    "text": "Most cats avoided that"
+    "start": 55,
+    "end": 63,
+    "text": "eleven"
   },
   {
-    "start": 326,
-    "end": 352,
-    "text": "street after dark"
+    "start": 63,
+    "end": 76,
+    "text": "eleven"
   },
   {
-    "start": 472,
-    "end": 511,
-    "text": "But Latte was especially"
+    "start": 86,
+    "end": 90,
+    "text": "the"
   },
   {
-    "start": 511,
-    "end": 528,
-    "text": "afraid"
+    "start": 90,
+    "end": 95,
+    "text": "little"
   },
   {
-    "start": 550,
-    "end": 574,
-    "text": "He counted the nine"
+    "start": 95,
+    "end": 106,
+    "text": "café"
   },
   {
-    "start": 574,
-    "end": 614,
-    "text": "streetlights between the café"
+    "start": 106,
+    "end": 116,
+    "text": "door"
   },
   {
-    "start": 614,
-    "end": 638,
-    "text": "and his house"
+    "start": 116,
+    "end": 130,
+    "text": "opened"
   },
   {
-    "start": 650,
-    "end": 666,
-    "text": "If they were all"
+    "start": 139,
+    "end": 143,
+    "text": "No"
   },
   {
-    "start": 666,
-    "end": 709,
-    "text": "glowing he felt safe"
+    "start": 143,
+    "end": 146,
+    "text": "one"
   },
   {
-    "start": 736,
-    "end": 776,
-    "text": "One rainy night Latte"
+    "start": 146,
+    "end": 151,
+    "text": "could"
   },
   {
-    "start": 776,
-    "end": 806,
-    "text": "stayed out too late"
+    "start": 151,
+    "end": 156,
+    "text": "see"
   },
   {
-    "start": 826,
-    "end": 867,
-    "text": "The first streetlight blinked"
+    "start": 156,
+    "end": 161,
+    "text": "who"
   },
   {
-    "start": 884,
-    "end": 905,
-    "text": "Then the second went"
+    "start": 161,
+    "end": 168,
+    "text": "opened"
   },
   {
-    "start": 905,
-    "end": 914,
-    "text": "out"
+    "start": 168,
+    "end": 173,
+    "text": "it"
   },
   {
-    "start": 935,
-    "end": 957,
-    "text": "Then a third"
+    "start": 178,
+    "end": 184,
+    "text": "And"
   },
   {
-    "start": 1046,
-    "end": 1072,
-    "text": "Latte ran"
+    "start": 184,
+    "end": 192,
+    "text": "nobody"
   },
   {
-    "start": 1182,
-    "end": 1208,
-    "text": "He splashed past the"
+    "start": 192,
+    "end": 196,
+    "text": "knew"
   },
   {
-    "start": 1208,
-    "end": 1245,
-    "text": "empty bus stop slipped"
+    "start": 196,
+    "end": 207,
+    "text": "why"
   },
   {
-    "start": 1245,
-    "end": 1267,
-    "text": "around a puddle"
+    "start": 218,
+    "end": 225,
+    "text": "Most"
   },
   {
-    "start": 1307,
-    "end": 1333,
-    "text": "and reached his porch"
+    "start": 225,
+    "end": 233,
+    "text": "cats"
   },
   {
-    "start": 1333,
-    "end": 1354,
-    "text": "just as the last"
+    "start": 233,
+    "end": 243,
+    "text": "avoided"
   },
   {
-    "start": 1354,
-    "end": 1378,
-    "text": "light went dark"
+    "start": 243,
+    "end": 248,
+    "text": "that"
   },
   {
-    "start": 1483,
-    "end": 1507,
-    "text": "Inside he hit the"
-  },
-  {
-    "start": 1507,
-    "end": 1520,
-    "text": "switch"
-  },
-  {
-    "start": 1530,
-    "end": 1542,
-    "text": "Click"
-  },
-  {
-    "start": 1558,
-    "end": 1570,
-    "text": "Nothing"
-  },
-  {
-    "start": 1587,
-    "end": 1615,
-    "text": "The entire street had"
-  },
-  {
-    "start": 1615,
-    "end": 1635,
-    "text": "lost power"
-  },
-  {
-    "start": 1652,
-    "end": 1682,
-    "text": "Except for one building"
-  },
-  {
-    "start": 1698,
-    "end": 1731,
-    "text": "Across the road the"
-  },
-  {
-    "start": 1731,
-    "end": 1767,
-    "text": "café still glowed"
-  },
-  {
-    "start": 1788,
-    "end": 1817,
-    "text": "Latte stared through his"
-  },
-  {
-    "start": 1817,
-    "end": 1841,
-    "text": "window as the clock"
-  },
-  {
-    "start": 1841,
-    "end": 1869,
-    "text": "reached eleven eleven"
-  },
-  {
-    "start": 1886,
-    "end": 1919,
-    "text": "The café door swung"
-  },
-  {
-    "start": 1919,
-    "end": 1930,
-    "text": "open"
-  },
-  {
-    "start": 1943,
-    "end": 1974,
-    "text": "Then came three tiny"
-  },
-  {
-    "start": 1974,
-    "end": 1988,
-    "text": "taps"
-  },
-  {
-    "start": 1999,
-    "end": 2011,
-    "text": "Tap"
-  },
-  {
-    "start": 2052,
-    "end": 2064,
-    "text": "Tap"
-  },
-  {
-    "start": 2105,
-    "end": 2117,
-    "text": "Tap"
-  },
-  {
-    "start": 2153,
-    "end": 2181,
-    "text": "Latte pulled his blanket"
-  },
-  {
-    "start": 2181,
-    "end": 2200,
-    "text": "over his head"
-  },
-  {
-    "start": 2217,
-    "end": 2241,
-    "text": "Whatever was out there"
-  },
-  {
-    "start": 2241,
-    "end": 2271,
-    "text": "could stay out there"
-  },
-  {
-    "start": 2288,
-    "end": 2306,
-    "text": "But then he heard"
-  },
-  {
-    "start": 2306,
-    "end": 2349,
-    "text": "a meow So small"
-  },
-  {
-    "start": 2349,
-    "end": 2371,
-    "text": "he almost missed it"
-  },
-  {
-    "start": 2371,
-    "end": 2394,
-    "text": "beneath the rain"
-  },
-  {
-    "start": 2414,
-    "end": 2437,
-    "text": "He looked again"
-  },
-  {
-    "start": 2447,
-    "end": 2479,
-    "text": "Behind the foggy café"
-  },
-  {
-    "start": 2479,
-    "end": 2523,
-    "text": "window an enormous shadow"
-  },
-  {
-    "start": 2523,
-    "end": 2541,
-    "text": "rose"
-  },
-  {
-    "start": 2553,
-    "end": 2585,
-    "text": "Two pointed ears"
-  },
-  {
-    "start": 2601,
-    "end": 2639,
-    "text": "Something long dragged across"
-  },
-  {
-    "start": 2639,
-    "end": 2674,
-    "text": "the floor It moved"
-  },
-  {
-    "start": 2674,
-    "end": 2696,
-    "text": "toward the door"
-  },
-  {
-    "start": 2715,
-    "end": 2759,
-    "text": "Latte's paws shook He"
-  },
-  {
-    "start": 2759,
-    "end": 2784,
-    "text": "wanted to hide"
-  },
-  {
-    "start": 2798,
-    "end": 2827,
-    "text": "But the tiny meow"
-  },
-  {
-    "start": 2827,
-    "end": 2859,
-    "text": "came again and this"
-  },
-  {
-    "start": 2859,
-    "end": 2879,
-    "text": "time he crossed the"
-  },
-  {
-    "start": 2879,
-    "end": 2892,
+    "start": 248,
+    "end": 256,
     "text": "street"
   },
   {
-    "start": 2919,
-    "end": 2947,
-    "text": "At the café door"
+    "start": 256,
+    "end": 262,
+    "text": "after"
   },
   {
-    "start": 2951,
-    "end": 2967,
-    "text": "he saw what had"
+    "start": 262,
+    "end": 273,
+    "text": "dark"
   },
   {
-    "start": 2967,
-    "end": 2995,
-    "text": "been making the taps"
+    "start": 281,
+    "end": 286,
+    "text": "But"
   },
   {
-    "start": 3007,
-    "end": 3042,
-    "text": "A soaking-wet kitten"
+    "start": 286,
+    "end": 298,
+    "text": "Latte"
   },
   {
-    "start": 3062,
-    "end": 3083,
-    "text": "Too little to reach"
+    "start": 298,
+    "end": 303,
+    "text": "was"
   },
   {
-    "start": 3083,
-    "end": 3102,
-    "text": "the handle"
+    "start": 303,
+    "end": 320,
+    "text": "especially"
   },
   {
-    "start": 3132,
-    "end": 3168,
-    "text": "The enormous shadow rose"
+    "start": 320,
+    "end": 336,
+    "text": "afraid"
   },
   {
-    "start": 3168,
-    "end": 3186,
-    "text": "behind her"
+    "start": 351,
+    "end": 356,
+    "text": "He"
   },
   {
-    "start": 3198,
-    "end": 3230,
-    "text": "Latte squeezed his eyes"
+    "start": 356,
+    "end": 364,
+    "text": "counted"
   },
   {
-    "start": 3230,
-    "end": 3242,
+    "start": 364,
+    "end": 368,
+    "text": "the"
+  },
+  {
+    "start": 368,
+    "end": 376,
+    "text": "nine"
+  },
+  {
+    "start": 376,
+    "end": 391,
+    "text": "streetlights"
+  },
+  {
+    "start": 391,
+    "end": 399,
+    "text": "between"
+  },
+  {
+    "start": 399,
+    "end": 401,
+    "text": "the"
+  },
+  {
+    "start": 401,
+    "end": 415,
+    "text": "café"
+  },
+  {
+    "start": 415,
+    "end": 419,
+    "text": "and"
+  },
+  {
+    "start": 419,
+    "end": 423,
+    "text": "his"
+  },
+  {
+    "start": 423,
+    "end": 438,
+    "text": "house"
+  },
+  {
+    "start": 443,
+    "end": 447,
+    "text": "If"
+  },
+  {
+    "start": 447,
+    "end": 450,
+    "text": "they"
+  },
+  {
+    "start": 450,
+    "end": 454,
+    "text": "were"
+  },
+  {
+    "start": 454,
+    "end": 459,
+    "text": "all"
+  },
+  {
+    "start": 459,
+    "end": 473,
+    "text": "glowing"
+  },
+  {
+    "start": 478,
+    "end": 481,
+    "text": "he"
+  },
+  {
+    "start": 481,
+    "end": 488,
+    "text": "felt"
+  },
+  {
+    "start": 488,
+    "end": 502,
+    "text": "safe"
+  },
+  {
+    "start": 519,
+    "end": 526,
+    "text": "One"
+  },
+  {
+    "start": 526,
+    "end": 534,
+    "text": "rainy"
+  },
+  {
+    "start": 534,
+    "end": 544,
+    "text": "night"
+  },
+  {
+    "start": 548,
+    "end": 559,
+    "text": "Latte"
+  },
+  {
+    "start": 559,
+    "end": 567,
+    "text": "stayed"
+  },
+  {
+    "start": 567,
+    "end": 571,
+    "text": "out"
+  },
+  {
+    "start": 571,
+    "end": 577,
+    "text": "too"
+  },
+  {
+    "start": 577,
+    "end": 588,
+    "text": "late"
+  },
+  {
+    "start": 594,
+    "end": 597,
+    "text": "The"
+  },
+  {
+    "start": 597,
+    "end": 606,
+    "text": "first"
+  },
+  {
+    "start": 606,
+    "end": 621,
+    "text": "streetlight"
+  },
+  {
+    "start": 621,
+    "end": 634,
+    "text": "blinked"
+  },
+  {
+    "start": 644,
+    "end": 649,
+    "text": "Then"
+  },
+  {
+    "start": 649,
+    "end": 651,
+    "text": "the"
+  },
+  {
+    "start": 651,
+    "end": 659,
+    "text": "second"
+  },
+  {
+    "start": 659,
+    "end": 664,
+    "text": "went"
+  },
+  {
+    "start": 664,
+    "end": 673,
+    "text": "out"
+  },
+  {
+    "start": 678,
+    "end": 684,
+    "text": "Then"
+  },
+  {
+    "start": 684,
+    "end": 686,
+    "text": "a"
+  },
+  {
+    "start": 686,
+    "end": 699,
+    "text": "third"
+  },
+  {
+    "start": 707,
+    "end": 720,
+    "text": "Latte"
+  },
+  {
+    "start": 720,
+    "end": 732,
+    "text": "ran"
+  },
+  {
+    "start": 740,
+    "end": 744,
+    "text": "He"
+  },
+  {
+    "start": 744,
+    "end": 755,
+    "text": "splashed"
+  },
+  {
+    "start": 755,
+    "end": 763,
+    "text": "past"
+  },
+  {
+    "start": 763,
+    "end": 766,
+    "text": "the"
+  },
+  {
+    "start": 766,
+    "end": 772,
+    "text": "empty"
+  },
+  {
+    "start": 772,
+    "end": 778,
+    "text": "bus"
+  },
+  {
+    "start": 778,
+    "end": 787,
+    "text": "stop"
+  },
+  {
+    "start": 787,
+    "end": 795,
+    "text": "slipped"
+  },
+  {
+    "start": 795,
+    "end": 802,
+    "text": "around"
+  },
+  {
+    "start": 802,
+    "end": 804,
+    "text": "a"
+  },
+  {
+    "start": 804,
+    "end": 817,
+    "text": "puddle"
+  },
+  {
+    "start": 820,
+    "end": 825,
+    "text": "and"
+  },
+  {
+    "start": 825,
+    "end": 832,
+    "text": "reached"
+  },
+  {
+    "start": 832,
+    "end": 836,
+    "text": "his"
+  },
+  {
+    "start": 836,
+    "end": 847,
+    "text": "porch"
+  },
+  {
+    "start": 847,
+    "end": 853,
+    "text": "just"
+  },
+  {
+    "start": 853,
+    "end": 857,
+    "text": "as"
+  },
+  {
+    "start": 857,
+    "end": 860,
+    "text": "the"
+  },
+  {
+    "start": 860,
+    "end": 867,
+    "text": "last"
+  },
+  {
+    "start": 867,
+    "end": 874,
+    "text": "light"
+  },
+  {
+    "start": 874,
+    "end": 880,
+    "text": "went"
+  },
+  {
+    "start": 880,
+    "end": 891,
+    "text": "dark"
+  },
+  {
+    "start": 900,
+    "end": 915,
+    "text": "Inside"
+  },
+  {
+    "start": 915,
+    "end": 918,
+    "text": "he"
+  },
+  {
+    "start": 918,
+    "end": 922,
+    "text": "hit"
+  },
+  {
+    "start": 922,
+    "end": 925,
+    "text": "the"
+  },
+  {
+    "start": 925,
+    "end": 937,
+    "text": "switch"
+  },
+  {
+    "start": 947,
+    "end": 958,
+    "text": "Click"
+  },
+  {
+    "start": 975,
+    "end": 986,
+    "text": "Nothing"
+  },
+  {
+    "start": 997,
+    "end": 1000,
+    "text": "The"
+  },
+  {
+    "start": 1000,
+    "end": 1011,
+    "text": "entire"
+  },
+  {
+    "start": 1011,
+    "end": 1021,
+    "text": "street"
+  },
+  {
+    "start": 1021,
+    "end": 1025,
+    "text": "had"
+  },
+  {
+    "start": 1025,
+    "end": 1032,
+    "text": "lost"
+  },
+  {
+    "start": 1032,
+    "end": 1043,
+    "text": "power"
+  },
+  {
+    "start": 1053,
+    "end": 1062,
+    "text": "Except"
+  },
+  {
+    "start": 1062,
+    "end": 1066,
+    "text": "for"
+  },
+  {
+    "start": 1066,
+    "end": 1071,
+    "text": "one"
+  },
+  {
+    "start": 1071,
+    "end": 1083,
+    "text": "building"
+  },
+  {
+    "start": 1100,
+    "end": 1110,
+    "text": "Across"
+  },
+  {
+    "start": 1110,
+    "end": 1113,
+    "text": "the"
+  },
+  {
+    "start": 1113,
+    "end": 1123,
+    "text": "road"
+  },
+  {
+    "start": 1130,
+    "end": 1133,
+    "text": "the"
+  },
+  {
+    "start": 1133,
+    "end": 1146,
+    "text": "café"
+  },
+  {
+    "start": 1146,
+    "end": 1154,
+    "text": "still"
+  },
+  {
+    "start": 1154,
+    "end": 1168,
+    "text": "glowed"
+  },
+  {
+    "start": 1182,
+    "end": 1193,
+    "text": "Latte"
+  },
+  {
+    "start": 1193,
+    "end": 1203,
+    "text": "stared"
+  },
+  {
+    "start": 1203,
+    "end": 1208,
+    "text": "through"
+  },
+  {
+    "start": 1208,
+    "end": 1212,
+    "text": "his"
+  },
+  {
+    "start": 1212,
+    "end": 1221,
+    "text": "window"
+  },
+  {
+    "start": 1221,
+    "end": 1224,
+    "text": "as"
+  },
+  {
+    "start": 1224,
+    "end": 1226,
+    "text": "the"
+  },
+  {
+    "start": 1226,
+    "end": 1235,
+    "text": "clock"
+  },
+  {
+    "start": 1235,
+    "end": 1243,
+    "text": "reached"
+  },
+  {
+    "start": 1243,
+    "end": 1251,
+    "text": "eleven"
+  },
+  {
+    "start": 1251,
+    "end": 1263,
+    "text": "eleven"
+  },
+  {
+    "start": 1273,
+    "end": 1276,
+    "text": "The"
+  },
+  {
+    "start": 1276,
+    "end": 1287,
+    "text": "café"
+  },
+  {
+    "start": 1287,
+    "end": 1296,
+    "text": "door"
+  },
+  {
+    "start": 1296,
+    "end": 1305,
+    "text": "swung"
+  },
+  {
+    "start": 1305,
+    "end": 1316,
+    "text": "open"
+  },
+  {
+    "start": 1322,
+    "end": 1328,
+    "text": "Then"
+  },
+  {
+    "start": 1328,
+    "end": 1335,
+    "text": "came"
+  },
+  {
+    "start": 1335,
+    "end": 1343,
+    "text": "three"
+  },
+  {
+    "start": 1343,
+    "end": 1353,
+    "text": "tiny"
+  },
+  {
+    "start": 1353,
+    "end": 1366,
+    "text": "taps"
+  },
+  {
+    "start": 1370,
+    "end": 1381,
+    "text": "Tap"
+  },
+  {
+    "start": 1386,
+    "end": 1397,
+    "text": "Tap"
+  },
+  {
+    "start": 1401,
+    "end": 1413,
+    "text": "Tap"
+  },
+  {
+    "start": 1429,
+    "end": 1439,
+    "text": "Latte"
+  },
+  {
+    "start": 1439,
+    "end": 1445,
+    "text": "pulled"
+  },
+  {
+    "start": 1445,
+    "end": 1448,
+    "text": "his"
+  },
+  {
+    "start": 1448,
+    "end": 1457,
+    "text": "blanket"
+  },
+  {
+    "start": 1457,
+    "end": 1462,
+    "text": "over"
+  },
+  {
+    "start": 1462,
+    "end": 1466,
+    "text": "his"
+  },
+  {
+    "start": 1466,
+    "end": 1476,
+    "text": "head"
+  },
+  {
+    "start": 1485,
+    "end": 1494,
+    "text": "Whatever"
+  },
+  {
+    "start": 1494,
+    "end": 1498,
+    "text": "was"
+  },
+  {
+    "start": 1498,
+    "end": 1503,
+    "text": "out"
+  },
+  {
+    "start": 1503,
+    "end": 1509,
+    "text": "there"
+  },
+  {
+    "start": 1509,
+    "end": 1514,
+    "text": "could"
+  },
+  {
+    "start": 1514,
+    "end": 1521,
+    "text": "stay"
+  },
+  {
+    "start": 1521,
+    "end": 1526,
+    "text": "out"
+  },
+  {
+    "start": 1526,
+    "end": 1538,
+    "text": "there"
+  },
+  {
+    "start": 1548,
+    "end": 1552,
+    "text": "But"
+  },
+  {
+    "start": 1552,
+    "end": 1557,
+    "text": "then"
+  },
+  {
+    "start": 1557,
+    "end": 1560,
+    "text": "he"
+  },
+  {
+    "start": 1560,
+    "end": 1566,
+    "text": "heard"
+  },
+  {
+    "start": 1566,
+    "end": 1568,
+    "text": "a"
+  },
+  {
+    "start": 1568,
+    "end": 1582,
+    "text": "meow"
+  },
+  {
+    "start": 1592,
+    "end": 1598,
+    "text": "So"
+  },
+  {
+    "start": 1598,
+    "end": 1608,
+    "text": "small"
+  },
+  {
+    "start": 1608,
+    "end": 1611,
+    "text": "he"
+  },
+  {
+    "start": 1611,
+    "end": 1620,
+    "text": "almost"
+  },
+  {
+    "start": 1620,
+    "end": 1627,
+    "text": "missed"
+  },
+  {
+    "start": 1627,
+    "end": 1630,
+    "text": "it"
+  },
+  {
+    "start": 1630,
+    "end": 1638,
+    "text": "beneath"
+  },
+  {
+    "start": 1638,
+    "end": 1641,
+    "text": "the"
+  },
+  {
+    "start": 1641,
+    "end": 1653,
+    "text": "rain"
+  },
+  {
+    "start": 1666,
+    "end": 1669,
+    "text": "He"
+  },
+  {
+    "start": 1669,
+    "end": 1675,
+    "text": "looked"
+  },
+  {
+    "start": 1675,
+    "end": 1688,
+    "text": "again"
+  },
+  {
+    "start": 1699,
+    "end": 1708,
+    "text": "Behind"
+  },
+  {
+    "start": 1708,
+    "end": 1711,
+    "text": "the"
+  },
+  {
+    "start": 1711,
+    "end": 1721,
+    "text": "foggy"
+  },
+  {
+    "start": 1721,
+    "end": 1731,
+    "text": "café"
+  },
+  {
+    "start": 1731,
+    "end": 1744,
+    "text": "window"
+  },
+  {
+    "start": 1747,
+    "end": 1752,
+    "text": "an"
+  },
+  {
+    "start": 1752,
+    "end": 1765,
+    "text": "enormous"
+  },
+  {
+    "start": 1765,
+    "end": 1775,
+    "text": "shadow"
+  },
+  {
+    "start": 1775,
+    "end": 1791,
+    "text": "rose"
+  },
+  {
+    "start": 1796,
+    "end": 1804,
+    "text": "Two"
+  },
+  {
+    "start": 1804,
+    "end": 1814,
+    "text": "pointed"
+  },
+  {
+    "start": 1814,
+    "end": 1828,
+    "text": "ears"
+  },
+  {
+    "start": 1837,
+    "end": 1848,
+    "text": "Something"
+  },
+  {
+    "start": 1848,
+    "end": 1857,
+    "text": "long"
+  },
+  {
+    "start": 1857,
+    "end": 1867,
+    "text": "dragged"
+  },
+  {
+    "start": 1867,
+    "end": 1875,
+    "text": "across"
+  },
+  {
+    "start": 1875,
+    "end": 1878,
+    "text": "the"
+  },
+  {
+    "start": 1878,
+    "end": 1890,
+    "text": "floor"
+  },
+  {
+    "start": 1897,
+    "end": 1902,
+    "text": "It"
+  },
+  {
+    "start": 1902,
+    "end": 1910,
+    "text": "moved"
+  },
+  {
+    "start": 1910,
+    "end": 1916,
+    "text": "toward"
+  },
+  {
+    "start": 1916,
+    "end": 1919,
+    "text": "the"
+  },
+  {
+    "start": 1919,
+    "end": 1931,
+    "text": "door"
+  },
+  {
+    "start": 1944,
+    "end": 1956,
+    "text": "Latte's"
+  },
+  {
+    "start": 1956,
+    "end": 1967,
+    "text": "paws"
+  },
+  {
+    "start": 1967,
+    "end": 1977,
+    "text": "shook"
+  },
+  {
+    "start": 1984,
+    "end": 1987,
+    "text": "He"
+  },
+  {
+    "start": 1987,
+    "end": 1994,
+    "text": "wanted"
+  },
+  {
+    "start": 1994,
+    "end": 1997,
+    "text": "to"
+  },
+  {
+    "start": 1997,
+    "end": 2011,
+    "text": "hide"
+  },
+  {
+    "start": 2018,
+    "end": 2022,
+    "text": "But"
+  },
+  {
+    "start": 2022,
+    "end": 2025,
+    "text": "the"
+  },
+  {
+    "start": 2025,
+    "end": 2035,
+    "text": "tiny"
+  },
+  {
+    "start": 2035,
+    "end": 2047,
+    "text": "meow"
+  },
+  {
+    "start": 2047,
+    "end": 2054,
+    "text": "came"
+  },
+  {
+    "start": 2054,
+    "end": 2067,
+    "text": "again"
+  },
+  {
+    "start": 2070,
+    "end": 2075,
+    "text": "and"
+  },
+  {
+    "start": 2075,
+    "end": 2079,
+    "text": "this"
+  },
+  {
+    "start": 2079,
+    "end": 2086,
+    "text": "time"
+  },
+  {
+    "start": 2086,
+    "end": 2089,
+    "text": "he"
+  },
+  {
+    "start": 2089,
+    "end": 2097,
+    "text": "crossed"
+  },
+  {
+    "start": 2097,
+    "end": 2100,
+    "text": "the"
+  },
+  {
+    "start": 2100,
+    "end": 2112,
+    "text": "street"
+  },
+  {
+    "start": 2122,
+    "end": 2126,
+    "text": "At"
+  },
+  {
+    "start": 2126,
+    "end": 2128,
+    "text": "the"
+  },
+  {
+    "start": 2128,
+    "end": 2138,
+    "text": "café"
+  },
+  {
+    "start": 2138,
+    "end": 2148,
+    "text": "door"
+  },
+  {
+    "start": 2154,
+    "end": 2157,
+    "text": "he"
+  },
+  {
+    "start": 2157,
+    "end": 2163,
+    "text": "saw"
+  },
+  {
+    "start": 2163,
+    "end": 2167,
+    "text": "what"
+  },
+  {
+    "start": 2167,
+    "end": 2170,
+    "text": "had"
+  },
+  {
+    "start": 2170,
+    "end": 2173,
+    "text": "been"
+  },
+  {
+    "start": 2173,
+    "end": 2180,
+    "text": "making"
+  },
+  {
+    "start": 2180,
+    "end": 2183,
+    "text": "the"
+  },
+  {
+    "start": 2183,
+    "end": 2196,
+    "text": "taps"
+  },
+  {
+    "start": 2202,
+    "end": 2207,
+    "text": "A"
+  },
+  {
+    "start": 2207,
+    "end": 2224,
+    "text": "soaking-wet"
+  },
+  {
+    "start": 2224,
+    "end": 2236,
+    "text": "kitten"
+  },
+  {
+    "start": 2241,
+    "end": 2247,
+    "text": "Too"
+  },
+  {
+    "start": 2247,
+    "end": 2253,
+    "text": "little"
+  },
+  {
+    "start": 2253,
+    "end": 2256,
+    "text": "to"
+  },
+  {
+    "start": 2256,
+    "end": 2262,
+    "text": "reach"
+  },
+  {
+    "start": 2262,
+    "end": 2266,
+    "text": "the"
+  },
+  {
+    "start": 2266,
+    "end": 2281,
+    "text": "handle"
+  },
+  {
+    "start": 2289,
+    "end": 2293,
+    "text": "The"
+  },
+  {
+    "start": 2293,
+    "end": 2305,
+    "text": "enormous"
+  },
+  {
+    "start": 2305,
+    "end": 2316,
+    "text": "shadow"
+  },
+  {
+    "start": 2316,
+    "end": 2324,
+    "text": "rose"
+  },
+  {
+    "start": 2324,
+    "end": 2335,
+    "text": "behind"
+  },
+  {
+    "start": 2335,
+    "end": 2341,
+    "text": "her"
+  },
+  {
+    "start": 2346,
+    "end": 2357,
+    "text": "Latte"
+  },
+  {
+    "start": 2357,
+    "end": 2368,
+    "text": "squeezed"
+  },
+  {
+    "start": 2368,
+    "end": 2372,
+    "text": "his"
+  },
+  {
+    "start": 2372,
+    "end": 2379,
+    "text": "eyes"
+  },
+  {
+    "start": 2379,
+    "end": 2390,
     "text": "shut"
   },
   {
+    "start": 2397,
+    "end": 2401,
+    "text": "When"
+  },
+  {
+    "start": 2401,
+    "end": 2405,
+    "text": "he"
+  },
+  {
+    "start": 2405,
+    "end": 2413,
+    "text": "opened"
+  },
+  {
+    "start": 2413,
+    "end": 2421,
+    "text": "them"
+  },
+  {
+    "start": 2424,
+    "end": 2430,
+    "text": "there"
+  },
+  {
+    "start": 2430,
+    "end": 2434,
+    "text": "was"
+  },
+  {
+    "start": 2434,
+    "end": 2446,
+    "text": "Mocha"
+  },
+  {
+    "start": 2451,
+    "end": 2464,
+    "text": "struggling"
+  },
+  {
+    "start": 2464,
+    "end": 2467,
+    "text": "with"
+  },
+  {
+    "start": 2467,
+    "end": 2469,
+    "text": "a"
+  },
+  {
+    "start": 2469,
+    "end": 2480,
+    "text": "blanket"
+  },
+  {
+    "start": 2480,
+    "end": 2491,
+    "text": "almost"
+  },
+  {
+    "start": 2491,
+    "end": 2501,
+    "text": "twice"
+  },
+  {
+    "start": 2501,
+    "end": 2505,
+    "text": "his"
+  },
+  {
+    "start": 2505,
+    "end": 2521,
+    "text": "size"
+  },
+  {
+    "start": 2526,
+    "end": 2535,
+    "text": "Essie"
+  },
+  {
+    "start": 2535,
+    "end": 2542,
+    "text": "brought"
+  },
+  {
+    "start": 2542,
+    "end": 2550,
+    "text": "fresh"
+  },
+  {
+    "start": 2550,
+    "end": 2561,
+    "text": "water"
+  },
+  {
+    "start": 2569,
+    "end": 2577,
+    "text": "Mocha"
+  },
+  {
+    "start": 2577,
+    "end": 2582,
+    "text": "laid"
+  },
+  {
+    "start": 2582,
+    "end": 2585,
+    "text": "the"
+  },
+  {
+    "start": 2585,
+    "end": 2594,
+    "text": "blanket"
+  },
+  {
+    "start": 2594,
+    "end": 2599,
+    "text": "by"
+  },
+  {
+    "start": 2599,
+    "end": 2601,
+    "text": "the"
+  },
+  {
+    "start": 2601,
+    "end": 2613,
+    "text": "door"
+  },
+  {
+    "start": 2618,
+    "end": 2623,
+    "text": "The"
+  },
+  {
+    "start": 2623,
+    "end": 2631,
+    "text": "kitten"
+  },
+  {
+    "start": 2631,
+    "end": 2640,
+    "text": "stepped"
+  },
+  {
+    "start": 2640,
+    "end": 2658,
+    "text": "inside"
+  },
+  {
+    "start": 2658,
+    "end": 2664,
+    "text": "and"
+  },
+  {
+    "start": 2664,
+    "end": 2675,
+    "text": "Latte"
+  },
+  {
+    "start": 2675,
+    "end": 2689,
+    "text": "followed"
+  },
+  {
+    "start": 2697,
+    "end": 2706,
+    "text": "Beside"
+  },
+  {
+    "start": 2706,
+    "end": 2708,
+    "text": "a"
+  },
+  {
+    "start": 2708,
+    "end": 2726,
+    "text": "flowerpot"
+  },
+  {
+    "start": 2726,
+    "end": 2736,
+    "text": "Latte"
+  },
+  {
+    "start": 2736,
+    "end": 2745,
+    "text": "noticed"
+  },
+  {
+    "start": 2745,
+    "end": 2746,
+    "text": "a"
+  },
+  {
+    "start": 2746,
+    "end": 2752,
+    "text": "little"
+  },
+  {
+    "start": 2752,
+    "end": 2766,
+    "text": "sign"
+  },
+  {
+    "start": 2770,
+    "end": 2775,
+    "text": "It"
+  },
+  {
+    "start": 2775,
+    "end": 2786,
+    "text": "said"
+  },
+  {
+    "start": 2801,
+    "end": 2805,
+    "text": "If"
+  },
+  {
+    "start": 2805,
+    "end": 2811,
+    "text": "you're"
+  },
+  {
+    "start": 2811,
+    "end": 2820,
+    "text": "scared"
+  },
+  {
+    "start": 2820,
+    "end": 2822,
+    "text": "of"
+  },
+  {
+    "start": 2822,
+    "end": 2825,
+    "text": "the"
+  },
+  {
+    "start": 2825,
+    "end": 2836,
+    "text": "dark"
+  },
+  {
+    "start": 2845,
+    "end": 2850,
+    "text": "come"
+  },
+  {
+    "start": 2850,
+    "end": 2869,
+    "text": "inside"
+  },
+  {
+    "start": 2889,
+    "end": 2897,
+    "text": "Mocha"
+  },
+  {
+    "start": 2897,
+    "end": 2905,
+    "text": "opened"
+  },
+  {
+    "start": 2905,
+    "end": 2907,
+    "text": "the"
+  },
+  {
+    "start": 2907,
+    "end": 2921,
+    "text": "café"
+  },
+  {
+    "start": 2921,
+    "end": 2929,
+    "text": "every"
+  },
+  {
+    "start": 2929,
+    "end": 2937,
+    "text": "night"
+  },
+  {
+    "start": 2937,
+    "end": 2941,
+    "text": "at"
+  },
+  {
+    "start": 2941,
+    "end": 2949,
+    "text": "eleven"
+  },
+  {
+    "start": 2949,
+    "end": 2962,
+    "text": "eleven"
+  },
+  {
+    "start": 2966,
+    "end": 2973,
+    "text": "just"
+  },
+  {
+    "start": 2973,
+    "end": 2979,
+    "text": "after"
+  },
+  {
+    "start": 2979,
+    "end": 2982,
+    "text": "the"
+  },
+  {
+    "start": 2982,
+    "end": 2990,
+    "text": "last"
+  },
+  {
+    "start": 2990,
+    "end": 2998,
+    "text": "bus"
+  },
+  {
+    "start": 2998,
+    "end": 3009,
+    "text": "left"
+  },
+  {
+    "start": 3013,
+    "end": 3018,
+    "text": "in"
+  },
+  {
+    "start": 3018,
+    "end": 3023,
+    "text": "case"
+  },
+  {
+    "start": 3023,
+    "end": 3030,
+    "text": "someone"
+  },
+  {
+    "start": 3030,
+    "end": 3035,
+    "text": "had"
+  },
+  {
+    "start": 3035,
+    "end": 3042,
+    "text": "nowhere"
+  },
+  {
+    "start": 3042,
+    "end": 3044,
+    "text": "to"
+  },
+  {
+    "start": 3044,
+    "end": 3053,
+    "text": "go"
+  },
+  {
+    "start": 3067,
+    "end": 3071,
+    "text": "He"
+  },
+  {
+    "start": 3071,
+    "end": 3077,
+    "text": "wasn't"
+  },
+  {
+    "start": 3077,
+    "end": 3085,
+    "text": "waiting"
+  },
+  {
+    "start": 3085,
+    "end": 3088,
+    "text": "for"
+  },
+  {
+    "start": 3088,
+    "end": 3105,
+    "text": "customers"
+  },
+  {
+    "start": 3114,
+    "end": 3117,
+    "text": "He"
+  },
+  {
+    "start": 3117,
+    "end": 3120,
+    "text": "was"
+  },
+  {
+    "start": 3120,
+    "end": 3126,
+    "text": "leaving"
+  },
+  {
+    "start": 3126,
+    "end": 3129,
+    "text": "the"
+  },
+  {
+    "start": 3129,
+    "end": 3135,
+    "text": "light"
+  },
+  {
+    "start": 3135,
+    "end": 3139,
+    "text": "on"
+  },
+  {
+    "start": 3139,
+    "end": 3143,
+    "text": "for"
+  },
+  {
+    "start": 3143,
+    "end": 3153,
+    "text": "anyone"
+  },
+  {
+    "start": 3153,
+    "end": 3157,
+    "text": "who"
+  },
+  {
+    "start": 3157,
+    "end": 3165,
+    "text": "needed"
+  },
+  {
+    "start": 3165,
+    "end": 3171,
+    "text": "it"
+  },
+  {
+    "start": 3193,
+    "end": 3206,
+    "text": "Latte"
+  },
+  {
+    "start": 3206,
+    "end": 3212,
+    "text": "sat"
+  },
+  {
+    "start": 3212,
+    "end": 3221,
+    "text": "beside"
+  },
+  {
+    "start": 3221,
+    "end": 3224,
+    "text": "the"
+  },
+  {
+    "start": 3224,
+    "end": 3236,
+    "text": "kitten"
+  },
+  {
+    "start": 3244,
+    "end": 3247,
+    "text": "The"
+  },
+  {
+    "start": 3247,
+    "end": 3255,
+    "text": "street"
+  },
+  {
     "start": 3255,
-    "end": 3280,
-    "text": "When he opened them"
+    "end": 3263,
+    "text": "stayed"
   },
   {
-    "start": 3283,
-    "end": 3322,
-    "text": "there was Mocha struggling"
+    "start": 3263,
+    "end": 3275,
+    "text": "dark"
   },
   {
-    "start": 3322,
-    "end": 3350,
-    "text": "with a blanket almost"
+    "start": 3280,
+    "end": 3284,
+    "text": "But"
   },
   {
-    "start": 3350,
-    "end": 3380,
-    "text": "twice his size"
+    "start": 3284,
+    "end": 3287,
+    "text": "for"
   },
   {
-    "start": 3391,
-    "end": 3428,
-    "text": "Essie brought fresh water"
+    "start": 3287,
+    "end": 3290,
+    "text": "the"
   },
   {
-    "start": 3513,
-    "end": 3539,
-    "text": "Mocha laid the blanket"
+    "start": 3290,
+    "end": 3296,
+    "text": "first"
   },
   {
-    "start": 3539,
-    "end": 3559,
-    "text": "by the door"
+    "start": 3296,
+    "end": 3310,
+    "text": "time"
   },
   {
-    "start": 3581,
-    "end": 3620,
-    "text": "The kitten stepped inside"
+    "start": 3310,
+    "end": 3318,
+    "text": "neither"
   },
   {
-    "start": 3620,
-    "end": 3652,
-    "text": "and Latte followed"
+    "start": 3318,
+    "end": 3321,
+    "text": "of"
   },
   {
-    "start": 3704,
-    "end": 3744,
-    "text": "Beside a flowerpot Latte"
+    "start": 3321,
+    "end": 3325,
+    "text": "them"
   },
   {
-    "start": 3744,
-    "end": 3774,
-    "text": "noticed a little sign"
+    "start": 3325,
+    "end": 3329,
+    "text": "was"
   },
   {
-    "start": 3777,
-    "end": 3794,
-    "text": "It said"
-  },
-  {
-    "start": 3808,
-    "end": 3830,
-    "text": "If you're scared of"
-  },
-  {
-    "start": 3830,
-    "end": 3877,
-    "text": "the dark come inside"
-  },
-  {
-    "start": 3904,
-    "end": 3936,
-    "text": "Mocha opened the café"
-  },
-  {
-    "start": 3936,
-    "end": 3964,
-    "text": "every night at eleven"
-  },
-  {
-    "start": 3964,
-    "end": 3997,
-    "text": "eleven just after the"
-  },
-  {
-    "start": 3997,
-    "end": 4033,
-    "text": "last bus left in"
-  },
-  {
-    "start": 4033,
-    "end": 4057,
-    "text": "case someone had nowhere"
-  },
-  {
-    "start": 4057,
-    "end": 4069,
-    "text": "to go"
-  },
-  {
-    "start": 4090,
-    "end": 4111,
-    "text": "He wasn't waiting for"
-  },
-  {
-    "start": 4111,
-    "end": 4149,
-    "text": "customers He was leaving"
-  },
-  {
-    "start": 4149,
-    "end": 4166,
-    "text": "the light on for"
-  },
-  {
-    "start": 4166,
-    "end": 4195,
-    "text": "anyone who needed it"
-  },
-  {
-    "start": 4224,
-    "end": 4255,
-    "text": "Latte sat beside the"
-  },
-  {
-    "start": 4255,
-    "end": 4294,
-    "text": "kitten The street stayed"
-  },
-  {
-    "start": 4294,
-    "end": 4321,
-    "text": "dark But for the"
-  },
-  {
-    "start": 4321,
-    "end": 4352,
-    "text": "first time neither of"
-  },
-  {
-    "start": 4352,
-    "end": 4377,
-    "text": "them was afraid"
+    "start": 3329,
+    "end": 3345,
+    "text": "afraid"
   }
 ]

@@ -14,5 +14,5 @@ if draft:
  for i,(a,b) in enumerate([(1,12),(13,27),(28,44),(45,60)],1):sheet([s for s in plan['shots'] if a<=s['number']<=b],f'draft-act-{i}.jpg',4,180)
 else:
  sheet(plan['shots'],'The_Door_At_1111_Polish_Storyboard.jpg',8,180)
- picks=['01','03','18','26','39B','46','50','53','55','57A','60A','60B'];sheet([s for s in plan['shots'] if s['id'] in picks],'The_Door_At_1111_Polish_Keyframes.jpg',4,270)
+ picks=['01','03','20','26','39B','46','50B','53','55','57A','60A','60B'];sheet([s for s in plan['shots'] if s['id'] in picks],'The_Door_At_1111_Polish_Keyframes.jpg',4,270)
 print('Rendered-frame sheets saved.')
