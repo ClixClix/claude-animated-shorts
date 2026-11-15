@@ -17,7 +17,7 @@ export function createCity(){
  for(const road of CITY_ROADS){
   // Perpendicular asphalt planes previously shared the exact same depth at intersections.
   // The horizontal crossing layer sits 12 mm higher, preventing deterministic z-fighting.
-  const alongX=road.size[0]>road.size[2],surface:[number,number,number]=[road.position[0],alongX?.012:0,road.position[2]];
+  const alongX=road.size[0]>road.size[2],surface:[number,number,number]=[road.position[0],alongX ? 0.012 : 0,road.position[2]];
   mesh(new T.BoxGeometry(...road.size),asphalt,surface,road.id);
   for(const sign of [-1,1]){
    const size=alongX?[road.size[0],.1,.7]:[.7,.1,road.size[2]],p=surface.map((v,i)=>v+(i===(alongX?2:0)?sign*(road.size[alongX?2:0]/2+.38):i===1?-.015:0));
