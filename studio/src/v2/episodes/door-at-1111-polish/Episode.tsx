@@ -1,4 +1,4 @@
-import {TownPopulation} from './population';
+import {TownPopulation,cafeCardLightAt} from './population';
 import captions from './captions.json';
 import React,{useEffect,useMemo} from 'react';
 import edit from './edit.json';
@@ -69,7 +69,7 @@ const Inner:React.FC<EpisodeProps>=({shots,cues,optimize=true,previewScale=1})=>
  kg.restore();kitten.mesh.material.map!.needsUpdate=true;
  kitten.mesh.position.set(...kid);kitten.mesh.rotation.y=Math.atan2(s.camera[0]-kid[0],s.camera[2]-kid[2]);kitten.mesh.visible=kittenRevealed(s)&&!earlierInsert;
  kittenShadow.mesh.visible=kitten.mesh.visible;kittenShadow.mesh.position.set(kid[0],s.shot.number===47?.038:kid[1]+.008,kid[2]);
- kitten.mesh.material.color.setRGB(lerp(.77,1,beat(s.t,119,125)),lerp(.83,1,beat(s.t,119,125)),lerp(.88,1,beat(s.t,119,125)));
+ kitten.mesh.material.color.setRGB(...cafeCardLightAt(kid,[.77,.83,.88]));
  const h=w.handle(),tap=w.tapPoint(),pushPoint=w.pushPoint();
  const mp=s.mocha.position,ep=s.essie.position,lp=s.latte.position;
  const clothHand=new T.Vector3().fromBufferAttribute(w.blanket.geometry.getAttribute('position'),13).toArray() as V3;

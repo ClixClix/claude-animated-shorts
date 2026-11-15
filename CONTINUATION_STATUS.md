@@ -1,47 +1,31 @@
-# Latest update: narration approved and generated
+# Current What If Cats V2 status
 
-Read `EPISODE1_AUDIO_DELIVERY.md` first. The three approved patch calls are COMPLETE: 258 actual credits, no retries. Their 122.208s composite and original/processed caches are preserved and available via encrypted local transfer. The approval is consumed; do not request the same authorization again or regenerate missing audio. `generation-receipt.json` records the result and blocks repeat calls.
+Delivery branch: `v2-local-render`. Worktree branch may differ. Inspect Git status/log before edits. Preserve uncommitted files and prior movies.
 
-Visual synchronization of those three passages is STILL PENDING. Existing lamp/pan source fixes are delivered, but the active movie/edit retains old narration. Actual timing and the 19 written shot directions are ready in `timed-storyboard.json`. Finish the remaining focused staging locally using the exact source-change map, preserve the working old composition, and do not claim completion based on audio QA. The user has low usage and wants only small changes.
+## Latest review and requested small fix
 
-Earlier pending-approval text below describes the frozen pre-generation proposal and is superseded by this update.
+The user uploaded `Polish_Review_68c31d7f_540p.mp4` (111.633s / 3,349 frames) and says the visuals are very close. Keep changes small. Latest explicit request: **kittens must not remain dark once inside the cafe**.
 
----
+This lighting fix is implemented in source: supporting cats now use the existing illustrated-character `cardShade`, with a smooth position-based transition to warm cafe light. The main kitten uses the same doorway-position tint. Dark alley guests stay dark while outside the side wall. No character artwork, cafe geometry, lamps, routes, narration or music changed in this pass.
 
-# Active task: Episode 1 story polish (2026-11-15)
+Frame samples across all 80 cuts of that exact uploaded source hash were inspected. Updated source has not been rendered in the cloud. TypeScript/story/rig checks and all 3,349 CPU character-alpha states passed. New assertions check readable warm indoor guest materials, zero emissive intensity and no cafe light leaking onto alley cats. Actual updated local playback remains required.
 
-The user says this is already very good and wants VERY SMALL changes. Prioritize the remaining lamp placement/occlusion and missing window-to-door pan; preserve everything else that works. Usage was reported at 8%, so finish/deliver essentials before additional polish.
+On Windows: update source, then `Preview-Polish.cmd`. This renders the existing edit with the latest visual corrections and the ORIGINAL narration. No API credit use or narration generation is involved. The user renders locally at C:\V2; no cloud scene/video rendering is authorized.
 
-Read `EPISODE1_STORY_POLISH_PLAN.md` and `EPISODE1_STORY_POLISH_COMPARISON.md` first. The exact revised full script and 19 written storyboard shots are prepared in `studio/src/v2/episodes/door-at-1111-story-polish/`. Three replacement narration segments total 646 characters/estimated credits; approximately 91.90s of the existing recording is retained. Full proposed script: 2,352 characters. Runtime estimate: 119.79–133.74s, not a target.
+## Approved story-narration revision: audio complete, visual integration pending
 
-**No new paid generation is authorized.** Request approval for three exact one-time patch calls, no automatic retries, before generating anything. Do not regenerate the full recording. Keep approved Adam, natural synthesis 1.0x and offline 1.35x varispeed. All old caches/movies stay intact. New provider alignment is required before revised captions/cuts/SFX and a separate revised render composition can be completed.
+Read `EPISODE1_AUDIO_DELIVERY.md`. Three authorized narration patches succeeded once for **258 actual credits**, below the 646-credit cap. Authorization is consumed. `generation-receipt.json` records completion and blocks another generation. Never regenerate missing local audio; restore the encrypted cache instead.
 
-Additional user steering: Latte follows the mouse into the DARK existing alley beside the cafe. Streetlamps must form orderly curb rows and not block subjects. Restore the pan on “It moved toward the door.” The latter lamp/pan source fixes are implemented independently in the existing polish composition; their latest technical result is recorded below/in CURRENT_FIX_REVIEW.md. They do not activate the proposed new narration.
+The revised composite is 122.208 seconds, true peak -3.01 dBTP, with unaffected source speech retained. Files and actual provider-aligned timings are cached. `timed-storyboard.json` has 19 written affected-shot directions/timings, NOT actual rendered frames. Original/processed caches and an encrypted local transfer are preserved. The unlock code is in the previous chat; never commit it or an API key.
 
-Technical checks completed: TypeScript/regressions, curb placement, all 3,349 geometry/character-alpha states and five narration-plan test groups passed. Actual local playback remains pending.
+The new opening, dark-alley mouse chase, open-door kitten discovery and Latte helping still need their focused visual implementation/synchronization. The current preview does NOT include those revised spoken passages. `EPISODE1_STORY_POLISH_PLAN.md` maps source changes; `EPISODE1_STORY_POLISH_COMPARISON.md` contains exact before/after lines. Their old pending-approval text is historical and superseded by the completed generation receipt.
 
-Checkpoint before this pass: `checkpoint/episode1-before-story-polish-20261115` at `5b8892f`. Active delivery remains `v2-local-render`. Normal-chat continuation must honor this newer task rather than restarting the earlier visual pass. No cloud video rendering.
+Preserve the emotional ending, approved character designs, cafe fixtures/style, original BridgeShort and previous compositions. No full episode rewrite or next episode. Maximum shot length four seconds; one subtitle word at a time; no added narration gaps.
 
----
+## Continuation and local workflow
 
-# Current continuation status
+Read `HANDOFF_FOR_CHATGPT.md`, `CREATIVE_AND_QA_GUIDE.md`, `REFERENCE_QUALITY_NOTES.md` and `CHATGPT_CONTINUATION_PROMPT.md`. For a chat without repo access, use `Export-ChatGPT-Context.ps1` and upload the source ZIP plus the latest actual review movie. Upload the revised MP3/metadata separately if needed; a new chat cannot infer private cache contents or inherit previous attachments/tools.
 
-Active delivery branch: `v2-local-render` in `ClixClix/claude-animated-shorts`. Use Git log and `CURRENT_FIX_REVIEW.md` for the latest source candidate; do not rely on historic setup completion counts.
+Original cached Adam at straight 1.35x varispeed remains selected; Daniel and Sawyer fallback are unchanged. No new paid narration is authorized. Keep private music/reference media/credentials outside public Git. Source updates must remain in `LOCAL_UPDATE_FILES.json`; installed Windows updater rejects `references/...`.
 
-## Active episode
-
-**The Door at 11:11** is ready for a refreshed local review render after the current source pass. It is NOT visually approved. The uploaded baseline reviewed for this pass was `Polish_Review_d73d13af_540p.mp4`.
-
-The requested sun/street/city/lamps/mouse/bus shelter/blackout/window/alley/nose/cafe-painting fixes are implemented in source. `CURRENT_FIX_REVIEW.md` maps each request to its behavior and states the limits of verification. Current instructions require checking work carefully; the earlier request to skip checks was temporary and superseded.
-
-## Next action
-
-On Windows, close Studio/video players, update the source, then run `Preview-Polish.cmd` (checks enabled). Review the version-stamped MP4 selected by Explorer against the actual requests and reference shorts. Do not claim the source candidate is a finished, visually approved episode before that playback review. No cloud scene/video rendering is authorized.
-
-Do not start the next episode without approval or explicit new instructions. Preserve original movies, private caches, BridgeShort, narrator configuration and approved cat drawings. No new paid narration is authorized.
-
-## Continue in normal ChatGPT
-
-Read `HANDOFF_FOR_CHATGPT.md`, `CREATIVE_AND_QA_GUIDE.md`, `REFERENCE_QUALITY_NOTES.md` and `CHATGPT_CONTINUATION_PROMPT.md`. Use `Export-ChatGPT-Context.ps1` to create a source ZIP for a chat without connector access. Upload the latest review MP4 separately; keep runtime audio/private assets on the local PC. New chats do not automatically inherit tools, files or this conversation. Use `EPISODE_BRIEF_TEMPLATE.md` for an approved next episode.
-
-The source-export script targets PowerShell 5.1. Its path/manifest behavior was reviewed, but it has not been executed on Windows in this Linux session. The current local rendering commands must not be represented as Windows-verified solely because Linux code checks passed.
+Do not claim reference-level visual quality from compilation or CPU geometry/material tests. Verify the exact updated LOCAL movie and encoded audio. Source-export/private-restoration scripts target Windows, but actual Windows execution is not verified in this Linux session.

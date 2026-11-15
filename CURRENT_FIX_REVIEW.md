@@ -1,3 +1,15 @@
+# Latest: indoor kitten lighting
+
+Baseline visually sampled: `Polish_Review_68c31d7f_540p.mp4`, all 80 shot midpoints. Supporting kittens were visibly much darker than the leads inside the cafe. The cause was plain Lambert shading combined with a scene-time/route-progress dark multiplier.
+
+The correction reuses the existing illustrated `cardShade` and uses actual ROOM boundaries for a smooth warm doorway transition. Indoor guests now retain readable faces/coats; outside alley cats stay dim. The main kitten shares the same position-based tint. No new lights, artwork changes, layout changes, paid audio or cloud scene renders.
+
+TypeScript, 29,982 story/caption/route and 12,082 rig/city checks passed. All 3,349 CPU alpha/material frame states pass, including readable indoor guest materials, no emissive glow and no interior tint through the alley wall. This is technical evidence; updated local visual approval remains pending.
+
+The three new narrated story passages remain a separate pending visual-integration task; their audio generation is complete for 258 actual credits. See CONTINUATION_STATUS.md and EPISODE1_AUDIO_DELIVERY.md.
+
+---
+
 # Latest update: narration approved and generated
 
 Read `EPISODE1_AUDIO_DELIVERY.md` first. The three approved patch calls are COMPLETE: 258 actual credits, no retries. Their 122.208s composite and original/processed caches are preserved and available via encrypted local transfer. The approval is consumed; do not request the same authorization again or regenerate missing audio. `generation-receipt.json` records the result and blocks repeat calls.

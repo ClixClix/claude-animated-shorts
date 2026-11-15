@@ -36,6 +36,15 @@ export function run(props){
  const population=new TownPopulation(),cast=['latte','mocha','essie'].map(id=>({id,card:createEpisodeCat(id)})),kitten=createKitten();
  for(let frame=0;frame<props.shots.at(-1).end;frame++){
   const s=stateAt(frame,props.shots);population.update(s);population.root.updateMatrixWorld(true);
+  for(const actor of population.actors){
+   const mesh=actor.mesh,p=mesh.position,inside=Math.abs(p.x)<3.75&&p.z>-3.8&&p.z<3.8;
+   if(mesh.visible&&inside){
+    check(mesh.material.customProgramCacheKey()==='card9','Interior supporting cat lacks illustrated bright-floor shading');
+    check(mesh.material.color.r>=.99&&mesh.material.color.g>=.95&&mesh.material.color.b>=.88,'Interior supporting kitten remains dark: '+actor.id+' frame '+frame);
+    check(mesh.material.emissiveIntensity===0,'Interior kitten is emissive instead of using character shading');
+   }
+   if(mesh.visible&&['supporting-cat-6','supporting-cat-7'].includes(actor.id)&&p.x>4.2)check(mesh.material.color.g<.45,'Alley kitten receives interior lighting through the cafe side wall');
+  }
   const earlier=s.shot.number===58&&s.shot.variant===0||s.shot.number===59&&s.shot.variant===1;population.root.visible=!earlier;
   cast.forEach(c=>{c.card.updateActor(s[c.id],s);c.card.mesh.visible=(!earlier||c.id==='mocha')&&(c.id==='latte'||s.shot.number>=50)&&!(c.id==='latte'&&[39,40,41].includes(s.shot.number))&&!(s.shot.number===59&&s.shot.variant===0);c.card.mesh.updateMatrixWorld(true);});
   kitten.update({...storyAt(0),kitten:s.kitten,kittenFear:s.kittenFear,kittenSmile:s.kittenSmile,camera:s.camera,target:s.target},s.t*30);kitten.mesh.visible=s.shot.number>=46&&!earlier;kitten.mesh.position.set(...s.kitten);kitten.mesh.rotation.y=Math.atan2(s.camera[0]-s.kitten[0],s.camera[2]-s.kitten[2]);kitten.mesh.updateMatrixWorld(true);

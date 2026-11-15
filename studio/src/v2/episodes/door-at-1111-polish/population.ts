@@ -1,8 +1,18 @@
 import * as T from 'three';
 import {NOINK} from '../../../videos/bridge/ink';
+import {cardShade} from '../../../videos/bridge/cardshade';
+import {ROOM,V3} from '../../cafe/config';
 import {EpisodeState,streetActivity} from './timeline';
 import {shelterState,streetCatPosition} from './shelter';
 import {contactShadow} from './actors';
+
+/** Doorway transition in world space; an alley cat beside the cafe stays outside. */
+export function cafeCardLightAt(position:V3,outdoor:V3):V3{
+ const smooth=(v:number)=>{const u=Math.max(0,Math.min(1,v));return u*u*(3-2*u);};
+ const interior=Math.min(smooth((ROOM.half+.15-Math.abs(position[0]))/.4),smooth((position[2]-ROOM.back+.15)/.4),smooth((ROOM.front+.3-position[2])/.65));
+ const warm:V3=[1.02,.98,.91];
+ return outdoor.map((v,i)=>v+(warm[i]-v)*interior) as V3;
+}
 
 /** Supporting cast only: simple short-haired designs, never copies of the three leads. */
 export class TownPopulation{
@@ -15,7 +25,7 @@ export class TownPopulation{
  private cats=Array.from({length:8},(_,i)=>{
   const canvas=document.createElement('canvas');canvas.width=320;canvas.height=400;
   const texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;
-  const mat=new T.MeshLambertMaterial({map:texture,transparent:true,alphaTest:.08,side:T.DoubleSide,depthWrite:false});
+  const mat=cardShade(new T.MeshLambertMaterial({map:texture,transparent:true,alphaTest:.08,side:T.DoubleSide,depthWrite:false}));
   const geo=new T.PlaneGeometry(.84,1.05);geo.translate(0,.449,0);
   const mesh=new T.Mesh(geo,mat);mesh.name='supporting-cat-'+i;mesh.layers.set(NOINK);
   const shadow=contactShadow(.56,.35);this.root.add(mesh,shadow.mesh);
@@ -50,7 +60,8 @@ export class TownPopulation{
    for(const x of [-34,34]){oval(x,165,18,blink?2:13,'#d6d5b3');if(!blink)oval(x+(i%2?2:-2),165,6,12,'#283240');}
    shape(()=>{g.moveTo(-9,194);g.lineTo(9,194);g.lineTo(0,203);g.closePath();},'#705550');
    g.beginPath();g.moveTo(-12,217);g.quadraticCurveTo(0,225-(guest?.fear??0)*18,12,217);g.stroke();g.restore();g.restore();
-   const shade=i>=6?.35+.50*(guest?.progress??0):t>=54?.79:.92;cat.mat.color.setRGB(shade*.94,shade,shade*1.04);cat.texture.needsUpdate=true;
+   const shade=i>=6?.35:t>=54?.79:.92;
+   cat.mat.color.setRGB(...cafeCardLightAt(pos as V3,[shade*.94,shade,shade*1.04]));cat.texture.needsUpdate=true;
   });
  }
  dispose(){for(const cat of this.cats){cat.geo.dispose();cat.mat.dispose();cat.texture.dispose();cat.shadow.dispose();}for(const p of this.steam){p.geo.dispose();p.mat.dispose();}}
