@@ -1,4 +1,5 @@
 import {hash,visualSourceHash,validSegment} from './lib/polish-cache.mjs';
+import {criticalShots,qualityErrors} from './lib/polish-quality.mjs';
 import {browserExecutable,chromiumOptions,renderConcurrency} from './lib/runtime.mjs';
 // Actual Remotion/Three.js renders, resumable by shot; no audio service requests.
 import fs from 'node:fs/promises';
@@ -13,6 +14,7 @@ const unbatched=process.argv.includes('--unbatched');
 const out=path.resolve('out/v2-episodes/door-at-1111-polish'),props=JSON.parse(await fs.readFile(path.join(out,'render-props.json'),'utf8'));
 props.optimize=!unbatched;props.previewScale=draft||mode==='motion'?.5:1;
 const pick=after('--shots')?.split(',');const selected=props.shots.filter(s=>!pick||pick.includes(s.id)||pick.includes(String(s.number)));
+if(mode==='motion')selected.sort((a,b)=>{const rank=id=>criticalShots.includes(id)?criticalShots.indexOf(id):criticalShots.length;return rank(a.id)-rank(b.id)||a.start-b.start;});
 const serveUrl=await bundle({entryPoint:path.resolve('src/index.ts')});
 const browser=await openBrowser('chrome',{browserExecutable,chromiumOptions});
 const sourceHash=await visualSourceHash();
@@ -38,7 +40,9 @@ try{
    let last=0;const start=Date.now(),before=audits.length;
    await renderMedia({overwrite:true,serveUrl,composition,inputProps:props,frameRange:range,outputLocation:file+'.partial.mp4',codec:'h264',crf:18,pixelFormat:'yuv420p',imageFormat:'jpeg',jpegQuality:95,scale:mode==='motion'?.5:1,concurrency:renderConcurrency(after('--concurrency')),puppeteerInstance:browser,chromiumOptions,logLevel:'error',timeoutInMilliseconds:240000,onBrowserLog:log,onProgress:p=>{if(p.renderedFrames-last>=15){last=p.renderedFrames;console.log(`${shot.id}: ${last}/${shot.end-shot.start} frames`);}}});
    await fs.rename(file+'.partial.mp4',file);
-   await fs.writeFile(file.replace('.mp4','.json'),JSON.stringify({shot,range,sourceHash,propsHash,videoSHA256:hash(await fs.readFile(file)),seconds:(Date.now()-start)/1000,audits:audits.slice(before),errors},null,2));console.log(JSON.stringify({completed:shot.id,seconds:(Date.now()-start)/1000}));
+   const shotAudits=audits.slice(before),quality=qualityErrors(shotAudits);
+   await fs.writeFile(file.replace('.mp4','.json'),JSON.stringify({shot,range,sourceHash,propsHash,videoSHA256:hash(await fs.readFile(file)),seconds:(Date.now()-start)/1000,audits:shotAudits,qualityErrors:quality,errors},null,2));console.log(JSON.stringify({completed:shot.id,seconds:(Date.now()-start)/1000}));
+   if(quality.length)throw Error('Actual rendered-frame QA failed in '+shot.id+': '+JSON.stringify(quality.slice(0,4))+'. Completed clips are preserved; full preview stopped.');
   }
  }else throw Error('Use stills, motion or render.');
  await fs.writeFile(path.join(out,`${mode}${draft?'-draft':''}-render-log.json`),JSON.stringify({audits,errors},null,2));

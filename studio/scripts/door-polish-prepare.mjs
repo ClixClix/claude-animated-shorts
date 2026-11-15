@@ -52,6 +52,7 @@ for(const g of groups){
    const cuts=Array.from({length:pieces+1},(_,i)=>originalStart+Math.round((end-originalStart)*i/pieces));
    const placement=placements.at(-1);
    const atWord=(text,from)=>{const w=meta.timing.words.find(w=>w.text===text&&w.start>=from);if(!w)throw Error('Missing editorial word '+text);return Math.round((placement.targetStart+w.start-placement.sourceStart)*30);};
+   if(s.number===1)cuts[1]=originalStart+Math.round((end-originalStart)*.64);
    if(s.number===50)cuts[1]=atWord('there',79.9);
    if(s.number===57){cuts[1]=atWord('Latte',90.8);cuts[2]=atWord('It',92.3);cuts[3]=atWord('If',93.3);cuts[4]=atWord('come',94.8);}
    if(s.number===60){cuts[1]=atWord('The',108.1);cuts[2]=atWord('But',109.3);}

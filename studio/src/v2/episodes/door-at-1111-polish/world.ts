@@ -1,4 +1,5 @@
 import * as T from 'three';
+import {createCity} from './city';
 import {mouthAnchor} from './contacts';
 import {batchCafe} from './batch';
 import {CafeEnvironment} from '../../cafe/environment';
@@ -33,7 +34,7 @@ export class EpisodeWorld{
    const group=i===0?clockGroup:new T.Group();if(i){group.name='clock-side-'+i;group.position.set(x,h,z);group.rotation.y=angle;this.root.add(group);this.cylinder(group,1.15,1.15,.1,[0,0,-.04],'#bda36d').rotation.x=Math.PI/2;}
    const face=new T.Mesh(new T.CircleGeometry(1.075,64),clockMat);face.position.z=.02;face.layers.set(NOINK);group.add(face);
   }
-  const fog=this.box(this.root,[4.40,2.78,.008],[-1.45,2.22,4.247],'#dac6a0',false);fog.name='rain-fogged-cafe-window';fog.material=new T.MeshStandardMaterial({color:'#cbbd9b',roughness:1,transparent:false,opacity:1,emissive:'#7b552c',emissiveIntensity:.06,side:T.DoubleSide});this.materials.push(fog.material);fog.receiveShadow=true;fog.layers.set(NOINK);this.props.set('shadow',fog);
+  const fog=this.box(this.root,[4.40,2.78,.008],[-1.45,2.22,4.247],'#dac6a0',false);fog.name='rain-fogged-cafe-window';fog.material=new T.MeshStandardMaterial({color:'#cbbd9b',roughness:1,transparent:false,opacity:1,emissive:'#7b552c',emissiveIntensity:.025,side:T.DoubleSide});this.materials.push(fog.material);fog.receiveShadow=true;fog.layers.set(NOINK);this.props.set('shadow',fog);
   const screen=new T.Mesh(new T.PlaneGeometry(1,1),new T.MeshBasicMaterial({transparent:true,opacity:0}));screen.visible=false;this.root.add(screen);this.shadowScreen=screen;
   this.lights.forEach((lamp,i)=>{const p=STREETLIGHTS[i],g=new T.Group();g.name='lamp-frame-'+i;g.position.set(...p);this.root.add(g);for(const x of [-.155,.155])for(const z of [-.155,.155])this.box(g,[.027,.49,.027],[x,3.08,z],'#253c47',false);for(const y of [2.84,3.32])this.box(g,[.36,.045,.36],[0,y,0],'#253c47',false);});
   this.sign();this.lanternLight=this.lantern();
@@ -94,7 +95,7 @@ export class EpisodeWorld{
  private street(){
   const pavement=this.box(this.root,[100,.06,7.4],[0,0,8.55],'#394b59',false);pavement.name='episode-road';this.box(this.root,[8.9,.06,.6],[-3.05,0,4.55],'#667776',false).name='entrance-apron-left';this.box(this.root,[4.4,.06,.6],[5.3,0,4.55],'#667776',false).name='entrance-apron-right';
   for(let x=-7;x<7;x+=1.4)this.box(this.root,[.7,.008,.07],[x,.034,9.0],'#7b7a6b',false);
-  const puddle=this.add(this.root,new T.CircleGeometry(.72,32),new T.MeshStandardMaterial({color:'#718794',roughness:.25,metalness:.32,transparent:true,opacity:.48}),[-.70,.034,9.0],false);puddle.rotation.x=-Math.PI/2;this.materials.push(puddle.material);
+  const puddle=this.add(this.root,new T.CircleGeometry(.72,32),new T.MeshStandardMaterial({color:'#516a78',roughness:.5,metalness:.12,transparent:true,opacity:.18}),[-.70,.034,9.0],false);puddle.rotation.x=-Math.PI/2;puddle.layers.set(NOINK);this.materials.push(puddle.material);
   // Reuse the two approved street lamps at +/-6. Add seven fixed lamps: nine total.
   const town=this.cafe.root.getObjectByName('night-town')!;
   for(let i=0;i<2;i++){
@@ -158,13 +159,13 @@ export class EpisodeWorld{
  private livingDetails(){
   // Deterministic star field above the existing skyline, without flashing/noise animation.
   const starGeo=new T.BufferGeometry(),positions:number[]=[];
-  for(let i=0;i<620;i++){const h=(n:number)=>{const v=Math.sin(n*127.1+17.7)*43758.5453;return v-Math.floor(v);};const angle=h(i)*Math.PI*2,elevation=.08+h(i+230)*1.35,radius=54;positions.push(Math.cos(angle)*Math.cos(elevation)*radius,Math.sin(elevation)*radius,Math.sin(angle)*Math.cos(elevation)*radius);}
-  starGeo.setAttribute('position',new T.Float32BufferAttribute(positions,3));const starMat=new T.PointsMaterial({color:'#d8d9c5',size:.11,sizeAttenuation:true,transparent:true,opacity:.76,depthWrite:false});this.materials.push(starMat);
+  for(let i=0;i<620;i++){const h=(n:number)=>{const v=Math.sin(n*127.1+17.7)*43758.5453;return v-Math.floor(v);};const angle=h(i)*Math.PI*2,elevation=.08+h(i+230)*1.35,radius=150;positions.push(Math.cos(angle)*Math.cos(elevation)*radius,Math.sin(elevation)*radius,Math.sin(angle)*Math.cos(elevation)*radius);}
+  starGeo.setAttribute('position',new T.Float32BufferAttribute(positions,3));const starMat=new T.PointsMaterial({color:'#d8d9c5',size:.28,sizeAttenuation:true,transparent:true,opacity:.76,depthWrite:false,fog:false});this.materials.push(starMat);
   const stars=new T.Points(starGeo,starMat);stars.name='night-stars';stars.layers.set(NOINK);this.root.add(stars);
   // Bed and bowls already exist when Latte gets home; nothing pops into place on the line.
-  const bed=new T.Group();bed.name='latte-cat-bed';bed.position.set(1.65,.2,13.6);this.root.add(bed);this.props.set('cat-bed',bed);
+  const bed=new T.Group();bed.name='latte-cat-bed';bed.position.set(2.75,.2,15.45);this.root.add(bed);this.props.set('cat-bed',bed);
   this.cylinder(bed,.53,.58,.13,[0,.065,0],'#8f8171');this.cylinder(bed,.46,.46,.07,[0,.15,0],'#a9a08a');
-  for(const [i,x] of [2.42,2.97].entries()){const b=new T.Group();b.name=i?'home-food':'home-water';b.position.set(x,.2,13.65);this.root.add(b);this.cylinder(b,.18,.14,.10,[0,.05,0],'#b0b9a3');this.cylinder(b,.15,.15,.008,[0,.10,0],i?'#806343':'#6c94a4');if(i)for(let n=0;n<9;n++)this.add(b,new T.SphereGeometry(.025,6,4),this.mat('#94754d'),[Math.cos(n*2.4)*.09,.12,Math.sin(n*2.4)*.09],false);}
+  for(const [i,x] of [2.42,2.97].entries()){const b=new T.Group();b.name=i?'home-food':'home-water';b.position.set(x,.2,14.15);this.root.add(b);this.cylinder(b,.18,.14,.10,[0,.05,0],'#b0b9a3');this.cylinder(b,.15,.15,.008,[0,.10,0],i?'#806343':'#6c94a4');if(i)for(let n=0;n<9;n++)this.add(b,new T.SphereGeometry(.025,6,4),this.mat('#94754d'),[Math.cos(n*2.4)*.09,.12,Math.sin(n*2.4)*.09],false);}
   const box=new T.Group();box.name='latte-hiding-box';box.position.set(.55,.2,15.05);this.root.add(box);this.props.set('hiding-box',box);
   for(const x of [-.40,.40])this.box(box,[.055,.60,.78],[x,.30,0],'#9b805f');this.box(box,[.85,.055,.78],[0,.027,0],'#a58b68');this.box(box,[.85,.60,.055],[0,.30,.39],'#9b805f');
   this.box(box,[.85,.055,.45],[0,.59,.2],'#ae9571').rotation.x=.18;
@@ -196,20 +197,10 @@ export class EpisodeWorld{
   const relocated:Record<string,V3>={'town-building-2':[-12,0,1],'town-building-3':[-12,0,15],'town-building-5':[12,0,1],'town-building-9':[-7,0,14.5],'town-building-11':[7,0,14.5]};
   for(const [id,p] of Object.entries(relocated))this.cafe.root.getObjectByName(id)!.position.set(...p);
   for(const id of ['town-building-9','town-building-10','town-building-11']){const g=this.cafe.root.getObjectByName(id) as T.Group;g.rotation.y=Math.PI;this.box(g,[.85,1.8,.06],[0,1.0,2.045],'#344b52',false);this.box(g,[1.35,.10,.65],[0,.05,2.3],'#728482',false);}
-  this.box(this.root,[120,.20,120],[0,-.11,0],'#283c45',false).name='city-ground';
-  for(const x of [-17,17])this.box(this.root,[5,.06,100],[x,0,0],'#394b59',false);
-  for(const z of [-9,22])this.box(this.root,[100,.06,4],[0,0,z],'#394b59',false);
-  // Road gutters stay below pavement; no coplanar overlays.
-  this.box(this.root,[1.3,.08,7],[ -3.4,-.01,15.4],'#6c7c7c',false);
-  for(const z of [4.52,12.6])this.box(this.root,[64,.10,.60],[0,-.015,z],'#6c7c7c',false);
-  const textureCanvas=document.createElement('canvas');textureCanvas.width=textureCanvas.height=128;const c=textureCanvas.getContext('2d')!;c.fillStyle='#b1afa0';c.fillRect(0,0,128,128);for(let i=0;i<65;i++){c.fillStyle=i%2?'rgba(248,238,209,.10)':'rgba(34,55,62,.09)';c.fillRect((i*37)%128,(i*53)%128,12+i%17,2+i%4);}const tx=new T.CanvasTexture(textureCanvas);tx.colorSpace=T.SRGBColorSpace;this.textures.push(tx);
-  for(const x of [-32,-24,24,32])for(const [j,z] of [-24,-14,-4,16,28].entries()){
-   const g=new T.Group();g.name='city-block-'+x+'-'+z;g.position.set(x,0,z);this.root.add(g);const h=4.5+(j%3)*1.1,w=4.8,d=5.5;
-   const wall=this.mat(['#6d7c7b','#67798a','#887c6b'][j%3]);wall.map=tx;this.add(g,new T.BoxGeometry(w,h,d),wall,[0,h/2,0],false);this.box(g,[w+.15,.3,d+.15],[0,-.1,0],'#4e6368',false);this.box(g,[w+.25,.15,d+.25],[0,h+.07,0],'#344d59',false);
-   const roof=this.add(g,new T.ConeGeometry(1,.9,4),this.mat('#344d59'),[0,h+.6,0],false);roof.rotation.y=Math.PI/4;roof.scale.set(w/Math.SQRT2,1,d/Math.SQRT2);
-   for(const side of [-1,1])for(const y of [1.4,3])for(const px of [-1.25,1.25]){const m=this.mat('#b8ac8e');m.emissive.set('#c9a26a');m.emissiveIntensity=.22;this.townWindows.push({mat:m,color:m.color.clone(),emissive:.22});this.add(g,new T.BoxGeometry(.78,.95,.045),m,[px,y,side*(d/2+.025)],false);this.box(g,[.9,.08,.16],[px,y-.52,side*(d/2+.05)],'#a29a82',false);}
-   for(const side of [-1,1])this.box(g,[.9,1.75,.06],[0,.875,side*(d/2+.04)],'#354b51',false);
-  }
+  const city=createCity();this.root.add(city.root);this.materials.push(...city.materials);this.textures.push(...city.textures);this.blockers.push(...city.blockers);
+  this.townWindows.push({mat:city.windowMaterial,color:city.windowMaterial.color.clone(),emissive:.32});
+  const road=this.root.getObjectByName('episode-road') as T.Mesh;road.material=city.asphalt;
+  for(const z of [4.52,12.6])this.box(this.root,[120,.10,.60],[0,-.015,z],'#6c7c7c',false);
  }
  private sign(){
   const g=new T.Group();g.name='welcome-sign';g.position.set(...SIGN);g.rotation.y=Math.PI;this.root.add(g);
@@ -244,7 +235,10 @@ export class EpisodeWorld{
   for(const p of this.permanentLights){
    if(p.light.name.startsWith('streetlight-'))continue;
    if(lightingInsert){p.light.intensity=p.intensity*(.06+.94*lightingLevel);p.light.visible=true;continue;}
-   if(p.light.name.includes('practical-light')){p.light.intensity=blackout?0:p.intensity;p.light.visible=!blackout;}
+   if(p.light.name==='night-sky-fill')p.light.intensity=.62;
+   else if(p.light.name==='window-moon')p.light.intensity=1.6;
+   else if(p.light.name==='front-window-spill')p.light.intensity=blackout?3.2:4.2;
+   else if(p.light.name.includes('practical-light')){p.light.intensity=blackout?0:p.intensity;p.light.visible=!blackout;}
    else if(p.light.name==='interior-bounce')p.light.intensity=blackout?11+2*beat(s.t,131.45,131.65):p.intensity;
    else if(p.light.name==='warm-interior-key')p.light.intensity=blackout?1.05:p.intensity;
   }
@@ -259,7 +253,7 @@ export class EpisodeWorld{
    const column=i%21,row=Math.floor(i/21),x=(column/20-.5),u=row/16;
    const v=column/20;
    const tug=.035*Math.sin(s.t*7)*beat(s.t,110,112)*(1-beat(s.t,114.5,115));
-   const held:V3=[Math.max(-3.7,Math.min(3.7,mouth[0]+right.x*v*2.3)),.006+(mouth[1]-.006)*(1-u)*(1-.85*Math.sqrt(v))+tug*v*(1-u),Math.min(4.10,mouth[2]+right.z*v*2.3+u*.42)];
+   const held:V3=[Math.max(-3.7,Math.min(3.7,mouth[0]+right.x*v*2.3)),.006+(mouth[1]-.006)*(1-u)*(1-.85*Math.sqrt(v))+tug*v*(1-u)+.025*Math.sin(v*19+u*5)**2*v*(1-u),Math.min(4.10,mouth[2]+right.z*v*2.3+u*.42)];
    const spread:V3=[2.22+x*1.9,.004+.012*Math.sin(x*16)**2*Math.sin(u*Math.PI),2.72+u*1.32];
    const point=mix(held,spread,s.blanketLay);p.setXYZ(i,...point);
   }p.needsUpdate=true;this.blanket.geometry.computeVertexNormals();this.blanket.geometry.computeBoundingBox();this.blanket.geometry.computeBoundingSphere();this.blanket.visible=s.t>=18&&!(s.shot.number===58&&s.shot.variant===0||s.shot.number===59&&s.shot.variant===1);

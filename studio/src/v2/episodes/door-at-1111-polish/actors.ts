@@ -1,44 +1,48 @@
 import * as T from 'three';
-import {legProjection} from './legProjection';
+import {createWalkingLegs} from './walkingLegs';
 import {headDropPixels} from './contacts';
 import {createCatCard} from '../../cats/Cat';
 import {drawCat} from '../../cats/drawCat';
 import {CatId} from '../../cats/designs';
 import {CatPose} from '../../cats/pose';
-import {Actor,EpisodeState,mix,beat} from './timeline';
+import {Actor,EpisodeState,mix,beat,lerp} from './timeline';
 import {cardShade} from '../../../videos/bridge/cardshade';
 import {NOINK} from '../../../videos/bridge/ink';
 import {V3} from '../../cafe/config';
 
-/** Adapter around the locked drawing: preserves art; projects planted world-space feet. */
+/** Locked body/head artwork with separate world-anchored walking legs. */
 export function createEpisodeCat(id:CatId){
- const card=createCatCard(id,1.52),canvas=document.createElement('canvas'),other=document.createElement('canvas');canvas.width=other.width=1000;canvas.height=other.height=1100;
- const g=canvas.getContext('2d')!,h=other.getContext('2d')!,texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;texture.anisotropy=8;
+ const card=createCatCard(id,1.52),walking=createWalkingLegs(id),canvas=document.createElement('canvas');canvas.width=1000;canvas.height=1100;
+ const g=canvas.getContext('2d',{willReadFrequently:true})!,texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;texture.anisotropy=8;
  card.mesh.material.map=texture;card.mesh.material.transparent=false;card.mesh.material.alphaTest=.25;card.mesh.material.depthWrite=true;card.mesh.material=cardShade(card.mesh.material);card.mesh.layers.set(NOINK);card.mesh.name=`episode-${id}`;
- const nativeRotations=new Map([[g,g.rotate.bind(g)],[h,h.rotate.bind(h)]]);
- const nativeTranslations=new Map([[g,g.translate.bind(g)],[h,h.translate.bind(h)]]);
+ const nativeRotations=new Map([[g,g.rotate.bind(g)]]);
+ const nativeTranslations=new Map([[g,g.translate.bind(g)]]);
+ const nativeScales=new Map([[g,g.scale.bind(g)]]);
  function render(ctx:CanvasRenderingContext2D,actor:Actor,s:EpisodeState,pose:Partial<CatPose>){
   ctx.setTransform(2,0,0,2,0,0);ctx.clearRect(0,0,500,550);
   const crouch=id==='latte'?beat(s.t,77.5,79)*(1-beat(s.t,83,84)):0;ctx.setTransform(2,0,0,2*(1-.18*crouch),0,2*480*.18*crouch);
-  const original=nativeTranslations.get(ctx)!,root=new T.Vector3(...actor.position),camera=new T.Vector3(...s.camera),normal=camera.clone().sub(root);normal.y=0;normal.normalize();const right=new T.Vector3(normal.z,0,-normal.x),sign=(pose.yaw??0)<0?-1:1;
+  const original=nativeTranslations.get(ctx)!,scale=nativeScales.get(ctx)!;
+  // Retain the approved torso paths/palette; remove the legacy pancake squash in locomotion.
+  ctx.scale=(x,y)=>scale(actor.moving&&y===.68?x-.25+.25*Math.abs(pose.yaw??0):x,actor.moving&&y===.68?.82:y);
   let leg=0,rotation=0;const nativeRotate=nativeRotations.get(ctx)!;
-  // Keep a single ear silhouette while facial expressions dissolve. Artwork endpoints stay exact.
+  // Use the approved expression silhouettes with continuous ear gestures.
   const desiredEar=(id==='latte'?.68:0)*actor.emotion,drawnEar=pose.expression==='scared'?.68:pose.expression==='happy'?-.06:0;
   ctx.rotate=(angle:number)=>{const n=rotation++;nativeRotate(angle+(n===2?-1:n===3?1:0)*(desiredEar-drawnEar));};
   ctx.translate=(x:number,y:number)=>{
    if(actor.moving&&y===0&&Math.abs(x)<180&&leg<4){
-    const index=leg++,foot=new T.Vector3(...actor.feet[index]),ray=foot.clone().sub(camera),k=normal.dot(root.clone().sub(camera))/normal.dot(ray),local=camera.clone().addScaledVector(ray,k).sub(root);
-    const phase=[0,Math.PI,Math.PI,0][index],lift=Math.max(0,Math.cos((pose.gait??0)+phase))*13;
-    original(x,0);ctx.transform(...legProjection(x,local.dot(right)*550/1.52/sign,480-local.y*550/1.52,lift));
+    leg++;original(x,0);scale(0,0); // These exact silhouettes now live on the planted 3D leg cards.
    }else original(x,y+(id==='essie'&&y>190&&y<245&&x>=0&&x<100?headDropPixels(s,'essie'):0));
   };
-  try{drawCat(ctx,id,pose);}finally{ctx.translate=original;ctx.rotate=nativeRotate;}
+  try{drawCat(ctx,id,pose);}finally{ctx.translate=original;ctx.rotate=nativeRotate;ctx.scale=scale;}
  }
- return {...card,texture,updateActor:(a:Actor,s:EpisodeState)=>{
-  const amount=a.emotion,pose={...a.pose,expression:(id==='mocha'&&s.shot.number>=59?'happy':'neutral') as 'happy'|'neutral',...(id==='latte'?{}:{blink:Math.max(a.pose.blink??0,amount*.7)})};render(g,a,s,pose);
-  if(id==='latte'&&amount>0){render(h,a,s,{...pose,expression:'scared'});g.setTransform(1,0,0,1,0,0);g.globalCompositeOperation='destination-in';g.fillStyle=`rgba(0,0,0,${1-amount})`;g.fillRect(0,0,1000,1100);g.globalCompositeOperation='lighter';g.globalAlpha=amount;g.drawImage(other,0,0);g.globalAlpha=1;g.globalCompositeOperation='source-over';}
-  texture.needsUpdate=true;card.mesh.position.set(...a.position);card.mesh.rotation.y=Math.atan2(s.camera[0]-a.position[0],s.camera[2]-a.position[2]);
- },dispose:()=>{texture.dispose();card.dispose();}};
+ return {...card,texture,legs:walking.root,updateActor:(a:Actor,s:EpisodeState)=>{
+  const amount=a.emotion,pose:Partial<CatPose>={...a.pose,expression:a.pose.expression??(id==='mocha'&&s.shot.number>=59?'happy':'neutral'),...(id==='latte'?{}:{blink:Math.max(a.pose.blink??0,amount*.7)})};
+  if(id==='latte'){const sign=(pose.yaw??0)<0?-1:1;if(Math.abs(pose.yaw??0)+(pose.headTurn??0)*sign<.035)pose.headTurn=(.035-Math.abs(pose.yaw??0))*sign;}
+  if(id==='latte'&&amount>=.60&&pose.expression!=='surprised')pose.expression='scared';
+  if(id==='latte'&&[38,43].includes(s.shot.number))pose.blink=Math.max(pose.blink??0,Math.max(0,1-Math.abs(s.u-.23)/.055));
+  render(g,a,s,pose);
+  texture.needsUpdate=true;card.mesh.position.set(...a.position);card.mesh.rotation.y=Math.atan2(s.camera[0]-a.position[0],s.camera[2]-a.position[2]);const p=a.position,inside=p[2]<4.25,spill=inside?1:Math.max(0,1-Math.hypot(p[0]+1,p[2]-4.5)/4);card.mesh.material.color.setRGB(lerp(.75,1.02,spill),lerp(.84,.96,spill),lerp(.98,.85,spill));walking.update(a,s.camera,card.mesh.material.color);
+ },dispose:()=>{texture.dispose();walking.dispose();card.dispose();}};
 }
 export function contactShadow(width=.9,depth=.5){
  const cv=document.createElement('canvas');cv.width=cv.height=128;const g=cv.getContext('2d')!,gradient=g.createRadialGradient(64,64,1,64,64,63);gradient.addColorStop(0,'rgba(20,22,30,.47)');gradient.addColorStop(.5,'rgba(20,22,30,.20)');gradient.addColorStop(1,'rgba(20,22,30,0)');g.fillStyle=gradient;g.fillRect(0,0,128,128);

@@ -21,10 +21,15 @@ export function checkEpisodeCamera(w:EpisodeWorld,s:EpisodeState,cam:T.Perspecti
   marker['alley-kitten']=face(shelterState(s,3).position,.48);marker['flowerpot']=new T.Vector3(-3.25,.65,3.35);marker['hiding-box']=new T.Vector3(.55,.55,15.05);marker['cloth-silhouette']=new T.Vector3(-.9,1.05,4.26);marker['dark-street']=new T.Vector3(s.camera[0],1.55,10.0);marker['rush-home']=face(streetCatPosition(s,1),.55);
   w.lights.forEach((l,i)=>{marker[`light-${i+1}`]=l.point.getWorldPosition(new T.Vector3());});
   const blockers=[...w.cafe.blockers,...w.blockers].filter(m=>m.visible);
-  const visual:T.Mesh[]=[];w.root.traverse(o=>{for(let p:T.Object3D|null=o;p;p=p.parent)if(!p.visible)return;if(o instanceof T.Mesh&&!Array.isArray(o.material)&&o.material.opacity>=.9&&!o.name.startsWith('static-batch-'))visual.push(o);});
+  const visual:T.Mesh[]=[];w.root.traverse(o=>{for(let p:T.Object3D|null=o;p;p=p.parent)if(!p.visible)return;if(o instanceof T.Mesh&&!(o instanceof T.InstancedMesh)&&!Array.isArray(o.material)&&o.material.opacity>=.9&&!o.name.startsWith('static-batch-'))visual.push(o);});
   const required=[...s.required];
  if(required.includes('clock'))for(const [id,x,y] of [['clock-left',-1.14,0],['clock-right',1.14,0],['clock-top',0,1.14],['clock-bottom',0,-1.14]] as [string,number,number][]){marker[id]=new T.Vector3(CLOCK[0]+x,CLOCK[1]+y,CLOCK[2]+.03);required.push(id);}
+ if(required.includes('bus'))for(const [id,x,y,z] of [['bus-front',-1.9,1,.0],['bus-rear',1.9,1,0],['bus-roof',0,1.85,0],['bus-wheels',0,.3,.65]] as [string,number,number,number][]){marker[id]=new T.Vector3(w.bus.position.x+x,y+.03,w.bus.position.z+z);required.push(id);}
  const visibility=required.map(id=>{
+ if(id==='city-district'){
+  const visibleBuildings:string[]=[];for(const b of w.root.getObjectByName('connected-city')!.children.filter(o=>o.name.startsWith('city-block-'))){const p=b.getWorldPosition(new T.Vector3()).add(new T.Vector3(0,4,0)),ndc=p.project(cam);if(Math.abs(ndc.x)<.95&&Math.abs(ndc.y)<.9&&ndc.z>-1&&ndc.z<1)visibleBuildings.push(b.name);}
+  return {id,inFrame:visibleBuildings.length>=12,ndc:[0,0],occluder:null,visibleBuildings};
+ }
  if(id==='other-buildings'){
   const buildings=new Set<string>();for(const y of [-.25,0,.25])for(const x of [-.8,-.4,0,.4,.8]){const ray=new T.Raycaster();ray.setFromCamera(new T.Vector2(x,y),cam);const hit=ray.intersectObjects(visual,false)[0];if(hit)for(let p:T.Object3D|null=hit.object;p;p=p.parent)if(p.name==='latte-home'||p.name.startsWith('town-building-')||p.name.startsWith('city-block-')){buildings.add(p.name);break;}}
   return {id,inFrame:buildings.size>=2,ndc:[0,0],occluder:null,visibleBuildings:[...buildings]};
@@ -33,6 +38,7 @@ export function checkEpisodeCamera(w:EpisodeWorld,s:EpisodeState,cam:T.Perspecti
    const p=marker[id];if(!p)throw Error('Missing required story marker '+id);const ndc=p.clone().project(cam),d=p.clone().sub(cam.position),length=d.length(),ray=new T.Raycaster(cam.position,d.normalize(),.08,length-.06);
    ray.layers.enable(7);ray.layers.enable(NOINK);
    let owner=id.startsWith('clock-')?w.props.get('clock'):id==='handle'||id==='tap'||id==='push-point'?w.door:id==='blanket-shadow'?w.blanket:w.props.get(id);
+   if(id.startsWith('bus-'))owner=w.bus;
    if(id==='flowerpot')owner=w.cafe.fixtures.get('entrance-plant');
    if(id.startsWith('light-')&&owner?.parent?.name.startsWith('streetlight-'))owner=owner.parent;
    const physical=ray.intersectObjects(visual,false).filter(h=>{

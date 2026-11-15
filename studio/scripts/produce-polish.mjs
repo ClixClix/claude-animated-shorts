@@ -8,7 +8,7 @@ function run(program,args){const r=spawnSync(program,args,{stdio:'inherit',cwd:s
 const node=(name,...args)=>run(process.execPath,['scripts/door-polish-'+name+'.mjs',...args]);
 const py=(name,...args)=>run(python,['scripts/door-polish-'+name+'.py',...args]);
 if(!['preview','all','qa'].includes(stage))throw Error('Use preview, all or qa.');
-if(stage!=='qa'){node('prepare');node('tests');node('story-tests');node('leg-tests');}
+if(stage!=='qa'){node('prepare');node('tests');node('story-tests');node('leg-tests');node('quality-tests');node('card-tests');}
 if(stage==='preview'){
  node('render','motion','--concurrency',String(c));
  node('preview-assemble');

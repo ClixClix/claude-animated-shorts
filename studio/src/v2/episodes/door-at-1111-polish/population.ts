@@ -29,7 +29,7 @@ export class TownPopulation{
    const guest=i>=4?shelterState(s,i-4):undefined;
    const walking=guest?guest.walking:i<2,t=s.t;
    // Street activity clears before the blackout. Patrons stay in fixed existing seats.
-   cat.mesh.visible=cat.shadow.mesh.visible=guest?guest.visible:i<2?streetActivity(s):true;
+   cat.mesh.visible=cat.shadow.mesh.visible=guest?guest.visible:i<2?streetActivity(s):s.shot.number>=50;
    const pos=guest?guest.position:i<2?streetCatPosition(s,i):i===2?[2.38,.51,-2.14]:[.96,.51,2.13];
    cat.mesh.scale.setScalar(i===7?.66:1);
    cat.mesh.position.set(...pos as [number,number,number]);cat.shadow.mesh.position.set(pos[0],(i>=4?.036:pos[1]+.006),pos[2]);

@@ -15,7 +15,7 @@ import {stateAt} from './timeline';
 import {checkEpisodeCamera} from './cameraQA';
 import {mouthAnchor} from './contacts';
 export function run(props){
- const w=new EpisodeWorld(false),camera=new T.PerspectiveCamera(48,1080/1920,.08,120),flags=[],cameraFlags=[],assets=[],contactFlags=[],occluders={};let checked=0;
+ const w=new EpisodeWorld(false),camera=new T.PerspectiveCamera(48,1080/1920,.08,220),flags=[],cameraFlags=[],assets=[],contactFlags=[],occluders={};let checked=0;
  w.root.traverse(o=>{if(o instanceof T.Mesh){if(!o.geometry?.getAttribute('position')?.count||!o.material)assets.push(o.name);const materials=Array.isArray(o.material)?o.material:[o.material];for(const m of materials)if(m.map&&(!m.map.image?.width||!m.map.image?.height))assets.push(o.name+':texture');}});
  for(const name of ['night-stars','bus-stop-pictogram','bus-stop-platform','latte-cat-bed','home-food','home-water','latte-hiding-box','door-open-plaque'])if(!w.root.getObjectByName(name))assets.push(name);
  const roles=[...w.cafe.fixtures].map(([id,o])=>({id,role:o.userData.role}));
@@ -29,6 +29,8 @@ export function run(props){
   if(s.t>=29&&passing.some(car=>car.visible))contactFlags.push({frame,issue:'traffic-after-curfew'});
   for(const car of passing.filter(c=>c.visible))for(const other of [w.bus,...[1,2].map(i=>w.props.get('parked-car-'+i))].filter(c=>c.visible)){if(new T.Box3().setFromObject(car).intersectsBox(new T.Box3().setFromObject(other)))contactFlags.push({frame,issue:'vehicle-overlap',a:car.name,b:other.name});}
 
+  const earlier=s.shot.number===58&&s.shot.variant===0||s.shot.number===59&&s.shot.variant===1;
+  for(const id of ['latte','mocha','essie']){if(earlier&&id!=='mocha'||s.shot.number<50&&id!=='latte')continue;const p=s[id].position;if(Math.hypot(s.camera[0]-p[0],s.camera[2]-p[2])<.52&&s.camera[1]>p[1]&&s.camera[1]<p[1]+1.32)cameraFlags.push({frame,shot:s.shot.id,hits:[id+'-body']});}
   if(a.cameraHits.length)cameraFlags.push({frame,shot:s.shot.id,hits:a.cameraHits});
   for(const v of a.visibility)if(!v.inFrame||v.occluder){flags.push({frame,shot:s.shot.id,...v});if(v.occluder&&!occluders[v.occluder]){const object=w.root.getObjectByName(v.occluder),box=new T.Box3().setFromObject(object);occluders[v.occluder]={frame,camera:s.camera,target:s.target,min:box.min.toArray(),max:box.max.toArray()};}}
   if(frame%400===0)console.log('CAMERA_PREFLIGHT '+frame);

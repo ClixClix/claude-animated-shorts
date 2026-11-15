@@ -1,30 +1,23 @@
-# The Door at 11:11 — current local review pass
+# The Door at 11:11 — final major review candidate
 
-The separate `InThisTownTheDoorAt1111Polish` composition preserves the original episode, approved lead drawings, permanent cafe configuration, narrator settings, cached audio and existing finished movies. All scene/video rendering remains on the Windows PC.
+This source pass responds to the actual uploaded `Polish_Review_e9c6b388_540p.mp4`. Frames across its full duration and consecutive walking/entrance/ending frames were inspected, along with samples from three supplied reference shorts. The changed pictures below still require an actual local render and visual approval.
 
-The edit follows the continuous approved Adam recording: **3,349 frames / 111.63 seconds / 80 cuts at 30 FPS**. The longest shot is 105 frames (3.5 seconds). All **364 caption cards contain one word**. No silence is inserted between narration lines; the only padding is less than one frame at the end. The decoded narration stem is checked sample-for-sample against the cached recording.
+The separate `InThisTownTheDoorAt1111Polish` composition preserves the original composition, permanent cafe fixtures, three lead drawings/palettes, narration configuration and cached recordings. Scene/video rendering remains on the Windows PC. No paid narration is generated.
 
-## Changes prompted by the uploaded movie
+## What changed
 
-The uploaded `Polish_Narrated_Review_540p.mp4` was decoded and visually reviewed in contact sheets covering the complete movie. These times refer to that uploaded movie, not proof of the revised pixels:
+- **City scale:** 76 additional configured buildings form districts around the original town, with connected road corridors, crossings, curbs, foundations, doors, varied heights/rooflines and batched framed windows. The opening establishes these districts before the rush-home cut. Extended ground and distance fog support the skyline; stars cover the sky and remain visible through atmospheric fog.
+- **Walking:** the previous flat-card foot projection was fundamentally wrong for close perspectives: the projected paws could lie below the floor and be clipped. Walking now uses four separate articulated leg cards with actual world-space hips and planted toes. They reuse the approved leg silhouettes, colors, sock sizes and ink. The approved torso/head drawing is retained; its exaggerated walking squash is reduced. The rig includes planted paw shadows, body weight shift and camera-relative profile selection. A new walking bout starts its own gait, so a turn after a long pause cannot inherit planted paws facing the previous direction.
+- **Composition:** the rush-home view clears the central pole; the walking/slip and home-exit cameras track the subject at safe distances. The follow/entrance and guest shots clear the doorway piers and foreground table. The bus departure is seen from a lower front-quarter angle, with full-vehicle bounds checked. The final duo is framed from inside beside the doorway rather than behind its frame.
+- **Suspense:** Essie and seated patrons are hidden before the reveal, as well as the already-hidden opener and kitten. The door still opens from closed, closes for the kitten's unsuccessful reach, and opens for the eventual entry. The clock-window move clears the entire analog face and roofline; the clock tower remains one stable landmark.
+- **Light and surfaces:** cooler directional night light, reduced flat ambient fill and lower front-window spill retain readable dark surfaces and control the large bright pane. Street and facade materials gain restrained painted grain; windows have frames and tonal variation. Lead cards take a cool street tint or warm cafe spill. The same cinematic ink, bloom and grading pipeline is retained.
+- **Acting:** closed-mouth concern, startled reactions, searching glances, fear and relaxed final attention replace the nearly constant open-mouth fear pose. Crisp approved expressions replace dissolves that doubled facial lines. Blinks are more frequent, with a blink at the startled-to-listening change. The home bed is clear of the foreground reaction view, and carried cloth gets soft folds.
 
-| Uploaded time | Problem observed | Source correction |
-| --- | --- | --- |
-| 0–12 seconds | Obstructed opening, generic mystery view, overbright block-like streetlights | Higher city approach, confused-cat reactions, framed lantern housings, continuous streetlight pan followed by the house |
-| 26–40 seconds | Detached walking legs, bare home, blackout aimed at cafe, unreadable clock | Hip-anchored leg projection, visible bed/bowls/tower/wall art, street-facing blackout views, four-faced analog clock tower |
-| 42–74 seconds | Early occupants visible, rigid blanket, unclear approach, open door during failed reach | Opaque window/door panes, hidden opener, crouch under cloth dome, alley-to-door staging, closed-door kitten jump and synchronized handle tilt |
-| 80–94 seconds | Cloth/ground contact and diagonal entrance route; follow shot unclear | Blanket support heights, kitten enters first, centered Latte route, interior follow view leading to flowerpot, then Latte and the readable sign |
-| 98–111 seconds | Bus composition, arbitrary crates, foreground guest blocking leads, cafe shown for dark street | Closer departing bus, functional alley dumpster, guests settled before final close-up, views of other dark buildings, friendly duo finish |
+The narration remains **3,349 frames / 111.63 seconds / 80 cuts at 30 FPS**, with a maximum shot length of 105 frames (3.5 seconds). All **364 caption cards show one word**. The cached Adam recording is continuous; no gaps or additional speed adjustment are inserted. Original finished movies and private assets are preserved.
 
-Connected roads, extended ground, curb lines and detailed city blocks replace scattered infill. The clock tower has an illuminated circular analog face with hour/minute hands, masonry bands, cornice and spire; every view uses the same clock. The home-window move checks the whole clock face through the actual opening. The OPEN plaque is mounted on a stationary pier clear of the moving door. Window opacity, sidewalk elevations and lower lantern output address transparency/floor artifacts and glare.
+## Local command
 
-Street walkers and cars are present before curfew and clear before the suspense section. Car headlights include a light pool. Ending guests follow continuous entrance routes; the dumpster cat is the same cat that later emerges. The recalled opening and light-switch inserts hide present-time guests and carried props, so they cannot appear stranded in the earlier event. Cafe furniture and the three approved lead drawings remain unchanged.
-
-The latest requested streetlight direction is a **pan → house → Latte**, replacing the older nine jump-cut plan. Taps are **cafe → Latte → empty street**. The sign stays visible while its invitation is spoken. The original recording controls the pacing throughout.
-
-## Run on Windows
-
-Close Remotion Studio, then run these commands in PowerShell, one line at a time:
+Close Studio and previous review players. Run each line separately in PowerShell:
 
 ```powershell
 cd C:\V2
@@ -32,18 +25,14 @@ powershell -ExecutionPolicy Bypass -File .\Update-Local-Code.ps1
 .\Preview-Polish.cmd
 ```
 
-The preview command prepares timing offline, checks the story, renders each shot locally at **540×960**, and assembles the full narrated review with captions. Matching complete shot caches resume; changed source/props invalidate earlier polish clips. Original movies and private assets are preserved.
+The command prepares timing offline, checks source/rig invariants, renders locally at **540×960**, then assembles the narrated review. It renders the previously troublesome city, walk, clock, door, entrance, bus and ending shots first. Offscreen Canvas tests check repeated frames in different orders with a fixed rasterization mode. Actual per-frame audits stop the render if a critical subject is blocked/outside the frame, the camera enters geometry, or a character is revealed early. This catches defined failures; it does not judge animation quality or replace visual review.
 
-The current review has a version-specific name, `Polish_Review_<source-hash>_540p.mp4`, and source/props metadata. `PREVIEW_QA.json` records its exact path; Explorer selects this file after completion. The canonical `Polish_Narrated_Review_540p.mp4` is also refreshed for compatibility. Outputs are under `studio/out/v2-episodes/door-at-1111-polish/`.
+Valid matching clips resume. Changed visual source invalidates prior polish clips. No original episode outputs are deleted. The version-stamped output is `studio/out/v2-episodes/door-at-1111-polish/Polish_Review_<source-hash>_540p.mp4`; `PREVIEW_QA.json` records its exact path, and Explorer selects that movie after completion. The canonical preview filename is also refreshed.
 
-After picture approval, `Render-Polish.cmd` runs native 1080×1920 rendering and the separate music/Foley finishing stages. Narration synthesis is never called by either command.
+After visual approval, `Render-Polish.cmd` performs native 1080×1920 rendering and separate music/Foley finishing using the existing authorized assets. Neither command generates narration.
 
-## Verification and limits
+## Evidence and limits
 
-TypeScript, cafe layout, original animation, narration and original-episode regressions pass. Polish tests cover timing, deterministic transforms, planted feet, narration continuity, single-word captions, hidden early kitten, closed-door reach, mouth-to-bowl contact, doorway routes, shelter continuity and protected asset hashes. A separate leg projection test verifies both fixed hips and exact foot targets.
+TypeScript and the existing cafe, animation, narration and original-episode regression suites pass. Polish timing/story checks preserve continuous narration samples, single-word captions, deterministic transforms, planted feet, doorway routes, hidden early reveals, cloth/mouth and bowl/mouth contact, and 44 protected asset hashes. Additional rig/city checks verify real toe/hip anchors, finite leg geometry, reasonable reach, stable IDs and buildings clear of road corridors. The actual Three.js world passes geometry checks across all 3,349 frames, including camera/body clearance, required subjects, full clock/bus bounds, city coverage and other-building blackout views.
 
-The all-frame geometry preflight initializes the actual Three.js environment and checks all 3,349 camera states without drawing scene frames. It checks camera collisions, required subject visibility, full clock-face bounds, at least two other buildings in dark-street views, textures, vehicle separation and mouth/cloth contact. It is not a pixel-quality approval; character alpha occlusion is checked during actual local rendering.
-
-A supplied viral reference frame was inspected for room geography, grounded subjects and warm/cool separation. The reference shorts and `references/reports/motion.md` remain the local quality benchmark. This revision is **not claimed to match their visual quality until actual playback is reviewed**.
-
-No revised scene frames or movie were rendered in the cloud. End-to-end Windows rendering, the new preview assembly and revised acting/framing require local visual and listening approval. Check the complete version-stamped movie, especially the tower through the window, the unknown opener, blanket silhouette, kitten/Latte threshold order, bus departure and final unobstructed duo. Record findings in `studio/out/v2-episodes/door-at-1111-polish/VISUAL_INSPECTION_NOTES.md`.
+These are technical checks. The new scenes, lighting, acting and foot contacts must be judged from the actual version-stamped Windows movie against the references. No revised scene still or video was rendered in the cloud; source bundling, offscreen Canvas API tests and geometry evaluation do not establish visual approval. This is the intended final major pass, not a claim that no small cleanup can remain.
