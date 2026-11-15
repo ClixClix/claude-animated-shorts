@@ -29,14 +29,14 @@
     "number": 5,
     "start": 255,
     "end": 315,
-    "direction": "Different cats react in confusion; final cat shrugs",
+    "direction": "Door context, confused cat reaction, then a shrug",
     "purpose": "Different cats react in confusion; final cat shrugs"
   },
   {
     "number": 6,
     "start": 315,
     "end": 390,
-    "direction": "Cat approaches the dark road, hesitates, then takes another route",
+    "direction": "Cat hesitates at the dark street and takes the paved alternative lane",
     "purpose": "Cat approaches the dark road, hesitates, then takes another route"
   },
   {
@@ -80,13 +80,13 @@
     "number": 13,
     "start": 795,
     "end": 855,
-    "direction": "Rain clouds roll across the moon"
+    "direction": "Carefree mouse chase along the cafe pavement"
   },
   {
     "number": 14,
     "start": 855,
     "end": 915,
-    "direction": "Carefree rainy walk before the lights begin failing",
+    "direction": "Follow the mouse into the narrow service alley",
     "purpose": "Carefree rainy walk before the lights begin failing"
   },
   {
@@ -147,7 +147,7 @@
     "number": 24,
     "start": 1545,
     "end": 1620,
-    "direction": "Last streetlight switches off, then the surrounding town goes dark"
+    "direction": "Actual ninth lamp switches off, then dark residential buildings"
   },
   {
     "number": 25,
@@ -159,14 +159,14 @@
     "number": 26,
     "start": 1680,
     "end": 1755,
-    "direction": "Home arrival, nose-to-switch nudge, frightened reaction",
+    "direction": "Furnished home; stop and nudge the wall switch with the nose; reaction",
     "purpose": "Home arrival, nose-to-switch nudge, frightened reaction"
   },
   {
     "number": 27,
     "start": 1755,
     "end": 1815,
-    "direction": "Eye-level pan across the buildings of the dark street"
+    "direction": "Pan across unlit houses opposite the cafe"
   },
   {
     "number": 28,
@@ -190,7 +190,7 @@
     "number": 31,
     "start": 2010,
     "end": 2070,
-    "direction": "Wide approach and fast mysterious door swing with a restrained camera kick"
+    "direction": "Clear mysterious door swing with short impact shake"
   },
   {
     "number": 32,
@@ -208,7 +208,7 @@
     "number": 34,
     "start": 2205,
     "end": 2280,
-    "direction": "Three taps, three views of Latte reacting",
+    "direction": "Three reactions with the same home window behind Latte",
     "purpose": "Three taps, three views of Latte reacting"
   },
   {
@@ -227,7 +227,7 @@
     "number": 37,
     "start": 2415,
     "end": 2475,
-    "direction": "Empty nighttime street and doorway suspense inserts"
+    "direction": "Dark street followed by an ambiguous moving alley shadow"
   },
   {
     "number": 38,
@@ -239,19 +239,19 @@
     "number": 39,
     "start": 2550,
     "end": 2625,
-    "direction": "Continuous view of the shadow rising through fogged glass"
+    "direction": "Through Latte home window, zoom toward the cafe shadow"
   },
   {
     "number": 40,
     "start": 2625,
     "end": 2685,
-    "direction": "Slow push toward both pointed ears behind the foggy window"
+    "direction": "Continue through the same window to the pointed ears"
   },
   {
     "number": 41,
     "start": 2685,
     "end": 2760,
-    "direction": "Track the long shape behind fogged glass, then pan out toward the door"
+    "direction": "Tilt down through the same window to the moving cloth shadow"
   },
   {
     "number": 42,

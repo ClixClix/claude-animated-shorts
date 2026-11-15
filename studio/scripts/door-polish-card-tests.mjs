@@ -15,7 +15,7 @@ import {TownPopulation} from './population';
 import {createKitten} from '../../animation/kitten';
 import {storyAt} from '../../animation/timeline';
 export function run(props){
- const frames=['21','22','30','44','53','60C'].map(id=>{const s=props.shots.find(s=>s.id===id);return s.start+Math.floor((s.end-s.start)*.6);});let checks=0;
+ const frames=['21','22','30','44','53','60C'].map(id=>{const s=props.shots.find(s=>s.id===id);return s.start+Math.floor((s.end-s.start)*.6);});let checks=0;const issues={};
  const check=(v,m)=>{if(!v)throw Error(m);checks++;};
  const hash=bytes=>{let h=2166136261;for(const n of bytes)h=Math.imul(h^n,16777619);return h>>>0;};
  for(const id of ['latte','mocha','essie']){
@@ -34,16 +34,17 @@ export function run(props){
  const world=new EpisodeWorld(false),latte=createEpisodeCat('latte'),shot=props.shots.find(s=>s.id==='46'),camera=new T.PerspectiveCamera(70,1080/1920,.08,220);
  for(let frame=shot.start;frame<shot.end;frame++){const s=stateAt(frame,props.shots);latte.updateActor(s.latte,s);latte.mesh.updateMatrixWorld(true);camera.position.set(...s.camera);camera.fov=s.fov;camera.lookAt(...s.target);camera.updateProjectionMatrix();camera.updateMatrixWorld(true);world.update(s);const a=checkEpisodeCamera(world,s,camera,[{id:'latte',mesh:latte.mesh}]);check(a.visibility.every(v=>v.inFrame&&!v.occluder),'Kitten reveal blocked at '+frame+' '+JSON.stringify(a.visibility));}
  const population=new TownPopulation(),cast=['latte','mocha','essie'].map(id=>({id,card:createEpisodeCat(id)})),kitten=createKitten();
- for(let frame=props.shots.find(s=>s.id==='59C').start;frame<props.shots.at(-1).end;frame++){
+ for(let frame=0;frame<props.shots.at(-1).end;frame++){
   const s=stateAt(frame,props.shots);population.update(s);population.root.updateMatrixWorld(true);
-  cast.forEach(c=>{c.card.updateActor(s[c.id],s);c.card.mesh.updateMatrixWorld(true);});
-  kitten.update({...storyAt(0),kitten:s.kitten,kittenFear:s.kittenFear,kittenSmile:s.kittenSmile,camera:s.camera,target:s.target},s.t*30);kitten.mesh.position.set(...s.kitten);kitten.mesh.rotation.y=Math.atan2(s.camera[0]-s.kitten[0],s.camera[2]-s.kitten[2]);kitten.mesh.updateMatrixWorld(true);
+  const earlier=s.shot.number===58&&s.shot.variant===0||s.shot.number===59&&s.shot.variant===1;population.root.visible=!earlier;
+  cast.forEach(c=>{c.card.updateActor(s[c.id],s);c.card.mesh.visible=(!earlier||c.id==='mocha')&&(c.id==='latte'||s.shot.number>=50)&&!(c.id==='latte'&&[39,40,41].includes(s.shot.number))&&!(s.shot.number===59&&s.shot.variant===0);c.card.mesh.updateMatrixWorld(true);});
+  kitten.update({...storyAt(0),kitten:s.kitten,kittenFear:s.kittenFear,kittenSmile:s.kittenSmile,camera:s.camera,target:s.target},s.t*30);kitten.mesh.visible=s.shot.number>=46&&!earlier;kitten.mesh.position.set(...s.kitten);kitten.mesh.rotation.y=Math.atan2(s.camera[0]-s.kitten[0],s.camera[2]-s.kitten[2]);kitten.mesh.updateMatrixWorld(true);
   camera.position.set(...s.camera);camera.fov=s.fov;camera.lookAt(...s.target);camera.updateProjectionMatrix();camera.updateMatrixWorld(true);world.update(s);
   const a=checkEpisodeCamera(world,s,camera,[...cast.map(c=>({id:c.id,mesh:c.card.mesh})),{id:'kitten',mesh:kitten.mesh},...population.actors]);
-  check(a.visibility.every(v=>v.inFrame&&!v.occluder),'Ending occlusion at '+frame+' '+JSON.stringify(a.visibility));
+  const important=new Set(['latte','mocha','essie','kitten','mouse','door','clock','sign','light-9','shadow','shadow-top','cloth-silhouette','confused-cat','other-buildings']);for(const v of a.visibility.filter(v=>important.has(v.id)&&(!v.inFrame||v.occluder))){const key=s.shot.id+':'+v.id+':'+(v.occluder??'out-of-frame'),prior=issues[key]??{first:frame,last:frame,count:0};prior.last=frame;prior.count++;issues[key]=prior;}checks++;
  }
  population.dispose();cast.forEach(c=>c.card.dispose());kitten.dispose();latte.dispose();world.dispose();
- return {checks,passed:true,sceneFramesRendered:0};
+ return {checks,passed:!Object.keys(issues).length,alphaFramesChecked:props.shots.at(-1).end,issues,sceneFramesRendered:0};
 }`,resolveDir:path.resolve('src/v2/episodes/door-at-1111-polish'),loader:'ts'},bundle:true,write:false,platform:'browser',format:'iife',globalName:'CardTest'});
 const browser=await openBrowser('chrome',{browserExecutable,chromiumOptions});
-try{const page=await browser.newPage({context:()=>null,logLevel:'error',indent:false,pageIndex:0,onBrowserLog:()=>{},onLog:()=>{}});await page.evaluate(code=>{(0,eval)(code);},source.outputFiles[0].text);console.log(JSON.stringify(await page.evaluate(props=>window.CardTest.run(props),props)));}finally{await browser.close({silent:true});}
+try{const page=await browser.newPage({context:()=>null,logLevel:'error',indent:false,pageIndex:0,onBrowserLog:()=>{},onLog:()=>{}});await page.evaluate(code=>{(0,eval)(code);},source.outputFiles[0].text);const result=await page.evaluate(props=>window.CardTest.run(props),props);console.log(JSON.stringify(result));await fs.writeFile('out/v2-episodes/door-at-1111-polish/CARD_ALPHA_QA.json',JSON.stringify(result,null,2)+'\n');if(!result.passed)process.exitCode=1;}finally{await browser.close({silent:true});}

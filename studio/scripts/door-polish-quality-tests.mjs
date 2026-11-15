@@ -33,7 +33,7 @@ for(let frame=0;frame<shots.at(-1).end;frame++){
    check(corners.flat().every(Number.isFinite),'Invalid leg geometry');
    check(hip[1]>foot[1],'Visible leg inverted');
    const reach=Math.hypot(hip[0]-foot[0],hip[2]-foot[2]);maxShear=Math.max(maxShear,reach);maxHipX=Math.max(maxHipX,Math.hypot(hip[0]-a.position[0],hip[2]-a.position[2]));
-   check(reach<.34,'Excessive visible limb reach');
+   check(reach<.34,'Excessive visible limb reach '+JSON.stringify({frame,shot:s.shot.id,id,reach}));
   }
  }
 }

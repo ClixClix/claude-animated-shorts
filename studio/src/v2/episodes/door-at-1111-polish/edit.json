@@ -9,7 +9,7 @@
       "sourceStart": 0,
       "sourceEnd": 30,
       "direction": "City hook, then cats hurry home as one light flickers",
-      "purpose": "City hook, then cats hurry home as one light flickers \u2014 purposeful detail 1/2",
+      "purpose": "City hook, then cats hurry home as one light flickers — purposeful detail 1/2",
       "flashback": false
     },
     {
@@ -21,7 +21,7 @@
       "sourceStart": 30,
       "sourceEnd": 60,
       "direction": "City hook, then cats hurry home as one light flickers",
-      "purpose": "City hook, then cats hurry home as one light flickers \u2014 purposeful detail 2/2",
+      "purpose": "City hook, then cats hurry home as one light flickers — purposeful detail 2/2",
       "flashback": false
     },
     {
@@ -68,8 +68,8 @@
       "end": 161,
       "sourceStart": 255,
       "sourceEnd": 275,
-      "direction": "Different cats react in confusion; final cat shrugs",
-      "purpose": "Different cats react in confusion; final cat shrugs",
+      "direction": "Door context, confused cat reaction, then a shrug",
+      "purpose": "Door context, confused cat reaction, then a shrug — purposeful detail 1/3",
       "flashback": false
     },
     {
@@ -80,8 +80,8 @@
       "end": 188,
       "sourceStart": 275,
       "sourceEnd": 295,
-      "direction": "Different cats react in confusion; final cat shrugs",
-      "purpose": "Different cats react in confusion; final cat shrugs",
+      "direction": "Door context, confused cat reaction, then a shrug",
+      "purpose": "Door context, confused cat reaction, then a shrug — purposeful detail 2/3",
       "flashback": false
     },
     {
@@ -92,8 +92,8 @@
       "end": 214,
       "sourceStart": 295,
       "sourceEnd": 315,
-      "direction": "Different cats react in confusion; final cat shrugs",
-      "purpose": "Different cats react in confusion; final cat shrugs",
+      "direction": "Door context, confused cat reaction, then a shrug",
+      "purpose": "Door context, confused cat reaction, then a shrug — purposeful detail 3/3",
       "flashback": false
     },
     {
@@ -104,8 +104,8 @@
       "end": 278,
       "sourceStart": 315,
       "sourceEnd": 390,
-      "direction": "Cat approaches the dark road, hesitates, then takes another route",
-      "purpose": "Cat approaches the dark road, hesitates, then takes another route",
+      "direction": "Cat hesitates at the dark street and takes the paved alternative lane",
+      "purpose": "Cat hesitates at the dark street and takes the paved alternative lane",
       "flashback": false
     },
     {
@@ -129,7 +129,7 @@
       "sourceStart": 630,
       "sourceEnd": 655,
       "direction": "Streetlight pan from Latte eye level",
-      "purpose": "Streetlight pan from Latte eye level",
+      "purpose": "Streetlight pan from Latte eye level — purposeful detail 1/3",
       "flashback": false
     },
     {
@@ -141,7 +141,7 @@
       "sourceStart": 655,
       "sourceEnd": 680,
       "direction": "Streetlight pan from Latte eye level",
-      "purpose": "Streetlight pan from Latte eye level",
+      "purpose": "Streetlight pan from Latte eye level — purposeful detail 2/3",
       "flashback": false
     },
     {
@@ -153,7 +153,7 @@
       "sourceStart": 680,
       "sourceEnd": 705,
       "direction": "Streetlight pan from Latte eye level",
-      "purpose": "Streetlight pan from Latte eye level",
+      "purpose": "Streetlight pan from Latte eye level — purposeful detail 3/3",
       "flashback": false
     },
     {
@@ -176,8 +176,8 @@
       "end": 546,
       "sourceStart": 795,
       "sourceEnd": 855,
-      "direction": "Rain clouds roll across the moon",
-      "purpose": "Rain clouds roll across the moon",
+      "direction": "Carefree mouse chase along the cafe pavement",
+      "purpose": "Carefree mouse chase along the cafe pavement",
       "flashback": false
     },
     {
@@ -188,8 +188,8 @@
       "end": 591,
       "sourceStart": 855,
       "sourceEnd": 915,
-      "direction": "Carefree rainy walk before the lights begin failing",
-      "purpose": "Carefree rainy walk before the lights begin failing",
+      "direction": "Follow the mouse into the narrow service alley",
+      "purpose": "Follow the mouse into the narrow service alley",
       "flashback": false
     },
     {
@@ -284,8 +284,8 @@
       "end": 874,
       "sourceStart": 1545,
       "sourceEnd": 1582.5,
-      "direction": "Last streetlight switches off, then the surrounding town goes dark",
-      "purpose": "Last streetlight switches off, then the surrounding town goes dark \u2014 purposeful detail 1/2",
+      "direction": "Actual ninth lamp switches off, then dark residential buildings",
+      "purpose": "Actual ninth lamp switches off, then dark residential buildings — purposeful detail 1/2",
       "flashback": false
     },
     {
@@ -296,8 +296,8 @@
       "end": 896,
       "sourceStart": 1582.5,
       "sourceEnd": 1620,
-      "direction": "Last streetlight switches off, then the surrounding town goes dark",
-      "purpose": "Last streetlight switches off, then the surrounding town goes dark \u2014 purposeful detail 2/2",
+      "direction": "Actual ninth lamp switches off, then dark residential buildings",
+      "purpose": "Actual ninth lamp switches off, then dark residential buildings — purposeful detail 2/2",
       "flashback": false
     },
     {
@@ -308,8 +308,8 @@
       "end": 928,
       "sourceStart": 1620,
       "sourceEnd": 1665,
-      "direction": "Home arrival, nose-to-switch nudge, frightened reaction",
-      "purpose": "Home arrival, nose-to-switch nudge, frightened reaction",
+      "direction": "Furnished home; stop and nudge the wall switch with the nose; reaction",
+      "purpose": "Furnished home; stop and nudge the wall switch with the nose; reaction — purposeful detail 1/3",
       "flashback": false
     },
     {
@@ -320,8 +320,8 @@
       "end": 960,
       "sourceStart": 1665,
       "sourceEnd": 1710,
-      "direction": "Home arrival, nose-to-switch nudge, frightened reaction",
-      "purpose": "Home arrival, nose-to-switch nudge, frightened reaction",
+      "direction": "Furnished home; stop and nudge the wall switch with the nose; reaction",
+      "purpose": "Furnished home; stop and nudge the wall switch with the nose; reaction — purposeful detail 2/3",
       "flashback": false
     },
     {
@@ -332,8 +332,8 @@
       "end": 992,
       "sourceStart": 1710,
       "sourceEnd": 1755,
-      "direction": "Home arrival, nose-to-switch nudge, frightened reaction",
-      "purpose": "Home arrival, nose-to-switch nudge, frightened reaction",
+      "direction": "Furnished home; stop and nudge the wall switch with the nose; reaction",
+      "purpose": "Furnished home; stop and nudge the wall switch with the nose; reaction — purposeful detail 3/3",
       "flashback": false
     },
     {
@@ -344,8 +344,8 @@
       "end": 1050,
       "sourceStart": 1755,
       "sourceEnd": 1815,
-      "direction": "Eye-level pan across the buildings of the dark street",
-      "purpose": "Eye-level pan across the buildings of the dark street",
+      "direction": "Pan across unlit houses opposite the cafe",
+      "purpose": "Pan across unlit houses opposite the cafe",
       "flashback": false
     },
     {
@@ -392,8 +392,8 @@
       "end": 1320,
       "sourceStart": 2010,
       "sourceEnd": 2070,
-      "direction": "Wide approach and fast mysterious door swing with a restrained camera kick",
-      "purpose": "Wide approach and fast mysterious door swing with a restrained camera kick",
+      "direction": "Clear mysterious door swing with short impact shake",
+      "purpose": "Clear mysterious door swing with short impact shake",
       "flashback": false
     },
     {
@@ -416,8 +416,8 @@
       "end": 1387,
       "sourceStart": 2130,
       "sourceEnd": 2180,
-      "direction": "Three taps, three views of Latte reacting",
-      "purpose": "Three taps, three views of Latte reacting",
+      "direction": "Three reactions with the same home window behind Latte",
+      "purpose": "Three reactions with the same home window behind Latte — purposeful detail 1/3",
       "flashback": false
     },
     {
@@ -428,8 +428,8 @@
       "end": 1404,
       "sourceStart": 2180,
       "sourceEnd": 2230,
-      "direction": "Three taps, three views of Latte reacting",
-      "purpose": "Three taps, three views of Latte reacting",
+      "direction": "Three reactions with the same home window behind Latte",
+      "purpose": "Three reactions with the same home window behind Latte — purposeful detail 2/3",
       "flashback": false
     },
     {
@@ -440,8 +440,8 @@
       "end": 1422,
       "sourceStart": 2230,
       "sourceEnd": 2280,
-      "direction": "Three taps, three views of Latte reacting",
-      "purpose": "Three taps, three views of Latte reacting",
+      "direction": "Three reactions with the same home window behind Latte",
+      "purpose": "Three reactions with the same home window behind Latte — purposeful detail 3/3",
       "flashback": false
     },
     {
@@ -453,7 +453,7 @@
       "sourceStart": 2280,
       "sourceEnd": 2347.5,
       "direction": "Continuous slow push as Latte covers his head with his blanket",
-      "purpose": "Continuous slow push as Latte covers his head with his blanket \u2014 purposeful detail 1/2",
+      "purpose": "Continuous slow push as Latte covers his head with his blanket — purposeful detail 1/2",
       "flashback": false
     },
     {
@@ -465,7 +465,7 @@
       "sourceStart": 2347.5,
       "sourceEnd": 2415,
       "direction": "Continuous slow push as Latte covers his head with his blanket",
-      "purpose": "Continuous slow push as Latte covers his head with his blanket \u2014 purposeful detail 2/2",
+      "purpose": "Continuous slow push as Latte covers his head with his blanket — purposeful detail 2/2",
       "flashback": false
     },
     {
@@ -476,8 +476,8 @@
       "end": 1512,
       "sourceStart": 2415,
       "sourceEnd": 2445,
-      "direction": "Empty nighttime street and doorway suspense inserts",
-      "purpose": "Empty nighttime street and doorway suspense inserts \u2014 purposeful detail 1/2",
+      "direction": "Dark street followed by an ambiguous moving alley shadow",
+      "purpose": "Dark street followed by an ambiguous moving alley shadow — purposeful detail 1/2",
       "flashback": false
     },
     {
@@ -488,8 +488,8 @@
       "end": 1543,
       "sourceStart": 2445,
       "sourceEnd": 2475,
-      "direction": "Empty nighttime street and doorway suspense inserts",
-      "purpose": "Empty nighttime street and doorway suspense inserts \u2014 purposeful detail 2/2",
+      "direction": "Dark street followed by an ambiguous moving alley shadow",
+      "purpose": "Dark street followed by an ambiguous moving alley shadow — purposeful detail 2/2",
       "flashback": false
     },
     {
@@ -501,7 +501,7 @@
       "sourceStart": 2475,
       "sourceEnd": 2512.5,
       "direction": "Tiny meow. Latte stops hiding to listen",
-      "purpose": "Tiny meow. Latte stops hiding to listen \u2014 purposeful detail 1/2",
+      "purpose": "Tiny meow. Latte stops hiding to listen — purposeful detail 1/2",
       "flashback": false
     },
     {
@@ -513,7 +513,7 @@
       "sourceStart": 2512.5,
       "sourceEnd": 2550,
       "direction": "Tiny meow. Latte stops hiding to listen",
-      "purpose": "Tiny meow. Latte stops hiding to listen \u2014 purposeful detail 2/2",
+      "purpose": "Tiny meow. Latte stops hiding to listen — purposeful detail 2/2",
       "flashback": false
     },
     {
@@ -524,8 +524,8 @@
       "end": 1727,
       "sourceStart": 2550,
       "sourceEnd": 2587.5,
-      "direction": "Continuous view of the shadow rising through fogged glass",
-      "purpose": "Continuous view of the shadow rising through fogged glass \u2014 purposeful detail 1/2",
+      "direction": "Through Latte home window, zoom toward the cafe shadow",
+      "purpose": "Through Latte home window, zoom toward the cafe shadow — purposeful detail 1/2",
       "flashback": false
     },
     {
@@ -536,8 +536,8 @@
       "end": 1793,
       "sourceStart": 2587.5,
       "sourceEnd": 2625,
-      "direction": "Continuous view of the shadow rising through fogged glass",
-      "purpose": "Continuous view of the shadow rising through fogged glass \u2014 purposeful detail 2/2",
+      "direction": "Through Latte home window, zoom toward the cafe shadow",
+      "purpose": "Through Latte home window, zoom toward the cafe shadow — purposeful detail 2/2",
       "flashback": false
     },
     {
@@ -548,8 +548,8 @@
       "end": 1834,
       "sourceStart": 2625,
       "sourceEnd": 2685,
-      "direction": "Slow push toward both pointed ears behind the foggy window",
-      "purpose": "Slow push toward both pointed ears behind the foggy window",
+      "direction": "Continue through the same window to the pointed ears",
+      "purpose": "Continue through the same window to the pointed ears",
       "flashback": false
     },
     {
@@ -560,8 +560,8 @@
       "end": 1939,
       "sourceStart": 2685,
       "sourceEnd": 2760,
-      "direction": "Track the long shape behind fogged glass, then pan out toward the door",
-      "purpose": "Track the long shape behind fogged glass, then pan out toward the door",
+      "direction": "Tilt down through the same window to the moving cloth shadow",
+      "purpose": "Tilt down through the same window to the moving cloth shadow",
       "flashback": false
     },
     {
@@ -573,7 +573,7 @@
       "sourceStart": 2760,
       "sourceEnd": 2797.5,
       "direction": "Shaking paws, then the open hiding box inside Latte home",
-      "purpose": "Shaking paws, then the open hiding box inside Latte home \u2014 purposeful detail 1/2",
+      "purpose": "Shaking paws, then the open hiding box inside Latte home — purposeful detail 1/2",
       "flashback": false
     },
     {
@@ -585,7 +585,7 @@
       "sourceStart": 2797.5,
       "sourceEnd": 2835,
       "direction": "Shaking paws, then the open hiding box inside Latte home",
-      "purpose": "Shaking paws, then the open hiding box inside Latte home \u2014 purposeful detail 2/2",
+      "purpose": "Shaking paws, then the open hiding box inside Latte home — purposeful detail 2/2",
       "flashback": false
     },
     {
@@ -621,7 +621,7 @@
       "sourceStart": 2970,
       "sourceEnd": 3000,
       "direction": "Search along the alley before Latte discovers the kitten at the door",
-      "purpose": "Search along the alley before Latte discovers the kitten at the door \u2014 purposeful detail 1/2",
+      "purpose": "Search along the alley before Latte discovers the kitten at the door — purposeful detail 1/2",
       "flashback": false
     },
     {
@@ -633,7 +633,7 @@
       "sourceStart": 3000,
       "sourceEnd": 3030,
       "direction": "Search along the alley before Latte discovers the kitten at the door",
-      "purpose": "Search along the alley before Latte discovers the kitten at the door \u2014 purposeful detail 2/2",
+      "purpose": "Search along the alley before Latte discovers the kitten at the door — purposeful detail 2/2",
       "flashback": false
     },
     {
@@ -693,7 +693,7 @@
       "sourceStart": 3300,
       "sourceEnd": 3330,
       "direction": "Continue the eye-close move until the Mocha reveal",
-      "purpose": "Continue the eye-close move until the Mocha reveal",
+      "purpose": "Continue the eye-close move until the Mocha reveal — purposeful detail 1/2",
       "flashback": false
     },
     {
@@ -705,7 +705,7 @@
       "sourceStart": 3330,
       "sourceEnd": 3360,
       "direction": "Continue the eye-close move until the Mocha reveal",
-      "purpose": "Continue the eye-close move until the Mocha reveal",
+      "purpose": "Continue the eye-close move until the Mocha reveal — purposeful detail 2/2",
       "flashback": false
     },
     {
@@ -789,7 +789,7 @@
       "sourceStart": 3780,
       "sourceEnd": 3792,
       "direction": "Continuous flowerpot to Latte to invitation sign pan",
-      "purpose": "Continuous flowerpot to Latte to invitation sign pan",
+      "purpose": "Continuous flowerpot to Latte to invitation sign pan — purposeful detail 1/5",
       "flashback": false
     },
     {
@@ -801,7 +801,7 @@
       "sourceStart": 3792,
       "sourceEnd": 3804,
       "direction": "Continuous flowerpot to Latte to invitation sign pan",
-      "purpose": "Continuous flowerpot to Latte to invitation sign pan",
+      "purpose": "Continuous flowerpot to Latte to invitation sign pan — purposeful detail 2/5",
       "flashback": false
     },
     {
@@ -813,7 +813,7 @@
       "sourceStart": 3804,
       "sourceEnd": 3816,
       "direction": "Continuous flowerpot to Latte to invitation sign pan",
-      "purpose": "Continuous flowerpot to Latte to invitation sign pan",
+      "purpose": "Continuous flowerpot to Latte to invitation sign pan — purposeful detail 3/5",
       "flashback": false
     },
     {
@@ -825,7 +825,7 @@
       "sourceStart": 3816,
       "sourceEnd": 3828,
       "direction": "Continuous flowerpot to Latte to invitation sign pan",
-      "purpose": "Continuous flowerpot to Latte to invitation sign pan",
+      "purpose": "Continuous flowerpot to Latte to invitation sign pan — purposeful detail 4/5",
       "flashback": false
     },
     {
@@ -837,7 +837,7 @@
       "sourceStart": 3828,
       "sourceEnd": 3840,
       "direction": "Continuous flowerpot to Latte to invitation sign pan",
-      "purpose": "Continuous flowerpot to Latte to invitation sign pan",
+      "purpose": "Continuous flowerpot to Latte to invitation sign pan — purposeful detail 5/5",
       "flashback": false
     },
     {
@@ -849,7 +849,7 @@
       "sourceStart": 3840,
       "sourceEnd": 3858.75,
       "direction": "Recall Mocha opening the cafe, then present clock tower, departing bus and dumpster cat",
-      "purpose": "Recall Mocha opening the cafe, then present clock tower, departing bus and dumpster cat \u2014 purposeful detail 1/4",
+      "purpose": "Recall Mocha opening the cafe, then present clock tower, departing bus and dumpster cat — purposeful detail 1/4",
       "flashback": true
     },
     {
@@ -861,7 +861,7 @@
       "sourceStart": 3858.75,
       "sourceEnd": 3877.5,
       "direction": "Recall Mocha opening the cafe, then present clock tower, departing bus and dumpster cat",
-      "purpose": "Recall Mocha opening the cafe, then present clock tower, departing bus and dumpster cat \u2014 purposeful detail 2/4",
+      "purpose": "Recall Mocha opening the cafe, then present clock tower, departing bus and dumpster cat — purposeful detail 2/4",
       "flashback": false
     },
     {
@@ -873,7 +873,7 @@
       "sourceStart": 3877.5,
       "sourceEnd": 3896.25,
       "direction": "Recall Mocha opening the cafe, then present clock tower, departing bus and dumpster cat",
-      "purpose": "Recall Mocha opening the cafe, then present clock tower, departing bus and dumpster cat \u2014 purposeful detail 3/4",
+      "purpose": "Recall Mocha opening the cafe, then present clock tower, departing bus and dumpster cat — purposeful detail 3/4",
       "flashback": false
     },
     {
@@ -885,7 +885,7 @@
       "sourceStart": 3896.25,
       "sourceEnd": 3915,
       "direction": "Recall Mocha opening the cafe, then present clock tower, departing bus and dumpster cat",
-      "purpose": "Recall Mocha opening the cafe, then present clock tower, departing bus and dumpster cat \u2014 purposeful detail 4/4",
+      "purpose": "Recall Mocha opening the cafe, then present clock tower, departing bus and dumpster cat — purposeful detail 4/4",
       "flashback": false
     },
     {
@@ -897,7 +897,7 @@
       "sourceStart": 3915,
       "sourceEnd": 3940,
       "direction": "Only kittens entering on the customer line; Mocha light-switch insert; alley refuge",
-      "purpose": "Only kittens entering on the customer line; Mocha light-switch insert; alley refuge",
+      "purpose": "Only kittens entering on the customer line; Mocha light-switch insert; alley refuge — purposeful detail 1/3",
       "flashback": false
     },
     {
@@ -909,7 +909,7 @@
       "sourceStart": 3940,
       "sourceEnd": 3965,
       "direction": "Only kittens entering on the customer line; Mocha light-switch insert; alley refuge",
-      "purpose": "Only kittens entering on the customer line; Mocha light-switch insert; alley refuge",
+      "purpose": "Only kittens entering on the customer line; Mocha light-switch insert; alley refuge — purposeful detail 2/3",
       "flashback": true
     },
     {
@@ -921,7 +921,7 @@
       "sourceStart": 3965,
       "sourceEnd": 3990,
       "direction": "Only kittens entering on the customer line; Mocha light-switch insert; alley refuge",
-      "purpose": "Only kittens entering on the customer line; Mocha light-switch insert; alley refuge",
+      "purpose": "Only kittens entering on the customer line; Mocha light-switch insert; alley refuge — purposeful detail 3/3",
       "flashback": false
     },
     {
@@ -933,7 +933,7 @@
       "sourceStart": 3990,
       "sourceEnd": 4020,
       "direction": "Latte and kitten settle together; other arrivals already inside",
-      "purpose": "Latte and kitten settle together; other arrivals already inside",
+      "purpose": "Latte and kitten settle together; other arrivals already inside — purposeful detail 1/3",
       "flashback": false
     },
     {
@@ -945,7 +945,7 @@
       "sourceStart": 4020,
       "sourceEnd": 4050,
       "direction": "Latte and kitten settle together; other arrivals already inside",
-      "purpose": "Latte and kitten settle together; other arrivals already inside",
+      "purpose": "Latte and kitten settle together; other arrivals already inside — purposeful detail 2/3",
       "flashback": false
     },
     {
@@ -957,7 +957,7 @@
       "sourceStart": 4050,
       "sourceEnd": 4080,
       "direction": "Latte and kitten settle together; other arrivals already inside",
-      "purpose": "Latte and kitten settle together; other arrivals already inside",
+      "purpose": "Latte and kitten settle together; other arrivals already inside — purposeful detail 3/3",
       "flashback": false
     }
   ],

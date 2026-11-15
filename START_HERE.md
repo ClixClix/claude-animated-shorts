@@ -1,3 +1,5 @@
+> **Current work:** Read [HANDOFF_FOR_CHATGPT.md](HANDOFF_FOR_CHATGPT.md) and [CONTINUATION_STATUS.md](CONTINUATION_STATUS.md) first. The completion counts below describe the original historical handoff, not the current polish revision.
+
 # What If Cats V2 — local Windows handoff
 
 The cloud render was stopped at your request. This package contains **37 complete native shots / 2,462 frames** from the 70-shot episode. **33 shots remain.** There is no finished full-episode MP4 yet. Existing approved test movies and artwork are retained.

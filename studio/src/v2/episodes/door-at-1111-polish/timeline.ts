@@ -30,7 +30,7 @@ export function sourceAt(frame:number,shots:EpisodeShot[]){
 }
 export function actualAt(base:number,shots:EpisodeShot[]){const s=shots.find(s=>base>=s.sourceStart&&base<s.sourceEnd)??shots.at(-1)!;return s.start+(s.end-s.start)*clamp((base-s.sourceStart)/(s.sourceEnd-s.sourceStart));}
 export const HOME={front:12.3,back:16.1,left:-0.05,right:4.55,floor:0.20,door:[3.15,0.2,12.3] as V3,window:[0.85,1.55,12.3] as V3,switch:[4.50,.90,13.10] as V3};
-export const STREETLIGHTS:V3[]=[[-6,0,6.05],[6,0,6.05],...[-4.5,-3,-1.5,0,1.5,3,4.5].map(x=>[x,0,12.0] as V3)];
+export const STREETLIGHTS:V3[]=[[-6,0,6.05],[6,0,6.05],[-14,0,6.05],[14,0,6.05],[-10,0,11.95],[-4.8,0,11.95],[10,0,11.95],[14,0,11.95],[3.8,0,11.95]];
 export const DOOR_PUSH_WINDOWS=[[4,6],[15,17],[67,69],[109,109.25]] as const;
 /** Acceleration under the paw, then continuous-velocity coasting with friction after release. */
 export function doorAngleAt(t:number){
@@ -44,7 +44,7 @@ export function doorAngleAt(t:number){
 export const kittenRevealed=(s:Pick<EpisodeState,'shot'>)=>s.shot.number>=46;
 export const streetActivity=(s:Pick<EpisodeState,'t'>)=>s.t<29;
 export function groupedProgress(s:EpisodeState,numbers:number[]){const shots=s.editShots?.filter(q=>numbers.includes(q.number));return shots?.length?clamp((s.frame-shots[0].start)/(shots.at(-1)!.end-shots[0].start)):s.u;}
-export const BLACKOUT_TIMES=[31.8,34.5,36.8,41.0,43.7,46.0,48.7,51.0,54.25];
+export const BLACKOUT_TIMES=[31.8,34.5,36.8,41.0,43.7,46.0,48.7,51.0,52.4];
 export const KITTEN_WAIT:V3=[2.50,0.03,5.10],KITTEN_REST:V3=[2.60,0,3.24];
 export const BOWL_REST:V3=[3.124228,0,3.424509];
 export const CLOCK:V3=[-8.4,15.2,-13.4];
@@ -66,7 +66,7 @@ function pathAt(t:number,keys:Key[]){
 const LATTE_PATH:Key[]=[
  {time:0,position:[-1.45,.03,6.1]},{time:10.5,position:[-1.45,.03,6.1]},{time:12.99,position:[-2,.03,6.6]},{time:13,position:[-2,.03,6.1]},
  {time:26.49,position:[-2.0,0.03,6.10]}, {time:26.5,position:[-2.50,0.03,6.3]},
- {time:28.0,position:[-1.6,.03,6.1]},{time:29.4,position:[-3.3,.03,6.35]},{time:30.5,position:[-2.5,.03,6.3]},{time:39.5,position:[-2.50,0.03,6.3]}, {time:44.5,position:[-2.50,0.03,8.00]},
+ {time:27.3,position:[.5,.03,5.6]},{time:28.2,position:[4.05,.03,5.6]},{time:28.5,position:[4.5,.03,5.45]},{time:28.8,position:[4.6,.03,5.05]},{time:30.5,position:[4.6,.028,1.0]},{time:31.2,position:[4.6,.028,1.0]},{time:34,position:[4.6,.03,5.6]},{time:37,position:[-2.5,.03,6.3]},{time:39.5,position:[-2.50,0.03,6.3]}, {time:44.5,position:[-2.50,0.03,8.00]},
  {time:46.5,position:[-1.80,0.03,8.25]}, {time:49,position:[-0.70,0.03,9.0]},
  {time:51.5,position:[2.0,0.03,10.8]}, {time:51.9,position:[3.15,.03,11.1]}, {time:52.5,position:[3.15,.18,11.7]}, {time:54,position:[3.15,0.20,12.08]},
  {time:56,position:[3.68,0.20,13.10]}, {time:56.8,position:[4.08,.20,13.10]},{time:57.6,position:[4.08,.20,13.10]},{time:58.5,position:[3.68,0.20,13.10]},
@@ -77,6 +77,7 @@ const LATTE_PATH:Key[]=[
  {time:105.5,position:[3.80,0.03,5.55]}, {time:107.5,position:[4.15,0.03,5.85]}, {time:122,position:[4.15,0.03,5.85]}, {time:123,position:[2.25,.03,5.45]}, {time:124,position:[2.25,.03,5.45]}, {time:125.1,position:[2.25,.03,4.4]}, {time:125.3,position:[2.25,0,4.1]}, {time:125.8,position:[2.25,0,3.6]},
  {time:126,position:[1.93,0,3.30]}, {time:132.5,position:[1.93,0,3.30]}, {time:135,position:[2.15,0,3.30]}, {time:136,position:[2.15,0,3.30]},
 ];
+export function mouseAt(t:number):V3{const p=pathAt(Math.min(t+.22,30.5),LATTE_PATH).position;p[0]+=.55*beat(t,27.7,28.5);return t<30.5?p:mix(p,[6.52,.028,1.0],beat(t,30.5,31.0));}
 const ESSIE_PATH:Key[]=[{time:99,position:[0.02,0.6,-2.08]},{time:100.5,position:[0.48,0.6,-2.08]},{time:102,position:[0.91,0,-2.08]},{time:104,position:[1.40,0,-1.8]},{time:107,position:[1.4,0,0.5]},{time:109,position:[3.55,0,0.6]},{time:113.5,position:[3.55,0,2.9]},{time:117,position:[3.32,0,3.34]},{time:127,position:[3.32,0,3.34]},{time:129.5,position:[3.65,0,3.34]},{time:132,position:[3.65,0,.9]},{time:136,position:[3.65,0,.9]}];
 const MOCHA_PATH:Key[]=[{time:0,position:[2.25,0,3.90]},{time:6,position:[2.25,0,3.90]},{time:10,position:[-.96,0,3.30]},{time:12.99,position:[-.96,0,3.30]},{time:13,position:[2.25,0,3.90]},{time:17,position:[2.25,0,3.90]},{time:21,position:[-.96,0,3.30]},{time:26.5,position:[-.96,0,3.65]},{time:64.5,position:[-.96,0,3.65]},{time:67,position:[2.25,0,3.90]},{time:69,position:[2.25,0,3.90]},{time:75,position:[-.96,0,3.65]},{time:85,position:[-.96,0,3.65]},{time:87.5,position:[-.96,0,3.30]},{time:89.5,position:[-.96,0,3.30]},{time:93.5,position:[-.50,0,3.30]},{time:101,position:[-.96,0,3.30]},{time:105.5,position:[-.96,0,3.10]},{time:107.5,position:[-.96,0,3.10]},{time:109,position:[2.25,0,3.90]},{time:112,position:[2.25,0,3.90]},{time:114.5,position:[1.18,0,3.32]},{time:127,position:[1.18,0,3.32]},{time:128,position:[.25,0,3.32]},{time:129,position:[.25,0,1.25]},{time:130.3,position:[-3.45,0,1.25]},{time:136,position:[-3.45,0,1.25]}];
 
@@ -114,7 +115,7 @@ function actor(t:number,keys:Key[],seed:number):Actor{
  let segment=keys.findIndex((k,i)=>i>0&&t<k.time);if(segment<0)segment=keys.length-1;let begin=Math.max(0,segment-1),end=segment;while(begin>0&&distance(keys[begin-1].position,keys[begin].position)>.001)begin--;while(end<keys.length-1&&distance(keys[end].position,keys[end+1].position)>.001)end++;
  let priorTravel=0;for(let i=1;i<=begin;i++)priorTravel+=distance(keys[i-1].position,keys[i].position);const walkTravel=Math.max(0,p.travel-priorTravel);
  const feet=feetAt(walkTravel,keys.slice(begin,end+1));for(const foot of feet)foot.position[1]=supportHeight(foot.position,seed)+foot.lift;
- const before=pathAt(t-.025,keys).position,after=pathAt(t+.025,keys).position,length=Math.hypot(after[0]-before[0],after[2]-before[2])||1,heading:V3=[(after[0]-before[0])/length,0,(after[2]-before[2])/length];
+ const before=pointByDistance(Math.max(0,walkTravel-.12),keys.slice(begin,end+1)),after=pointByDistance(walkTravel+.12,keys.slice(begin,end+1)),length=Math.hypot(after[0]-before[0],after[2]-before[2])||1,heading:V3=[(after[0]-before[0])/length,0,(after[2]-before[2])/length];
  const gait=walkTravel/.32*Math.PI*2;if(moving)p.position[1]+=(.006+.014*(1-Math.cos(gait*2)))*clamp(p.velocity/.35);
  return {feet:feet.map(f=>f.position),footKeys:feet.map(f=>begin+':'+f.key),position:p.position,heading,travel:walkTravel,moving,emotion:0,pose:{walking:moving,gait:walkTravel/0.32*Math.PI*2,breath:Math.sin(t*1.8+seed)*.22,tail:Math.sin(t*.9+seed)*.10,blink:Math.max(0,1-Math.abs(((t+seed*.41)%2.45)-2.20)/.10),earLeft:0,earRight:0,headTilt:0,yaw:0,headTurn:0,gazeX:0,gazeY:0}};
 }
@@ -174,8 +175,7 @@ export function stateAt(frame:number,shots:EpisodeShot[]=DRAFT_SHOTS,taps:number
  // A short central sample anticipates corners and avoids an abrupt left/right profile flip.
  for(const [a,path] of [[latte,LATTE_PATH],[mocha,MOCHA_PATH],[essie,ESSIE_PATH]] as [Actor,Key[]][]){
   if(!a.moving)continue;
-  const before=pathAt(t-.12,path).position,after=pathAt(t+.12,path).position;
-  const dx=after[0]-before[0],dz=after[2]-before[2],length=Math.hypot(dx,dz);
+  const before=pathAt(t-.12,path).position,after=pathAt(t+.12,path).position;const dx=after[0]-before[0],dz=after[2]-before[2],length=Math.hypot(dx,dz);
   const cx=s.camera[0]-a.position[0],cz=s.camera[2]-a.position[2],cameraLength=Math.hypot(cx,cz);
   const heading=length>1e-8&&cameraLength>1e-8?Math.max(-1,Math.min(1,(dx*cz-dz*cx)/(length*cameraLength))):0;
   a.pose.yaw=heading*.92;a.pose.gazeX=heading*.5;
@@ -193,48 +193,46 @@ function setCamera(s:EpisodeState){
  const set=(camera:V3,target:V3,fov:number,required:string[]=[],blur=0)=>Object.assign(s,{camera,target,fov,required,blur});
  const latteHome=(close=false)=>set(close?[1.00,1.30,14.6]:[2.55,1.55,15.35],latte,close?65:58,['latte'],close?3:0);
  switch(n){
- case 1:if(!v)set(mix([32,29,43],[27,25,36],ease(u)),[-3,3,-7],74,['city-district','cafe']);else {const p=streetCatPosition(s,1);set([2.8,1.4,8.5],[p[0],.56,p[2]],74,['rush-home']);}break;
+ case 1:if(!v)set(mix([32,29,43],[27,25,36],ease(u)),[-3,3,-7],74,u<.8?['city-district','cafe','sun']:['city-district','cafe']);else {const p=streetCatPosition(s,1);set([2.8,1.4,8.5],[p[0],.56,p[2]],74,['rush-home']);}break;
  case 2:set([CLOCK[0]+3.8,CLOCK[1]+.4,CLOCK[2]+10.4],CLOCK,45,['clock']);break;
  case 3:case 4:{const q=groupedProgress(s,[3,4]);set(mix([5.7,5.7,10.0],[3.4,1.5,7.0],ease(q)),mix([0,2.4,4.2],[2.25,1.5,4.2],ease(q)),94-32*ease(q),q<.35?['cafe']:['door']);break;}
  
- case 5:{const index=v%2,p=streetCatPosition(s,index);set([p[0]+.55,1.15,p[2]+2.2],[p[0],.57,p[2]],58,['confused-cat']);break;}
- case 6:{const p=streetCatPosition(s,0);set([p[0]+2.0,1.25,p[2]-1.5],[p[0],.6,p[2]],76,['confused-cat']);break;}
+ case 5:if(v===0)set([-.5,1.4,9.5],[2.25,1.4,4.2],80,['door']);else {const p=streetCatPosition(s,0);set([p[0]+.55,1.15,p[2]+2.2],[p[0],.57,p[2]],v===1?64:56,['confused-cat']);}break;
+ case 6:{const p=streetCatPosition(s,0);set([Math.min(-2.4,p[0]+1.8),1.8,p[2]+2],[p[0],.6,p[2]],82,['confused-cat']);break;}
  case 7:set([.55,3.18,5.65],CLOCK,65,['clock']);break;
  case 8:set([5.7,2.8,12.0],[1.2,2.2,4.2],52,['door']);break;
  case 9:set([-.80,1.8,6.05],[-.90,2.1,4.24],62,['shadow']);break;
  case 10:set([-.6,1.25,8.5],latte,40,['latte']);break;
  case 11:{const q=groupedProgress(s,[11]);set([s.latte.position[0]+.15,1.20,s.latte.position[2]+.55],mix([-6,3.05,6.5],[4.5,3.05,12],ease(q)),92,[]);break;}
  case 12:set([-1.00,1.15,8.1],latte,40,['latte']);break;
- case 13:set([s.latte.position[0]+1.6,1.1,s.latte.position[2]+2.0],latte,68,['latte']);break;
- case 14:set([s.latte.position[0]+1.6,1.1,s.latte.position[2]+2.0],latte,68,['latte']);break;
- case 15:set([-7.25,2.8,8.5],[-6,3.1,6.5],49,['light-1']);break;
- case 16:set([7.3,2.5,9],[6,3.1,6.5],50,['light-2']);break;
- case 17:set([-4.1,2.6,7.2],[-4.5,3.1,9.6],45,['light-3']);break;
+ case 13:{const m=mouseAt(t);set([s.latte.position[0]+.8,2.0,s.latte.position[2]+2.2],mix(latte,[m[0],.4,m[2]],.25),78,['latte','mouse']);break;}
+ case 14:{const m=mouseAt(t);set([5.9,1.8,s.latte.position[2]+2.0],mix(latte,[m[0],.4,m[2]],.25),78,['latte','mouse']);break;}
+ case 15:{const p=STREETLIGHTS[0];set([p[0]+1.6,2.6,p[2]+2.6],[p[0],3.05,p[2]],52,['light-1']);break;}
+ case 16:{const p=STREETLIGHTS[1];set([p[0]+1.6,2.6,p[2]+2.6],[p[0],3.05,p[2]],52,['light-2']);break;}
+ case 17:{const p=STREETLIGHTS[2];set([p[0]+1.6,2.6,p[2]+2.6],[p[0],3.05,p[2]],52,['light-3']);break;}
  case 18:set([-2.6,1.25,8.4],latte,46,['latte'],2);break;
  case 19:set([s.latte.position[0]+1,.32,s.latte.position[2]+1.7],[s.latte.position[0],.22,s.latte.position[2]],44,['latte-feet']);break;
  case 20:set([s.latte.position[0]+2.15,1.1,s.latte.position[2]+1.4],latte,53,['latte']);break;
  case 21:set([-1.0,1.25,8.8],[-3.25,.85,6.95],85,['latte','bus-stop']);break;
  case 22:set([s.latte.position[0]+1.2,.85,s.latte.position[2]+1.4],[s.latte.position[0],.58,s.latte.position[2]],70,['latte']);break;
  case 23:set([7.2,2.2,8.5],[3.15,1.0,12.3],78,['home-door']);break;
- case 24:if(!v)set([5.7,3.0,11.0],[4.5,3.05,9.6],62,['light-9']);else set([-4,3.5,7.2],[0,1.7,16],95,['other-buildings']);break;
+ case 24:if(!v)set([6.7,2.8,9.8],[3.8,3.05,11.95],58,['light-9']);else set([-4,2.2,7.2],[0,1.8,17],88,['other-buildings']);break;
  case 25:set([2.35,1.2,14.55],[3.12,1.1,12.3],57,['home-door']);break;
- case 26:if(!v)set([4.15,1.6,15.4],latte,75,['latte']);else if(v===1)set([3.5,1.5,14.25],HOME.switch,70,['switch']);else latteHome(true);break;
- case 27:{const x=-6+11.5*ease(u);set([-4.2,1.8,7.0],[x,1.8,17],88,['other-buildings']);break;}
+ case 26:if(!v)set([3.8,2.5,15.7],latte,88,['latte']);else if(v===1)set([4.04,1.15,14.9],[4.15,.85,13.1],76,['latte','switch']);else latteHome(true);break;
+ case 27:{const x=-6+11.5*ease(u);set([-2,2.4,7.8],[x,2.0,19],92,['other-buildings']);break;}
  case 28:case 29:{const q=groupedProgress(s,[28,29]);set(mix([-3.7,1.55,9.3],[1.5,2.2,8.8],ease(q)),mix([-1,1.7,4.2],[0,1.9,4.2],ease(q)),100-17*ease(q),['cafe']);break;}
  case 30:set([1.15,1.05,14.8],CLOCK,70-52*ease(u),['clock']);break;
- case 31:set(mix([4.8,1.6,8.3],[4.3,1.45,7.5],beat(u,0,.75)),[2.25,1.50,4.2],72-6*ease(u),['door']);s.camera[0]+=.012*Math.sin(s.frame*2.4)*Math.max(0,1-Math.abs(u-.15)/.1);break;
+ case 31:set(mix([4.8,1.6,8.3],[4.3,1.45,7.5],beat(u,0,.75)),[2.25,1.50,4.2],72-6*ease(u),['door']);{const d=s.frame-s.shot.start-7,j=d>=0&&d<7?(1-d/7)*(d%2?-1:1):0;s.camera[0]+=.035*j;s.camera[1]+=.015*j;}break;
  case 32:latteHome(true);break;
  case 33:set([2.80,.73,3.60],[2.80,.63,4.47],55,['tap']);break;
- case 34:{const cameras:V3[]=[[2.6,1.35,15.3],[1.05,1.3,14.6],[3.4,1.4,14.6]];set(cameras[v],latte,66,['latte']);break;}
+ case 34:{const cameras:V3[]=[[1.7,1.3,15.2],[1.05,1.3,14.6],[.35,1.35,15.1]];set(cameras[v],latte,66,['latte']);break;}
  case 35:latteHome(true);break;
  case 36:latteHome();s.camera=mix(s.camera,s.target,.12*ease(groupedProgress(s,[36])));s.required=['home-blanket'];break;
  case 37:if(!v)set([-2,1.55,6.5],[-2,1.7,17],86,['other-buildings']);else set([6.0,1.3,7.3],[5.45,.7,2.2],70,['alley']);break;
  case 38:latteHome(v>0);if(!v)s.required=['home-blanket'];break;
- case 39:set(mix([-.45,1.65,6.65],[-.65,1.85,5.95],ease(groupedProgress(s,[39]))),[-.90,2.0,4.24],64,['shadow']);break;
- // Frame both ear tips together with the head, rather than an empty window strip.
- case 40:set(mix([-.96,2.55,6.65],[-.96,2.55,6.05],ease(u)),[-.96,2.42,4.26],70,['shadow-top','shadow']);break;
- // Include the dragging cloth and the floor around its full travel.
- case 41:set(mix([-.8,1.45,6.4],[3.2,1.55,7.1],beat(u,.3,1)),mix([-.9,1.05,4.26],[2.25,1.25,4.24],beat(u,.3,1)),78,u<.3?['cloth-silhouette']:u>.85?['door']:[]);break;
+ case 39:set([.85,1.4,14.3],[-.9,2.0,4.258],88-58*ease(groupedProgress(s,[39])),['shadow']);break;
+ case 40:set([.85,1.4,14.3],mix([-.9,2.0,4.258],[-.9,2.55,4.258],ease(u)),30-6*ease(u),['shadow-top']);break;
+ case 41:set([.85,1.4,14.3],mix([-.9,2.55,4.258],[-.9,1.05,4.258],ease(u)),24+16*ease(u),u<.3?['shadow-top']:u>.85?['cloth-silhouette']:[]);break;
  case 42:{const q=groupedProgress(s,[42]);set([2.2,1.35,14.6],mix([.95,.60,13.24],[.55,.48,15.1],ease(q)),78,q<.4?['latte-paws']:q>.7?['hiding-box']:[]);const j=Math.sin(s.frame*1.9)*.004;s.camera[0]+=j;break;}
  case 43:set([3.8,1.35,15.35],latte,60,['latte']);break;
  case 44:set([s.latte.position[0]+.45,1.25,s.latte.position[2]-2.7],latte,68,['latte']);break;
@@ -266,7 +264,7 @@ function setCamera(s:EpisodeState){
   if(v===0)set([0,1.6,3.0],[2.25,.85,4.24],88,['mocha','door']);
   else if(v===1)set([CLOCK[0]+3.8,CLOCK[1]+.4,CLOCK[2]+10.4],CLOCK,45,['clock']);
   else if(v===2){const x=-2.8-u*3.4;set([x-4.8,1.65,9.0],[x,1.0,7.2],86,['bus']);}
-  else set(mix([7.0,1.3,8.1],[6.4,1.15,7.4],ease(u)),[5.45,.65,2.2],66,['hesitant-cat']);break;
+  else set(mix([6.1,1.3,3.6],[5.9,1.15,2.9],ease(u)),[5.45,.65,-1.7],66,['hesitant-cat']);break;
  case 59:
   if(v===0){const p=shelterState(s,0).position;set([3.25,1.35,2.85],[p[0],p[1]+.5,p[2]],78,['shelter-guest']);}
   else if(v===1)set([-2.15,1.3,3.0],[-3.65,.8,1.3],66,['mocha']);
@@ -277,7 +275,7 @@ function setCamera(s:EpisodeState){
 
  }
  // A restrained push supports selected reactions; tracking uses actor world position above.
- if([10,18,32,39,60].includes(n))s.camera=mix(s.camera,s.target,.035*u);
+ if([10,18,32,60].includes(n))s.camera=mix(s.camera,s.target,.035*u);
  // Fit requested faces/bodies inside the actual portrait frustum, not just their center marker.
  const close=new Set([10,12,14,18,28,32,35,38,42,45,49,50,57,59]);
  const fitIds=s.required.filter(id=>['latte','mocha','essie','kitten'].includes(id));

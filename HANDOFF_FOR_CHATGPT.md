@@ -66,3 +66,7 @@ For repo delivery, update `LOCAL_UPDATE_FILES.json`. The installed Windows updat
 Use the approved engine, not V1. Do not copy episode-specific geometry into a new permanent environment. Start with an approved script, a stable layout/prop registry, shot/beat mapping and continuity plan. Copy the existing composition/module pattern into a new episode directory and output folder, register the composition, and adapt production scripts deliberately. The current polish commands are episode-specific, NOT a universal new-episode CLI.
 
 For every episode: script approval -> narration approval/cache -> actual timing -> actual storyboard -> critical motion/contact samples -> full preview -> visual/audio QA -> approval -> native delivery. Maximum shot length four seconds unless the user changes that constraint. Actual renders are mandatory for picture approval; AI-generated images are not animation output.
+
+## Transfer to a normal chat without connector access
+
+Run `powershell -ExecutionPolicy Bypass -File .\Export-ChatGPT-Context.ps1` from C:\V2. Upload `studio/out/handoff/WhatIfCatsV2_ChatGPT_Source.zip` plus the latest review MP4 to the new chat, then paste `CHATGPT_CONTINUATION_PROMPT.md`. The source ZIP follows the explicit source manifest and excludes runtime output/media, .env and private caches. Keep those runtime files locally. For another episode, fill `EPISODE_BRIEF_TEMPLATE.md` before production. The export script targets Windows PowerShell 5.1; actual Windows execution must be verified on the user PC.
