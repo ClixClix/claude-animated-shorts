@@ -14,7 +14,16 @@ export function createCity(){
  const roadCanvas=document.createElement('canvas');roadCanvas.width=roadCanvas.height=256;const r=roadCanvas.getContext('2d')!;r.fillStyle='#a8adb0';r.fillRect(0,0,256,256);for(let i=0;i<2200;i++){r.fillStyle=i%2?'rgba(236,229,206,.10)':'rgba(21,32,44,.11)';r.fillRect((i*73)%256,(i*131)%256,1+i%2,1);}const roadTexture=new T.CanvasTexture(roadCanvas);roadTexture.wrapS=roadTexture.wrapT=T.RepeatWrapping;roadTexture.repeat.set(10,10);roadTexture.colorSpace=T.SRGBColorSpace;textures.push(roadTexture);asphalt.map=roadTexture;
  mesh(new T.BoxGeometry(CITY_EXTENT*2,.2,CITY_EXTENT*2),ground,[0,-.21,0],'city-ground');
  const paving=material('#73817e'),marking=material('#a49f87');
- for(const road of CITY_ROADS){mesh(new T.BoxGeometry(...road.size),asphalt,road.position,road.id);const alongX=road.size[0]>road.size[2];for(const sign of [-1,1]){const size=alongX?[road.size[0],.1,.7]:[.7,.1,road.size[2]],p=road.position.map((v,i)=>v+(i===(alongX?2:0)?sign*(road.size[alongX?2:0]/2+.38):i===1?-.015:0));mesh(new T.BoxGeometry(...size as [number,number,number]),paving,p,road.id+'-curb-'+sign);} }
+ for(const road of CITY_ROADS){
+  // Perpendicular asphalt planes previously shared the exact same depth at intersections.
+  // The horizontal crossing layer sits 12 mm higher, preventing deterministic z-fighting.
+  const alongX=road.size[0]>road.size[2],surface:[number,number,number]=[road.position[0],alongX?.012:0,road.position[2]];
+  mesh(new T.BoxGeometry(...road.size),asphalt,surface,road.id);
+  for(const sign of [-1,1]){
+   const size=alongX?[road.size[0],.1,.7]:[.7,.1,road.size[2]],p=surface.map((v,i)=>v+(i===(alongX?2:0)?sign*(road.size[alongX?2:0]/2+.38):i===1?-.015:0));
+   mesh(new T.BoxGeometry(...size as [number,number,number]),paving,p,road.id+'-curb-'+sign);
+  }
+ }
  for(const x of [-18,18])for(const stripe of [-1.8,-1.2,-.6,0,.6,1.2,1.8])mesh(new T.BoxGeometry(.32,.006,2.2),marking,[x+stripe,.034,8.55],`crosswalk-${x}-${stripe}`);
  const windows:{position:T.Vector3;rotation:number;lit:boolean}[]=[];
  for(const b of CITY_BUILDINGS){
