@@ -20,14 +20,14 @@ import {V3} from '../../cafe/config';
 import {EpisodeWorld} from './world';
 import {checkEpisodeCamera} from './cameraQA';
 import {createEpisodeCat,contactShadow,pawRig} from './actors';
-import {EpisodeShot,DRAFT_SHOTS,DOOR_PUSH_WINDOWS,stateAt,validateShots,LANTERN,HOME,CLOCK,SIGN,KITTEN_WAIT,KITTEN_REST,KITTEN_PATH,pointByDistance,supportHeight,kittenRevealed,beat,mix,lerp,clamp} from './timeline';
+import {EpisodeShot,DRAFT_SHOTS,DOOR_PUSH_WINDOWS,doorAngleAt,stateAt,validateShots,LANTERN,HOME,CLOCK,SIGN,KITTEN_WAIT,KITTEN_REST,KITTEN_PATH,pointByDistance,supportHeight,kittenRevealed,beat,mix,lerp,clamp} from './timeline';
 const GRADE:GradeParams={ky:[.015,.09,.26,.52,.77,.92,1],sat:[.92,.98,.90],tintS:[.008,.002],tintM:[0,.002],tintH:[-.003,.002],vig:[.10,.4]};
 export type EpisodeProps={previewScale?:number;optimize?:boolean;shots:EpisodeShot[];cues?:{taps:number[]}};
 const Inner:React.FC<EpisodeProps>=({shots,cues,optimize=true,previewScale=1})=>{
  const frame=useCurrentFrame(),s=stateAt(frame,shots,cues?.taps),{camera,scene,gl}=useThree();
  if(cues&&s.shot.number!==47)s.kittenTap=Math.max(0,...cues.taps.map(f=>1-Math.abs(frame-f)/6));
  const w=useMemo(()=>new EpisodeWorld(optimize),[optimize]);
- const population=useMemo(()=>new TownPopulation(),[]);population.update(s);
+ const population=useMemo(()=>new TownPopulation(),[]);population.update(s);const earlierInsert=s.shot.number===58&&s.shot.variant===0||s.shot.number===59&&s.shot.variant===1;population.root.visible=!earlierInsert;
  const cast=useMemo(()=>(['mocha','essie','latte'] as CatId[]).map(id=>({id,card:createEpisodeCat(id),shadow:contactShadow()})),[]);
  const kitten=useMemo(()=>createKitten(),[]),kittenShadow=useMemo(()=>contactShadow(.42,.29),[]);
  const paws=useMemo(()=>({mocha:pawRig('#92958d','#fff8e8',.054),essie:pawRig('#303039','#eee6d7',.045),latte:pawRig('#c8b99f','#5a463f',.047),kitten:pawRig('#c6ad87','#fff0d1',.023)}),[]);
@@ -51,13 +51,13 @@ const Inner:React.FC<EpisodeProps>=({shots,cues,optimize=true,previewScale=1})=>
  // This preserves the light field while avoiding invisible lights in software-rendered close-ups.
  if(optimize){w.root.updateMatrixWorld(true);const frustum=new T.Frustum().setFromProjectionMatrix(new T.Matrix4().multiplyMatrices(cam.projectionMatrix,cam.matrixWorldInverse));w.root.traverse(o=>{if(o instanceof T.PointLight)o.visible=o.intensity>0&&(o.distance<=0||frustum.intersectsSphere(new T.Sphere(o.getWorldPosition(new T.Vector3()),o.distance)));});}
 
- cast.forEach(c=>{const a=s[c.id];c.card.updateActor(a,s);c.card.mesh.visible=c.id!=='mocha'||s.shot.number>=50;c.shadow.mesh.visible=c.card.mesh.visible;c.shadow.mesh.position.set(a.position[0],supportHeight(a.position,c.id==='latte'?0:c.id==='essie'?2:1)+.008,a.position[2]);});
+ cast.forEach(c=>{const a=s[c.id];c.card.updateActor(a,s);c.card.mesh.visible=(!earlierInsert||c.id==='mocha')&&(c.id!=='mocha'||s.shot.number>=50);c.shadow.mesh.visible=c.card.mesh.visible;c.shadow.mesh.position.set(a.position[0],supportHeight(a.position,c.id==='latte'?0:c.id==='essie'?2:1)+.008,a.position[2]);});
  for(let i=0;i<2;i++){const phase=(s.latte.travel/.32+i*.5)%1,u=phase/.18,p=s.latte.feet[i+2],splash=splashes[i];splash.line.visible=s.rain>0&&s.t>=39.5&&s.t<54&&phase<.18;splash.line.position.set(p[0],supportHeight(p,0)+.005,p[2]);splash.line.scale.setScalar(.035+.14*u);splash.mat.opacity=.30*(1-clamp(u));}
  const kid=s.kitten,feet:V3[]=[[-.045,0,0],[.045,0,0]].map((p,i)=>{
   if(!s.kittenWalking)return [kid[0]+p[0],kid[1],kid[2]] as V3;
   const length=Math.hypot(KITTEN_REST[0]-KITTEN_WAIT[0],KITTEN_REST[2]-KITTEN_WAIT[2]),cycle=s.kittenTravel/.18+i*.5,step=Math.floor(cycle),phase=cycle-step;
   const sample=(n:number)=>pointByDistance(Math.max(0,(n-i*.5+.3)*.18),KITTEN_PATH);
-  const a=sample(step),b=sample(step+1),u=clamp((phase-.58)/.42),pos=phase<=.58?a:mix(a,b,u*u*(3-2*u));pos[0]+=p[0];pos[1]=.03*(1-beat(4.25-pos[2],0,.15));if(phase>.58)pos[1]+=Math.sin(Math.PI*u)*.03;return pos;
+  const a=sample(step),b=sample(step+1),u=clamp((phase-.58)/.42),pos=phase<=.58?a:mix(a,b,u*u*(3-2*u));pos[0]+=p[0];pos[1]=supportHeight(pos,0);if(phase>.58)pos[1]+=Math.sin(Math.PI*u)*.03;return pos;
  });
  const ks={...storyAt(0),frame:s.t*30,shot:4 as const,camera:s.camera,target:s.target,kitten:kid,kittenFear:s.kittenFear,kittenSmile:s.kittenSmile,kittenBlink:Math.max(0,1-Math.abs((s.t%4.2)-3.9)/.09),kittenLook:0,kittenWalking:s.kittenWalking,kittenGait:s.kittenTravel/.18*Math.PI*2,kittenLift:s.shot.number===47?Math.max(0,kid[1]-.03):0};
  kitten.update(ks,frame,{feet,gazeX:s.t>123?-.45:.10,gazeY:s.shot.number===47?-.65:s.t>123?-.4:0,earDrop:s.kittenFear*.7,headTilt:s.t>123?-.08:0});// Episode-only wet-coat glints and a timed meow articulation; the original kitten component stays intact.
@@ -67,7 +67,7 @@ const Inner:React.FC<EpisodeProps>=({shots,cues,optimize=true,previewScale=1})=>
  kg.globalAlpha=1;const meow=Math.max(0,...[83,94,122.7].map(t=>Math.sin(Math.PI*clamp((s.t-t)/.63))));
  if(meow>.02){kg.translate(0,244+Math.sin(frame/30*3.2)*(s.kittenFear?1.4:1));kg.rotate(s.t>123?-.08:0);kg.fillStyle='#fff0d1';kg.beginPath();kg.ellipse(0,50,19,9,0,0,Math.PI*2);kg.fill();kg.fillStyle='#674449';kg.strokeStyle='#292737';kg.lineWidth=2;kg.beginPath();kg.ellipse(0,49,4+2*meow,2+6*meow,0,0,Math.PI*2);kg.fill();kg.stroke();}
  kg.restore();kitten.mesh.material.map!.needsUpdate=true;
- kitten.mesh.position.set(...kid);kitten.mesh.rotation.y=Math.atan2(s.camera[0]-kid[0],s.camera[2]-kid[2]);kitten.mesh.visible=kittenRevealed(s);
+ kitten.mesh.position.set(...kid);kitten.mesh.rotation.y=Math.atan2(s.camera[0]-kid[0],s.camera[2]-kid[2]);kitten.mesh.visible=kittenRevealed(s)&&!earlierInsert;
  kittenShadow.mesh.visible=kitten.mesh.visible;kittenShadow.mesh.position.set(kid[0],s.shot.number===47?.038:kid[1]+.008,kid[2]);
  kitten.mesh.material.color.setRGB(lerp(.77,1,beat(s.t,119,125)),lerp(.83,1,beat(s.t,119,125)),lerp(.88,1,beat(s.t,119,125)));
  const h=w.handle(),tap=w.tapPoint(),pushPoint=w.pushPoint();
@@ -75,9 +75,10 @@ const Inner:React.FC<EpisodeProps>=({shots,cues,optimize=true,previewScale=1})=>
  const clothHand=new T.Vector3().fromBufferAttribute(w.blanket.geometry.getAttribute('position'),13).toArray() as V3;
  const carriesCloth=s.t>=108&&s.t<121.6,restHand:V3=carriesCloth?clothHand:[mp[0]+.22,mp[1]+.36,mp[2]+.08];
  const pushCycle=DOOR_PUSH_WINDOWS.find(([a,b])=>s.t>=a-.2&&s.t<=b+.4);
+ let contactPoint=pushPoint.clone();if(pushCycle&&s.t>pushCycle[1]){const matrix=new T.Matrix4().compose(w.door.position,new T.Quaternion().setFromAxisAngle(new T.Vector3(0,1,0),-doorAngleAt(pushCycle[1])),w.door.scale);matrix.premultiply(w.door.parent!.matrixWorld);contactPoint=new T.Vector3(.90,.52,-.07).applyMatrix4(matrix);}
  const pushAmount=pushCycle?beat(s.t,pushCycle[0]-.2,pushCycle[0])*(1-beat(s.t,pushCycle[1],pushCycle[1]+.4)):0;
  const lightReach=beat(s.t,131.35,131.55)*(1-beat(s.t,131.7,132.0));
- paws.mocha.update([mp[0]-.15,mp[1]+.38,mp[2]+.08],lightReach>0?mix([mp[0]-.15,mp[1]+.38,mp[2]+.08],[-3.90,.7,1.25],lightReach):mix(restHand,pushPoint.toArray() as V3,pushAmount),lightReach>.01||pushAmount>.01&&s.shot.number>=50);
+ paws.mocha.update([mp[0]-.15,mp[1]+.38,mp[2]+.08],lightReach>0?mix([mp[0]-.15,mp[1]+.38,mp[2]+.08],[-3.90,.7,1.25],lightReach):mix(restHand,contactPoint.toArray() as V3,pushAmount),lightReach>.01||pushAmount>.01&&s.shot.number>=50);
  const bowlHand:V3=[s.bowl[0]+.11,s.bowl[1]+.12,s.bowl[2]],release=beat(s.t,118.65,119.25);
  paws.essie.update([ep[0]-.08,ep[1]+.52,ep[2]],mix(bowlHand,[ep[0]-.15,ep[1]+.38,ep[2]],release),false);
  const shoulder:V3=[lp[0]+.16,lp[1]+.49,lp[2]-.04],rest:V3=[lp[0]+.20,lp[1]+.42,lp[2]-.04];

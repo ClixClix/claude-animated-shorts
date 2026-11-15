@@ -47,7 +47,7 @@ for(const g of groups){
  previousSource=to;previousTarget=to;
  entries.forEach((s,j)=>{
   const end=j===entries.length-1?start+length:start+Math.round(length*entries.slice(0,j+1).reduce((n,x)=>n+editorialFrames(x),0)/baseDuration);
-  const pieces=s.number===11?9:s.number===57?5:[58].includes(s.number)?4:[11,26,34,59,60].includes(s.number)?3:[1,36,37,38,39,42,45,50].includes(s.number)?2:Math.ceil((end-frame)/120),originalStart=frame;
+  const pieces=s.number===11?3:s.number===57?5:[58].includes(s.number)?4:[5,11,26,34,59,60].includes(s.number)?3:[1,24,36,37,38,39,42,45,50].includes(s.number)?2:Math.ceil((end-frame)/120),originalStart=frame;
   for(let k=0;k<pieces;k++){
    const cuts=Array.from({length:pieces+1},(_,i)=>originalStart+Math.round((end-originalStart)*i/pieces));
    const placement=placements.at(-1);
@@ -59,17 +59,11 @@ for(const g of groups){
    if(s.number===59){cuts[1]=atWord('He',103.7);cuts[2]=atWord('anyone',104.7);}
    const a=cuts[k],b=cuts[k+1];
    const sourceStart=s.start+(s.end-s.start)*k/pieces,sourceEnd=s.start+(s.end-s.start)*(k+1)/pieces;
-   shots.push({id:`${String(s.number).padStart(2,'0')}${pieces>1?String.fromCharCode(65+k):''}`,number:s.number,variant:k,start:a,end:b,sourceStart,sourceEnd,direction:s.direction,purpose:pieces>1?`${s.direction} — purposeful detail ${k+1}/${pieces}`:s.direction,flashback:s.number===58});
+   shots.push({id:`${String(s.number).padStart(2,'0')}${pieces>1?String.fromCharCode(65+k):''}`,number:s.number,variant:k,start:a,end:b,sourceStart,sourceEnd,direction:s.direction,purpose:pieces>1?`${s.direction} — purposeful detail ${k+1}/${pieces}`:s.direction,flashback:s.number===58&&k===0||s.number===59&&k===1});
   }
   frame=end;
  });
 }
-const lightCuts=shots.filter(s=>s.number===11);
-if(lightCuts.length!==9)throw Error('Exactly nine light inserts required.');
-const lightStart=lightCuts[0].start,nextReaction=shots.find(s=>s.number===12);
-for(let i=0;i<9;i++){lightCuts[i].start=lightStart+i*12;lightCuts[i].end=lightStart+(i+1)*12;}
-if(nextReaction.end-(lightStart+108)<24)throw Error('No room for readable nine-light sequence.');
-nextReaction.start=lightStart+108; // Borrow only reaction-picture time, never silence or voice speed.
 if(previousSource!==meta.duration)throw Error('Incomplete recording.');
 // At most one frame of final padding; never insert a gap between lines.
 frame=Math.ceil(meta.duration*30);shots.at(-1).end=frame;

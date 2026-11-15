@@ -24,14 +24,14 @@ const list=path.join(out,'preview-segments.txt');
 await fs.writeFile(list,files.map(file=>"file '"+file.replaceAll('\\','/').replaceAll("'","'\\''")+"'").join('\n')+'\n');
 const audio=await import(pathToFileURL(path.join(out,'audio-tools.mjs')).href),stem=path.join(out,'Narration_Stem.wav');
 const loudness=await audio.measureLoudness(stem),gain=Math.min(-16-loudness.integratedLUFS,-1.8-loudness.truePeakDBTP),duration=plan.durationInFrames/30;
-const final=path.join(out,'Polish_Narrated_Review_540p.mp4'),pending=path.join(out,'Polish_Narrated_Review_540p.partial.mp4');
+const final=path.join(out,`Polish_Review_${sourceHash.slice(0,8)}_540p.mp4`),pending=path.join(out,'Polish_Narrated_Review_540p.partial.mp4');
 const ff=args=>execFileSync('ffmpeg',['-nostdin','-hide_banner','-v','error',...args],{maxBuffer:8*1024*1024});
-ff(['-y','-f','concat','-safe','0','-i',list,'-i',stem,'-map','0:v:0','-map','1:a:0','-c:v','copy','-af',`volume=${gain}dB,apad=whole_dur=${duration},atrim=end=${duration}`,'-c:a','aac','-b:a','160k','-ar','48000','-t',String(duration),'-movflags','+faststart',pending]);
+ff(['-y','-f','concat','-safe','0','-i',list,'-i',stem,'-map','0:v:0','-map','1:a:0','-c:v','copy','-af',`volume=${gain}dB,apad=whole_dur=${duration},atrim=end=${duration}`,'-c:a','aac','-b:a','160k','-ar','48000','-t',String(duration),'-metadata',`comment=What If Cats V2 source=${sourceHash} props=${propsHash}`,'-movflags','+faststart',pending]);
 let encoded=await audio.measureLoudness(pending);
 if(encoded.truePeakDBTP> -1){const safe=path.join(out,'Polish_Narrated_Review_540p.safe.mp4');await audio.finalizeVideoAudio(pending,safe);await fs.rename(safe,pending);encoded=await audio.measureLoudness(pending);}
 if(encoded.truePeakDBTP> -1)throw Error('Preview encoded audio peak exceeds -1 dBTP.');
 const video=probe(pending).streams.find(s=>s.codec_type==='video');
 if(video.width!==540||video.height!==960||video.r_frame_rate!=='30/1'||Number(video.nb_frames)!==plan.durationInFrames)throw Error('Preview format/duration mismatch.');
-ff(['-i',pending,'-f','null','-']);await fs.rename(pending,final);
+ff(['-i',pending,'-f','null','-']);await fs.rename(pending,final);await fs.copyFile(final,path.join(out,'Polish_Narrated_Review_540p.mp4'));
 await fs.writeFile(path.join(out,'PREVIEW_QA.json'),JSON.stringify({file:final,sourceHash,propsHash,frames:Number(video.nb_frames),width:540,height:960,fps:30,duration,encoded,visibilityFlags,narration:'Existing continuous cached take; no synthesis',visualApproval:'Pending actual local review against reference shorts',musicAndSFX:'Native final finishing remains a separate stage'},null,2)+'\n');
 console.log('Full narrated preview: '+final);console.log('Review visibility notes in PREVIEW_QA.json. Native rendering/music finishing remain separate.');

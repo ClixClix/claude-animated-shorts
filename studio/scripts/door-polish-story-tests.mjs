@@ -30,7 +30,7 @@ for(let frame=0;frame<plan.durationInFrames;frame++){
  const s=t.stateAt(frame,shots);
  check(t.kittenRevealed(s)===(s.shot.number>=46),'Mystery kitten appears before its reveal');
  if(s.t>=29)check(!t.streetActivity(s),'Crowds remain out after curfew');
- if(s.shot.number===41)check(s.camera[2]>4.5&&s.required.includes('cloth-silhouette'),'Dragged shape must be seen through fogged glass');
+ if(s.shot.number===41){check(s.camera[2]>4.5,'Window-to-door move stays outside');if(s.u<.3)check(s.required.includes('cloth-silhouette'),'Begin with the shape through glass');if(s.u>.85)check(s.required.includes('door'),'Finish the pan on the door');}
  if(s.shot.number===47)check(s.door===0,'Door must be closed during failed handle attempts');
  if(s.shot.number===47)check(s.kittenTap===0,'Kitten must jump rather than stretch a paw');
  if(s.shot.number===47&&s.u>.35&&s.u<.45)check(s.kitten[1]>.10&&s.target[1]>1.0,'Handle pan must coincide with kitten jump');
@@ -40,7 +40,7 @@ for(const start of [4,15,67])check(t.doorAngleAt(start+.45)>1.1&&t.doorAngleAt(s
 check(t.stateAt(shot('57A').start,shots).required.includes('flowerpot'),'Flowerpot must precede Latte and the sign');
 check(t.stateAt(shot('57D').start,shots).required.includes('sign'),'Invitation text must remain visible while it is read');
 const beforePlace=shots.find(s=>s.number===53);const placementStates=Array.from({length:beforePlace.end-beforePlace.start},(_,i)=>t.stateAt(beforePlace.start+i,shots));const heldLast=placementStates.filter(s=>s.bowlContact).at(-1),releasedFirst=placementStates.find(s=>!s.bowlContact);check(t.distance(heldLast.bowl,releasedFirst.bowl)<.001,'Bowl jumps after mouth releases it');
-const lights=shots.filter(s=>s.number===11);check(lights.length===9&&lights.every(s=>s.end-s.start===12),'Nine light cuts must each hold 0.4 seconds');check(new Set(lights.map(s=>t.stateAt(s.start,shots).required[0])).size===9,'Each light insert must feature a different light');
+const lights=shots.filter(s=>s.number===11);check(lights.length===3,'Light geography uses one continuous pan then the house');check(t.stateAt(lights[2].start,shots).required.includes('home-door'),'Follow the lamps to Latte home before returning to him');
 const prior=new Map();
 for(let frame=shot('58A').start;frame<plan.durationInFrames;frame++){
  const s=t.stateAt(frame,shots);
@@ -48,8 +48,8 @@ for(let frame=shot('58A').start;frame<plan.durationInFrames;frame++){
   const a=t.shelterState(s,i),previous=prior.get(i);
   check(JSON.stringify(a)===JSON.stringify(t.shelterState(s,i)),'Non-deterministic supporting actor');
   if(previous)check(t.distance(a.position,previous.position)<.16,'Shelter guest teleported across a cut');
-  check(a.position[1]>=0&&a.position[1]<=.031,'Supporting cat floats or clips floor');
-  if(Math.abs(a.position[2]-4.2)<.15)check(a.position[0]>1.8&&a.position[0]<2.8,'Supporting cat crosses a wall instead of entrance');
+  check(a.position[1]>=0&&a.position[1]<=(i===2?.76:.031),'Supporting cat floats or clips floor');
+  if(Math.abs(a.position[2]-4.2)<.15&&Math.abs(a.position[0])<4.1)check(a.position[0]>1.8&&a.position[0]<2.8,'Supporting cat crosses a wall instead of entrance');
   for(const f of t.FIXTURES.filter(f=>['serving-counter','preparation-counter','customer-table','chair','bench'].includes(f.role))){
    check(!(Math.abs(a.position[0]-f.position[0])<f.size[0]/2+.10&&Math.abs(a.position[2]-f.position[2])<f.size[2]/2+.10),'Supporting cat intersects '+f.id);
   }

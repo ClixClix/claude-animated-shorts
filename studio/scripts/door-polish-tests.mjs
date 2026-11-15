@@ -12,8 +12,8 @@ t.validateShots(shots);let checks=0;
 const check=(condition,message)=>{assert.ok(condition,message);checks++;};
 check(shots.length>=60,'Complete storyboard');check(shots.at(-1).end===manifest.durationInFrames,'Complete coverage');check(manifest.width===1080&&manifest.height===1920&&manifest.fps===30,'Native format');
 check(manifest.durationInFrames<=5400,'Maximum three minutes');check(t.STREETLIGHTS.length===9&&new Set(t.STREETLIGHTS.map(JSON.stringify)).size===9,'Nine stable lamps');
-for(const shot of shots.filter(s=>s.number===58)){check(t.stateAt(shot.start,shots).t>=128,'Ending must preserve present-time layout');check(t.stateAt(shot.start,shots).door===Math.PI/2,'Shelter entrance must remain open');}
-for(const id of ['20','21','22','24','44','51','53','56']){
+for(const shot of shots.filter(s=>s.number===58)){const first=t.stateAt(shot.start,shots),last=t.stateAt(shot.end-1,shots);if(shot.variant===0){check(first.flashback,'Opening insert must be identified as earlier time');check(first.door===0&&last.door>1.5,'Show Mocha opening from closed');}else check(first.t>=128,'Other ending shots retain present layout');}
+for(const id of ['20','21','22','24B','44','51','53','56']){
  const shot=shots.find(s=>s.id===id),frame=shot.start+Math.floor((shot.end-shot.start)*.6),s=t.stateAt(frame,shots),before=t.stateAt(frame-1,shots),after=t.stateAt(frame+1,shots);
  for(const actor of ['latte','mocha','essie']){const a=s[actor];if(!a.moving)continue;const dx=after[actor].position[0]-before[actor].position[0],dz=after[actor].position[2]-before[actor].position[2],cx=s.camera[0]-a.position[0],cz=s.camera[2]-a.position[2];check(a.pose.yaw*(dx*cz-dz*cx)>=-1e-6,actor+' faces opposite actual travel in '+id);if(Math.abs(dx*cz-dz*cx)>1e-4)check(a.pose.yaw*(dx*cz-dz*cx)>0,actor+' has no readable travel facing in '+id);}
 }

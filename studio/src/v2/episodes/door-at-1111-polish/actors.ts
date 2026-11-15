@@ -1,10 +1,11 @@
 import * as T from 'three';
+import {legProjection} from './legProjection';
 import {headDropPixels} from './contacts';
 import {createCatCard} from '../../cats/Cat';
 import {drawCat} from '../../cats/drawCat';
 import {CatId} from '../../cats/designs';
 import {CatPose} from '../../cats/pose';
-import {Actor,EpisodeState,mix} from './timeline';
+import {Actor,EpisodeState,mix,beat} from './timeline';
 import {cardShade} from '../../../videos/bridge/cardshade';
 import {NOINK} from '../../../videos/bridge/ink';
 import {V3} from '../../cafe/config';
@@ -18,6 +19,7 @@ export function createEpisodeCat(id:CatId){
  const nativeTranslations=new Map([[g,g.translate.bind(g)],[h,h.translate.bind(h)]]);
  function render(ctx:CanvasRenderingContext2D,actor:Actor,s:EpisodeState,pose:Partial<CatPose>){
   ctx.setTransform(2,0,0,2,0,0);ctx.clearRect(0,0,500,550);
+  const crouch=id==='latte'?beat(s.t,77.5,79)*(1-beat(s.t,83,84)):0;ctx.setTransform(2,0,0,2*(1-.18*crouch),0,2*480*.18*crouch);
   const original=nativeTranslations.get(ctx)!,root=new T.Vector3(...actor.position),camera=new T.Vector3(...s.camera),normal=camera.clone().sub(root);normal.y=0;normal.normalize();const right=new T.Vector3(normal.z,0,-normal.x),sign=(pose.yaw??0)<0?-1:1;
   let leg=0,rotation=0;const nativeRotate=nativeRotations.get(ctx)!;
   // Keep a single ear silhouette while facial expressions dissolve. Artwork endpoints stay exact.
@@ -27,7 +29,7 @@ export function createEpisodeCat(id:CatId){
    if(actor.moving&&y===0&&Math.abs(x)<180&&leg<4){
     const index=leg++,foot=new T.Vector3(...actor.feet[index]),ray=foot.clone().sub(camera),k=normal.dot(root.clone().sub(camera))/normal.dot(ray),local=camera.clone().addScaledVector(ray,k).sub(root);
     const phase=[0,Math.PI,Math.PI,0][index],lift=Math.max(0,Math.cos((pose.gait??0)+phase))*13;
-    original(local.dot(right)*550/1.52/sign,480-local.y*550/1.52-(483-lift));
+    original(x,0);ctx.transform(...legProjection(x,local.dot(right)*550/1.52/sign,480-local.y*550/1.52,lift));
    }else original(x,y+(id==='essie'&&y>190&&y<245&&x>=0&&x<100?headDropPixels(s,'essie'):0));
   };
   try{drawCat(ctx,id,pose);}finally{ctx.translate=original;ctx.rotate=nativeRotate;}
