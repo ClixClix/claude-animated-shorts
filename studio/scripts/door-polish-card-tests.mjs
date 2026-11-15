@@ -11,6 +11,9 @@ import {stateAt} from './timeline';
 import * as T from 'three';
 import {EpisodeWorld} from './world';
 import {checkEpisodeCamera} from './cameraQA';
+import {TownPopulation} from './population';
+import {createKitten} from '../../animation/kitten';
+import {storyAt} from '../../animation/timeline';
 export function run(props){
  const frames=['21','22','30','44','53','60C'].map(id=>{const s=props.shots.find(s=>s.id===id);return s.start+Math.floor((s.end-s.start)*.6);});let checks=0;
  const check=(v,m)=>{if(!v)throw Error(m);checks++;};
@@ -30,7 +33,16 @@ export function run(props){
  }
  const world=new EpisodeWorld(false),latte=createEpisodeCat('latte'),shot=props.shots.find(s=>s.id==='46'),camera=new T.PerspectiveCamera(70,1080/1920,.08,220);
  for(let frame=shot.start;frame<shot.end;frame++){const s=stateAt(frame,props.shots);latte.updateActor(s.latte,s);latte.mesh.updateMatrixWorld(true);camera.position.set(...s.camera);camera.fov=s.fov;camera.lookAt(...s.target);camera.updateProjectionMatrix();camera.updateMatrixWorld(true);world.update(s);const a=checkEpisodeCamera(world,s,camera,[{id:'latte',mesh:latte.mesh}]);check(a.visibility.every(v=>v.inFrame&&!v.occluder),'Kitten reveal blocked at '+frame+' '+JSON.stringify(a.visibility));}
- latte.dispose();world.dispose();
+ const population=new TownPopulation(),cast=['latte','mocha','essie'].map(id=>({id,card:createEpisodeCat(id)})),kitten=createKitten();
+ for(let frame=props.shots.find(s=>s.id==='59C').start;frame<props.shots.at(-1).end;frame++){
+  const s=stateAt(frame,props.shots);population.update(s);population.root.updateMatrixWorld(true);
+  cast.forEach(c=>{c.card.updateActor(s[c.id],s);c.card.mesh.updateMatrixWorld(true);});
+  kitten.update({...storyAt(0),kitten:s.kitten,kittenFear:s.kittenFear,kittenSmile:s.kittenSmile,camera:s.camera,target:s.target},s.t*30);kitten.mesh.position.set(...s.kitten);kitten.mesh.rotation.y=Math.atan2(s.camera[0]-s.kitten[0],s.camera[2]-s.kitten[2]);kitten.mesh.updateMatrixWorld(true);
+  camera.position.set(...s.camera);camera.fov=s.fov;camera.lookAt(...s.target);camera.updateProjectionMatrix();camera.updateMatrixWorld(true);world.update(s);
+  const a=checkEpisodeCamera(world,s,camera,[...cast.map(c=>({id:c.id,mesh:c.card.mesh})),{id:'kitten',mesh:kitten.mesh},...population.actors]);
+  check(a.visibility.every(v=>v.inFrame&&!v.occluder),'Ending occlusion at '+frame+' '+JSON.stringify(a.visibility));
+ }
+ population.dispose();cast.forEach(c=>c.card.dispose());kitten.dispose();latte.dispose();world.dispose();
  return {checks,passed:true,sceneFramesRendered:0};
 }`,resolveDir:path.resolve('src/v2/episodes/door-at-1111-polish'),loader:'ts'},bundle:true,write:false,platform:'browser',format:'iife',globalName:'CardTest'});
 const browser=await openBrowser('chrome',{browserExecutable,chromiumOptions});

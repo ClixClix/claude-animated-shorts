@@ -8,7 +8,7 @@ export function shelterState(s:EpisodeState,index:number){
  const begin=index===3?anchor('57E',3850):index===2?emerge:start+index*16;
  const finish=index===3?end:index===2?settle:anchor('60A',3200);
  let progress=ease((s.frame-begin)/Math.max(30,finish-begin));
- const route:V3[]=index===3?[[3.70,.03,5.65],[2.5,.03,5.65],[2.5,0,3.6],[-.5,0,2.5]]:index===2?[[5.45,.03,2.2],[5.45,.03,4.9],[2.35,.03,5.85],[2.35,0,3.65],[-1.0,0,2.7]]:index===0?[[2.05,.03,5.9],[2.05,0,3.55],[.35,0,3.05],[.35,0,.8]]:[[2.65,.03,6.7],[2.65,0,3.65],[-.35,0,3.05],[-.35,0,1.7]];
+ const route:V3[]=index===3?[[3.70,.03,5.65],[2.5,.03,5.65],[2.5,0,3.6],[-.5,0,2.5]]:index===2?[[5.45,.03,2.2],[5.45,.03,4.9],[2.6,.03,5.85],[2.6,0,3.9],[3.5,0,3.65],[3.5,0,2.9],[-1.0,0,2.7]]:index===0?[[2.05,.03,5.9],[2.05,0,3.55],[.35,0,3.05],[.35,0,.8]]:[[2.65,.03,6.7],[2.65,0,3.65],[-.35,0,3.05],[-.35,0,1.7]];
  if(index===3){const threshold=anchor('58A',3892),entryFraction=3.25/(3.25+Math.hypot(3,1.1));progress=s.frame<threshold?entryFraction*ease((s.frame-begin)/Math.max(1,threshold-begin)):entryFraction+(1-entryFraction)*ease((s.frame-threshold)/Math.max(1,finish-threshold));}
  const lengths=route.slice(1).map((p,i)=>Math.hypot(...p.map((v,j)=>v-route[i][j]))),total=lengths.reduce((a,b)=>a+b,0);
  let distance=progress*total,position=route.at(-1)!;
