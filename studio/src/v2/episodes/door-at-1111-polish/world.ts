@@ -287,7 +287,7 @@ export class EpisodeWorld{
   }
   const blackout=s.t>=54.25;
   for(const p of this.townWindows){p.mat.emissiveIntensity=blackout?0:p.emissive*(.96+.04*Math.sin(s.t*.43+p.emissive*17));if(blackout)p.mat.color.set('#354958');else p.mat.color.copy(p.color);}
-  const homeMoon=this.root.getObjectByName('home-moonlight') as T.PointLight;homeMoon.intensity=3.8;const porchLight=this.root.getObjectByName('home-porch-light') as T.PointLight;porchLight.intensity=s.t<54.25?3:0;((this.props.get('home-porch-lamp') as T.Mesh).material as T.MeshStandardMaterial).emissiveIntensity=s.t<54.25?.65:0;
+  const homeMoon=this.root.getObjectByName('home-moonlight') as T.PointLight;homeMoon.intensity=blackout?1.1:3.8;const porchLight=this.root.getObjectByName('home-porch-light') as T.PointLight;porchLight.intensity=s.t<54.25?3:0;((this.props.get('home-porch-lamp') as T.Mesh).material as T.MeshStandardMaterial).emissiveIntensity=s.t<54.25?.65:0;
   const lightingInsert=s.shot.number===59&&s.shot.variant===1,lightingLevel=lightingInsert?beat(s.u,.35,.60):1;
   for(const p of this.permanentLights){
    if(p.light.name.startsWith('streetlight-'))continue;
