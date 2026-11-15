@@ -1,3 +1,5 @@
+> **Update:** The user approved these exact three patches. They were generated once for 258 actual credits; approval is consumed. See `EPISODE1_AUDIO_DELIVERY.md`. The proposal below is historical. Actual timing is in `timed-storyboard.json`; visual integration remains pending.
+
 # Episode 1: small story polish, prepared for approval
 
 Authoritative delivery branch: `v2-local-render`. Recoverable checkpoint: `checkpoint/episode1-before-story-polish-20261115` at `5b8892f5619e093659f0cde695a5b07b10353e44`. The previous visual candidate and all cached audio/movies remain preserved. This proposal is not active narration and is not a rendered movie.

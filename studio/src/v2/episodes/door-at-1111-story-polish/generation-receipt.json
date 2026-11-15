@@ -1,0 +1,46 @@
+{
+  "status": "approved-audio-generated",
+  "authorizationConsumed": true,
+  "approvedMaximumCredits": 646,
+  "actualCredits": 258,
+  "sourceCharactersGenerated": 646,
+  "paidRequestsCompleted": 3,
+  "automaticRetries": false,
+  "fullRegeneration": false,
+  "voiceId": "pNInz6obpgDQGcFmaJgB",
+  "playback": {
+    "speed": 1.35,
+    "mode": "varispeed",
+    "pitchSemitones": 0
+  },
+  "patches": [
+    {
+      "id": "opening",
+      "characters": 196,
+      "duration": 8.881633,
+      "audioHash": "325a669f8e53b32e0574b38f9be032cecbd3a217851554d233cd3ecd92f6abc7",
+      "truePeakDBTP": -5.16,
+      "actualCredits": 78
+    },
+    {
+      "id": "mouse-chase",
+      "characters": 188,
+      "duration": 9.534694,
+      "audioHash": "3f48ca031e32de0ebd005e596bb75150cc65b6fb18397b8a484c716ba283d77a",
+      "truePeakDBTP": -3.8,
+      "actualCredits": 75
+    },
+    {
+      "id": "kitten-reveal",
+      "characters": 262,
+      "duration": 12.016327,
+      "audioHash": "0247435cf0a66d7a0858432b77c3f77d1bd2564d02c76d268d44bd8b895b70e1",
+      "truePeakDBTP": -4.25,
+      "actualCredits": 105
+    }
+  ],
+  "audioLocation": "out/v2-narration/story-polish/",
+  "compositeLocation": "out/v2-episodes/door-at-1111-story-polish/Narration_Story_Polish.mp3",
+  "visualIntegration": "pending",
+  "note": "This receipt consumes the three-call approval. Never issue new paid requests to restore missing local files; transfer the cached recordings instead. revision.json retains the frozen pre-approval proposal and cannot itself authorize generation."
+}

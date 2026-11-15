@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "algorithm": "AES-256-GCM",
+  "kdf": "scrypt",
+  "sha256": "0c9d2a9893a927715ed2a603d4b38396e698952bd9ca25f51d2e4ad38a7e4c24",
+  "fileCount": 27,
+  "bytes": 4797683,
+  "note": "Only encrypted private narration; no API keys, music, photos or reference footage. Unlock code is supplied separately in chat."
+}

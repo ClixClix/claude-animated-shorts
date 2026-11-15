@@ -1,3 +1,13 @@
+# Latest update: narration approved and generated
+
+Read `EPISODE1_AUDIO_DELIVERY.md` first. The three approved patch calls are COMPLETE: 258 actual credits, no retries. Their 122.208s composite and original/processed caches are preserved and available via encrypted local transfer. The approval is consumed; do not request the same authorization again or regenerate missing audio. `generation-receipt.json` records the result and blocks repeat calls.
+
+Visual synchronization of those three passages is STILL PENDING. Existing lamp/pan source fixes are delivered, but the active movie/edit retains old narration. Actual timing and the 19 written shot directions are ready in `timed-storyboard.json`. Finish the remaining focused staging locally using the exact source-change map, preserve the working old composition, and do not claim completion based on audio QA. The user has low usage and wants only small changes.
+
+Earlier pending-approval text below describes the frozen pre-generation proposal and is superseded by this update.
+
+---
+
 # Paste this into a new ChatGPT session
 
 Continue What If Cats V2 from the repository `ClixClix/claude-animated-shorts`, branch `v2-local-render`.

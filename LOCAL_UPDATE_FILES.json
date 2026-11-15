@@ -183,5 +183,13 @@
   "studio/scripts/lib/story-revision-plan.mjs",
   "studio/src/v2/episodes/door-at-1111-story-polish/revision.json",
   "studio/src/v2/episodes/door-at-1111-story-polish/storyboard.json",
-  "studio/src/v2/episodes/door-at-1111-story-polish/narration.txt"
+  "studio/src/v2/episodes/door-at-1111-story-polish/narration.txt",
+  "EPISODE1_AUDIO_DELIVERY.md",
+  "studio/scripts/door-story-polish-generate.mjs",
+  "studio/scripts/door-story-polish-audio.mjs",
+  "studio/scripts/restore-story-audio.mjs",
+  "studio/src/v2/episodes/door-at-1111-story-polish/generation-receipt.json",
+  "studio/src/v2/episodes/door-at-1111-story-polish/timed-storyboard.json",
+  "studio/assets/story-polish-audio.json",
+  "studio/assets/story-polish-audio.payload"
 ]
