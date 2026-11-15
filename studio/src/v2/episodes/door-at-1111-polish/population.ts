@@ -27,11 +27,11 @@ export class TownPopulation{
   this.steam.forEach((p,j)=>{const phase=(s.t*.13+j*.25)%1,positions=p.geo.getAttribute('position');for(let i=0;i<16;i++){const u=i/15;positions.setXYZ(i,Math.sin(u*7+s.t*.9+j)*.018,u*.34+phase*.12,Math.cos(u*5+j)*.01);}positions.needsUpdate=true;p.geo.computeBoundingSphere();p.mat.opacity=.13*Math.sin(Math.PI*phase);});
   this.cats.forEach((cat,i)=>{
    const guest=i>=4?shelterState(s,i-4):undefined;
-   const walking=guest?guest.walking:i<2,t=s.t;
+   const walking=guest?guest.walking:i<2&&!(s.shot.number===6&&s.t>=10.8&&s.t<11.5),t=s.t;
    // Street activity clears before the blackout. Patrons stay in fixed existing seats.
-   cat.mesh.visible=cat.shadow.mesh.visible=guest?guest.visible:i<2?streetActivity(s):s.shot.number>=50;
+   cat.mesh.visible=cat.shadow.mesh.visible=guest?guest.visible:i<2?streetActivity(s):s.shot.number>=50&&!(s.shot.number===59&&s.shot.variant===0);
    const pos=guest?guest.position:i<2?streetCatPosition(s,i):i===2?[2.38,.51,-2.14]:[.96,.51,2.13];
-   cat.mesh.scale.setScalar(i===7?.66:1);
+   cat.mesh.scale.setScalar(i>=4?.66:1);
    cat.mesh.position.set(...pos as [number,number,number]);cat.shadow.mesh.position.set(pos[0],(i>=4?.036:pos[1]+.006),pos[2]);
    cat.mesh.rotation.y=Math.atan2(s.camera[0]-pos[0],s.camera[2]-pos[2]);
    const g=cat.canvas.getContext('2d')!,coat=['#aa8061','#7e8b93','#b18c65','#84928b','#9e8b7d','#ac8c6e','#75838e','#a69c86'][i],dark=['#7c5746','#55616d','#7d5e46','#596e67','#685a54','#75634e','#455466','#6d6b65'][i];
@@ -45,6 +45,7 @@ export class TownPopulation{
    g.save();if(s.shot.number===5){g.translate(0,171);g.rotate(i%2?-.12:.12);g.translate(0,-171);}
    shape(()=>{g.moveTo(-71,151);g.lineTo(-89,38+(guest?.fear??0)*23);g.lineTo(-29,105);g.lineTo(32,105);g.lineTo(88,38+(guest?.fear??0)*23);g.lineTo(72,156);g.closePath();},coat);
    oval(0,171,88,79,coat);oval(0,205,44,28,'#d5c6ad');
+   if(s.shot.number===5&&s.shot.variant===2){const shrug=Math.sin(Math.PI*s.u);for(const side of [-1,1])oval(side*76,272-shrug*18,20,13,coat);}
    const blink=(t+i*.8)%4.3>4.13;
    for(const x of [-34,34]){oval(x,165,18,blink?2:13,'#d6d5b3');if(!blink)oval(x+(i%2?2:-2),165,6,12,'#283240');}
    shape(()=>{g.moveTo(-9,194);g.lineTo(9,194);g.lineTo(0,203);g.closePath();},'#705550');

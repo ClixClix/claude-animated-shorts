@@ -20,7 +20,7 @@ const first=t.stateAt(shot('50A').start,shots),last=t.stateAt(shot('50A').end-1,
 check(first.required.includes('latte')&&first.latte.pose.blink>.95&&last.latte.pose.blink<.05,'Latte must visibly reopen eyes before Mocha');
 check(t.stateAt(shot('50B').start,shots).required.includes('mocha'),'Mocha reveal must follow eyes opening');
 check(t.stateAt(shot('57B').end-1,shots).latte.pose.gazeX<-.8,'Latte must look off screen toward the sign');
-check(t.stateAt(shot('57C').start,shots).required.includes('sign'),'Show sign after Latte notices it');
+check(t.stateAt(shot('57C').end-1,shots).required.includes('sign'),'Pan to sign after Latte notices it');
 const decode=file=>execFileSync('ffmpeg',['-nostdin','-v','error','-i',file,'-ar','48000','-ac','1','-f','f32le','pipe:1'],{maxBuffer:64*1024*1024});
 const original=decode(plan.narration.source),stem=decode(path.join(out,'Narration_Stem.wav'));
 check(stem.subarray(0,original.length).equals(original),'Narration contains changed, repeated or interrupted samples');
@@ -40,7 +40,7 @@ for(const start of [4,15,67])check(t.doorAngleAt(start+.45)>1.1&&t.doorAngleAt(s
 check(t.stateAt(shot('57A').start,shots).required.includes('flowerpot'),'Flowerpot must precede Latte and the sign');
 check(t.stateAt(shot('57D').start,shots).required.includes('sign'),'Invitation text must remain visible while it is read');
 const beforePlace=shots.find(s=>s.number===53);const placementStates=Array.from({length:beforePlace.end-beforePlace.start},(_,i)=>t.stateAt(beforePlace.start+i,shots));const heldLast=placementStates.filter(s=>s.bowlContact).at(-1),releasedFirst=placementStates.find(s=>!s.bowlContact);check(t.distance(heldLast.bowl,releasedFirst.bowl)<.001,'Bowl jumps after mouth releases it');
-const lights=shots.filter(s=>s.number===11);check(lights.length===3,'Light geography uses one continuous pan then the house');check(t.stateAt(lights[2].start,shots).required.includes('home-door'),'Follow the lamps to Latte home before returning to him');
+const lights=shots.filter(s=>s.number===11);check(lights.length===3,'Light geography uses one continuous pan then the house');check(Math.abs(t.stateAt(lights[2].start,shots).camera[1]-1.2)<.01,'Streetlight view must stay at Latte eye level');
 const prior=new Map();
 for(let frame=shot('58A').start;frame<plan.durationInFrames;frame++){
  const s=t.stateAt(frame,shots);

@@ -17,7 +17,7 @@ export function checkEpisodeCamera(w:EpisodeWorld,s:EpisodeState,cam:T.Perspecti
   marker.essie=new T.Vector3(...mouthAnchor(s,'essie')).add(new T.Vector3(0,.11,0));
   marker['other-buildings']=new T.Vector3(s.camera[0],1.7,12.19);marker.alley=new T.Vector3(5.45,.7,2.8);
   marker['shelter-guest']=face(shelterState(s,0).position,.46);marker['hesitant-cat']=face(shelterState(s,2).position,.72);
-  marker['confused-cat']=face(streetCatPosition(s,0),.6);
+  marker['confused-cat']=face(streetCatPosition(s,s.shot.number===5?s.shot.variant%2:0),.6);
   marker['alley-kitten']=face(shelterState(s,3).position,.48);marker['flowerpot']=new T.Vector3(-3.25,.65,3.35);marker['hiding-box']=new T.Vector3(.55,.55,15.05);marker['cloth-silhouette']=new T.Vector3(-.9,1.05,4.26);marker['dark-street']=new T.Vector3(s.camera[0],1.55,10.0);marker['rush-home']=face(streetCatPosition(s,1),.55);
   w.lights.forEach((l,i)=>{marker[`light-${i+1}`]=l.point.getWorldPosition(new T.Vector3());});
   const blockers=[...w.cafe.blockers,...w.blockers].filter(m=>m.visible);

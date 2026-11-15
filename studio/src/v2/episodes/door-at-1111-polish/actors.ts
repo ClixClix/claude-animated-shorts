@@ -31,7 +31,7 @@ export function createEpisodeCat(id:CatId){
   ctx.translate=(x:number,y:number)=>{
    if(actor.moving&&y===0&&Math.abs(x)<180&&leg<4){
     leg++;original(x,0);scale(0,0); // These exact silhouettes now live on the planted 3D leg cards.
-   }else original(x,y+(id==='essie'&&y>190&&y<245&&x>=0&&x<100?headDropPixels(s,'essie'):0));
+   }else {const nose=id==='latte'&&y>190&&y<245?10*beat(s.t,56.8,57)*(1-beat(s.t,57.1,57.5)):0;original(x+nose,y+(id==='essie'&&y>190&&y<245&&x>=0&&x<100?headDropPixels(s,'essie'):0));}
   };
   try{drawCat(ctx,id,pose);}finally{ctx.translate=original;ctx.rotate=nativeRotate;ctx.scale=scale;}
  }

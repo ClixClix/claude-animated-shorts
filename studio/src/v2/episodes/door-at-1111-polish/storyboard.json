@@ -15,25 +15,29 @@
     "number": 3,
     "start": 120,
     "end": 195,
-    "direction": "Low close-up of caf\u00e9 door handle moving unexpectedly"
+    "direction": "Whole cafe approach flowing into the door opening",
+    "purpose": "Whole cafe approach flowing into the door opening"
   },
   {
     "number": 4,
     "start": 195,
     "end": 255,
-    "direction": "Cafe door swings visibly and quickly from closed to open"
+    "direction": "Continue the same push to the mysterious opening door",
+    "purpose": "Continue the same push to the mysterious opening door"
   },
   {
     "number": 5,
     "start": 255,
     "end": 315,
-    "direction": "Empty mystery street, then confused close-ups of Latte and a passing cat"
+    "direction": "Different cats react in confusion; final cat shrugs",
+    "purpose": "Different cats react in confusion; final cat shrugs"
   },
   {
     "number": 6,
     "start": 315,
     "end": 390,
-    "direction": "Passing background cat notices the door and backs away"
+    "direction": "Cat approaches the dark road, hesitates, then takes another route",
+    "purpose": "Cat approaches the dark road, hesitates, then takes another route"
   },
   {
     "number": 7,
@@ -63,7 +67,8 @@
     "number": 11,
     "start": 630,
     "end": 705,
-    "direction": "Continuous pan establishing nine streetlights, then Latte home before his reaction"
+    "direction": "Streetlight pan from Latte eye level",
+    "purpose": "Streetlight pan from Latte eye level"
   },
   {
     "number": 12,
@@ -81,7 +86,8 @@
     "number": 14,
     "start": 855,
     "end": 915,
-    "direction": "Latte notices how late it has become"
+    "direction": "Carefree rainy walk before the lights begin failing",
+    "purpose": "Carefree rainy walk before the lights begin failing"
   },
   {
     "number": 15,
@@ -153,7 +159,8 @@
     "number": 26,
     "start": 1680,
     "end": 1755,
-    "direction": "Latte enters home, reaches the switch, reacts to the failed light"
+    "direction": "Home arrival, nose-to-switch nudge, frightened reaction",
+    "purpose": "Home arrival, nose-to-switch nudge, frightened reaction"
   },
   {
     "number": 27,
@@ -201,7 +208,8 @@
     "number": 34,
     "start": 2205,
     "end": 2280,
-    "direction": "Three taps: cafe exterior, frightened Latte, then an empty dark street"
+    "direction": "Three taps, three views of Latte reacting",
+    "purpose": "Three taps, three views of Latte reacting"
   },
   {
     "number": 35,
@@ -291,13 +299,15 @@
     "number": 49,
     "start": 3225,
     "end": 3300,
-    "direction": "Latte shuts his eyes as the background slowly recedes"
+    "direction": "Eye-close camera pullback begins",
+    "purpose": "Eye-close camera pullback begins"
   },
   {
     "number": 50,
     "start": 3300,
     "end": 3360,
-    "direction": "Eyes reopen, then Mocha is revealed holding the cloth in his mouth"
+    "direction": "Continue the eye-close move until the Mocha reveal",
+    "purpose": "Continue the eye-close move until the Mocha reveal"
   },
   {
     "number": 51,
@@ -327,7 +337,8 @@
     "number": 55,
     "start": 3645,
     "end": 3720,
-    "direction": "Kitten hesitates and backs off before trusting the warm doorway"
+    "direction": "Kitten moves forward inside without a backward reset",
+    "purpose": "Kitten moves forward inside without a backward reset"
   },
   {
     "number": 56,
@@ -339,7 +350,8 @@
     "number": 57,
     "start": 3780,
     "end": 3840,
-    "direction": "Flowerpot, Latte notices, sign, dark alley kitten, invitation and entry"
+    "direction": "Continuous flowerpot to Latte to invitation sign pan",
+    "purpose": "Continuous flowerpot to Latte to invitation sign pan"
   },
   {
     "number": 58,
@@ -351,12 +363,14 @@
     "number": 59,
     "start": 3915,
     "end": 3990,
-    "direction": "Guests enter; recall Mocha switching on the light from dark; dumpster cat emerges"
+    "direction": "Only kittens entering on the customer line; Mocha light-switch insert; alley refuge",
+    "purpose": "Only kittens entering on the customer line; Mocha light-switch insert; alley refuge"
   },
   {
     "number": 60,
     "start": 3990,
     "end": 4080,
-    "direction": "Friendly Latte approaches kitten; dark street; return to safe cats with others settled"
+    "direction": "Latte and kitten settle together; other arrivals already inside",
+    "purpose": "Latte and kitten settle together; other arrivals already inside"
   }
 ]

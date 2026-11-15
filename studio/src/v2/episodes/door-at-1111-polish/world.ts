@@ -17,7 +17,7 @@ export class EpisodeWorld{
  private serial=0;
  private townWindows:{mat:T.MeshStandardMaterial;color:T.Color;emissive:number}[]=[];
  private permanentLights:{light:T.Light;intensity:number}[]=[];private pendantBulbs:{mat:T.MeshStandardMaterial;emissive:number}[]=[];
- private traffic:T.Group[]=[];
+ private traffic:T.Group[]=[];private backgroundTraffic:T.Group[]=[];
  readonly shadowScreen:T.Mesh;readonly rainPositions:Float32Array;
  constructor(optimize=true){
   this.root.name='door-at-1111-extensions';this.root.add(this.cafe.root);this.door=this.rigDoor();
@@ -37,6 +37,8 @@ export class EpisodeWorld{
   const fog=this.box(this.root,[4.40,2.78,.008],[-1.45,2.22,4.247],'#dac6a0',false);fog.name='rain-fogged-cafe-window';fog.material=new T.MeshStandardMaterial({color:'#cbbd9b',roughness:1,transparent:false,opacity:1,emissive:'#7b552c',emissiveIntensity:.025,side:T.DoubleSide});this.materials.push(fog.material);fog.receiveShadow=true;fog.layers.set(NOINK);this.props.set('shadow',fog);
   const screen=new T.Mesh(new T.PlaneGeometry(1,1),new T.MeshBasicMaterial({transparent:true,opacity:0}));screen.visible=false;this.root.add(screen);this.shadowScreen=screen;
   this.lights.forEach((lamp,i)=>{const p=STREETLIGHTS[i],g=new T.Group();g.name='lamp-frame-'+i;g.position.set(...p);this.root.add(g);for(const x of [-.155,.155])for(const z of [-.155,.155])this.box(g,[.027,.49,.027],[x,3.08,z],'#253c47',false);for(const y of [2.84,3.32])this.box(g,[.36,.045,.36],[0,y,0],'#253c47',false);});
+  const piers=new T.Group();piers.name='facade-gap-infill';this.root.add(piers);this.box(piers,[8.2,.10,.18],[0,3.74,4.25],'#234942');
+  this.box(piers,[.48,3.7,.18],[1.285,1.85,4.25],'#234942');this.box(piers,[.53,3.7,.18],[3.525,1.85,4.25],'#234942');
   this.sign();this.lanternLight=this.lantern();
   this.blanket=this.cloth('mocha-blanket','#9c9d7f',2.5,1.8);this.homeBlanket=this.cloth('latte-home-blanket','#a59a7e',1.25,1.45);
   this.root.add(this.blanket,this.homeBlanket);this.props.set('blanket',this.blanket);this.props.set('home-blanket',this.homeBlanket);
@@ -93,11 +95,11 @@ export class EpisodeWorld{
   const homeFill=new T.PointLight('#9fbad0',3.8,6,2);homeFill.name='home-moonlight';homeFill.position.set(.85,2.25,14.15);g.add(homeFill);
  }
  private street(){
-  const pavement=this.box(this.root,[100,.06,7.4],[0,0,8.55],'#394b59',false);pavement.name='episode-road';this.box(this.root,[8.9,.06,.6],[-3.05,0,4.55],'#667776',false).name='entrance-apron-left';this.box(this.root,[4.4,.06,.6],[5.3,0,4.55],'#667776',false).name='entrance-apron-right';
+  const pavement=this.box(this.root,[100,.06,5.3],[0,0,8.975],'#394b59',false);pavement.name='episode-road';this.box(this.root,[8.9,.06,.6],[-3.05,0,4.55],'#667776',false).name='entrance-apron-left';this.box(this.root,[4.4,.06,.6],[5.3,0,4.55],'#667776',false).name='entrance-apron-right';
   for(let x=-7;x<7;x+=1.4)this.box(this.root,[.7,.008,.07],[x,.034,9.0],'#7b7a6b',false);
   const puddle=this.add(this.root,new T.CircleGeometry(.72,32),new T.MeshStandardMaterial({color:'#516a78',roughness:.5,metalness:.12,transparent:true,opacity:.18}),[-.70,.034,9.0],false);puddle.rotation.x=-Math.PI/2;puddle.layers.set(NOINK);this.materials.push(puddle.material);
   // Reuse the two approved street lamps at +/-6. Add seven fixed lamps: nine total.
-  const town=this.cafe.root.getObjectByName('night-town')!;
+  const town=this.cafe.root.getObjectByName('night-town')!;for(const o of town.children)if(Math.abs(o.position.x)===6&&o.position.z===6.5)o.position.z=6.05;
   for(let i=0;i<2;i++){
    const p=STREETLIGHTS[i];const point=town.children.find(o=>o instanceof T.PointLight&&Math.abs(o.position.x-p[0])<.01&&Math.abs(o.position.z-p[2])<.01) as T.PointLight;
    const bulb=town.children.find(o=>o instanceof T.Mesh&&Math.abs(o.position.x-p[0])<.01&&Math.abs(o.position.y-3.08)<.01) as T.Mesh<T.BufferGeometry,T.MeshStandardMaterial>;
@@ -162,13 +164,35 @@ export class EpisodeWorld{
   for(let i=0;i<620;i++){const h=(n:number)=>{const v=Math.sin(n*127.1+17.7)*43758.5453;return v-Math.floor(v);};const angle=h(i)*Math.PI*2,elevation=.08+h(i+230)*1.35,radius=150;positions.push(Math.cos(angle)*Math.cos(elevation)*radius,Math.sin(elevation)*radius,Math.sin(angle)*Math.cos(elevation)*radius);}
   starGeo.setAttribute('position',new T.Float32BufferAttribute(positions,3));const starMat=new T.PointsMaterial({color:'#d8d9c5',size:.28,sizeAttenuation:true,transparent:true,opacity:.76,depthWrite:false,fog:false});this.materials.push(starMat);
   const stars=new T.Points(starGeo,starMat);stars.name='night-stars';stars.layers.set(NOINK);this.root.add(stars);
+  const sun=this.add(this.root,new T.SphereGeometry(.95,20,12),new T.MeshBasicMaterial({color:'#efbc87',fog:false}),[-18,14,-40],false);sun.name='opening-setting-sun';sun.layers.set(NOINK);this.materials.push(sun.material);
+  const duskLight=new T.DirectionalLight('#efbc91',0);duskLight.position.set(-18,14,-40);duskLight.name='opening-dusk-light';this.root.add(duskLight);
   // Bed and bowls already exist when Latte gets home; nothing pops into place on the line.
   const bed=new T.Group();bed.name='latte-cat-bed';bed.position.set(2.75,.2,15.45);this.root.add(bed);this.props.set('cat-bed',bed);
   this.cylinder(bed,.53,.58,.13,[0,.065,0],'#8f8171');this.cylinder(bed,.46,.46,.07,[0,.15,0],'#a9a08a');
   for(const [i,x] of [2.42,2.97].entries()){const b=new T.Group();b.name=i?'home-food':'home-water';b.position.set(x,.2,14.15);this.root.add(b);this.cylinder(b,.18,.14,.10,[0,.05,0],'#b0b9a3');this.cylinder(b,.15,.15,.008,[0,.10,0],i?'#806343':'#6c94a4');if(i)for(let n=0;n<9;n++)this.add(b,new T.SphereGeometry(.025,6,4),this.mat('#94754d'),[Math.cos(n*2.4)*.09,.12,Math.sin(n*2.4)*.09],false);}
+  const homeTrim=new T.Group();homeTrim.name='home-interior-finish';this.root.add(homeTrim);
+  this.box(homeTrim,[4.4,.10,.055],[2.25,.27,16.075],'#b19c7e',false);
+  for(const x of [-.015,4.515])this.box(homeTrim,[.055,.10,3.7],[x,.27,14.2],'#b19c7e',false);
+  const rug=this.box(homeTrim,[1.3,.012,1.65],[1.1,.206,13.8],'#647c7a',false);rug.name='home-woven-rug';
+  for(const x of [.52,1.68])this.box(homeTrim,[.035,.002,1.5],[x,.213,13.8],'#a8ac96',false);
+  const cushion=this.box(homeTrim,[.38,.13,.32],[2.75,.445,15.45],'#ad876b',false);cushion.rotation.y=.2;
+  this.box(homeTrim,[.58,.055,.3],[4.34,1.65,15.3],'#997653');
+  this.cylinder(homeTrim,.10,.08,.17,[4.34,1.76,15.3],'#9f9c7c');
+  this.add(homeTrim,new T.IcosahedronGeometry(.16,1),this.mat('#688277'),[4.34,1.96,15.3],false);
+  const shelf=new T.Group();shelf.name='home-low-bookcase';shelf.position.set(.75,.2,15.85);this.root.add(shelf);
+  for(const y of [.05,.45,.9])this.box(shelf,[1.2,.07,.35],[0,y,0],'#997653');for(const x of [-.56,.56])this.box(shelf,[.07,.95,.35],[x,.475,0],'#785b43');for(let i=0;i<8;i++)this.box(shelf,[.09,.25+(i%3)*.04,.23],[-.42+i*.12,.23,0],['#778c86','#a57f64','#b4a480'][i%3],false);
+  const mat=this.box(this.root,[1.3,.018,.65],[3.15,.209,12.75],'#a48765',false);mat.name='home-entry-mat';
+  const alleyShelf=new T.Group();alleyShelf.name='alley-storage';alleyShelf.position.set(6.0,0,-.7);this.root.add(alleyShelf);
+  for(const [i,z] of [-.8,.1,.9].entries()){this.box(alleyShelf,[.68,.55,.6],[i%2*.3,.275,z],'#7c715e');for(const y of [.12,.4])this.box(alleyShelf,[.7,.055,.63],[i%2*.3,y,z],'#a28b67',false);}
+  this.cylinder(alleyShelf,.035,.035,2.4,[-1.8,1.2,-3.2],'#52676b');for(const y of [.35,1.3,2.2])this.box(alleyShelf,[.12,.05,.10],[-1.84,y,-3.2],'#7b8884',false);
   const box=new T.Group();box.name='latte-hiding-box';box.position.set(.55,.2,15.05);this.root.add(box);this.props.set('hiding-box',box);
   for(const x of [-.40,.40])this.box(box,[.055,.60,.78],[x,.30,0],'#9b805f');this.box(box,[.85,.055,.78],[0,.027,0],'#a58b68');this.box(box,[.85,.60,.055],[0,.30,.39],'#9b805f');
   this.box(box,[.85,.055,.45],[0,.59,.2],'#ae9571').rotation.x=.18;
+  const alleyFinish=new T.Group();alleyFinish.name='alley-service-details';this.root.add(alleyFinish);
+  this.box(alleyFinish,[1.9,.10,.16],[5.25,.05,-3.5],'#7d8580',false);
+  const drain=this.box(alleyFinish,[.46,.014,.35],[5.4,.038,-2.8],'#344d54',false);
+  for(let i=0;i<6;i++)this.box(alleyFinish,[.025,.003,.31],[5.22+i*.07,.047,-2.8],'#7c8b89',false);
+  for(const z of [-2.5,-1.4]){this.cylinder(alleyFinish,.18,.15,.27,[6.05,.135,z],'#8c7863');this.add(alleyFinish,new T.IcosahedronGeometry(.23,1),this.mat('#546d64'),[6.05,.48,z],false);}
   const bin=new T.Group();bin.name='alley-dumpster';bin.position.set(5.45,0,2.2);this.root.add(bin);this.props.set('alley-dumpster',bin);
   this.box(bin,[1.05,.05,.85],[0,.005,0],'#3d5858');for(const x of [-.50,.50])this.box(bin,[.05,.48,.85],[x,.27,0],'#476664');for(const z of [-.4,.4])this.box(bin,[1.05,.48,.05],[0,.27,z],'#476664');const lid=this.box(bin,[1.12,.06,.9],[0,.957,-.288],'#2b4246');lid.rotation.x=-1.25;
   this.box(this.root,[2.1,.06,7.1],[5.2,0,.7],'#657477',false).name='alley-pavement';
@@ -188,6 +212,7 @@ export class EpisodeWorld{
    for(const x of [-.73,.73])for(const z of [-.51,.51]){const w=this.cylinder(car,.22,.22,.14,[x,.22,z],'#28343b');w.rotation.x=Math.PI/2;}
    for(const z of [-.37,.37]){const lamp=this.box(car,[.04,.12,.20],[1.18,.55,z],'#f0dab0',false);(lamp.material as T.MeshStandardMaterial).emissive.set('#ffe1a0');(lamp.material as T.MeshStandardMaterial).emissiveIntensity=1.4;}const light=new T.PointLight('#ffdfaa',3,6,2);light.position.set(1.5,.36,0);car.add(light);
   }
+  for(let i=0;i<6;i++){const car=this.traffic[i%2].clone(true);car.name='district-moving-car-'+i;car.traverse(o=>{if(o instanceof T.PointLight)o.intensity=0;});this.root.add(car);this.backgroundTraffic.push(car);}
   // Mount the existing plaque on a stationary pier instead of intersecting the moving leaf.
   const open=this.door.children.find(o=>o instanceof T.Mesh&&Math.abs(o.position.y-2.3)<.001&&(o.material as T.MeshBasicMaterial).map);
   if(open){const mount=new T.Group();mount.name='open-sign-mount';mount.position.set(3.15,2.5,4.41);this.root.add(mount);mount.add(open);open.name='door-open-plaque';open.position.set(0,0,.005);open.rotation.set(0,0,0);open.layers.set(NOINK);const m=(open as T.Mesh).material as T.Material;m.polygonOffset=false;this.box(mount,[.59,.29,.06],[0,0,-.035],'#b59a70',false);}
@@ -221,9 +246,11 @@ export class EpisodeWorld{
  }
  update(s:EpisodeState){
   const clouds=this.props.get('clouds');if(clouds){clouds.visible=s.t>=26.5;clouds.position.x=-10.8+3*beat(s.t,26.5,28.5);}
+  const openingEnd=s.editShots?.filter(q=>q.number===1).at(-1)?.end??54,dusk=s.shot.number===1?1-beat(s.frame,0,openingEnd*.85):0;const sun=this.root.getObjectByName('opening-setting-sun')!;sun.visible=dusk>0;sun.position.y=-3+17*dusk;(this.root.getObjectByName('opening-dusk-light') as T.DirectionalLight).intensity=.85*dusk;
   this.door.rotation.y=-s.door;this.homeDoor.rotation.y=-s.homeDoor*1.35;
-  this.traffic.forEach((car,i)=>{car.position.set(i? -20+s.t*1.1:-7+s.t*1.8,.03,8.85);car.visible=s.t<29;});
-  const busCallback=s.shot.number===58&&s.shot.variant===2;const busX=busCallback?-2.8-s.u*3.4:s.t<2?-4.5-s.t*2.9:-15;this.bus.position.set(busX,.03,7.2);this.bus.visible=s.t<3||busCallback;
+  this.traffic.forEach((car,i)=>{car.position.set(i? -12+s.t*2.1:9-s.t*2.2,.03,i?8.85:7.45);car.rotation.y=i?0:Math.PI;car.visible=s.t<29;});
+  this.backgroundTraffic.forEach((car,i)=>{const direction=i%2?1:-1;car.position.set((i<3?18:-18)+direction*1.1,.03,-30+i*11+direction*s.t*2.2);car.rotation.y=direction>0?-Math.PI/2:Math.PI/2;car.visible=s.t<29;});
+  const busCallback=s.shot.number===58&&s.shot.variant===2;const busX=busCallback?-2.8-s.u*3.4:s.t<2?-4.5-s.t*2.9:-15;this.bus.position.set(busX,.03,7.7);this.bus.visible=s.t<3||busCallback;
   for(let i=0;i<9;i++){
    const l=this.lights[i],fail=s.failed[i],flicker=i===0&&s.shot.number===1&&s.shot.variant===1?(s.u>.24&&s.u<.40?.28:1):i===0&&s.t>30.5&&s.t<31.8?(.5+.5*Math.sin(s.t*47)):1;
    l.point.visible=!fail;l.point.intensity=fail?0:(i<2?20:8)*flicker;l.bulb.emissiveIntensity=fail?0:.65*flicker;l.bulb.color.set(fail?'#5a6266':'#dfc084');
@@ -259,7 +286,7 @@ export class EpisodeWorld{
   }p.needsUpdate=true;this.blanket.geometry.computeVertexNormals();this.blanket.geometry.computeBoundingBox();this.blanket.geometry.computeBoundingSphere();this.blanket.visible=s.t>=18&&!(s.shot.number===58&&s.shot.variant===0||s.shot.number===59&&s.shot.variant===1);
   // A cloth dome over the body, with a lowered front opening for the listening reaction.
   const cover=beat(s.t,78,80.5)*(1-beat(s.t,83.15,84.30));this.homeBlanket.visible=s.t>=54;this.homeBlanket.position.set(.85,.20,13.1);this.homeBlanket.rotation.x=0;
-  const hp=this.homeBlanket.geometry.getAttribute('position');for(let i=0;i<hp.count;i++){const x=(i%21)/20-.5,z=Math.floor(i/21)/16-.5;hp.setXYZ(i,x*1.25,.004+cover*(.08+.97*Math.cos(x*Math.PI)*(.65+.35*Math.cos(z*Math.PI*1.5))),z*1.45);}hp.needsUpdate=true;this.homeBlanket.geometry.computeVertexNormals();this.homeBlanket.geometry.computeBoundingBox();this.homeBlanket.geometry.computeBoundingSphere();
+  const hp=this.homeBlanket.geometry.getAttribute('position');for(let i=0;i<hp.count;i++){const x=(i%21)/20-.5,z=Math.floor(i/21)/16-.5;hp.setXYZ(i,x*1.25,.004+cover*(.04+.94*Math.sqrt(Math.max(0,1-(x*2)**2))*(.65+.35*Math.cos(z*Math.PI*1.5))+.026*Math.sin(x*25+z*8)**2*Math.sin((z+.5)*Math.PI)),z*1.45);}hp.needsUpdate=true;this.homeBlanket.geometry.computeVertexNormals();this.homeBlanket.geometry.computeBoundingBox();this.homeBlanket.geometry.computeBoundingSphere();
   this.rain.visible=s.rain>.01;const ra=this.rain.geometry.getAttribute('position');for(let i=0;i<240;i++){
    const hash=(n:number)=>{const a=Math.sin(n*75.31+16.7)*43758.5453;return a-Math.floor(a);};
    const x=-8+hash(i)*16,z=4.8+hash(i+110)*7.1,y=((hash(i+300)*7-s.frame/30*4)%7+7)%7;

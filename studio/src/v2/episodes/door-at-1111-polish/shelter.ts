@@ -4,8 +4,8 @@ const ease=(v:number)=>{const u=Math.max(0,Math.min(1,v));return u*u*(3-2*u);};
 /** Continuous supporting-actor routes through the existing entrance, independent of camera cuts. */
 export function shelterState(s:EpisodeState,index:number){
  const anchor=(id:string,fallback:number)=>s.editShots?.find(q=>q.id===id)?.start??fallback;
- const start=anchor('59A',3050),end=anchor('58C',3988),emerge=anchor('59C',4170),settle=anchor('60C',3300);
- const begin=index===3?anchor('57E',3850):index===2?emerge:start+index*16;
+ const start=anchor('59A',3050),end=anchor('58C',3988),emerge=anchor('59C',4170),settle=anchor('60A',3200);
+ const begin=index===3?anchor('57E',3850):index===2?start:start+index*16;
  const finish=index===3?end:index===2?settle:anchor('60A',3200);
  let progress=ease((s.frame-begin)/Math.max(30,finish-begin));
  const route:V3[]=index===3?[[3.70,.03,5.65],[2.5,.03,5.65],[2.5,0,3.6],[-.5,0,2.5]]:index===2?[[5.45,.03,2.2],[5.45,.03,4.9],[2.6,.03,5.85],[2.6,0,3.9],[3.5,0,3.65],[3.5,0,2.9],[-1.0,0,2.7]]:index===0?[[2.05,.03,5.9],[2.05,0,3.55],[.35,0,3.05],[.35,0,.8]]:[[2.65,.03,6.7],[2.65,0,3.65],[-.35,0,3.05],[-.35,0,1.7]];
@@ -19,6 +19,6 @@ export function shelterState(s:EpisodeState,index:number){
 
 export function streetCatPosition(s:Pick<EpisodeState,'t'>,index:number):V3{
  const t=s.t,rush=Math.min(t,3),walk=Math.max(0,t-3);
- if(index===0&&t>10){const u=ease((t-10)/3);return [-2.4-u,.03,11.9+u*5.3];}
+ if(index===0&&t>10){const approach=ease((t-10)/.8),turn=ease((t-11.5)/1.5);return [-2.4-approach*.3-turn*1.4,.03,11.9-approach*.45+turn*5.5];}
  return index===0?[5-rush*1.3-walk*.5,.03,11.9]:[-2.5+rush*1.2+walk*.42,.03,6.05];
 }

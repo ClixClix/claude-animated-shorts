@@ -43,7 +43,7 @@ const Inner:React.FC<EpisodeProps>=({shots,cues,optimize=true,previewScale=1})=>
  },[cast,w]);
  const fx=useMemo(()=>({ink:new InkPass(scene,camera as T.PerspectiveCamera,{color:'#262737',widthNear:2.5*previewScale,widthFar:1.7*previewScale,creaseScale:.55,strength:.8}),lens:new LensBlur({maxCoC:8,nearScale:.5}),bloom:new BloomEffect({blendFunction:BlendFunction.ADD,intensity:.18,luminanceThreshold:1.05,luminanceSmoothing:.25,mipmapBlur:true,levels:5,radius:.5}),tone:new ToneMappingEffect({mode:ToneMappingMode.NEUTRAL}),grade:new GradeEffect(GRADE,.7)}),[scene,camera]);
  const cam=camera as T.PerspectiveCamera;cam.position.set(...s.camera);cam.fov=s.fov;cam.near=.08;cam.far=220;cam.lookAt(...s.target);cam.layers.enable(NOINK);cam.updateProjectionMatrix();cam.updateMatrixWorld();
- scene.background=new T.Color('#14283c');scene.fog=new T.Fog('#21364a',38,145);gl.shadowMap.type=T.PCFSoftShadowMap;gl.localClippingEnabled=true;
+ const openingEnd=shots.filter(q=>q.number===1).at(-1)!.end,dusk=s.shot.number===1?1-beat(frame,0,openingEnd*.85):0;scene.background=new T.Color('#14283c').lerp(new T.Color('#aa756b'),dusk*.65);scene.fog=new T.Fog('#21364a',38,145);gl.shadowMap.type=T.PCFSoftShadowMap;gl.localClippingEnabled=true;
  CHAR.uCharTint.value.set(1,.96,.92);CHAR.uCharShade.value=.88;CHAR.uGrad.value=.055;CHAR.uBodyGrad.value=.15;CHAR.uSideTint.value.set(.80,.88,1);CARD_K.uPx.value=previewScale;
  fx.lens.focus=new T.Vector3(...s.target).sub(cam.position).dot(cam.getWorldDirection(new T.Vector3()));fx.lens.cInf=s.blur;
  w.update(s);
@@ -51,7 +51,7 @@ const Inner:React.FC<EpisodeProps>=({shots,cues,optimize=true,previewScale=1})=>
  // This preserves the light field while avoiding invisible lights in software-rendered close-ups.
  if(optimize){w.root.updateMatrixWorld(true);const frustum=new T.Frustum().setFromProjectionMatrix(new T.Matrix4().multiplyMatrices(cam.projectionMatrix,cam.matrixWorldInverse));w.root.traverse(o=>{if(o instanceof T.PointLight)o.visible=o.intensity>0&&(o.distance<=0||frustum.intersectsSphere(new T.Sphere(o.getWorldPosition(new T.Vector3()),o.distance)));});}
 
- cast.forEach(c=>{const a=s[c.id];c.card.updateActor(a,s);c.card.mesh.visible=(!earlierInsert||c.id==='mocha')&&(c.id==='latte'||s.shot.number>=50);c.card.legs.visible=c.card.mesh.visible&&a.moving;c.shadow.mesh.visible=c.card.mesh.visible;c.shadow.mesh.position.set(a.position[0],supportHeight(a.position,c.id==='latte'?0:c.id==='essie'?2:1)+.008,a.position[2]);});
+ cast.forEach(c=>{const a=s[c.id];c.card.updateActor(a,s);c.card.mesh.visible=(!earlierInsert||c.id==='mocha')&&(c.id==='latte'||s.shot.number>=50)&&!(s.shot.number===59&&s.shot.variant===0);c.card.legs.visible=c.card.mesh.visible&&a.moving;c.shadow.mesh.visible=c.card.mesh.visible;c.shadow.mesh.position.set(a.position[0],supportHeight(a.position,c.id==='latte'?0:c.id==='essie'?2:1)+.008,a.position[2]);});
  for(let i=0;i<2;i++){const phase=(s.latte.travel/.32+i*.5)%1,u=phase/.18,p=s.latte.feet[i+2],splash=splashes[i];splash.line.visible=s.rain>0&&s.t>=39.5&&s.t<54&&phase<.18;splash.line.position.set(p[0],supportHeight(p,0)+.005,p[2]);splash.line.scale.setScalar(.035+.14*u);splash.mat.opacity=.30*(1-clamp(u));}
  const kid=s.kitten,feet:V3[]=[[-.045,0,0],[.045,0,0]].map((p,i)=>{
   if(!s.kittenWalking)return [kid[0]+p[0],kid[1],kid[2]] as V3;
@@ -60,7 +60,7 @@ const Inner:React.FC<EpisodeProps>=({shots,cues,optimize=true,previewScale=1})=>
   const a=sample(step),b=sample(step+1),u=clamp((phase-.58)/.42),pos=phase<=.58?a:mix(a,b,u*u*(3-2*u));pos[0]+=p[0];pos[1]=supportHeight(pos,0);if(phase>.58)pos[1]+=Math.sin(Math.PI*u)*.03;return pos;
  });
  const ks={...storyAt(0),frame:s.t*30,shot:4 as const,camera:s.camera,target:s.target,kitten:kid,kittenFear:s.kittenFear,kittenSmile:s.kittenSmile,kittenBlink:Math.max(0,1-Math.abs((s.t%4.2)-3.9)/.09),kittenLook:0,kittenWalking:s.kittenWalking,kittenGait:s.kittenTravel/.18*Math.PI*2,kittenLift:s.shot.number===47?Math.max(0,kid[1]-.03):0};
- kitten.update(ks,frame,{feet,gazeX:s.t>123?-.45:.10,gazeY:s.shot.number===47?-.65:s.t>123?-.4:0,earDrop:s.kittenFear*.7,headTilt:s.t>123?-.08:0});// Episode-only wet-coat glints and a timed meow articulation; the original kitten component stays intact.
+ kitten.update(ks,frame,{feet:s.kittenWalking?undefined:feet,gazeX:s.t>123?-.45:.10,gazeY:s.shot.number===47?-.65:s.t>123?-.4:0,earDrop:s.kittenFear*.7,headTilt:s.t>123?-.08:0});// Episode-only wet-coat glints and a timed meow articulation; the original kitten component stays intact.
  const kc=kitten.mesh.material.map!.image as HTMLCanvasElement,kg=kc.getContext('2d')!;kg.save();kg.setTransform(2,0,0,2,0,0);kg.translate(210,0);
  const wet=1-beat(s.t,124,132);kg.globalAlpha=.52*wet;kg.strokeStyle='#b9d0d6';kg.lineWidth=1.2;kg.lineCap='round';
  for(const [x,y] of [[-64,338],[61,355],[-59,392],[58,419],[-43,375],[-31,155],[35,166],[-49,202],[52,223],[20,388]]){kg.beginPath();kg.moveTo(x,y);kg.lineTo(x-1,y+9);kg.stroke();}
@@ -83,7 +83,7 @@ const Inner:React.FC<EpisodeProps>=({shots,cues,optimize=true,previewScale=1})=>
  paws.essie.update([ep[0]-.08,ep[1]+.52,ep[2]],mix(bowlHand,[ep[0]-.15,ep[1]+.38,ep[2]],release),false);
  const shoulder:V3=[lp[0]+.16,lp[1]+.49,lp[2]-.04],rest:V3=[lp[0]+.20,lp[1]+.42,lp[2]-.04];
  const comfort=0,tremble=s.t>=91.5&&s.t<=94.5;
- paws.latte.update(tremble?[lp[0]+.16,lp[1]+.49,lp[2]+.03]:shoulder,tremble?[lp[0]+.10+Math.sin(s.t*25)*.008,lp[1]+.40+Math.sin(s.t*21)*.006,lp[2]+.12]:comfort>0?mix(rest,[kid[0]-.12,kid[1]+.22,kid[2]],comfort):mix(rest,[HOME.switch[0]-.14,HOME.switch[1],HOME.switch[2]],s.switchReach),s.switchReach>.01||comfort>.01||tremble);
+ paws.latte.update(tremble?[lp[0]+.16,lp[1]+.49,lp[2]+.03]:shoulder,tremble?[lp[0]+.10+Math.sin(s.t*25)*.008,lp[1]+.40+Math.sin(s.t*21)*.006,lp[2]+.12]:comfort>0?mix(rest,[kid[0]-.12,kid[1]+.22,kid[2]],comfort):mix(rest,[HOME.switch[0]-.14,HOME.switch[1],HOME.switch[2]],s.switchReach),comfort>.01||tremble);
  const kidRight=new T.Vector3(cam.position.z-kid[2],0,-(cam.position.x-kid[0])).normalize();
  const kittenShoulder:V3=[kid[0]-kidRight.x*.14,kid[1]+.21,kid[2]-kidRight.z*.14],kidRest:V3=[kid[0]-kidRight.x*.10,kid[1]+.12,kid[2]-kidRight.z*.10];
  paws.kitten.update(kittenShoulder,mix(kidRest,s.shot.number===47?mix(kidRest,h.toArray() as V3,.42):tap.toArray() as V3,s.kittenTap),false);
