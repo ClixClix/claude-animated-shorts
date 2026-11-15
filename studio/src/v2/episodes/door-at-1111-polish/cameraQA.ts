@@ -14,7 +14,7 @@ export function checkEpisodeCamera(w:EpisodeWorld,s:EpisodeState,cam:T.Perspecti
  w.root.updateMatrixWorld(true);
   const face=(p:V3,h=.77)=>new T.Vector3(p[0],p[1]+h,p[2]);
   const marker:Record<string,T.Vector3>={latte:face(lp),mocha:face(mp),essie:face(ep),kitten:face(kid,.39),'latte-ear':new T.Vector3(lp[0]-.20,lp[1]+1.15,lp[2]),'home-blanket':new T.Vector3().fromBufferAttribute(w.homeBlanket.geometry.getAttribute('position'),8*21+3).applyMatrix4(w.homeBlanket.matrixWorld),'latte-feet':face(lp,.10),'latte-paws':new T.Vector3(lp[0]+.1,lp[1]+.4,lp[2]+.12),pavement:new T.Vector3(3.05,.03,8.0),cafe:new T.Vector3(0,2.2,4.3),clock:new T.Vector3(...CLOCK),sign:new T.Vector3(...SIGN),handle:h,'push-point':pushPoint,door:new T.Vector3(2.25,1.6,4.20),tap,shadow:new T.Vector3(-.9,2.0,4.26),'shadow-top':new T.Vector3(-.9,2.65,4.26),'blanket-shadow':new T.Vector3().fromBufferAttribute(w.blanket.geometry.getAttribute('position'),16*21+10),blanket:new T.Vector3(2,.30,3.4),bowl:face(s.bowl,.1),'home-door':new T.Vector3(3.15,1.4,12.23),switch:new T.Vector3(...HOME.switch),lantern:new T.Vector3(-.96,.25,2.62),moon:new T.Vector3(-10,13,-28),'bus-stop':w.root.getObjectByName('bus-stop-pictogram')!.getWorldPosition(new T.Vector3()),bus:new T.Vector3(w.bus.position.x,1,w.bus.position.z)};
-  marker.sun=w.props.get('sun')!.getWorldPosition(new T.Vector3());marker.mouse=w.props.get('mouse')!.getWorldPosition(new T.Vector3()).add(new T.Vector3(0,.08,0));
+  marker.puddle=w.props.get('puddle')!.getWorldPosition(new T.Vector3());marker.sun=w.props.get('sun')!.getWorldPosition(new T.Vector3());marker.mouse=w.props.get('mouse')!.getWorldPosition(new T.Vector3()).add(new T.Vector3(0,.08,0));
   marker.essie=new T.Vector3(...mouthAnchor(s,'essie')).add(new T.Vector3(0,.11,0));
   marker['other-buildings']=new T.Vector3(s.camera[0],1.7,12.19);marker.alley=new T.Vector3(5.45,.7,2.8);
   marker['shelter-guest']=face(shelterState(s,0).position,.46);marker['hesitant-cat']=face(shelterState(s,2).position,.72);
@@ -24,6 +24,7 @@ export function checkEpisodeCamera(w:EpisodeWorld,s:EpisodeState,cam:T.Perspecti
   const blockers=[...w.cafe.blockers,...w.blockers].filter(m=>m.visible);
   const visual:T.Mesh[]=[];w.root.traverse(o=>{for(let p:T.Object3D|null=o;p;p=p.parent)if(!p.visible)return;if(o instanceof T.Mesh&&!(o instanceof T.InstancedMesh)&&!Array.isArray(o.material)&&o.material.opacity>=.9&&!o.name.startsWith('static-batch-'))visual.push(o);});
   const required=[...s.required];
+ if(required.includes('sign'))for(const [id,x,y] of [['sign-left',-.46,0],['sign-right',.46,0],['sign-top',0,.30],['sign-bottom',0,-.30]] as [string,number,number][]){marker[id]=new T.Vector3(SIGN[0]+x,SIGN[1]+y,SIGN[2]);required.push(id);}
  if(required.includes('clock'))for(const [id,x,y] of [['clock-left',-1.14,0],['clock-right',1.14,0],['clock-top',0,1.14],['clock-bottom',0,-1.14]] as [string,number,number][]){marker[id]=new T.Vector3(CLOCK[0]+x,CLOCK[1]+y,CLOCK[2]+.03);required.push(id);}
  if(required.includes('bus'))for(const [id,x,y,z] of [['bus-front',-1.9,1,.0],['bus-rear',1.9,1,0],['bus-roof',0,1.85,0],['bus-wheels',0,.3,.65]] as [string,number,number,number][]){marker[id]=new T.Vector3(w.bus.position.x+x,y+.03,w.bus.position.z+z);required.push(id);}
  const visibility=required.map(id=>{
@@ -39,6 +40,7 @@ export function checkEpisodeCamera(w:EpisodeWorld,s:EpisodeState,cam:T.Perspecti
    const p=marker[id];if(!p)throw Error('Missing required story marker '+id);const ndc=p.clone().project(cam),d=p.clone().sub(cam.position),length=d.length(),ray=new T.Raycaster(cam.position,d.normalize(),.08,length-.06);
    ray.layers.enable(7);ray.layers.enable(NOINK);
    let owner=id.startsWith('clock-')?w.props.get('clock'):id==='handle'||id==='tap'||id==='push-point'?w.door:id==='blanket-shadow'?w.blanket:w.props.get(id);
+   if(id.startsWith('sign-'))owner=w.props.get('sign');
    if(id.startsWith('bus-'))owner=w.bus;
    if(id==='flowerpot')owner=w.cafe.fixtures.get('entrance-plant');
    if(id.startsWith('light-')&&owner?.parent?.name.startsWith('streetlight-'))owner=owner.parent;

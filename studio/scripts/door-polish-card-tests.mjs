@@ -31,7 +31,7 @@ export function run(props){
   }
   card.dispose();
  }
- const world=new EpisodeWorld(false),latte=createEpisodeCat('latte'),shot=props.shots.find(s=>s.id==='46'),camera=new T.PerspectiveCamera(70,1080/1920,.08,220);
+ const world=new EpisodeWorld(false),latte=createEpisodeCat('latte'),shot=props.shots.find(s=>s.id==='46'),camera=new T.PerspectiveCamera(70,1080/1920,.08,320);
  for(let frame=shot.start;frame<shot.end;frame++){const s=stateAt(frame,props.shots);latte.updateActor(s.latte,s);latte.mesh.updateMatrixWorld(true);camera.position.set(...s.camera);camera.fov=s.fov;camera.lookAt(...s.target);camera.updateProjectionMatrix();camera.updateMatrixWorld(true);world.update(s);const a=checkEpisodeCamera(world,s,camera,[{id:'latte',mesh:latte.mesh}]);check(a.visibility.every(v=>v.inFrame&&!v.occluder),'Kitten reveal blocked at '+frame+' '+JSON.stringify(a.visibility));}
  const population=new TownPopulation(),cast=['latte','mocha','essie'].map(id=>({id,card:createEpisodeCat(id)})),kitten=createKitten();
  for(let frame=0;frame<props.shots.at(-1).end;frame++){

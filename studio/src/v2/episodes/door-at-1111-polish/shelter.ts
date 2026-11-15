@@ -5,7 +5,7 @@ const ease=(v:number)=>{const u=Math.max(0,Math.min(1,v));return u*u*(3-2*u);};
 export function shelterState(s:EpisodeState,index:number){
  const anchor=(id:string,fallback:number)=>s.editShots?.find(q=>q.id===id)?.start??fallback;
  const start=anchor('59A',3050),end=anchor('58C',3988),emerge=anchor('59C',4170),settle=anchor('60A',3200);
- const begin=index===3?anchor('57E',3850):index===2?start-14:start+index*16;
+ const begin=index===3?anchor('57E',3850):index===2?anchor('58D',3000)+2:start+index*16;
  const finish=index===3?end:index===2?settle:anchor('60A',3200);
  let progress=ease((s.frame-begin)/Math.max(30,finish-begin));
  if(index===2){const u=Math.max(0,Math.min(1,(s.frame-begin)/(finish-begin))),r=.08;progress=u<r?u*u/(2*r*(1-r)):u>1-r?1-(1-u)**2/(2*r*(1-r)):(u-r/2)/(1-r);}
@@ -20,6 +20,6 @@ export function shelterState(s:EpisodeState,index:number){
 
 export function streetCatPosition(s:Pick<EpisodeState,'t'>,index:number):V3{
  const t=s.t,rush=Math.min(t,3),walk=Math.max(0,t-3);
- if(index===0&&t>10){const approach=ease((t-10)/.8),turn=ease((t-11.5)/1.5);return [-2.4-approach*.3-turn*1.4,.03,11.9-approach*.45+turn*5.5];}
- return index===0?[5-rush*1.3-walk*.5,.03,11.9]:[-2.5+rush*1.2+walk*.42,.03,6.05];
+ if(index===0){const approach=ease((t-9.5)/1.2),turn=ease((t-11.5)/1.5),leave=ease((t-13)/13.5);return [5.45-1.85*turn-9.1*leave,.03,6.2-.8*approach+.2*turn];}
+ return [-2.5+rush*1.2-walk*.42,.03,6.05];
 }

@@ -66,6 +66,7 @@ export class EpisodeWorld{
   const entrance=this.cafe.root.getObjectByName('entrance') as T.Group;this.cafe.root.updateMatrixWorld(true);const pivot=new T.Group();pivot.name='episode-cafe-door-hinge';pivot.position.x=-.725;entrance.add(pivot);this.cafe.root.updateMatrixWorld(true);
   const leaf=entrance.children.filter(c=>c!==pivot&&(c.name.endsWith('/glass')||Math.abs(c.position.x+.02)<.001||Math.abs(c.position.y-.24)<.001||Math.abs(c.position.x-.48)<.001||Math.abs(c.position.y-2.3)<.001));for(const child of leaf)pivot.attach(child);
   const pane=leaf.find(o=>o.name.endsWith('/glass')) as T.Mesh|undefined;if(pane){const mat=new T.MeshStandardMaterial({color:'#d5c5a4',roughness:1,side:T.DoubleSide,transparent:false,opacity:1,emissive:'#7b552c',emissiveIntensity:.10});this.materials.push(mat);pane.material=mat;}
+  const nosePlate=this.box(pivot,[.16,.15,.045],[.58,.69,-.10],'#bca776',false);nosePlate.name='door-nose-push-plate';this.props.set('nose-plate',nosePlate);
   this.props.set('door',pivot);return pivot;
  }
  pushPoint(){this.root.updateMatrixWorld(true);return new T.Vector3(.90,.52,-.07).applyMatrix4(this.door.matrixWorld);}
@@ -98,7 +99,7 @@ export class EpisodeWorld{
  private street(){
   const pavement=this.box(this.root,[100,.06,5.3],[0,0,8.975],'#394b59',false);pavement.name='episode-road';this.box(this.root,[8.9,.06,.6],[-3.05,0,4.55],'#667776',false).name='entrance-apron-left';this.box(this.root,[4.4,.06,.6],[5.3,0,4.55],'#667776',false).name='entrance-apron-right';
   for(let x=-7;x<7;x+=1.4)this.box(this.root,[.7,.008,.07],[x,.034,9.0],'#7b7a6b',false);
-  const puddle=this.add(this.root,new T.CircleGeometry(.72,32),new T.MeshStandardMaterial({color:'#516a78',roughness:.5,metalness:.12,transparent:true,opacity:.18}),[-.70,.034,9.0],false);puddle.rotation.x=-Math.PI/2;puddle.layers.set(NOINK);this.materials.push(puddle.material);
+  const puddle=this.add(this.root,new T.CircleGeometry(.72,32),new T.MeshStandardMaterial({color:'#516a78',roughness:.5,metalness:.12,transparent:true,opacity:.35,depthWrite:false}),[-.70,.034,9.0],false);puddle.name='street-puddle';puddle.rotation.x=-Math.PI/2;puddle.layers.set(NOINK);this.materials.push(puddle.material);this.props.set('puddle',puddle);
   // Reuse the two approved street lamps at +/-6. Add seven fixed lamps: nine total.
   const town=this.cafe.root.getObjectByName('night-town')!;
   const originalLamps=[-6,6].map(x=>town.children.filter(o=>o.position.x===x&&o.position.z===6.5));
@@ -208,6 +209,7 @@ export class EpisodeWorld{
   for(let i=0;i<6;i++)this.box(alleyFinish,[.025,.003,.31],[5.22+i*.07,.047,-2.8],'#7c8b89',false);
   for(const z of [-2.5,-1.4]){this.cylinder(alleyFinish,.18,.15,.27,[6.05,.135,z],'#8c7863');this.add(alleyFinish,new T.IcosahedronGeometry(.23,1),this.mat('#546d64'),[6.05,.48,z],false);}
   const bin=new T.Group();bin.name='alley-dumpster';bin.position.set(5.45,0,-1.7);this.root.add(bin);this.props.set('alley-dumpster',bin);
+  for(const [i,z] of [2.2,1.3].entries()){const trash=new T.Group();trash.name='alley-trash-bin-'+i;trash.position.set(6.1,.03,z);this.root.add(trash);this.cylinder(trash,.23,.21,.65,[0,.325,0],'#4d6264');this.cylinder(trash,.26,.26,.06,[0,.68,0],'#344b50');for(const x of [-.24,.24])this.box(trash,[.06,.08,.12],[x,.52,0],'#84918a',false);}
   this.box(bin,[1.05,.05,.85],[0,.005,0],'#3d5858');for(const x of [-.50,.50])this.box(bin,[.05,.48,.85],[x,.27,0],'#476664');for(const z of [-.4,.4])this.box(bin,[1.05,.48,.05],[0,.27,z],'#476664');const lid=this.box(bin,[1.12,.06,.9],[0,.957,-.288],'#2b4246');lid.rotation.x=-1.25;
   this.box(this.root,[2.4,.06,7.04],[5.4,-.002,.7],'#657477',false).name='alley-pavement';
   const tower=new T.Group();tower.name='home-cat-tower';tower.position.set(4.05,.2,15.6);this.root.add(tower);this.cylinder(tower,.09,.09,1.65,[0,.825,0],'#a5977c');for(const y of [.08,.85,1.65])this.box(tower,[.72,.10,.65],[0,y,0],'#8e8978');
@@ -218,6 +220,7 @@ export class EpisodeWorld{
   }
 
   this.box(this.root,[.09,.24,.19],[-3.95,.7,1.25],'#b8bba0',false).name='cafe-light-switch';
+  const noseSwitch=this.box(this.root,[.025,.10,.10],[-3.89,.70,1.25],'#e2d4ad',false);noseSwitch.name='cafe-nose-switch';
   // Two one-way cars. They exit naturally; none circulate after the curfew.
   const shadowCanvas=document.createElement('canvas');shadowCanvas.width=shadowCanvas.height=64;const sc=shadowCanvas.getContext('2d')!,gradient=sc.createRadialGradient(32,32,1,32,32,32);gradient.addColorStop(0,'rgba(12,22,28,.38)');gradient.addColorStop(1,'rgba(12,22,28,0)');sc.fillStyle=gradient;sc.fillRect(0,0,64,64);const shadowTexture=new T.CanvasTexture(shadowCanvas);this.textures.push(shadowTexture);
   for(const i of [0,1]){const car=new T.Group();car.name='passing-car-'+i;this.root.add(car);this.traffic.push(car);
@@ -237,12 +240,11 @@ export class EpisodeWorld{
   for(const [id,p] of Object.entries(relocated))this.cafe.root.getObjectByName(id)!.position.set(...p);
   (this.cafe.root.getObjectByName('town-building-5') as T.Group).scale.z=2.25;
   for(const id of ['town-building-9','town-building-10','town-building-11']){const g=this.cafe.root.getObjectByName(id) as T.Group;g.rotation.y=Math.PI;this.box(g,[.85,1.8,.06],[0,1.0,2.045],'#344b52',false);this.box(g,[1.35,.10,.65],[0,.05,2.3],'#728482',false);}
-  this.box(this.root,[2,.06,8],[-3.3,0,16],'#6c7c7c',false).name='alternate-pedestrian-lane';
   for(let i=1;i<=11;i++){const b=this.cafe.root.getObjectByName('town-building-'+i)!;this.box(b,[4.3,.22,4.3],[0,-.1,0],'#52636a',false);}
   const city=createCity();this.root.add(city.root);this.materials.push(...city.materials);this.textures.push(...city.textures);this.blockers.push(...city.blockers);
   this.townWindows.push({mat:city.windowMaterial,color:city.windowMaterial.color.clone(),emissive:.32});
   const road=this.root.getObjectByName('episode-road') as T.Mesh;road.removeFromParent();road.geometry.dispose();for(const id of ['entrance-apron-left','entrance-apron-right'])this.root.getObjectByName(id)?.removeFromParent();
-  for(const z of [4.52,12.6])this.box(this.root,[120,.10,.60],[0,-.015,z],'#6c7c7c',false);
+  // All sidewalk/apron/lane top surfaces belong to the partitioned city mesh.
  }
  private sign(){
   const g=new T.Group();g.name='welcome-sign';g.position.set(...SIGN);g.rotation.y=Math.PI;this.root.add(g);
@@ -267,6 +269,7 @@ export class EpisodeWorld{
   this.root.getObjectByName('switch-toggle')!.rotation.z=-.25*beat(s.t,56.98,57.1);
   const mouse=this.props.get('mouse')!;mouse.position.set(...mouseAt(s.t));mouse.visible=s.t>=26.5&&s.t<31;const ahead=mouseAt(s.t+.03),behind=mouseAt(s.t-.03);mouse.rotation.y=-Math.atan2(ahead[2]-behind[2],ahead[0]-behind[0]);const unknown=this.props.get('alley-motion')!;unknown.visible=s.shot.number===37&&s.shot.variant===1;unknown.position.z=-1.7+1.4*beat(s.u,0,1);unknown.scale.set(1.6,.7+.3*Math.sin(s.u*Math.PI),1);
   this.door.rotation.y=-s.door;this.homeDoor.rotation.y=-s.homeDoor*1.35;
+  this.root.getObjectByName('cafe-nose-switch')!.rotation.z=-.2*beat(s.u,.35,.60)*(s.shot.number===59&&s.shot.variant===1?1:0);
   this.traffic.forEach((car,i)=>{car.position.set(i? -12+s.t*2.1:9-s.t*2.2,.03,i?9.45:7.45);car.rotation.y=i?0:Math.PI;car.visible=s.t<29;});
   this.backgroundTraffic.forEach((car,i)=>{const direction=i%2?1:-1;car.position.set((i<3?18:-18)+direction*1.1,.03,-30+i*11+direction*s.t*2.2);car.rotation.y=direction>0?-Math.PI/2:Math.PI/2;car.visible=s.t<29;});
   const busCallback=s.shot.number===58&&s.shot.variant===2;const busX=busCallback?-2.8-s.u*3.4:s.t<2?-4.5-s.t*2.9:-15;this.bus.position.set(busX,.03,7.7);this.bus.visible=s.t<3||busCallback;

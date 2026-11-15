@@ -60,5 +60,11 @@ for(let frame=shot('58A').start;frame<plan.durationInFrames;frame++){
 }
 const shyStart=t.shelterState(t.stateAt(shot('58D').start,shots),2),shyEnd=t.shelterState(t.stateAt(plan.durationInFrames-1,shots),2);
 check(shyStart.progress===0&&shyEnd.progress===1,'Same hesitant cat must emerge and reach shelter');
+const jump=Array.from({length:shot('58D').end-shot('58D').start},(_,i)=>t.shelterState(t.stateAt(shot('58D').start+i,shots),2));
+check(Math.max(...jump.map(a=>a.position[1]))>.60&&jump.at(-1).position[1]<.04,'Dumpster cat must complete the jump before cutting away');
+const shrugBefore=t.stateAt(shot('05B').end-1,shots),shrugAfter=t.stateAt(shot('05C').start,shots);
+check(shrugBefore.fov===shrugAfter.fov&&t.distance(shrugBefore.camera,shrugAfter.camera)<.12,'Nobody knew why cut resets camera scale or position');
+const slip=Array.from({length:shot('22').end-shot('22').start},(_,i)=>t.stateAt(shot('22').start+i,shots));
+check(slip.some(s=>s.latte.footKeys.some(k=>k.includes('puddle-skid')))&&slip.some(s=>s.latte.pose.expression==='surprised'),'Puddle sequence lacks a deliberate skid and recovery');
 check(t.stateAt(shot('59B').start,shots).mocha.pose.expression==='happy','Mocha must offer a smile');
 console.log(checks+' narration-led story, caption and shelter-route checks passed.');

@@ -1,6 +1,6 @@
 // Read the actual per-frame Remotion audits before spending time on the rest of a preview.
 export const criticalShots=['01A','01B','21','22','30','31','44','47','53','56','58C','59A','60C'];
-const clearSubjects=new Set(['latte','mocha','essie','kitten','clock','clock-left','clock-right','clock-top','clock-bottom','sign','bus','bus-front','bus-rear','bus-roof','bus-wheels','shelter-guest']);
+const clearSubjects=new Set(['latte','mocha','essie','kitten','clock','clock-left','clock-right','clock-top','clock-bottom','sign','sign-left','sign-right','sign-top','sign-bottom','bus','bus-front','bus-rear','bus-roof','bus-wheels','shelter-guest']);
 export function qualityErrors(audits){
  const errors=[];
  for(const a of audits){

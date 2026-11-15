@@ -1,3 +1,9 @@
+# Newest correction list
+
+`LAST_MINOR_FIXES.md` supersedes earlier request lists for the latest source candidate. All twelve requested fixes are implemented and technical frame checks passed; updated local motion/visual approval remains pending. The separate new-narration visual integration is still pending.
+
+---
+
 # Latest: indoor kitten lighting
 
 Baseline visually sampled: `Polish_Review_68c31d7f_540p.mp4`, all 80 shot midpoints. Supporting kittens were visibly much darker than the leads inside the cafe. The cause was plain Lambert shading combined with a scene-time/route-progress dark multiplier.

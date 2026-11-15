@@ -13,9 +13,9 @@ import * as T from 'three';
 import {EpisodeWorld} from './world';
 import {stateAt} from './timeline';
 import {checkEpisodeCamera} from './cameraQA';
-import {mouthAnchor} from './contacts';
+import {mouthAnchor,noseAnchor} from './contacts';
 export function run(props){
- const w=new EpisodeWorld(false),camera=new T.PerspectiveCamera(48,1080/1920,.08,220),flags=[],cameraFlags=[],assets=[],contactFlags=[],occluders={};let checked=0;
+ const w=new EpisodeWorld(false),camera=new T.PerspectiveCamera(48,1080/1920,.08,320),flags=[],cameraFlags=[],assets=[],contactFlags=[],occluders={};let checked=0;
  w.root.traverse(o=>{if(o instanceof T.Mesh){if(!o.geometry?.getAttribute('position')?.count||!o.material)assets.push(o.name);const materials=Array.isArray(o.material)?o.material:[o.material];for(const m of materials)if(m.map&&(!m.map.image?.width||!m.map.image?.height))assets.push(o.name+':texture');}});
  for(const name of ['night-stars','bus-stop-pictogram','bus-stop-platform','latte-cat-bed','home-food','home-water','latte-hiding-box','door-open-plaque'])if(!w.root.getObjectByName(name))assets.push(name);
  const roles=[...w.cafe.fixtures].map(([id,o])=>({id,role:o.userData.role}));
@@ -23,7 +23,10 @@ export function run(props){
   if(props.inspectFrame!==undefined&&frame!==props.inspectFrame)continue;checked++;
   const s=stateAt(frame,props.shots,props.cues?.taps);camera.position.set(...s.camera);camera.fov=s.fov;camera.lookAt(...s.target);camera.updateProjectionMatrix();camera.updateMatrixWorld(true);w.update(s);
   const a=checkEpisodeCamera(w,s,camera);
-  if(s.t>=18&&s.blanketLay===0){const grip=new T.Vector3().fromBufferAttribute(w.blanket.geometry.getAttribute('position'),0),mouth=new T.Vector3(...mouthAnchor(s,'mocha'));if(grip.distanceTo(mouth)>.001)contactFlags.push({frame,issue:'cloth-mouth-gap',distance:grip.distanceTo(mouth)});}
+  if(s.shot.number===58&&s.shot.variant===0&&s.t>=109.12&&s.t<=109.25){const tip=new T.Vector3(...noseAnchor(s)),plate=w.props.get('nose-plate').getWorldPosition(new T.Vector3());if(tip.distanceTo(plate)>.10)contactFlags.push({frame,issue:'nose-door-gap',distance:tip.distanceTo(plate)});}
+  if(s.shot.number===59&&s.shot.variant===1&&s.u>=.35&&s.u<=.60){const tip=new T.Vector3(...noseAnchor(s)),button=w.root.getObjectByName('cafe-nose-switch').getWorldPosition(new T.Vector3());if(tip.distanceTo(button)>.10)contactFlags.push({frame,issue:'nose-switch-gap',distance:tip.distanceTo(button)});}
+
+  if(w.blanket.visible&&s.t>=18&&s.blanketLay===0){const grip=new T.Vector3().fromBufferAttribute(w.blanket.geometry.getAttribute('position'),0),mouth=new T.Vector3(...mouthAnchor(s,'mocha'));if(grip.distanceTo(mouth)>.001)contactFlags.push({frame,issue:'cloth-mouth-gap',distance:grip.distanceTo(mouth)});}
   if(s.t>=54&&!w.homeBlanket.visible)contactFlags.push({frame,issue:'blanket-missing-before-line'});
   const passing=[0,1].map(i=>w.root.getObjectByName('passing-car-'+i));
   if(s.t>=29&&passing.some(car=>car.visible))contactFlags.push({frame,issue:'traffic-after-curfew'});

@@ -1,6 +1,6 @@
 import * as T from 'three';
 import {createWalkingLegs} from './walkingLegs';
-import {headDropPixels} from './contacts';
+import {headDropPixels,nosePushPixels} from './contacts';
 import {createCatCard} from '../../cats/Cat';
 import {drawCat} from '../../cats/drawCat';
 import {CatId} from '../../cats/designs';
@@ -31,7 +31,7 @@ export function createEpisodeCat(id:CatId){
   ctx.translate=(x:number,y:number)=>{
    if(actor.moving&&y===0&&Math.abs(x)<180&&leg<4){
     leg++;original(x,0);scale(0,0); // These exact silhouettes now live on the planted 3D leg cards.
-   }else {const nose=id==='latte'&&y>190&&y<245?10*beat(s.t,56.8,57)*(1-beat(s.t,57.1,57.5)):0;original(x+nose,y+(id==='essie'&&y>190&&y<245&&x>=0&&x<100?headDropPixels(s,'essie'):0));}
+   }else {const head=y>190&&y<245&&x>=0&&x<100,nose=head?(id==='latte'?10*beat(s.t,56.8,57)*(1-beat(s.t,57.1,57.5)):id==='mocha'?nosePushPixels(s):0):0;original(x+nose,y+(id==='essie'&&head?headDropPixels(s,'essie'):0));}
   };
   try{drawCat(ctx,id,pose);}finally{ctx.translate=original;ctx.rotate=nativeRotate;ctx.scale=scale;}
  }

@@ -43,7 +43,7 @@ const Inner:React.FC<EpisodeProps>=({shots,cues,optimize=true,previewScale=1})=>
  },[cast,w]);
  const fx=useMemo(()=>({ink:new InkPass(scene,camera as T.PerspectiveCamera,{color:'#262737',widthNear:2.5*previewScale,widthFar:1.7*previewScale,creaseScale:.55,strength:.8}),lens:new LensBlur({maxCoC:8,nearScale:.5}),bloom:new BloomEffect({blendFunction:BlendFunction.ADD,intensity:.18,luminanceThreshold:1.05,luminanceSmoothing:.25,mipmapBlur:true,levels:5,radius:.5}),tone:new ToneMappingEffect({mode:ToneMappingMode.NEUTRAL}),grade:new GradeEffect(GRADE,.7)}),[scene,camera]);
  const cam=camera as T.PerspectiveCamera;cam.position.set(...s.camera);cam.fov=s.fov;cam.near=.08;cam.far=220;cam.lookAt(...s.target);cam.layers.enable(NOINK);cam.updateProjectionMatrix();cam.updateMatrixWorld();
- const openingEnd=shots.filter(q=>q.number===1).at(-1)!.end,dusk=s.shot.number===1?1-beat(frame,0,openingEnd*.85):0;scene.background=new T.Color('#14283c').lerp(new T.Color('#aa756b'),dusk*.65);scene.fog=new T.Fog('#21364a',38,145);gl.shadowMap.type=T.PCFSoftShadowMap;gl.localClippingEnabled=true;
+ const openingEnd=shots.filter(q=>q.number===1).at(-1)!.end,dusk=s.shot.number===1?1-beat(frame,0,openingEnd*.85):0;scene.background=new T.Color('#14283c').lerp(new T.Color('#aa756b'),dusk*.65);scene.fog=new T.Fog(scene.background.clone(),45,240);cam.far=320;cam.updateProjectionMatrix();gl.shadowMap.type=T.PCFSoftShadowMap;gl.localClippingEnabled=true;
  CHAR.uCharTint.value.set(1,.96,.92);CHAR.uCharShade.value=.88;CHAR.uGrad.value=.055;CHAR.uBodyGrad.value=.15;CHAR.uSideTint.value.set(.80,.88,1);CARD_K.uPx.value=previewScale;
  fx.lens.focus=new T.Vector3(...s.target).sub(cam.position).dot(cam.getWorldDirection(new T.Vector3()));fx.lens.cInf=s.blur;
  w.update(s);
@@ -78,7 +78,8 @@ const Inner:React.FC<EpisodeProps>=({shots,cues,optimize=true,previewScale=1})=>
  let contactPoint=pushPoint.clone();if(pushCycle&&s.t>pushCycle[1]){const matrix=new T.Matrix4().compose(w.door.position,new T.Quaternion().setFromAxisAngle(new T.Vector3(0,1,0),-doorAngleAt(pushCycle[1])),w.door.scale);matrix.premultiply(w.door.parent!.matrixWorld);contactPoint=new T.Vector3(.90,.52,-.07).applyMatrix4(matrix);}
  const pushAmount=pushCycle?beat(s.t,pushCycle[0]-.2,pushCycle[0])*(1-beat(s.t,pushCycle[1],pushCycle[1]+.4)):0;
  const lightReach=beat(s.t,131.35,131.55)*(1-beat(s.t,131.7,132.0));
- paws.mocha.update([mp[0]-.15,mp[1]+.38,mp[2]+.08],lightReach>0?mix([mp[0]-.15,mp[1]+.38,mp[2]+.08],[-3.90,.7,1.25],lightReach):mix(restHand,contactPoint.toArray() as V3,pushAmount),lightReach>.01||pushAmount>.01&&s.shot.number>=50);
+ const noseInteraction=s.shot.number===58&&s.shot.variant===0||s.shot.number===59&&s.shot.variant===1;
+ paws.mocha.update([mp[0]-.15,mp[1]+.38,mp[2]+.08],lightReach>0?mix([mp[0]-.15,mp[1]+.38,mp[2]+.08],[-3.90,.7,1.25],lightReach):mix(restHand,contactPoint.toArray() as V3,pushAmount),!noseInteraction&&(lightReach>.01||pushAmount>.01&&s.shot.number>=50));
  const bowlHand:V3=[s.bowl[0]+.11,s.bowl[1]+.12,s.bowl[2]],release=beat(s.t,118.65,119.25);
  paws.essie.update([ep[0]-.08,ep[1]+.52,ep[2]],mix(bowlHand,[ep[0]-.15,ep[1]+.38,ep[2]],release),false);
  const shoulder:V3=[lp[0]+.16,lp[1]+.49,lp[2]-.04],rest:V3=[lp[0]+.20,lp[1]+.42,lp[2]-.04];

@@ -191,5 +191,6 @@
   "studio/src/v2/episodes/door-at-1111-story-polish/generation-receipt.json",
   "studio/src/v2/episodes/door-at-1111-story-polish/timed-storyboard.json",
   "studio/assets/story-polish-audio.json",
-  "studio/assets/story-polish-audio.payload"
+  "studio/assets/story-polish-audio.payload",
+  "LAST_MINOR_FIXES.md"
 ]

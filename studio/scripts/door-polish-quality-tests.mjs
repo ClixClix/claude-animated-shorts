@@ -16,6 +16,8 @@ for(const mutation of [{earlyInteriorVisible:true},{openerVisible:true},{kittenV
 check(['01A','22','44','56','60C'].every(id=>criticalShots.includes(id)),'Critical review order omits a known failed beat');
 check(t.CITY_BUILDINGS.length>=65,'City must have several connected districts');
 check(new Set(t.CITY_BUILDINGS.map(b=>b.id)).size===t.CITY_BUILDINGS.length,'Duplicate city IDs');
+check(t.CITY_BACKDROP.length>=500&&new Set(t.CITY_BACKDROP.map(b=>b.id)).size===t.CITY_BACKDROP.length,'Skyline must cover the distant city with stable IDs');
+for(const x of [-1,1])for(const z of [-1,1])check(t.CITY_BACKDROP.some(b=>Math.sign(b.position[0])===x&&Math.sign(b.position[2])===z&&Math.abs(b.position[2])>140),'Empty city horizon quadrant');
 // A lamp must belong to a curb row, outside every carriageway and clear of the porch.
 for(const [z,count] of [[6.05,5],[11.95,4]]){
  const row=t.STREETLIGHTS.filter(p=>Math.abs(p[2]-z)<.001).sort((a,b)=>a[0]-b[0]);

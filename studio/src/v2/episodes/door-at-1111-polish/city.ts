@@ -1,5 +1,5 @@
 import * as T from 'three';
-import {CITY_BUILDINGS,CITY_ROADS,CITY_EXTENT} from './cityConfig';
+import {CITY_BUILDINGS,CITY_ROADS,CITY_EXTENT,CITY_BACKDROP} from './cityConfig';
 
 /** Batched district windows keep a larger city practical on the local renderer. */
 export function createCity(){
@@ -16,7 +16,8 @@ export function createCity(){
  const paving=material('#73817e'),marking=material('#a49f87');
  // Partition the union once: intersections have one road skin and continuous UVs.
  const main={id:'main-street',position:[0,0,8.975],size:[120,.06,5.3]},roads=[...CITY_ROADS,main].map(r=>({x0:r.position[0]-r.size[0]/2,x1:r.position[0]+r.size[0]/2,z0:r.position[2]-r.size[2]/2,z1:r.position[2]+r.size[2]/2}));
- const walks=roads.map((r,i)=>({x0:r.x0-.8,x1:r.x1+.8,z0:r.z0-(i===roads.length-1?2.1:.8),z1:r.z1+(i===roads.length-1?.675:.8)}));
+ const walks=[...roads.map((r,i)=>({x0:r.x0-.8,x1:r.x1+.8,z0:r.z0-(i===roads.length-1?2.1:.8),z1:r.z1+(i===roads.length-1?.675:.8)})),
+  {x0:-60,x1:60,z0:4.22,z1:4.82},{x0:-60,x1:60,z0:12.3,z1:12.9},{x0:-4.3,x1:-2.3,z0:12,z1:20}];
  const xs=[...new Set([...roads,...walks].flatMap(r=>[r.x0,r.x1]))].sort((a,b)=>a-b),zs=[...new Set([...roads,...walks].flatMap(r=>[r.z0,r.z1]))].sort((a,b)=>a-b);
  const positions=[[],[]] as number[][],uvs=[[],[]] as number[][];
  const inside=(x:number,z:number,list:typeof roads)=>list.some(r=>x>r.x0&&x<r.x1&&z>r.z0&&z<r.z1);
@@ -44,5 +45,8 @@ export function createCity(){
  const unlit=material('#344c60');
  const windowCanvas=document.createElement('canvas');windowCanvas.width=96;windowCanvas.height=144;const w=windowCanvas.getContext('2d')!;w.fillStyle='#344553';w.fillRect(0,0,96,144);const glow=w.createLinearGradient(0,12,0,132);glow.addColorStop(0,'#a5a8a1');glow.addColorStop(1,'#f1dfb3');w.fillStyle=glow;w.fillRect(8,8,80,126);w.fillStyle='#6c7774';w.fillRect(46,8,4,126);w.fillRect(8,86,80,4);w.fillStyle='#c2b79b';w.fillRect(4,134,88,6);const windowTexture=new T.CanvasTexture(windowCanvas);windowTexture.colorSpace=T.SRGBColorSpace;textures.push(windowTexture);windowMaterial.map=unlit.map=windowTexture;windowMaterial.emissiveMap=windowTexture;
  for(const [lit,mat] of [[true,windowMaterial],[false,unlit]] as const){const chosen=windows.filter(w=>w.lit===lit),m=new T.InstancedMesh(new T.BoxGeometry(.72,1.0,.065),mat,chosen.length),dummy=new T.Object3D();chosen.forEach((w,i)=>{dummy.position.copy(w.position);dummy.rotation.y=w.rotation;dummy.updateMatrix();m.setMatrixAt(i,dummy.matrix);});m.instanceMatrix.needsUpdate=true;m.name=lit?'city-warm-windows':'city-dark-windows';root.add(m);}
+ const skylineMaterial=material('#526777'),skyline=new T.InstancedMesh(new T.BoxGeometry(1,1,1),skylineMaterial,CITY_BACKDROP.length),roofline=new T.InstancedMesh(new T.BoxGeometry(1,1,1),roof,CITY_BACKDROP.length),dummy=new T.Object3D();
+ CITY_BACKDROP.forEach((b,i)=>{dummy.position.set(b.position[0],b.height/2-.04,b.position[2]);dummy.scale.set(b.width,b.height,b.depth);dummy.updateMatrix();skyline.setMatrixAt(i,dummy.matrix);dummy.position.y=b.height;dummy.scale.set(b.width+.2,.22,b.depth+.2);dummy.updateMatrix();roofline.setMatrixAt(i,dummy.matrix);});
+ skyline.name='distant-city-blocks';roofline.name='distant-city-roofline';root.add(skyline,roofline);
  return {root,materials,textures,blockers,windowMaterial,asphalt};
 }

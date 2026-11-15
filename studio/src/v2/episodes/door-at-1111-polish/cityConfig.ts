@@ -11,3 +11,8 @@ export const CITY_ROADS=[
  ...[-58.5,-45.5,-32.5,-19.5,-6.5,19.5,32.5,45.5,58.5,71.5].flatMap(z=>[-6.5,19.5].includes(z)?[-1,1].map(side=>({id:`city-road-z-${z}-${side}`,position:[side*40,0,z] as V3,size:[38,.06,5.2] as V3})):[{id:`city-road-z-${z}`,position:[0,0,z] as V3,size:[120,.06,5.2] as V3}]),
 ];
 export const CITY_EXTENT=170;
+/** Distant, fixed skyline blocks: fill the horizon without changing the story street. */
+export const CITY_BACKDROP=[
+ ...[-156,-143,-130,-117,-104,-91,-78,78,91,104,117,130,143,156].flatMap(z=>Array.from({length:25},(_,i)=>[-144+i*12,z])),
+ ...[-156,-144,-132,-120,-108,-96,-84,-72,72,84,96,108,120,132,144,156].flatMap(x=>Array.from({length:11},(_,i)=>[x,-65+i*13])),
+].map(([x,z],i)=>({id:'skyline-block-'+i,position:[x,0,z] as V3,width:6.4+i%3,depth:7.2,height:11+(i*7%9)*1.5}));
