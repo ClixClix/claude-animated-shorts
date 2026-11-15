@@ -8,6 +8,9 @@ const props=JSON.parse(await fs.readFile('src/v2/episodes/door-at-1111-polish/ed
 const source=await build({stdin:{contents:`
 import {createEpisodeCat} from './actors';
 import {stateAt} from './timeline';
+import * as T from 'three';
+import {EpisodeWorld} from './world';
+import {checkEpisodeCamera} from './cameraQA';
 export function run(props){
  const frames=['21','22','30','44','53','60C'].map(id=>{const s=props.shots.find(s=>s.id===id);return s.start+Math.floor((s.end-s.start)*.6);});let checks=0;
  const check=(v,m)=>{if(!v)throw Error(m);checks++;};
@@ -25,6 +28,9 @@ export function run(props){
   }
   card.dispose();
  }
+ const world=new EpisodeWorld(false),latte=createEpisodeCat('latte'),shot=props.shots.find(s=>s.id==='46'),camera=new T.PerspectiveCamera(70,1080/1920,.08,220);
+ for(let frame=shot.start;frame<shot.end;frame++){const s=stateAt(frame,props.shots);latte.updateActor(s.latte,s);latte.mesh.updateMatrixWorld(true);camera.position.set(...s.camera);camera.fov=s.fov;camera.lookAt(...s.target);camera.updateProjectionMatrix();camera.updateMatrixWorld(true);world.update(s);const a=checkEpisodeCamera(world,s,camera,[{id:'latte',mesh:latte.mesh}]);check(a.visibility.every(v=>v.inFrame&&!v.occluder),'Kitten reveal blocked at '+frame+' '+JSON.stringify(a.visibility));}
+ latte.dispose();world.dispose();
  return {checks,passed:true,sceneFramesRendered:0};
 }`,resolveDir:path.resolve('src/v2/episodes/door-at-1111-polish'),loader:'ts'},bundle:true,write:false,platform:'browser',format:'iife',globalName:'CardTest'});
 const browser=await openBrowser('chrome',{browserExecutable,chromiumOptions});

@@ -237,7 +237,7 @@ function setCamera(s:EpisodeState){
  case 43:set([3.8,1.35,15.35],latte,60,['latte']);break;
  case 44:set([s.latte.position[0]+.45,1.25,s.latte.position[2]-2.7],latte,68,['latte']);break;
  case 45:if(!v)set([4.35,1.5,7.7],mix([5.45,.6,2.2],[2.5,.5,5.1],ease(u)),82,u<.2?['alley']:[]);else set([4.35,1.35,6.7],latte,64,['latte']);break;
- case 46:set([3.65,.85,6.3],kitten,65,['kitten']);break;
+ case 46:set([s.kitten[0]+.8,.75,4.55],kitten,70,['kitten']);break;
  case 47:{
   // Establish the kitten, tilt to the unreachable handle, then return to the kitten.
   const up=beat(u,.16,.40)*(1-beat(u,.64,.88));
