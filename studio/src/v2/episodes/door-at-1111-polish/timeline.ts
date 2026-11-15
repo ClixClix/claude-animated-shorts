@@ -225,7 +225,7 @@ function setCamera(s:EpisodeState){
  case 27:{const x=-6+11.5*ease(u);set([-4.2,1.8,7.0],[x,1.8,17],88,['other-buildings']);break;}
  case 28:case 29:{const q=groupedProgress(s,[28,29]);set(mix([.85,1.75,14.65],[.85,1.75,12.55],ease(q)),mix([.85,1.75,12.2],[-.90,2.00,4.25],ease(q)),78-14*ease(q),['cafe']);break;}
  case 30:set([1.15,1.05,14.8],CLOCK,70-52*ease(u),['clock']);break;
- case 31:set(mix([4.8,1.6,8.3],[4.3,1.45,7.5],beat(u,0,.75)),[2.25,1.50,4.2],72-6*ease(u),['door']);s.camera[0]+=.012*Math.sin(s.frame*2.4)*Math.max(0,1-Math.abs(u-.15)/.1);break;
+ case 31:set(mix([4.8,1.6,8.3],[4.3,1.45,7.5],beat(u,0,.75)),[2.25,1.50,4.2],72-6*ease(u),['door']);const impact=Math.max(0,1-Math.abs(u-.15)/.12);s.camera[0]+=.032*Math.sin(s.frame*2.4)*impact;s.camera[1]+=.014*Math.cos(s.frame*2.6)*impact;break;
  case 32:latteHome(true);break;
  case 33:set([2.80,.73,3.60],[2.80,.63,4.47],55,['tap']);break;
  case 34:if(v===2)set([.85,1.72,14.4],[-.30,1.90,4.25],68,['cafe']);else{const cameras:V3[]=[[2.6,1.35,15.3],[1.05,1.3,14.6]];set(cameras[v],latte,66,['latte']);}break;
