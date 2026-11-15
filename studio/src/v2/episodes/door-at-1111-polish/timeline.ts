@@ -30,7 +30,8 @@ export function sourceAt(frame:number,shots:EpisodeShot[]){
 }
 export function actualAt(base:number,shots:EpisodeShot[]){const s=shots.find(s=>base>=s.sourceStart&&base<s.sourceEnd)??shots.at(-1)!;return s.start+(s.end-s.start)*clamp((base-s.sourceStart)/(s.sourceEnd-s.sourceStart));}
 export const HOME={front:12.3,back:16.1,left:-0.05,right:4.55,floor:0.20,door:[3.15,0.2,12.3] as V3,window:[0.85,1.55,12.3] as V3,switch:[4.50,.90,13.10] as V3};
-export const STREETLIGHTS:V3[]=[[-6,0,6.05],[6,0,6.05],...[-4.5,-3,-1.5,0,1.5,3,4.5].map(x=>[x,0,12.0] as V3)];
+// Fixed curbside fixtures progress along the route toward Latte's home, not across the road like a fence.
+export const STREETLIGHTS:V3[]=[[-6,0,6.05],[6,0,6.05],[-4.5,0,7.15],[4.5,0,7.15],[-4.5,0,8.45],[4.5,0,8.45],[-4.5,0,9.75],[4.5,0,9.75],[4.5,0,11.40]];
 export const DOOR_PUSH_WINDOWS=[[4,6],[15,17],[67,69],[109,109.25]] as const;
 /** Acceleration under the paw, then continuous-velocity coasting with friction after release. */
 export function doorAngleAt(t:number){
@@ -211,14 +212,14 @@ function setCamera(s:EpisodeState){
  case 14:set([4.45,1.55,7.0],[5.1,.5,2.8],72,['latte']);break;
  case 15:set([-7.25,2.8,8.5],[-6,3.1,6.5],49,['light-1']);break;
  case 16:set([7.3,2.5,9],[6,3.1,6.5],50,['light-2']);break;
- case 17:set([-4.1,2.6,7.2],[-4.5,3.1,9.6],45,['light-3']);break;
+ case 17:set([-5.8,2.55,9.60],[-4.5,3.1,7.15],45,['light-3']);break;
  case 18:set([s.latte.position[0]+1.1,1.25,s.latte.position[2]+2.2],latte,46,['latte'],2);break;
  case 19:set([s.latte.position[0]+1,.32,s.latte.position[2]+1.7],[s.latte.position[0],.22,s.latte.position[2]],44,['latte-feet']);break;
  case 20:set([s.latte.position[0]+2.15,1.1,s.latte.position[2]+1.4],latte,53,['latte']);break;
  case 21:set([-1.0,1.25,8.8],[-3.25,.85,6.95],85,['latte','bus-stop']);break;
  case 22:set([s.latte.position[0]+1.2,.85,s.latte.position[2]+1.4],[s.latte.position[0],.58,s.latte.position[2]],70,['latte']);break;
  case 23:set([7.2,2.2,8.5],[3.15,1.0,12.3],78,['home-door']);break;
- case 24:if(!v)set([5.7,3.0,11.0],[4.5,3.05,9.6],62,['light-9']);else set([-4,3.5,7.2],[0,1.7,16],95,['other-buildings']);break;
+ case 24:if(!v)set([5.9,3.0,9.2],[4.5,3.05,11.40],62,['light-9']);else set([-4,3.5,7.2],[0,1.7,16],95,['other-buildings']);break;
  case 25:set([2.35,1.2,14.55],[3.12,1.1,12.3],57,['home-door']);break;
  case 26:if(!v)set([4.15,1.6,15.4],latte,75,['latte']);else if(v===1)set([3.5,1.5,14.25],HOME.switch,70,['switch']);else latteHome(true);break;
  case 27:{const x=-6+11.5*ease(u);set([-4.2,1.8,7.0],[x,1.8,17],88,['other-buildings']);break;}
