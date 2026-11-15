@@ -175,5 +175,13 @@
   "studio/src/videos/bridge/story.ts",
   "studio/src/videos/bridge/toon.ts",
   "studio/src/videos/bridge/world.ts",
-  "studio/tsconfig.json"
+  "studio/tsconfig.json",
+  "EPISODE1_STORY_POLISH_PLAN.md",
+  "EPISODE1_STORY_POLISH_COMPARISON.md",
+  "studio/scripts/door-story-polish-plan.mjs",
+  "studio/scripts/door-story-polish-plan.test.mjs",
+  "studio/scripts/lib/story-revision-plan.mjs",
+  "studio/src/v2/episodes/door-at-1111-story-polish/revision.json",
+  "studio/src/v2/episodes/door-at-1111-story-polish/storyboard.json",
+  "studio/src/v2/episodes/door-at-1111-story-polish/narration.txt"
 ]

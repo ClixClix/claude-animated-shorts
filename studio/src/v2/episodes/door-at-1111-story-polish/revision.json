@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "status": "prepared-awaiting-paid-approval",
+  "title": "The Door at 11:11",
+  "checkpoint": "checkpoint/episode1-before-story-polish-20261115",
+  "baselineCommit": "5b8892f5619e093659f0cde695a5b07b10353e44",
+  "sourceScript": "src/v2/episodes/door-at-1111-polish/narration.txt",
+  "sourceScriptSHA256": "9155636916acec0b212e755cf6672e89d3ffbea7159e9b708ef913b15ef795b2",
+  "sourceAudio": "out/v2-narration/Door_At_1111_Adam.mp3",
+  "sourceAudioSHA256": "96304ee5e4a8f89feb4810f99b3a49cc043f88b9fc702e722354c24a5a44f37f",
+  "sourceMetadata": "out/v2-narration/Door_At_1111_Adam-timestamps.json",
+  "candidateOutput": "out/v2-episodes/door-at-1111-story-polish",
+  "series": "in_this_town",
+  "voiceId": "pNInz6obpgDQGcFmaJgB",
+  "modelId": "eleven_multilingual_v2",
+  "providerSpeed": 1,
+  "playback": {
+    "speed": 1.35,
+    "mode": "varispeed",
+    "pitchSemitones": 0
+  },
+  "generation": {
+    "paidApproved": false,
+    "plannedRequests": 3,
+    "automaticRetries": false,
+    "fullRegeneration": false,
+    "creditEstimatePerCharacter": 1,
+    "pricingBasis": "Conservative planning assumption, not a live account quote. Previous account discount is not assumed."
+  },
+  "patches": [
+    {
+      "id": "opening",
+      "sourceSentenceIds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "before": "In this town, every night at exactly eleven eleven, the little café door opened. No one could see who opened it. And nobody knew why.\n\nMost cats avoided that street after dark. But Latte was especially afraid.",
+      "after": "In this town, there's a café that opens at exactly 11:11 every night. But nobody ever sees anyone unlock the door. Latte lived just across the street. And he was terrified of what might be inside.",
+      "sourceShotIds": [
+        "01A",
+        "01B",
+        "02",
+        "03",
+        "04",
+        "05A",
+        "05B",
+        "05C",
+        "06",
+        "10",
+        "11A"
+      ]
+    },
+    {
+      "id": "mouse-chase",
+      "sourceSentenceIds": [
+        7
+      ],
+      "before": "One rainy night, Latte stayed out too late.",
+      "after": "One rainy night, Latte spotted a mouse outside the café. He chased it straight into a narrow alley. But when he finally turned around, something was wrong. The streetlights were going out.",
+      "sourceShotIds": [
+        "12",
+        "13",
+        "14",
+        "15"
+      ]
+    },
+    {
+      "id": "kitten-reveal",
+      "sourceSentenceIds": [
+        37,
+        38,
+        39
+      ],
+      "before": "At the café door, he saw what had been making the taps.\n\nA soaking-wet kitten. Too little to reach the handle.",
+      "after": "At the café, Latte finally discovered what was making the tapping. A tiny kitten, soaking wet and shivering beneath the window. The door was open, but she was too frightened to go inside.\n\nLatte was still shaking. But he gave her a gentle nudge toward the light.",
+      "sourceShotIds": [
+        "45A",
+        "45B",
+        "46",
+        "47",
+        "48"
+      ]
+    }
+  ],
+  "protectedLines": [
+    "He wasn't waiting for customers.",
+    "He was leaving the light on for anyone who needed it.",
+    "Latte sat beside the kitten. The street stayed dark. But for the first time, neither of them was afraid."
+  ]
+}

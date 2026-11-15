@@ -1,5 +1,9 @@
 # Read first: What If Cats V2 continuation
 
+## Latest task
+
+The newer Episode 1 story-polish brief supersedes the previous visual-only task. Read the top of `CONTINUATION_STATUS.md`, `EPISODE1_STORY_POLISH_PLAN.md` and `EPISODE1_STORY_POLISH_COMPARISON.md`. The three narration patches (646 estimated credits) are prepared, NOT generated or authorized. The user emphasizes VERY SMALL changes and has low remaining usage. Preserve the working candidate, deliver essential lamp/pan fixes, then stop at paid approval. Do not treat the written storyboard as actual renders.
+
 ## Current status and authority
 
 The active episode is **The Door at 11:11**. Its original silent/native episode is preserved. The separate `door-at-1111-polish` composition is the active review candidate. The user has NOT approved its final visuals. Do not start another episode until this one is approved, unless explicitly instructed otherwise.

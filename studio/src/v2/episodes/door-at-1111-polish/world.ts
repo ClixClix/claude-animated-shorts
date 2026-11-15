@@ -100,10 +100,12 @@ export class EpisodeWorld{
   for(let x=-7;x<7;x+=1.4)this.box(this.root,[.7,.008,.07],[x,.034,9.0],'#7b7a6b',false);
   const puddle=this.add(this.root,new T.CircleGeometry(.72,32),new T.MeshStandardMaterial({color:'#516a78',roughness:.5,metalness:.12,transparent:true,opacity:.18}),[-.70,.034,9.0],false);puddle.rotation.x=-Math.PI/2;puddle.layers.set(NOINK);this.materials.push(puddle.material);
   // Reuse the two approved street lamps at +/-6. Add seven fixed lamps: nine total.
-  const town=this.cafe.root.getObjectByName('night-town')!;for(const o of town.children)if(Math.abs(o.position.x)===6&&o.position.z===6.5)o.position.z=6.05;
+  const town=this.cafe.root.getObjectByName('night-town')!;
+  const originalLamps=[-6,6].map(x=>town.children.filter(o=>o.position.x===x&&o.position.z===6.5));
+  originalLamps.forEach((parts,i)=>parts.forEach(o=>{o.position.x=STREETLIGHTS[i][0];o.position.z=STREETLIGHTS[i][2];o.position.y+=STREETLIGHTS[i][1];}));
   for(let i=0;i<2;i++){
-   const p=STREETLIGHTS[i];const point=town.children.find(o=>o instanceof T.PointLight&&Math.abs(o.position.x-p[0])<.01&&Math.abs(o.position.z-p[2])<.01) as T.PointLight;
-   const bulb=town.children.find(o=>o instanceof T.Mesh&&Math.abs(o.position.x-p[0])<.01&&Math.abs(o.position.y-3.08)<.01) as T.Mesh<T.BufferGeometry,T.MeshStandardMaterial>;
+   const point=originalLamps[i].find(o=>o instanceof T.PointLight) as T.PointLight;
+   const bulb=originalLamps[i].find(o=>o instanceof T.Mesh&&Math.abs(o.position.y-3.11)<.01) as T.Mesh<T.BufferGeometry,T.MeshStandardMaterial>;
    if(!point||!bulb)throw Error('Approved streetlamp missing.');point.name=`streetlight-${i+1}`;this.lights.push({id:point.name,point,bulb:bulb.material});this.props.set(`light-${i+1}`,bulb);
   }
   for(let i=2;i<9;i++){

@@ -30,7 +30,9 @@ export function sourceAt(frame:number,shots:EpisodeShot[]){
 }
 export function actualAt(base:number,shots:EpisodeShot[]){const s=shots.find(s=>base>=s.sourceStart&&base<s.sourceEnd)??shots.at(-1)!;return s.start+(s.end-s.start)*clamp((base-s.sourceStart)/(s.sourceEnd-s.sourceStart));}
 export const HOME={front:12.3,back:16.1,left:-0.05,right:4.55,floor:0.20,door:[3.15,0.2,12.3] as V3,window:[0.85,1.55,12.3] as V3,switch:[4.50,.90,13.10] as V3};
-export const STREETLIGHTS:V3[]=[[-6,0,6.05],[6,0,6.05],[-14,0,6.05],[14,0,6.05],[-10,0,11.95],[-4.8,0,11.95],[10,0,11.95],[14,0,11.95],[3.8,0,11.95]];
+// Two orderly curb rows, 6 m spacing; avoid the +/-18 m junctions and the home porch.
+// Failure order proceeds along the cafe curb, then the opposite curb toward Latte's home.
+export const STREETLIGHTS:V3[]=[...[-12,-6,0,6,12].map(x=>[x,.03,6.05] as V3),...[-12,-6,0,6].map(x=>[x,.03,11.95] as V3)];
 export const DOOR_PUSH_WINDOWS=[[4,6],[15,17],[67,69],[109,109.25]] as const;
 /** Acceleration under the paw, then continuous-velocity coasting with friction after release. */
 export function doorAngleAt(t:number){
@@ -205,7 +207,7 @@ function setCamera(s:EpisodeState){
  case 10:set([-.6,1.25,8.5],latte,40,['latte']);break;
  case 11:{const q=groupedProgress(s,[11]);set([s.latte.position[0]+.15,1.20,s.latte.position[2]+.55],mix([-6,3.05,6.5],[4.5,3.05,12],ease(q)),92,[]);break;}
  case 12:set([-1.00,1.15,8.1],latte,40,['latte']);break;
- case 13:{const m=mouseAt(t);set([s.latte.position[0]+.8,2.0,s.latte.position[2]+2.2],mix(latte,[m[0],.4,m[2]],.25),78,['latte','mouse']);break;}
+ case 13:{const m=mouseAt(t);set([s.latte.position[0]+2.6,1.7,5.05],mix(latte,[m[0],.4,m[2]],.25),80,['latte','mouse']);break;}
  case 14:{const m=mouseAt(t);set([5.9,1.8,s.latte.position[2]+2.0],mix(latte,[m[0],.4,m[2]],.25),78,['latte','mouse']);break;}
  case 15:{const p=STREETLIGHTS[0];set([p[0]+1.6,2.6,p[2]+2.6],[p[0],3.05,p[2]],52,['light-1']);break;}
  case 16:{const p=STREETLIGHTS[1];set([p[0]+1.6,2.6,p[2]+2.6],[p[0],3.05,p[2]],52,['light-2']);break;}
@@ -216,11 +218,11 @@ function setCamera(s:EpisodeState){
  case 21:set([-1.0,1.25,8.8],[-3.25,.85,6.95],85,['latte','bus-stop']);break;
  case 22:set([s.latte.position[0]+1.2,.85,s.latte.position[2]+1.4],[s.latte.position[0],.58,s.latte.position[2]],70,['latte']);break;
  case 23:set([7.2,2.2,8.5],[3.15,1.0,12.3],78,['home-door']);break;
- case 24:if(!v)set([6.7,2.8,9.8],[3.8,3.05,11.95],58,['light-9']);else set([-4,2.2,7.2],[0,1.8,17],88,['other-buildings']);break;
+ case 24:if(!v){const p=STREETLIGHTS[8];set([p[0]+2.9,2.8,p[2]-2.15],[p[0],3.08,p[2]],58,['light-9']);}else set([-4,2.2,7.2],[0,1.8,17],88,['other-buildings']);break;
  case 25:set([2.35,1.2,14.55],[3.12,1.1,12.3],57,['home-door']);break;
  case 26:if(!v)set([3.8,2.5,15.7],latte,88,['latte']);else if(v===1)set([4.04,1.15,14.9],[4.15,.85,13.1],76,['latte','switch']);else latteHome(true);break;
  case 27:{const x=-6+11.5*ease(u);set([-2,2.4,7.8],[x,2.0,19],92,['other-buildings']);break;}
- case 28:case 29:{const q=groupedProgress(s,[28,29]);set(mix([-3.7,1.55,9.3],[1.5,2.2,8.8],ease(q)),mix([-1,1.7,4.2],[0,1.9,4.2],ease(q)),100-17*ease(q),['cafe']);break;}
+ case 28:case 29:{const q=groupedProgress(s,[28,29]);set(mix([4.8,1.55,9.3],[3.9,2.2,8.8],ease(q)),mix([-1,1.7,4.2],[0,1.9,4.2],ease(q)),100-17*ease(q),['cafe']);break;}
  case 30:set([1.15,1.05,14.8],CLOCK,70-52*ease(u),['clock']);break;
  case 31:set(mix([4.8,1.6,8.3],[4.3,1.45,7.5],beat(u,0,.75)),[2.25,1.50,4.2],72-6*ease(u),['door']);{const d=s.frame-s.shot.start-7,j=d>=0&&d<7?(1-d/7)*(d%2?-1:1):0;s.camera[0]+=.035*j;s.camera[1]+=.015*j;}break;
  case 32:latteHome(true);break;
@@ -232,7 +234,16 @@ function setCamera(s:EpisodeState){
  case 38:latteHome(v>0);if(!v)s.required=['home-blanket'];break;
  case 39:set([.85,1.4,14.3],[-.9,2.0,4.258],88-58*ease(groupedProgress(s,[39])),['shadow']);break;
  case 40:set([.85,1.4,14.3],mix([-.9,2.0,4.258],[-.9,2.55,4.258],ease(u)),30-6*ease(u),['shadow-top']);break;
- case 41:set([.85,1.4,14.3],mix([-.9,2.55,4.258],[-.9,1.05,4.258],ease(u)),24+16*ease(u),u<.3?['shadow-top']:u>.85?['cloth-silhouette']:[]);break;
+ case 41:{
+  // First read the long shape; on the actual "It moved toward the door" line,
+  // pan right from the window to the entrance while remaining at Latte's window.
+  const edge=s.editShots?.find(q=>q.number===41)?.start??s.shot.start;
+  const line=(s.editShots?.find(q=>q.number===42)?.start??s.shot.end)-edge;
+  const q=line?clamp((s.frame-edge)/line):u,pan=beat(q,.59,.96);
+  const down=mix([-.9,2.55,4.258],[-.9,1.05,4.258],ease(clamp(q/.59)));
+  set([.85,1.4,14.3],mix(down,[2.25,1.45,4.2],pan),24+16*ease(clamp(q/.59))+8*pan,q<.18?['shadow-top']:q<.59?['cloth-silhouette']:q>.96?['door']:[]);
+  break;
+ }
  case 42:{const q=groupedProgress(s,[42]);set([2.2,1.35,14.6],mix([.95,.60,13.24],[.55,.48,15.1],ease(q)),78,q<.4?['latte-paws']:q>.7?['hiding-box']:[]);const j=Math.sin(s.frame*1.9)*.004;s.camera[0]+=j;break;}
  case 43:set([3.8,1.35,15.35],latte,60,['latte']);break;
  case 44:set([s.latte.position[0]+.45,1.25,s.latte.position[2]-2.7],latte,68,['latte']);break;

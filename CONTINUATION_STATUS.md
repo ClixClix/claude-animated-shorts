@@ -1,3 +1,19 @@
+# Active task: Episode 1 story polish (2026-11-15)
+
+The user says this is already very good and wants VERY SMALL changes. Prioritize the remaining lamp placement/occlusion and missing window-to-door pan; preserve everything else that works. Usage was reported at 8%, so finish/deliver essentials before additional polish.
+
+Read `EPISODE1_STORY_POLISH_PLAN.md` and `EPISODE1_STORY_POLISH_COMPARISON.md` first. The exact revised full script and 19 written storyboard shots are prepared in `studio/src/v2/episodes/door-at-1111-story-polish/`. Three replacement narration segments total 646 characters/estimated credits; approximately 91.90s of the existing recording is retained. Full proposed script: 2,352 characters. Runtime estimate: 119.79–133.74s, not a target.
+
+**No new paid generation is authorized.** Request approval for three exact one-time patch calls, no automatic retries, before generating anything. Do not regenerate the full recording. Keep approved Adam, natural synthesis 1.0x and offline 1.35x varispeed. All old caches/movies stay intact. New provider alignment is required before revised captions/cuts/SFX and a separate revised render composition can be completed.
+
+Additional user steering: Latte follows the mouse into the DARK existing alley beside the cafe. Streetlamps must form orderly curb rows and not block subjects. Restore the pan on “It moved toward the door.” The latter lamp/pan source fixes are implemented independently in the existing polish composition; their latest technical result is recorded below/in CURRENT_FIX_REVIEW.md. They do not activate the proposed new narration.
+
+Technical checks completed: TypeScript/regressions, curb placement, all 3,349 geometry/character-alpha states and five narration-plan test groups passed. Actual local playback remains pending.
+
+Checkpoint before this pass: `checkpoint/episode1-before-story-polish-20261115` at `5b8892f`. Active delivery remains `v2-local-render`. Normal-chat continuation must honor this newer task rather than restarting the earlier visual pass. No cloud video rendering.
+
+---
+
 # Current continuation status
 
 Active delivery branch: `v2-local-render` in `ClixClix/claude-animated-shorts`. Use Git log and `CURRENT_FIX_REVIEW.md` for the latest source candidate; do not rely on historic setup completion counts.

@@ -1,0 +1,192 @@
+[
+  {
+    "id": "H01",
+    "patchId": "opening",
+    "weight": 1.4,
+    "narrationAnchor": "In this town, there's a café",
+    "action": "Cafe exterior at night: full facade and mysterious entrance are the clear subject, not a city flyover.",
+    "criticalSubject": "cafe-door",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  },
+  {
+    "id": "H02",
+    "patchId": "opening",
+    "weight": 0.8,
+    "narrationAnchor": "at exactly 11:11",
+    "action": "Same illuminated clock tower, hands legibly at 11:11; no sunset. Return on a matched eyeline.",
+    "criticalSubject": "clock",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  },
+  {
+    "id": "H03",
+    "patchId": "opening",
+    "weight": 1.8,
+    "narrationAnchor": "nobody ever sees anyone unlock the door",
+    "action": "Push toward the door as it swings without revealing Mocha or anyone unlocking it.",
+    "criticalSubject": "cafe-door",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  },
+  {
+    "id": "H04",
+    "patchId": "opening",
+    "weight": 3,
+    "narrationAnchor": "Latte lived just across the street",
+    "action": "Street-level geography: cafe on one side and Latte house opposite; end at his existing window.",
+    "criticalSubject": "home-and-cafe",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  },
+  {
+    "id": "H05",
+    "patchId": "opening",
+    "weight": 3,
+    "narrationAnchor": "terrified of what might be inside",
+    "action": "Latte watches that cafe from home; tense ears and fixed eyeline, then hold. No unrelated reaction cats.",
+    "criticalSubject": "latte",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  },
+  {
+    "id": "M01",
+    "patchId": "mouse-chase",
+    "weight": 1.8,
+    "narrationAnchor": "Latte spotted a mouse",
+    "action": "Rainy pavement outside cafe: Latte notices the existing mouse. Clear eyeline before pursuit.",
+    "criticalSubject": "latte-and-mouse",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  },
+  {
+    "id": "M02",
+    "patchId": "mouse-chase",
+    "weight": 1.4,
+    "narrationAnchor": "a mouse outside the café",
+    "action": "Mouse darts toward the existing dark, narrow side alley. Keep the cafe edge and curb in frame so the turn is unambiguous.",
+    "criticalSubject": "mouse",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  },
+  {
+    "id": "M03",
+    "patchId": "mouse-chase",
+    "weight": 2.6,
+    "narrationAnchor": "chased it straight into a narrow alley",
+    "action": "Track Latte chasing the mouse from lit pavement into the dark alley beside the cafe. Entrance spill provides orientation; no new lamps or location change.",
+    "criticalSubject": "latte-and-mouse",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  },
+  {
+    "id": "M04",
+    "patchId": "mouse-chase",
+    "weight": 1.8,
+    "narrationAnchor": "when he finally turned around",
+    "action": "Mouse disappears deeper into the unlit alley, into the existing service hole. Latte pauses, loses track of time, then turns back toward the street.",
+    "criticalSubject": "latte",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  },
+  {
+    "id": "M05",
+    "patchId": "mouse-chase",
+    "weight": 1.6,
+    "narrationAnchor": "something was wrong",
+    "action": "Over Latte shoulder back toward street. His playful posture changes as he notices failing light.",
+    "criticalSubject": "latte-and-streetlight",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  },
+  {
+    "id": "M06",
+    "patchId": "mouse-chase",
+    "weight": 1.2,
+    "narrationAnchor": "streetlights were going out",
+    "action": "His eyeline leads to the exact first lamp; begin flicker, then keep old first-light failure and sequence.",
+    "criticalSubject": "first-streetlight",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  },
+  {
+    "id": "K01",
+    "patchId": "kitten-reveal",
+    "weight": 2.1,
+    "narrationAnchor": "At the café, Latte finally discovered",
+    "action": "Follow his search to the window, with partly open door in the same geographic context.",
+    "criticalSubject": "latte-and-window",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  },
+  {
+    "id": "K02",
+    "patchId": "kitten-reveal",
+    "weight": 1.2,
+    "narrationAnchor": "what was making the tapping",
+    "action": "Reveal a tiny paw gently touching the sill/pane; one quiet tap with visible contact and matching SFX. No jump at handle.",
+    "criticalSubject": "kitten-paw-contact",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  },
+  {
+    "id": "K03",
+    "patchId": "kitten-reveal",
+    "weight": 2.7,
+    "narrationAnchor": "soaking wet and shivering beneath the window",
+    "action": "Reveal the whole wet kitten below the window; matting, droplets, small shiver, grounded paws.",
+    "criticalSubject": "kitten",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  },
+  {
+    "id": "K04",
+    "patchId": "kitten-reveal",
+    "weight": 1.2,
+    "narrationAnchor": "The door was open",
+    "action": "Show the real held-open doorway and warm interior. Do not reveal Mocha.",
+    "criticalSubject": "cafe-door",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  },
+  {
+    "id": "K05",
+    "patchId": "kitten-reveal",
+    "weight": 2.2,
+    "narrationAnchor": "too frightened to go inside",
+    "action": "Kitten leans toward warmth then withdraws to the same waiting position. No crossing/reset.",
+    "criticalSubject": "kitten",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  },
+  {
+    "id": "K06",
+    "patchId": "kitten-reveal",
+    "weight": 1.4,
+    "narrationAnchor": "Latte was still shaking",
+    "action": "Two-shot: Latte looks from kitten to dark window, matching her fear; he chooses to stay.",
+    "criticalSubject": "latte-and-kitten",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  },
+  {
+    "id": "K07",
+    "patchId": "kitten-reveal",
+    "weight": 2.1,
+    "narrationAnchor": "gave her a gentle nudge",
+    "action": "Latte approaches slowly and gently nose-to-shoulder nudges; visible contact and release, no hand reach.",
+    "criticalSubject": "nose-shoulder-contact",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  },
+  {
+    "id": "K08",
+    "patchId": "kitten-reveal",
+    "weight": 1.2,
+    "narrationAnchor": "toward the light",
+    "action": "He stays beside her; she makes one supported step toward the threshold but waits outside. Then existing giant-shadow beat.",
+    "criticalSubject": "latte-and-kitten",
+    "maxSeconds": 4,
+    "mochaVisible": false
+  }
+]

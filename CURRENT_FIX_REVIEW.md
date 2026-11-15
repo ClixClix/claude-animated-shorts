@@ -1,3 +1,20 @@
+# Latest small correction pass and pending story proposal
+
+The user considers the episode very close and wants small changes. Current source adds orderly curb-row lamps, cameras derived from actual lamp positions, adjusted chase/cafe framing for pole obstructions, and the restored window-to-door pan. Actual updated local playback remains pending.
+
+The separate story proposal changes only three narration passages; it is not integrated or generated. Read `EPISODE1_STORY_POLISH_PLAN.md` and `EPISODE1_STORY_POLISH_COMPARISON.md`. The exact 646-character patch request still requires explicit paid approval. Dark-alley chase motivation and new open-door kitten/help sequence must be timed after those actual recordings exist.
+
+## Current pass: completed technical evidence
+
+- TypeScript and existing 104 cafe / 2,167 animation / 25 narration / 66,028 original-episode regressions passed.
+- Current edit: 48,418 timing/contact checks, 29,982 story/caption/route checks and 12,082 rig/city/curb-placement checks passed.
+- All 3,349 frame states passed geometry/camera/contact checks and 3,802 CPU character-alpha checks. Lamp occlusions found in the chase/cafe approach were corrected by camera staging. No scene/video frames were rendered in the cloud.
+- Five new offline plan test groups passed, including stale cache/script rejection, word-safe splice boundaries, missing help action, premature reveal, shot length and paid-authorization guards.
+- Source update manifest: 185 present, unique source files. Existing narration, captions and shot edit remain unchanged; the proposed three-patch recording has not been generated or integrated.
+- Local Windows execution and actual revised movie appearance are not certified by these checks.
+
+---
+
 # Current source candidate: request-by-request record
 
 Latest reviewed movie: `Polish_Review_d73d13af_540p.mp4`. The delivery branch was fetched before work; it matched commit `015fdd1`. Existing code was retained and corrected rather than importing a different engine.

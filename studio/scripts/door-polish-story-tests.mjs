@@ -30,7 +30,7 @@ for(let frame=0;frame<plan.durationInFrames;frame++){
  const s=t.stateAt(frame,shots);
  check(t.kittenRevealed(s)===(s.shot.number>=46),'Mystery kitten appears before its reveal');
  if(s.t>=29)check(!t.streetActivity(s),'Crowds remain out after curfew');
- if(s.shot.number===41){check(s.camera[2]>4.5,'Window-to-door move stays outside');if(s.u<.3)check(s.required.includes('shadow-top'),'Begin on the ears through Latte window');if(s.u>.85)check(s.required.includes('cloth-silhouette'),'Finish on the moving shape through the cafe window');}
+ if(s.shot.number===41){check(t.distance(s.camera,[.85,1.4,14.3])<1e-8,'Window-to-door pan stays at Latte window');if(s.u<.18)check(s.required.includes('shadow-top'),'Begin on the ears through Latte window');if(s.u>.96)check(s.required.includes('door')&&s.target[0]>2.2,'Finish the moved-toward-door line at the actual door');}
  if(s.shot.number===47)check(s.door===0,'Door must be closed during failed handle attempts');
  if(s.shot.number===47)check(s.kittenTap===0,'Kitten must jump rather than stretch a paw');
  if(s.shot.number===47&&s.u>.35&&s.u<.45)check(s.kitten[1]>.10&&s.target[1]>1.0,'Handle pan must coincide with kitten jump');
