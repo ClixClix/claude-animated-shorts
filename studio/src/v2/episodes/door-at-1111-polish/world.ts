@@ -21,10 +21,11 @@ export class EpisodeWorld{
  constructor(optimize=true){
   this.root.name='door-at-1111-extensions';this.root.add(this.cafe.root);this.door=this.rigDoor();
   this.home();this.street();this.busStop();this.makeBus();this.parkedCars();this.livingDetails();
-  this.clockCanvas.width=this.clockCanvas.height=512;this.clockTexture=new T.CanvasTexture(this.clockCanvas);this.clockTexture.colorSpace=T.SRGBColorSpace;this.textures.push(this.clockTexture);
+  this.clockCanvas.width=768;this.clockCanvas.height=384;this.clockTexture=new T.CanvasTexture(this.clockCanvas);this.clockTexture.colorSpace=T.SRGBColorSpace;this.textures.push(this.clockTexture);
   const clockGroup=new T.Group();clockGroup.name='episode-clock';clockGroup.position.set(...CLOCK);this.root.add(clockGroup);this.props.set('clock',clockGroup);
-  this.cylinder(clockGroup,.34,.34,.085,[0,0,-.04],'#ac8c55').rotation.x=Math.PI/2;
-  const clock=new T.Mesh(new T.CircleGeometry(.305,64),new T.MeshBasicMaterial({map:this.clockTexture,transparent:true,alphaTest:.05}));clock.position.z=.02;clock.layers.set(NOINK);clockGroup.add(clock);this.materials.push(clock.material);
+  this.box(clockGroup,[2.28,1.25,.15],[0,0,-.05],'#ac8c55');
+  const tower=new T.Group();tower.name='city-clock-tower';tower.position.set(CLOCK[0],0,CLOCK[2]-.8);this.root.add(tower);this.props.set('clock-tower',tower);this.box(tower,[1.8,9.5,1.6],[0,4.75,0],'#6f726e');this.box(tower,[2.55,1.65,1.9],[0,10.3,-.15],'#8b8877');this.box(tower,[2.9,.24,2.2],[0,11.25,-.15],'#3b515d');this.cylinder(tower,.95,1.4,1.1,[0,11.9,-.15],'#435461');
+  const clock=new T.Mesh(new T.PlaneGeometry(2.1,1.05),new T.MeshBasicMaterial({map:this.clockTexture,transparent:true,alphaTest:.05}));clock.position.z=.02;clock.layers.set(NOINK);clockGroup.add(clock);this.materials.push(clock.material);
   const fog=this.box(this.root,[4.40,2.78,.008],[-1.45,2.22,4.247],'#dac6a0',false);fog.name='rain-fogged-cafe-window';fog.material=new T.MeshStandardMaterial({color:'#cbbd9b',roughness:1,transparent:true,opacity:.985,emissive:'#7b552c',emissiveIntensity:.16,side:T.DoubleSide});this.materials.push(fog.material);fog.receiveShadow=true;fog.layers.set(NOINK);this.props.set('shadow',fog);
   const screen=new T.Mesh(new T.PlaneGeometry(1,1),new T.MeshBasicMaterial({transparent:true,opacity:0}));screen.visible=false;this.root.add(screen);this.shadowScreen=screen;
   this.sign();this.lanternLight=this.lantern();
@@ -147,7 +148,7 @@ export class EpisodeWorld{
  private livingDetails(){
   // Deterministic star field above the existing skyline, without flashing/noise animation.
   const starGeo=new T.BufferGeometry(),positions:number[]=[];
-  for(let i=0;i<210;i++){const h=(n:number)=>{const v=Math.sin(n*127.1+17.7)*43758.5453;return v-Math.floor(v);};positions.push((h(i)-.5)*110,11+h(i+230)*37,-26-h(i+460)*25);}
+  for(let i=0;i<620;i++){const h=(n:number)=>{const v=Math.sin(n*127.1+17.7)*43758.5453;return v-Math.floor(v);};const angle=h(i)*Math.PI*2,elevation=.08+h(i+230)*1.35,radius=54;positions.push(Math.cos(angle)*Math.cos(elevation)*radius,Math.sin(elevation)*radius,Math.sin(angle)*Math.cos(elevation)*radius);}
   starGeo.setAttribute('position',new T.Float32BufferAttribute(positions,3));const starMat=new T.PointsMaterial({color:'#d8d9c5',size:.11,sizeAttenuation:true,transparent:true,opacity:.76,depthWrite:false});this.materials.push(starMat);
   const stars=new T.Points(starGeo,starMat);stars.name='night-stars';stars.layers.set(NOINK);this.root.add(stars);
   // Bed and bowls already exist when Latte gets home; nothing pops into place on the line.
@@ -158,7 +159,13 @@ export class EpisodeWorld{
   for(const x of [-.40,.40])this.box(box,[.055,.60,.78],[x,.30,0],'#9b805f');this.box(box,[.85,.055,.78],[0,.027,0],'#a58b68');this.box(box,[.85,.60,.055],[0,.30,.39],'#9b805f');
   this.box(box,[.85,.055,.45],[0,.59,.2],'#ae9571').rotation.x=.18;
   // Low cover for two distinct epilogue refugees, with visible ears/eyes above it.
-  for(const [i,x] of [3.95,4.87,5.78].entries()){const crate=this.box(this.root,[.61,.40,.63],[x,.23,5.9],'#6f695a');crate.name='alley-crate-'+i;this.props.set(crate.name,crate);for(const z of [5.64,6.17])this.box(this.root,[.67,.06,.055],[x,.38,z],'#8b8067');}
+  for(const [i,x] of [5.78,6.5].entries()){const crate=this.box(this.root,[.61,.40,.63],[x,.23,5.9],'#6f695a');crate.name='alley-crate-'+i;this.props.set(crate.name,crate);for(const z of [5.64,6.17])this.box(this.root,[.67,.06,.055],[x,.38,z],'#8b8067');}
+  const tower=new T.Group();tower.name='home-cat-tower';tower.position.set(3.7,.2,15.35);this.root.add(tower);this.cylinder(tower,.09,.09,1.65,[0,.825,0],'#a5977c');for(const y of [.08,.85,1.65])this.box(tower,[.72,.10,.65],[0,y,0],'#8e8978');
+  for(const x of [.8,2.5]){this.box(this.root,[.85,.65,.05],[x,2.1,16.04],'#ae9469');this.label(this.root,'◆',.72,.52,[x,2.1,15.999],'#526f77','#c5b797',170).rotation.y=Math.PI;}
+  for(let i=0;i<28;i++){const angle=i*Math.PI*2/28,radius=23+(i%3)*3,height=3+(i%5)*.8;this.box(this.root,[2.6,height,2.5],[Math.cos(angle)*radius,height/2,Math.sin(angle)*radius],'#243a4b',false);}
+  for(const z of [6.05,11.9])this.box(this.root,[16,.05,.55],[0,.005,z],'#637377',false);
+  this.box(this.root,[.09,.24,.19],[-3.95,.7,1.25],'#b8bba0',false).name='cafe-light-switch';
+  for(const z of [-18,-25])for(let i=0;i<7;i++){const x=-15+i*5,h=4+(i%3)*1.1;const g=new T.Group();g.name='city-infill-'+z+'-'+i;g.position.set(x,0,z);this.root.add(g);this.box(g,[3.6,h,3.2],[0,h/2,0],['#354c5b','#455b66','#53616b'][i%3],false);this.box(g,[3.8,.16,3.4],[0,h+.08,0],'#263c4b',false);for(const y of [1.2,2.6])for(const px of [-.9,.9])this.box(g,[.6,.8,.035],[px,y,1.62],'#283d4c',false);}
   // Two one-way cars. They exit naturally; none circulate after the curfew.
   const shadowCanvas=document.createElement('canvas');shadowCanvas.width=shadowCanvas.height=64;const sc=shadowCanvas.getContext('2d')!,gradient=sc.createRadialGradient(32,32,1,32,32,32);gradient.addColorStop(0,'rgba(12,22,28,.38)');gradient.addColorStop(1,'rgba(12,22,28,0)');sc.fillStyle=gradient;sc.fillRect(0,0,64,64);const shadowTexture=new T.CanvasTexture(shadowCanvas);this.textures.push(shadowTexture);
   for(const i of [0,1]){const car=new T.Group();car.name='passing-car-'+i;this.root.add(car);this.traffic.push(car);
@@ -202,14 +209,11 @@ export class EpisodeWorld{
   for(const p of this.permanentLights){
    if(p.light.name.startsWith('streetlight-'))continue;
    if(p.light.name.includes('practical-light')){p.light.intensity=blackout?0:p.intensity;p.light.visible=!blackout;}
-   else if(p.light.name==='interior-bounce')p.light.intensity=blackout?11:p.intensity;
+   else if(p.light.name==='interior-bounce')p.light.intensity=blackout?11+2*beat(s.t,131.45,131.65):p.intensity;
    else if(p.light.name==='warm-interior-key')p.light.intensity=blackout?1.05:p.intensity;
   }
   for(const p of this.pendantBulbs)p.mat.emissiveIntensity=blackout?0:p.emissive;
-  const g=this.clockCanvas.getContext('2d')!;g.clearRect(0,0,512,512);g.fillStyle='#eed9b1';g.beginPath();g.arc(256,256,248,0,Math.PI*2);g.fill();g.strokeStyle='#34473e';g.lineWidth=10;
-  for(let i=0;i<12;i++){const a=i*Math.PI/6;g.beginPath();g.moveTo(256+Math.sin(a)*202,256-Math.cos(a)*202);g.lineTo(256+Math.sin(a)*225,256-Math.cos(a)*225);g.stroke();}
-  const minute=s.clock==='11:10'?10.7:s.clock==='11:11'?11:12;for(const [a,r,w] of [[(11+minute/60)*Math.PI/6,115,17],[minute*Math.PI/30,174,11]]){g.lineWidth=w;g.lineCap='round';g.beginPath();g.moveTo(256,256);g.lineTo(256+Math.sin(a)*r,256-Math.cos(a)*r);g.stroke();}
-  g.fillStyle='#2d453d';g.fillRect(132,340,248,89);g.font='bold 64px monospace';g.textAlign='center';g.textBaseline='middle';g.fillStyle='#f5dfa8';g.fillText(s.clock,256,387);this.clockTexture.needsUpdate=true;
+  const g=this.clockCanvas.getContext('2d')!;g.fillStyle='#1b3338';g.fillRect(0,0,768,384);g.fillStyle='#f5dfa8';g.font='bold 170px monospace';g.textAlign='center';g.textBaseline='middle';g.fillText(s.clock,384,192);this.clockTexture.needsUpdate=true;
   this.bowl.position.set(...s.bowl);this.bowl.visible=s.t>=99;
   const p=this.blanket.geometry.getAttribute('position'),mouth=mouthAnchor(s,'mocha'),toward=new T.Vector3(s.camera[0]-s.mocha.position[0],0,s.camera[2]-s.mocha.position[2]).normalize(),right=new T.Vector3(1,0,0);
   for(let i=0;i<p.count;i++){

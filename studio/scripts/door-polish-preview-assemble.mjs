@@ -13,6 +13,7 @@ for(const shot of plan.shots){
  const file=path.join(out,'motion',shot.id+'.mp4');
  if(!await validSegment(file,shot,sourceHash,propsHash,.5))throw Error('Missing, partial or stale preview shot '+shot.id+'. Run Preview-Polish.cmd again to resume.');
  const saved=JSON.parse(await fs.readFile(file.replace(/\.mp4$/,'.json'),'utf8'));
+ if(saved.audits.some(a=>a.sourceShot<50&&a.openerVisible))throw Error('Opener exposed before mystery reveal in '+shot.id);
  if(saved.audits.some(a=>a.sourceShot<46&&(a.kittenVisible||a.kittenPawVisible)))throw Error('Early kitten reveal in preview '+shot.id);
  if(saved.audits.some(a=>a.baseFrame>=29*30&&a.streetResidentsVisible))throw Error('Street crowd remains after curfew in '+shot.id);
  if(saved.audits.some(a=>a.cameraHits.length))throw Error('Camera collision in preview '+shot.id);

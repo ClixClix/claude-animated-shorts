@@ -2,7 +2,7 @@
 
 The separate **InThisTownTheDoorAt1111Polish** composition preserves the original episode, approved lead artwork, permanent café fixtures, original narration cache and finished movies. Only the polish version changes.
 
-The revised edit is **3,349 frames / 111.63 seconds / 71 cuts**. The continuous approved Adam recording sets the timing. There are **no inserted pauses between voice-over lines**, no additional speed-up, and less than 50 ms of final padding after decoded MP3 samples. Redundant unvoiced inserts are removed; the remaining pictures cover their actions during speech. All 364 spoken words have individual, non-overlapping subtitle cues.
+The revised edit is **3,349 frames / 111.63 seconds / 83 cuts**. The continuous approved Adam recording sets the timing. There are **no inserted pauses between voice-over lines**, no additional speed-up, and less than 50 ms of final padding after decoded MP3 samples. Redundant unvoiced inserts are removed; the remaining pictures cover their actions during speech. All 364 spoken words have individual, non-overlapping subtitle cues.
 
 Changes prepared for local visual approval:
 
@@ -37,7 +37,7 @@ TypeScript and existing café/animation/narration/original-episode regressions p
 
 ## Latest directing revision
 
-The narration remains continuous at 111.63 seconds. The edit now has **71 cuts**, with the city → rush-home hook fitted into the existing first sentence. One light flickers once; background cats and traffic clear before the curfew. Night stars, passing cars with contact shadows, a sheltered bus boarding area and a front-view bus pictogram are episode extensions, not new café furniture.
+The narration remains continuous at 111.63 seconds. The edit now has **83 cuts**, with the city → rush-home hook fitted into the existing first sentence. One light flickers once; background cats and traffic clear before the curfew. Night stars, passing cars with contact shadows, a sheltered bus boarding area and a front-view bus pictogram are episode extensions, not new café furniture.
 
 The kitten, its shadow and its reaching paw remain invisible until shot 46. Early taps only shake the camera briefly. The long shape is shown through the fogged window. Latte has his blanket before the blanket line, plus a bed, food, water and an open hiding box. His pause, searching looks, scared crossing and doorway search precede the reveal.
 
@@ -48,3 +48,21 @@ The ending shows flowerpot → Latte → sign → dark alley kitten → invitati
 **Preview-Polish.cmd now renders all revised shots at 540×960 and assembles `Polish_Narrated_Review_540p.mp4` with the continuous cached narration.** It resumes only validated matching shot clips, checks the encoded audio peak and full decode, and saves `PREVIEW_QA.json`. The preview includes one-word captions; music/Foley and native rendering remain the separate `Render-Polish.cmd` stage. No new preview movie has been rendered in the cloud. Review the complete local movie against the reference shorts before approving a native render.
 
 The new full-preview assembly path passed syntax checks and correctly rejected incomplete/stale caches. Its end-to-end render/assembly and the revised pixels await execution on the Windows PC; no new preview movie exists in this cloud workspace.
+
+## Clock/door/house continuity revision
+
+Latest edit: **83 cuts**, still 3,349 frames / 111.63 seconds of continuous cached narration. Clock is a centered digital display only; its time does not reset between the home and café shots. The home-window clock shot uses the actual exterior clock. Stars now span a hemisphere, with distant town silhouettes and pedestrian routes on both road edges before curfew.
+
+The unknown opener and their paw/contact shadow are hidden until the reveal. Each early opening now closes again before the kitten's failed attempts. The kitten retreats off camera when Latte approaches, emerges for the reveal, and makes a short jump toward the closed-door handle rather than stretching a paw. The ground shadow stays on the ground; landing gives a small camera kick. Wet-coat streaks remain visible.
+
+The porch view is wider; the home sequence now covers entry, switch and scared reaction. Added cat tower and framed wall decorations supplement the existing bed, bowls and hiding box. Blanket close-up leads into empty-street suspense views; all three taps receive their own view, with increasing tension. The head-shake/box view pans within the home; Latte jumps at the next meow, then exits and searches while crossing. The shadow sequence stays on the window instead of cutting back to Latte mid-reveal.
+
+The sign remains visible throughout its spoken invitation. The final bus shot is closer. Mocha has an accessible wall light control and activates a warm interior-light boost; other buildings remain dark in the street views. Original art files, café fixture layout, original composition, cached voices and music processing remain preserved.
+
+All revised pixels and the new narrated preview assembly still require local visual review. Structural success does not establish that the acting, home staging, sky, or suspense reads well in motion. No scene/video render has been performed in the cloud.
+
+## City clock tower and readable light count
+
+The shared clock is now a city clock tower behind the café, with a single centered digital face. The home-window view targets that same tower over the café roof. Fourteen more mid-distance building façades fill out the existing skyline; the tower body, roof and spire share one stable location. Its display is treated as a battery-backed civic timepiece during the blackout, while building windows stay dark. There is no second café clock.
+
+Each of the nine light inserts lasts exactly 12 frames (0.4 seconds). The sequence borrows 13 picture frames from the following reaction, retains every narration sample and adds no silence. The full edit remains 111.63 seconds, with 83 cuts. Revised framing and city readability still require actual local preview approval.

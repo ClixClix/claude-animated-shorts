@@ -31,13 +31,16 @@ for(let frame=0;frame<plan.durationInFrames;frame++){
  check(t.kittenRevealed(s)===(s.shot.number>=46),'Mystery kitten appears before its reveal');
  if(s.t>=29)check(!t.streetActivity(s),'Crowds remain out after curfew');
  if(s.shot.number===41)check(s.camera[2]>4.5&&s.required.includes('cloth-silhouette'),'Dragged shape must be seen through fogged glass');
- if(s.shot.number===47&&s.u>.42&&s.u<.62)check(s.kittenTap>.95&&s.target[1]>1.0,'Handle pan must coincide with attempted reach');
+ if(s.shot.number===47)check(s.door===0,'Door must be closed during failed handle attempts');
+ if(s.shot.number===47)check(s.kittenTap===0,'Kitten must jump rather than stretch a paw');
+ if(s.shot.number===47&&s.u>.35&&s.u<.45)check(s.kitten[1]>.10&&s.target[1]>1.0,'Handle pan must coincide with kitten jump');
  if(s.bowlContact){const mouth=t.mouthAnchor(s,'essie');check(Math.abs(s.bowl[1]+.115-mouth[1])<1e-9,'Bowl rim must meet mouth while carried');check(Math.abs(Math.hypot(s.bowl[0]-mouth[0],s.bowl[2]-mouth[2])-.17)<1e-9,'Bowl must be held at the rim, not through its center');}
 }
 for(const start of [4,15,67])check(t.doorAngleAt(start+.45)>1.1&&t.doorAngleAt(start)===0,'Door swing must be fast and begin closed');
 check(t.stateAt(shot('57A').start,shots).required.includes('flowerpot'),'Flowerpot must precede Latte and the sign');
-check(t.stateAt(shot('57D').start,shots).required.includes('alley-kitten'),'Dark-street clause must show hidden kitten');
+check(t.stateAt(shot('57D').start,shots).required.includes('sign'),'Invitation text must remain visible while it is read');
 const beforePlace=shots.find(s=>s.number===53);const placementStates=Array.from({length:beforePlace.end-beforePlace.start},(_,i)=>t.stateAt(beforePlace.start+i,shots));const heldLast=placementStates.filter(s=>s.bowlContact).at(-1),releasedFirst=placementStates.find(s=>!s.bowlContact);check(t.distance(heldLast.bowl,releasedFirst.bowl)<.001,'Bowl jumps after mouth releases it');
+const lights=shots.filter(s=>s.number===11);check(lights.length===9&&lights.every(s=>s.end-s.start===12),'Nine light cuts must each hold 0.4 seconds');check(new Set(lights.map(s=>t.stateAt(s.start,shots).required[0])).size===9,'Each light insert must feature a different light');
 const prior=new Map();
 for(let frame=shot('58A').start;frame<plan.durationInFrames;frame++){
  const s=t.stateAt(frame,shots);

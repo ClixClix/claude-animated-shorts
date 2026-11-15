@@ -25,7 +25,7 @@ meta.timing.sentences.forEach((s,i)=>{
 const group=(shots,ids=[])=>({shots,ids:ids.map(String)});
 const groups=[group([1,2,3,4],[0]),group([5],[1,2]),group([6],[3]),group([7,8,9]),group([10],[4]),group([11],[5]),group([12],[6]),
  group([13,14],[7]),group([15],[8]),group([16],[9]),group([17],[10]),group([18]),group([20],[11]),group([21],['12a']),group([22],['12b']),group([23,24],['12c']),group([25]),group([26],[13,14,15]),group([27],[16]),
- group([28,29],[17,18]),group([30],[19]),group([31],[20]),group([32],[21]),group([34],[22,23]),group([36],[24,25]),group([37],[26]),group([38],[27,28]),group([39],[29,30]),group([40],[31]),group([41],[32,33]),group([42],[34,35]),group([43,44],[36]),
+ group([28,29],[17,18]),group([30],[19]),group([31],[20]),group([32],[21]),group([34],[22,23,24]),group([36],[25]),group([37],[26]),group([38],[27,28]),group([39],[29,30]),group([40],[31]),group([41],[32,33]),group([42],[34,35]),group([43,44],[36]),
  group([45],[37]),group([46],[38]),group([47],[39]),group([48],[40]),group([49],[41]),group([50,51],[42]),group([52,53],[43]),group([54],[44]),group([55,56],[45]),group([57],[46,47]),group([58],[48]),group([59],[49,50]),group([60],[51,52,53])];
 const editorialFrames=s=>s.number===1?100:Math.round((board[s.number-1].end-board[s.number-1].start)*([2,3,5,7,8,9,11,13,15,16,17,23,29,30,31,33,34,35,37,39,40,41,48,49,57,58].includes(s.number)?.70:.90));
 let frame=0,previousSource=0,previousTarget=0;const shots=[],placements=[],pauses=[];
@@ -47,7 +47,7 @@ for(const g of groups){
  previousSource=to;previousTarget=to;
  entries.forEach((s,j)=>{
   const end=j===entries.length-1?start+length:start+Math.round(length*entries.slice(0,j+1).reduce((n,x)=>n+editorialFrames(x),0)/baseDuration);
-  const pieces=s.number===57?5:[58].includes(s.number)?4:[11,59,60].includes(s.number)?3:[1,38,39,42,45,50].includes(s.number)?2:Math.ceil((end-frame)/120),originalStart=frame;
+  const pieces=s.number===11?9:s.number===57?5:[58].includes(s.number)?4:[11,26,34,59,60].includes(s.number)?3:[1,36,37,38,39,42,45,50].includes(s.number)?2:Math.ceil((end-frame)/120),originalStart=frame;
   for(let k=0;k<pieces;k++){
    const cuts=Array.from({length:pieces+1},(_,i)=>originalStart+Math.round((end-originalStart)*i/pieces));
    const placement=placements.at(-1);
@@ -64,6 +64,12 @@ for(const g of groups){
   frame=end;
  });
 }
+const lightCuts=shots.filter(s=>s.number===11);
+if(lightCuts.length!==9)throw Error('Exactly nine light inserts required.');
+const lightStart=lightCuts[0].start,nextReaction=shots.find(s=>s.number===12);
+for(let i=0;i<9;i++){lightCuts[i].start=lightStart+i*12;lightCuts[i].end=lightStart+(i+1)*12;}
+if(nextReaction.end-(lightStart+108)<24)throw Error('No room for readable nine-light sequence.');
+nextReaction.start=lightStart+108; // Borrow only reaction-picture time, never silence or voice speed.
 if(previousSource!==meta.duration)throw Error('Incomplete recording.');
 // At most one frame of final padding; never insert a gap between lines.
 frame=Math.ceil(meta.duration*30);shots.at(-1).end=frame;
@@ -103,6 +109,6 @@ console.log(JSON.stringify({polishedSeconds:frame/30,captionWords:words.length,c
 
 const srtTime=f=>{const ms=Math.round(f*1000/30),hours=Math.floor(ms/3600000),minutes=Math.floor(ms/60000)%60,seconds=Math.floor(ms/1000)%60;return [hours,minutes,seconds].map(x=>String(x).padStart(2,'0')).join(':')+','+String(ms%1000).padStart(3,'0');};
 await fs.writeFile(path.join(out,'The_Door_At_1111_Polish_Subtitles.srt'),captions.map((c,i)=>`${i+1}\n${srtTime(c.start)} --> ${srtTime(c.end)}\n${c.text}\n`).join('\n'),'utf8');
-if(shots.some(s=>s.end-s.start<12))throw Error('An insert is too short to read.');
+if(shots.some(s=>s.end-s.start<(s.number===11?6:12)))throw Error('An insert is too short to read.');
 if(pauses.some(p=>p.at<meta.duration)||pauses.reduce((n,p)=>n+p.seconds,0)>1/30)throw Error('Editorial silence interrupts narration.');
 if(captions.map(c=>c.text).join(' ')!==meta.timing.words.map(w=>w.text).join(' '))throw Error('Subtitle text is incomplete.');
