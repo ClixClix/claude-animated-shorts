@@ -66,8 +66,8 @@ function pathAt(t:number,keys:Key[]){
 const LATTE_PATH:Key[]=[
  {time:0,position:[-1.45,.03,6.1]},{time:10.5,position:[-1.45,.03,6.1]},{time:12.99,position:[-2,.03,6.6]},{time:13,position:[-2,.03,6.1]},
  {time:26.49,position:[-2.0,0.03,6.10]}, {time:26.5,position:[-2.50,0.03,6.3]},
- {time:28.0,position:[-1.6,.03,6.1]},{time:29.4,position:[-3.3,.03,6.35]},{time:30.5,position:[-2.5,.03,6.3]},{time:39.5,position:[-2.50,0.03,6.3]}, {time:44.5,position:[-2.50,0.03,8.00]},
- {time:46.5,position:[-1.80,0.03,8.25]}, {time:49,position:[-0.70,0.03,9.0]},
+ {time:27.7,position:[2.80,.03,5.65]},{time:29.2,position:[4.9,.03,4.25]},{time:30.5,position:[5.15,.03,2.95]},{time:39.5,position:[5.15,.03,2.95]}, {time:44.5,position:[2.45,0.03,7.50]},
+ {time:46.5,position:[-.15,0.03,8.25]}, {time:49,position:[-0.70,0.03,9.0]},
  {time:51.5,position:[2.0,0.03,10.8]}, {time:51.9,position:[3.15,.03,11.1]}, {time:52.5,position:[3.15,.18,11.7]}, {time:54,position:[3.15,0.20,12.08]},
  {time:56,position:[3.68,0.20,13.10]}, {time:56.8,position:[4.08,.20,13.10]},{time:57.6,position:[4.08,.20,13.10]},{time:58.5,position:[3.68,0.20,13.10]},
  {time:60.5,position:[0.85,0.20,13.14]}, {time:85.9,position:[0.85,0.20,13.14]}, {time:87.1,position:[1.45,0.20,13.85]}, {time:89.1,position:[0.85,0.20,13.14]}, {time:95.65,position:[0.85,0.20,13.14]},
@@ -77,6 +77,8 @@ const LATTE_PATH:Key[]=[
  {time:105.5,position:[3.80,0.03,5.55]}, {time:107.5,position:[4.15,0.03,5.85]}, {time:122,position:[4.15,0.03,5.85]}, {time:123,position:[2.25,.03,5.45]}, {time:124,position:[2.25,.03,5.45]}, {time:125.1,position:[2.25,.03,4.4]}, {time:125.3,position:[2.25,0,4.1]}, {time:125.8,position:[2.25,0,3.6]},
  {time:126,position:[1.93,0,3.30]}, {time:132.5,position:[1.93,0,3.30]}, {time:135,position:[2.15,0,3.30]}, {time:136,position:[2.15,0,3.30]},
 ];
+export const MOUSE_PATH:Key[]=[{time:26.5,position:[-1.30,.09,6.05]},{time:27.7,position:[3.1,.09,5.60]},{time:29.2,position:[5.3,.09,4.0]},{time:30.5,position:[5.35,.09,2.55]},{time:81.0,position:[5.35,.09,2.55]},{time:82.2,position:[5.65,.09,-1.2]}];
+export function mouseAt(t:number):V3{return pathAt(t,MOUSE_PATH).position;}
 const ESSIE_PATH:Key[]=[{time:99,position:[0.02,0.6,-2.08]},{time:100.5,position:[0.48,0.6,-2.08]},{time:102,position:[0.91,0,-2.08]},{time:104,position:[1.40,0,-1.8]},{time:107,position:[1.4,0,0.5]},{time:109,position:[3.55,0,0.6]},{time:113.5,position:[3.55,0,2.9]},{time:117,position:[3.32,0,3.34]},{time:127,position:[3.32,0,3.34]},{time:129.5,position:[3.65,0,3.34]},{time:132,position:[3.65,0,.9]},{time:136,position:[3.65,0,.9]}];
 const MOCHA_PATH:Key[]=[{time:0,position:[2.25,0,3.90]},{time:6,position:[2.25,0,3.90]},{time:10,position:[-.96,0,3.30]},{time:12.99,position:[-.96,0,3.30]},{time:13,position:[2.25,0,3.90]},{time:17,position:[2.25,0,3.90]},{time:21,position:[-.96,0,3.30]},{time:26.5,position:[-.96,0,3.65]},{time:64.5,position:[-.96,0,3.65]},{time:67,position:[2.25,0,3.90]},{time:69,position:[2.25,0,3.90]},{time:75,position:[-.96,0,3.65]},{time:85,position:[-.96,0,3.65]},{time:87.5,position:[-.96,0,3.30]},{time:89.5,position:[-.96,0,3.30]},{time:93.5,position:[-.50,0,3.30]},{time:101,position:[-.96,0,3.30]},{time:105.5,position:[-.96,0,3.10]},{time:107.5,position:[-.96,0,3.10]},{time:109,position:[2.25,0,3.90]},{time:112,position:[2.25,0,3.90]},{time:114.5,position:[1.18,0,3.32]},{time:127,position:[1.18,0,3.32]},{time:128,position:[.25,0,3.32]},{time:129,position:[.25,0,1.25]},{time:130.3,position:[-3.45,0,1.25]},{time:136,position:[-3.45,0,1.25]}];
 
@@ -205,12 +207,12 @@ function setCamera(s:EpisodeState){
  case 10:set([-.6,1.25,8.5],latte,40,['latte']);break;
  case 11:{const q=groupedProgress(s,[11]);set([s.latte.position[0]+.15,1.20,s.latte.position[2]+.55],mix([-6,3.05,6.5],[4.5,3.05,12],ease(q)),92,[]);break;}
  case 12:set([-1.00,1.15,8.1],latte,40,['latte']);break;
- case 13:set([s.latte.position[0]+1.6,1.1,s.latte.position[2]+2.0],latte,68,['latte']);break;
- case 14:set([s.latte.position[0]+1.6,1.1,s.latte.position[2]+2.0],latte,68,['latte']);break;
+ case 13:{const mouse=mouseAt(t);set([s.latte.position[0]+1.55,1.65,s.latte.position[2]+2.7],mix(latte,[mouse[0],.28,mouse[2]],.45),74,['latte']);break;}
+ case 14:set([4.45,1.55,7.0],[5.1,.5,2.8],72,['latte']);break;
  case 15:set([-7.25,2.8,8.5],[-6,3.1,6.5],49,['light-1']);break;
  case 16:set([7.3,2.5,9],[6,3.1,6.5],50,['light-2']);break;
  case 17:set([-4.1,2.6,7.2],[-4.5,3.1,9.6],45,['light-3']);break;
- case 18:set([-2.6,1.25,8.4],latte,46,['latte'],2);break;
+ case 18:set([s.latte.position[0]+1.1,1.25,s.latte.position[2]+2.2],latte,46,['latte'],2);break;
  case 19:set([s.latte.position[0]+1,.32,s.latte.position[2]+1.7],[s.latte.position[0],.22,s.latte.position[2]],44,['latte-feet']);break;
  case 20:set([s.latte.position[0]+2.15,1.1,s.latte.position[2]+1.4],latte,53,['latte']);break;
  case 21:set([-1.0,1.25,8.8],[-3.25,.85,6.95],85,['latte','bus-stop']);break;
@@ -220,13 +222,13 @@ function setCamera(s:EpisodeState){
  case 25:set([2.35,1.2,14.55],[3.12,1.1,12.3],57,['home-door']);break;
  case 26:if(!v)set([4.15,1.6,15.4],latte,75,['latte']);else if(v===1)set([3.5,1.5,14.25],HOME.switch,70,['switch']);else latteHome(true);break;
  case 27:{const x=-6+11.5*ease(u);set([-4.2,1.8,7.0],[x,1.8,17],88,['other-buildings']);break;}
- case 28:case 29:{const q=groupedProgress(s,[28,29]);set(mix([-3.7,1.55,9.3],[1.5,2.2,8.8],ease(q)),mix([-1,1.7,4.2],[0,1.9,4.2],ease(q)),100-17*ease(q),['cafe']);break;}
+ case 28:case 29:{const q=groupedProgress(s,[28,29]);set(mix([.85,1.75,14.65],[.85,1.75,12.55],ease(q)),mix([.85,1.75,12.2],[-.90,2.00,4.25],ease(q)),78-14*ease(q),['cafe']);break;}
  case 30:set([1.15,1.05,14.8],CLOCK,70-52*ease(u),['clock']);break;
  case 31:set(mix([4.8,1.6,8.3],[4.3,1.45,7.5],beat(u,0,.75)),[2.25,1.50,4.2],72-6*ease(u),['door']);s.camera[0]+=.012*Math.sin(s.frame*2.4)*Math.max(0,1-Math.abs(u-.15)/.1);break;
  case 32:latteHome(true);break;
  case 33:set([2.80,.73,3.60],[2.80,.63,4.47],55,['tap']);break;
- case 34:{const cameras:V3[]=[[2.6,1.35,15.3],[1.05,1.3,14.6],[3.4,1.4,14.6]];set(cameras[v],latte,66,['latte']);break;}
- case 35:latteHome(true);break;
+ case 34:if(v===2)set([.85,1.72,14.4],[-.30,1.90,4.25],68,['cafe']);else{const cameras:V3[]=[[2.6,1.35,15.3],[1.05,1.3,14.6]];set(cameras[v],latte,66,['latte']);}break;
+ case 35:set([.85,1.72,14.0],[-.90,1.90,4.25],66,['cafe']);break;
  case 36:latteHome();s.camera=mix(s.camera,s.target,.12*ease(groupedProgress(s,[36])));s.required=['home-blanket'];break;
  case 37:if(!v)set([-2,1.55,6.5],[-2,1.7,17],86,['other-buildings']);else set([6.0,1.3,7.3],[5.45,.7,2.2],70,['alley']);break;
  case 38:latteHome(v>0);if(!v)s.required=['home-blanket'];break;
