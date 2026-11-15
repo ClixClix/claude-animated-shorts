@@ -1,5 +1,6 @@
 import * as T from 'three';
 import {CITY_BUILDINGS,CITY_ROADS,CITY_EXTENT,CITY_BACKDROP} from './cityConfig';
+import {NOINK} from '../../../videos/bridge/ink';
 
 /** Batched district windows keep a larger city practical on the local renderer. */
 export function createCity(){
@@ -48,5 +49,23 @@ export function createCity(){
  const skylineMaterial=material('#526777'),skyline=new T.InstancedMesh(new T.BoxGeometry(1,1,1),skylineMaterial,CITY_BACKDROP.length),roofline=new T.InstancedMesh(new T.BoxGeometry(1,1,1),roof,CITY_BACKDROP.length),dummy=new T.Object3D();
  CITY_BACKDROP.forEach((b,i)=>{dummy.position.set(b.position[0],b.height/2-.04,b.position[2]);dummy.scale.set(b.width,b.height,b.depth);dummy.updateMatrix();skyline.setMatrixAt(i,dummy.matrix);dummy.position.y=b.height;dummy.scale.set(b.width+.2,.22,b.depth+.2);dummy.updateMatrix();roofline.setMatrixAt(i,dummy.matrix);});
  skyline.name='distant-city-blocks';roofline.name='distant-city-roofline';root.add(skyline,roofline);
+ // Fixed illustrated city layers close the road vanishing points behind the 3D blocks.
+ // Alpha-cut roofs keep the real night sky; two depths provide restrained parallax.
+ for(let layer=0;layer<2;layer++){
+  const cv=document.createElement('canvas');cv.width=2048;cv.height=512;const pen=cv.getContext('2d')!;
+  let x=0,index=0;
+  while(x<cv.width){const seed=index*37+layer*17,width=25+seed%43,height=130+seed*11%300,y=cv.height-height;
+   pen.fillStyle=layer?'#344b60':'#2b4055';pen.fillRect(x,y,width+1,height);
+   pen.fillStyle=layer?'#3c5367':'#344a5e';pen.fillRect(x+width*.66,y,Math.max(3,width*.34),height);
+   pen.fillStyle='#263a4d';pen.fillRect(x-1,y-3,width+3,5);
+   if(index%3===0){pen.fillRect(x+width*.4,y-16,width*.24,16);pen.fillRect(x+width*.5,y-30,2,14);}
+   pen.fillStyle=layer?'#536477':'#455b70';for(let row=y+18;row<cv.height-12;row+=24)for(let col=x+7;col<x+width-4;col+=12)pen.fillRect(col,row,4,7);
+   x+=width;index++;
+  }
+  const texture=new T.CanvasTexture(cv);texture.colorSpace=T.SRGBColorSpace;texture.anisotropy=8;textures.push(texture);
+  const mat=new T.MeshBasicMaterial({map:texture,transparent:true,alphaTest:.15,side:T.DoubleSide,depthWrite:true,fog:true});materials.push(mat);
+  const d=layer?150:166,h=layer?35:48;
+  for(let side=0;side<4;side++){const card=mesh(new T.PlaneGeometry(d*2,h),mat,side<2?[0,h/2-.18,(side?1:-1)*d]:[(side===2?1:-1)*d,h/2-.18,0],`city-painted-horizon-${layer}-${side}`);card.rotation.y=side===0?0:side===1?Math.PI:side===2?-Math.PI/2:Math.PI/2;card.castShadow=false;card.receiveShadow=false;card.layers.set(NOINK);}
+ }
  return {root,materials,textures,blockers,windowMaterial,asphalt};
 }

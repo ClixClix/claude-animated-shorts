@@ -2,7 +2,7 @@ import * as T from 'three';
 import {NOINK} from '../../../videos/bridge/ink';
 import {cardShade} from '../../../videos/bridge/cardshade';
 import {ROOM,V3} from '../../cafe/config';
-import {EpisodeState,streetActivity} from './timeline';
+import {EpisodeState,streetActivity,blanketSurface,thresholdSurface} from './timeline';
 import {shelterState,streetCatPosition} from './shelter';
 import {contactShadow} from './actors';
 
@@ -40,9 +40,10 @@ export class TownPopulation{
    const walking=guest?guest.walking:i<2&&!(s.shot.number===6&&s.t>=10.8&&s.t<11.5),t=s.t;
    // Street activity clears before the blackout. Patrons stay in fixed existing seats.
    cat.mesh.visible=cat.shadow.mesh.visible=guest?guest.visible:i<2?streetActivity(s):s.shot.number>=50&&!(s.shot.number===59&&s.shot.variant===0);
-   const pos=guest?guest.position:i<2?streetCatPosition(s,i):i===2?[2.38,.51,-2.14]:[.96,.51,2.13];
+   const pos=guest?[...guest.position] as V3:i<2?streetCatPosition(s,i):i===2?[2.38,.51,-2.14]:[.96,.51,2.13];
+   if(guest)pos[1]=Math.max(pos[1],blanketSurface(pos as V3)*s.blanketLay,thresholdSurface(pos as V3));
    cat.mesh.scale.setScalar(i>=4?.66:1);
-   cat.mesh.position.set(...pos as [number,number,number]);cat.shadow.mesh.position.set(pos[0],(i>=4?.036:pos[1]+.006),pos[2]);
+   cat.mesh.position.set(...pos as [number,number,number]);cat.shadow.mesh.position.set(pos[0],(i>=4?Math.max(.036,pos[1]+.006):pos[1]+.006),pos[2]);
    cat.mesh.rotation.y=Math.atan2(s.camera[0]-pos[0],s.camera[2]-pos[2]);
    const g=cat.canvas.getContext('2d')!,coat=['#aa8061','#7e8b93','#b18c65','#84928b','#9e8b7d','#ac8c6e','#75838e','#a69c86'][i],dark=['#7c5746','#55616d','#7d5e46','#596e67','#685a54','#75634e','#455466','#6d6b65'][i];
    g.clearRect(0,0,320,400);g.save();g.translate(160,0);g.lineWidth=6;g.lineJoin='round';g.strokeStyle='#343241';

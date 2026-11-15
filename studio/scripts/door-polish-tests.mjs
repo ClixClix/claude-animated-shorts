@@ -24,7 +24,7 @@ for(let frame=0;frame<manifest.durationInFrames;frame++){
  const s=t.stateAt(frame,shots);check(JSON.stringify(s)===JSON.stringify(t.stateAt(frame,shots)),'Non-deterministic frame '+frame);
  check([...s.camera,...s.target,...s.latte.position,...s.mocha.position,...s.essie.position,...s.kitten,...s.bowl].every(Number.isFinite),'Invalid transform');
  check(s.kitten[1]>=-.001&&s.bowl[1]>=-.0001,'Floor clipping');
- if(s.t>119.2&&!s.flashback)check(Math.abs(s.bowl[1])<1e-8,'Released bowl floats');
+ if(s.t>119.6&&!s.flashback)check(Math.abs(s.bowl[1]-t.blanketSurface(s.bowl))<1e-8,'Released bowl does not rest on the settled blanket');
  if(last&&!s.flashback&&!last.flashback&&s.t>=27&&last.t>=27){
   for(const id of ['latte','mocha','essie'])check(t.distance(s[id].position,last[id].position)<.35,id+' teleports');
   check(t.distance(s.kitten,last.kitten)<.15,'Kitten teleports');
@@ -57,7 +57,7 @@ for(const base of [83.0,94.0,122.7])one(base,'kitten-meow');
 for(const base of [79.0,84.0,112.8])one(base,'blanket-rustle');
 // No clock tick over the shelter guests; the clock is no longer this insert.
 // No door hinge over the departing bus: the entrance is already open.
-one(48.1,'slip');one(55.6,'door-slam');one(57.0,'switch-click');one(109.1,'door-hinge');one(118.5,'bowl-contact');one(120.5,'blanket-rustle');one(131.7,'warm-accent');
+one(48.1,'slip');one(55.6,'door-slam');events.push({frame:Math.round(manifest.narration.unitTimes['14'].start*30),type:'switch-click'});one(109.1,'door-hinge');one(118.5,'bowl-contact');one(120.5,'blanket-rustle');one(131.7,'warm-accent');
 for(let base=88;base<93;base+=1.1)one(base,'blanket-rustle');
 events.sort((a,b)=>a.frame-b.frame);await fs.writeFile(path.join(out,'SFX_CUES.json'),JSON.stringify({fps:30,duration:manifest.durationInFrames/30,rainStart:t.actualAt(26.5*30,shots)/30,events},null,2)+'\n');
 await fs.writeFile(path.join(out,'STRUCTURAL_QA.json'),JSON.stringify({checks,passed:true,shots:shots.length,frames:manifest.durationInFrames,maximumShotFrames:Math.max(...shots.map(s=>s.end-s.start)),protectedHashes:Object.keys(baseline).length,plantedFootTargets:seenFeet.size,states:stateRows},null,2)+'\n');

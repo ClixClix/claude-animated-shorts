@@ -52,6 +52,8 @@ export const BOWL_REST:V3=[3.124228,0,3.424509];
 export const CLOCK:V3=[-8.4,15.2,-13.4];
 export const SIGN:V3=[-2.15,0.40,3.42];
 export const LANTERN:V3=[-0.96,0,2.62];
+export const ENTRY_THRESHOLD={x:2.25,z:4.24,halfWidth:.71,halfDepth:.09,height:.05};
+export function thresholdSurface(p:V3){const e=ENTRY_THRESHOLD;return Math.abs(p[0]-e.x)<=e.halfWidth&&Math.abs(p[2]-e.z)<=e.halfDepth?e.height:0;}
 
 export type Key={time:number;position:V3};
 export const KITTEN_PATH:Key[]=[{time:0,position:KITTEN_WAIT},{time:99,position:KITTEN_WAIT},{time:100,position:[4.6,.03,5.45]},{time:101,position:[4.6,.03,5.45]},{time:103,position:KITTEN_WAIT},{time:121.5,position:KITTEN_WAIT},{time:124,position:KITTEN_REST},{time:136,position:KITTEN_REST}];
@@ -102,9 +104,10 @@ export function feetAt(travel:number,keys:Key[]){
 
 export function blanketSurface(p:V3){
  const x=(p[0]-2.22)/1.9,u=(p[2]-2.72)/1.32;
- return Math.abs(x)<=.5&&u>=0&&u<=1?.004+.012*Math.sin(x*16)**2*Math.sin(u*Math.PI):0;
+ return Math.abs(x)<=.5&&u>=0&&u<=1?.010+.012*Math.sin(x*16)**2*Math.sin(u*Math.PI):0;
 }
 export function supportHeight(p:V3,seed:number){
+ if(thresholdSurface(p)>0)return thresholdSurface(p);
  if(seed===0&&p[2]<4.25&&blanketSurface(p)>0)return blanketSurface(p);
  if(seed===2&&p[0]>=-.505&&p[0]<=.545&&p[2]>=-2.58&&p[2]<=-1.58)return .6;
  if(seed===0&&p[2]>=12.3)return .20;
@@ -113,7 +116,7 @@ export function supportHeight(p:V3,seed:number){
 }
 export type Actor={feet:V3[];footKeys:string[];position:V3;heading:V3;pose:Partial<CatPose>;travel:number;moving:boolean;emotion:number};
 function actor(t:number,keys:Key[],seed:number):Actor{
- const p=pathAt(t,keys),moving=p.inMotion;if(seed===0&&blanketSurface(p.position)>0)p.position[1]=blanketSurface(p.position);
+ const p=pathAt(t,keys),moving=p.inMotion;if(seed===0&&blanketSurface(p.position)>0)p.position[1]=blanketSurface(p.position);p.position[1]=Math.max(p.position[1],thresholdSurface(p.position));
  let segment=keys.findIndex((k,i)=>i>0&&t<k.time);if(segment<0)segment=keys.length-1;let begin=Math.max(0,segment-1),end=segment;while(begin>0&&distance(keys[begin-1].position,keys[begin].position)>.001)begin--;while(end<keys.length-1&&distance(keys[end].position,keys[end+1].position)>.001)end++;
  let priorTravel=0;for(let i=1;i<=begin;i++)priorTravel+=distance(keys[i-1].position,keys[i].position);const walkTravel=Math.max(0,p.travel-priorTravel);
  const feet=feetAt(walkTravel,keys.slice(begin,end+1));for(const foot of feet)foot.position[1]=supportHeight(foot.position,seed)+foot.lift;
@@ -128,6 +131,7 @@ export function stateAt(frame:number,shots:EpisodeShot[]=DRAFT_SHOTS,taps:number
  // Only the visible opening is recalled; the other ending shots retain present-day staging.
  if(n===58&&sample.shot.variant===0)t=109+sample.u*1.55;
  const latte=actor(t,LATTE_PATH,0),mocha=actor(t,MOCHA_PATH,1),essie=actor(t,ESSIE_PATH,2);
+ latte.position[1]=Math.max(latte.position[1],blanketSurface(latte.position)*beat(t,119,119.6));
 
  latte.emotion=t>=23.5&&t<26.5?lerp(1,.35,beat(t,23.5,26)):1-beat(t,108,124);latte.pose={...latte.pose,yaw:latte.moving?-.9:-.05,headTurn:-.25*beat(t,28,37),gazeX:-.6,earLeft:.35*latte.emotion,earRight:.35*latte.emotion,headTilt:-.04*latte.emotion};
  if(t>=46.5&&t<49){latte.pose.headTilt=(latte.pose.headTilt??0)-.17*Math.sin(Math.PI*clamp((t-46.5)/2.5));latte.pose.tail=.45*Math.sin(Math.PI*clamp((t-46.5)/2.5));}
@@ -155,6 +159,7 @@ export function stateAt(frame:number,shots:EpisodeShot[]=DRAFT_SHOTS,taps:number
  latte.pose.expression=t>=124?'neutral':'concerned';
  latte.emotion=t<26.5?.12:t<39.5?.24:t<54?.52:t<71?.28:t<78?.62:t<83?.94:t<86?.26:t<95?.66:t<103?.42:t<108?.88:.5*(1-beat(t,108,121));
  if(n===10)latte.emotion=.52;
+ if(n===12&&sample.shot.variant===1){latte.emotion=.08;latte.pose.headTilt=-.035;latte.pose.earLeft=latte.pose.earRight=-.08;}
  if(n===13||n===14){latte.emotion=0;latte.pose.expression='happy';latte.pose.tail=.4;}
  if(n===34)latte.emotion=.5+.18*sample.shot.variant;
  if(n===38||n===43){latte.pose.expression=sample.u<.23?'surprised':'concerned';latte.emotion=sample.u<.23?.7:.28;}
@@ -164,7 +169,7 @@ export function stateAt(frame:number,shots:EpisodeShot[]=DRAFT_SHOTS,taps:number
  if(n===49)latte.emotion=.95;
  if(n===26&&sample.shot.variant===1){latte.pose.yaw=.96;latte.pose.headTurn=0;latte.pose.gazeX=.8;}
  if(n===30){latte.pose.yaw=-.95;latte.pose.headTurn=0;latte.pose.gazeX=-.8;latte.pose.gazeY=-.5;}
- const k=pathAt(t,KITTEN_PATH);k.position[1]=.03*(1-beat(4.25-k.position[2],0,.15))+blanketSurface(k.position);
+ const k=pathAt(t,KITTEN_PATH);k.position[1]=Math.max(thresholdSurface(k.position),.03*(1-beat(4.25-k.position[2],0,.15))+blanketSurface(k.position));
  const tapAt=(v:number)=>Math.max(0,1-Math.abs(t-v)/.22);
  const kittenTap=Math.max(tapAt(72.0),tapAt(74.3),tapAt(76.8),tapAt(99.8),tapAt(103.9));
  const door=doorAngleAt(t);
@@ -190,7 +195,7 @@ export function stateAt(frame:number,shots:EpisodeShot[]=DRAFT_SHOTS,taps:number
  if(n===59&&sample.shot.variant===1){mocha.pose.yaw=-.96;mocha.pose.headTurn=0;mocha.pose.headTilt=0;}
  if(n===22&&t>47.55&&t<48.55){latte.pose.expression='surprised';latte.pose.headTilt=-.32*Math.sin(Math.PI*(t-47.55));}
  const mouth=mouthAnchor(s,'essie'),dx=s.camera[0]-essie.position[0],dz=s.camera[2]-essie.position[2],length=Math.hypot(dx,dz)||1;
- s.bowl=t<118.65?[mouth[0]+dx/length*.17,Math.max(0,mouth[1]-.115),mouth[2]+dz/length*.17]:BOWL_REST;
+ s.bowl=t<118.65?[mouth[0]+dx/length*.17,Math.max(0,mouth[1]-.115),mouth[2]+dz/length*.17]:[BOWL_REST[0],blanketSurface(BOWL_REST)*s.blanketLay,BOWL_REST[2]];
  return s;
 }
 function setCamera(s:EpisodeState){
@@ -211,7 +216,7 @@ function setCamera(s:EpisodeState){
  case 9:set([-.80,1.8,6.05],[-.90,2.1,4.24],62,['shadow']);break;
  case 10:set([-.6,1.25,8.5],latte,40,['latte']);break;
  case 11:{const q=groupedProgress(s,[11]);set([s.latte.position[0]+.15,1.20,s.latte.position[2]+.55],mix([-6,3.05,6.5],[4.5,3.05,12],ease(q)),92,[]);break;}
- case 12:set([-1.00,1.15,8.1],latte,40,['latte']);break;
+ case 12:if(!v){const p=STREETLIGHTS[2];set([p[0]+1.4,2.4,p[2]+2.3],[p[0],3.08,p[2]],62,['light-3'],.35);}else set([-1.00,1.15,8.1],latte,40,['latte']);break;
  case 13:{const m=mouseAt(t);set([s.latte.position[0]+2.6,1.7,5.05],mix(latte,[m[0],.4,m[2]],.25),80,['latte','mouse']);break;}
  case 14:{const m=mouseAt(t);set([5.9,1.8,s.latte.position[2]+2.0],mix(latte,[m[0],.4,m[2]],.25),78,['latte','mouse']);break;}
  case 15:{const p=STREETLIGHTS[0];set([p[0]+1.6,2.6,p[2]+2.6],[p[0],3.05,p[2]],52,['light-1']);break;}
@@ -225,7 +230,7 @@ function setCamera(s:EpisodeState){
  case 23:set([7.2,2.2,8.5],[3.15,1.0,12.3],78,['home-door']);break;
  case 24:if(!v){const p=STREETLIGHTS[8];set([p[0]+2.9,2.8,p[2]-2.15],[p[0],3.08,p[2]],58,['light-9']);}else set([-10.5,3.1,9.2],[4,2.8,22],94,['other-buildings']);break;
  case 25:set([2.35,1.2,14.55],[3.12,1.1,12.3],57,['home-door']);break;
- case 26:if(!v)set([3.8,2.5,15.7],latte,88,['latte']);else if(v===1)set([4.04,1.15,14.9],[4.15,.85,13.1],76,['latte','switch']);else latteHome(true);break;
+ case 26:if(!v)set([3.8,2.5,15.7],latte,88,['latte']);else if(v===1)set([4.04,1.15,14.9],[4.33,1.02,13.1],66,['latte','switch'],.5);else latteHome(true);break;
  case 27:{const x=-1+11*ease(u);set([-10.5,3.1,9.2],[x,2.8,23],94,['other-buildings']);break;}
  case 28:case 29:{const q=groupedProgress(s,[28,29]);set(mix([4.8,1.55,9.3],[3.9,2.2,8.8],ease(q)),mix([-1,1.7,4.2],[0,1.9,4.2],ease(q)),100-17*ease(q),['cafe']);break;}
  case 30:set([1.15,1.05,14.8],CLOCK,70-52*ease(u),['clock']);break;
@@ -268,9 +273,9 @@ function setCamera(s:EpisodeState){
  case 53:set([2.45,.70,4.28],[3.12,.62,3.49],89,['bowl','essie']);break;
  case 54:set([3.65,1.75,4.08],[2.0,.36,3.32],64,['blanket','mocha']);break;
  case 55:set([1.8,.78,2.7],kitten,54,['kitten']);break;
- case 56:set(mix([2.9,1.3,2.95],[.1,2.2,2.85],beat(u,.55,1)),mix([2.35,.65,4.45],[-3.25,.65,3.35],beat(u,.55,1)),82,u<.5?['latte','kitten']:u>.9?['flowerpot']:[]);break;
+ case 56:{const q=beat(u,.55,.94);set(mix([2.9,1.3,2.95],[-1.7,1.1,1.5],q),mix([2.35,.65,4.45],[-3.25,.65,3.35],q),82-16*q,u<.5?['latte','kitten']:u>.9?['flowerpot']:[]);break;}
  case 57:{
-  if(v===0)set([-1.7,1.1,1.5],[-3.25,.65,3.35],66,['flowerpot']);
+  if(v===0)set([-1.7,1.1,1.5],[-3.25,.65,3.35],66,['flowerpot'],.45);
   else if(v===1)set([3.3,1.2,2.8],latte,74,['latte']);
   else {const parts=s.editShots!.filter(q=>q.number===57&&q.variant>=2),q=clamp((s.frame-parts[0].start)/(parts.at(-1)!.end-parts[0].start));set(mix([-2.15,.74,1.4],[-2.15,.68,1.6],ease(q)),SIGN,58,['sign']);}break;
  }
@@ -293,7 +298,7 @@ function setCamera(s:EpisodeState){
  // Fit requested faces/bodies inside the actual portrait frustum, not just their center marker.
  const close=new Set([10,12,14,18,28,32,35,38,42,45,49,50,57,59]);
  const fitIds=s.required.filter(id=>['latte','mocha','essie','kitten'].includes(id));
- if(fitIds.length){
+ if(fitIds.length&&!(n===26&&v===1||n===59&&v===1)){
   const sub=(a:V3,b:V3)=>a.map((v,i)=>v-b[i]) as V3,dot=(a:V3,b:V3)=>a.reduce((n,v,i)=>n+v*b[i],0),norm=(a:V3)=>{const l=Math.hypot(...a)||1;return a.map(v=>v/l) as V3;};
   const forward=norm(sub(s.target,s.camera)),right=norm([-forward[2],0,forward[0]]),up:V3=[right[1]*forward[2]-right[2]*forward[1],right[2]*forward[0]-right[0]*forward[2],right[0]*forward[1]-right[1]*forward[0]];
   let tangent=Math.tan(s.fov*Math.PI/360);

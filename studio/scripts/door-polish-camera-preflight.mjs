@@ -17,7 +17,8 @@ import {mouthAnchor,noseAnchor} from './contacts';
 export function run(props){
  const w=new EpisodeWorld(false),camera=new T.PerspectiveCamera(48,1080/1920,.08,320),flags=[],cameraFlags=[],assets=[],contactFlags=[],occluders={};let checked=0;
  w.root.traverse(o=>{if(o instanceof T.Mesh){if(!o.geometry?.getAttribute('position')?.count||!o.material)assets.push(o.name);const materials=Array.isArray(o.material)?o.material:[o.material];for(const m of materials)if(m.map&&(!m.map.image?.width||!m.map.image?.height))assets.push(o.name+':texture');}});
- for(const name of ['night-stars','bus-stop-pictogram','bus-stop-platform','latte-cat-bed','home-food','home-water','latte-hiding-box','door-open-plaque'])if(!w.root.getObjectByName(name))assets.push(name);
+ for(const name of ['night-stars','bus-stop-pictogram','bus-stop-platform','latte-cat-bed','home-food','home-water','latte-hiding-box','door-open-plaque','cafe-entry-threshold','planter-solid-rim','planter-soil','planter-saucer','planter-stem'])if(!w.root.getObjectByName(name))assets.push(name);
+ for(let layer=0;layer<2;layer++)for(let side=0;side<4;side++){const card=w.root.getObjectByName('city-painted-horizon-'+layer+'-'+side);if(!card||card.material.alphaTest<=0||!card.material.map||card.castShadow)assets.push('invalid-painted-horizon-'+layer+'-'+side);}
  const roles=[...w.cafe.fixtures].map(([id,o])=>({id,role:o.userData.role}));
  for(let frame=0;frame<props.shots.at(-1).end;frame++){
   if(props.inspectFrame!==undefined&&frame!==props.inspectFrame)continue;checked++;

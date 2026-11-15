@@ -47,19 +47,22 @@ for(const g of groups){
  previousSource=to;previousTarget=to;
  entries.forEach((s,j)=>{
   const end=j===entries.length-1?start+length:start+Math.round(length*entries.slice(0,j+1).reduce((n,x)=>n+editorialFrames(x),0)/baseDuration);
-  const pieces=s.number===11?3:s.number===57?5:[58].includes(s.number)?4:[5,11,26,34,59,60].includes(s.number)?3:[1,24,36,37,38,39,42,45,50].includes(s.number)?2:Math.ceil((end-frame)/120),originalStart=frame;
+   const pieces=s.number===11?3:s.number===57?5:[58].includes(s.number)?4:[5,11,26,34,59,60].includes(s.number)?3:[1,12,24,36,37,38,39,42,45,50].includes(s.number)?2:Math.ceil((end-frame)/120),originalStart=frame;
   for(let k=0;k<pieces;k++){
    const cuts=Array.from({length:pieces+1},(_,i)=>originalStart+Math.round((end-originalStart)*i/pieces));
    const placement=placements.at(-1);
    const atWord=(text,from)=>{const w=meta.timing.words.find(w=>w.text===text&&w.start>=from);if(!w)throw Error('Missing editorial word '+text);return Math.round((placement.targetStart+w.start-placement.sourceStart)*30);};
    if(s.number===1)cuts[1]=originalStart+Math.round((end-originalStart)*.64);
+   if(s.number===12)cuts[1]=atWord('he',15.8);
+   if(s.number===26){cuts[1]=atWord('hit',30.5);cuts[2]=atWord('Nothing',32.3);}
    if(s.number===50)cuts[1]=atWord('there',79.9);
    if(s.number===57){cuts[1]=atWord('Latte',90.8);cuts[2]=atWord('It',92.3);cuts[3]=atWord('If',93.3);cuts[4]=atWord('come',94.8);}
    if(s.number===60){cuts[1]=atWord('The',108.1);cuts[2]=atWord('But',109.3);}
    if(s.number===58){cuts[1]=atWord('at',97.9);cuts[2]=atWord('just',98.8);cuts[3]=atWord('in',100.4);}
    if(s.number===59){cuts[1]=atWord('He',103.7);cuts[2]=atWord('anyone',104.7);}
    const a=cuts[k],b=cuts[k+1];
-   const sourceStart=s.start+(s.end-s.start)*k/pieces,sourceEnd=s.start+(s.end-s.start)*(k+1)/pieces;
+   let sourceStart=s.start+(s.end-s.start)*k/pieces,sourceEnd=s.start+(s.end-s.start)*(k+1)/pieces;
+   if(s.number===26){const range=[54,56.8,57.27,58.5];sourceStart=range[k]*30;sourceEnd=range[k+1]*30;}
    shots.push({id:`${String(s.number).padStart(2,'0')}${pieces>1?String.fromCharCode(65+k):''}`,number:s.number,variant:k,start:a,end:b,sourceStart,sourceEnd,direction:s.direction,purpose:pieces>1?`${s.direction} — purposeful detail ${k+1}/${pieces}`:s.direction,flashback:s.number===58&&k===0||s.number===59&&k===1});
   }
   frame=end;

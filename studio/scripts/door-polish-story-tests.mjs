@@ -16,6 +16,12 @@ check(plan.narration.pauses.reduce((n,p)=>n+p.seconds,0)<1/30,'Narration tail lo
 check(captions.every((c,i)=>!(/\s/.test(c.text.trim()))&&c.end>c.start&&c.end<=(captions[i+1]?.start??plan.durationInFrames)),'Captions must be one word, readable, non-overlapping');
 for(const p of plan.narration.placements)check(Math.abs(p.targetStart-p.sourceStart)<1e-9&&Math.abs(p.targetEnd-p.sourceEnd)<1e-9,'Voice was delayed to accommodate a picture');
 const shot=id=>{const q=shots.find(s=>s.id===id);check(!!q,'Missing new acting beat '+id);return q;};
+check(shots.filter(s=>s.number===12).length===2,'Safe-lights beat must cut from lit lamp to relief');
+check(t.stateAt(shot('12A').start,shots).required.includes('light-3')&&t.stateAt(shot('12B').start,shots).required.includes('latte'),'Safe-lights edit lacks its cause and reaction');
+const clickFrame=Math.round(plan.narration.unitTimes['14'].start*30),click=t.stateAt(clickFrame,shots);
+check(click.shot.id==='26B'&&click.required.includes('switch'),'Switch press must remain visible on the spoken Click');
+const potBefore=t.stateAt(shot('56').end-1,shots),potAfter=t.stateAt(shot('57A').start,shots);
+check(t.distance(potBefore.camera,potAfter.camera)<.03&&Math.abs(potBefore.fov-potAfter.fov)<.3,'Flowerpot shot jumps at the pan-to-detail cut');
 const first=t.stateAt(shot('50A').start,shots),last=t.stateAt(shot('50A').end-1,shots);
 check(first.required.includes('latte')&&first.latte.pose.blink>.95&&last.latte.pose.blink<.05,'Latte must visibly reopen eyes before Mocha');
 check(t.stateAt(shot('50B').start,shots).required.includes('mocha'),'Mocha reveal must follow eyes opening');

@@ -1,3 +1,19 @@
+# Latest wrap-up: pacing, entrance floor, skyline, switch and planter
+
+The user clarified that the remaining floor glitch is **right before the cafe door**, and requested wrapping up at 3% usage. Keep this a small correction pass.
+
+- “If they were all glowing” now cuts from a lit-lamp insert to Latte relaxing, on the existing narration word boundary. Speech and episode duration are unchanged; the edit now has 81 cuts.
+- The cafe entrance has one solid stationary threshold joining the indoor floor and sidewalk; the old overlapping bottom rail is removed by the episode adapter. Shared support heights carry paws and shadows over it. Blanket/bowl support and fabric filtering were also stabilized.
+- Two illustrated 2D skyline layers on all four sides sit behind the existing 3D city, with transparent roof silhouettes, no rectangular ink borders and real depth separation. They close distant road views without adding foreground clutter.
+- The switch press remains in one steady close view through the spoken “Click”, then cuts to the reaction. The mechanical SFX cue uses that cached word timestamp. Existing nose interactions and lighting are preserved.
+- The existing flowerpot has a solid rim, soil, stem and saucer. Its camera move settles before the cut, with matching framing on the detail shot.
+
+TypeScript, current timing/contact/rig and revision-plan tests were run. Camera/geometry/alpha checks cover all 3,349 frames. No new audio generation or cloud scene rendering. Actual updated LOCAL visual review remains required; do not call a written/source change visually approved.
+
+Run the same Windows source update and `Preview-Polish.cmd`. Keep old movies and cached audio intact. The separate 122.208s revised narration remains generated but NOT visually integrated; that is a distinct remaining task, and its paid approval is consumed. Read EPISODE1_AUDIO_DELIVERY.md before continuing.
+
+---
+
 # Final minor visual corrections — current source pass
 
 Baseline supplied by the user: `Polish_Review_68c31d7f_540p.mp4`. The user says the episode is very close and requests minor fixes; do not rewrite or redesign. Checkpoint before this pass: `checkpoint/before-final-minor-fixes-20261115` (0a2fb31).

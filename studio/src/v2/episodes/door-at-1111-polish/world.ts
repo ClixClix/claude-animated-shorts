@@ -5,7 +5,7 @@ import {batchCafe} from './batch';
 import {CafeEnvironment} from '../../cafe/environment';
 import {NOINK} from '../../../videos/bridge/ink';
 import {V3} from '../../cafe/config';
-import {EpisodeState,HOME,CLOCK,SIGN,LANTERN,STREETLIGHTS,mouseAt,clamp,beat,lerp,mix} from './timeline';
+import {EpisodeState,HOME,CLOCK,SIGN,LANTERN,STREETLIGHTS,ENTRY_THRESHOLD,mouseAt,clamp,beat,lerp,mix} from './timeline';
 
 /** Episode extensions only. The permanent café constructor/configuration remain the sole source. */
 export class EpisodeWorld{
@@ -66,6 +66,9 @@ export class EpisodeWorld{
   const entrance=this.cafe.root.getObjectByName('entrance') as T.Group;this.cafe.root.updateMatrixWorld(true);const pivot=new T.Group();pivot.name='episode-cafe-door-hinge';pivot.position.x=-.725;entrance.add(pivot);this.cafe.root.updateMatrixWorld(true);
   const leaf=entrance.children.filter(c=>c!==pivot&&(c.name.endsWith('/glass')||Math.abs(c.position.x+.02)<.001||Math.abs(c.position.y-.24)<.001||Math.abs(c.position.x-.48)<.001||Math.abs(c.position.y-2.3)<.001));for(const child of leaf)pivot.attach(child);
   const pane=leaf.find(o=>o.name.endsWith('/glass')) as T.Mesh|undefined;if(pane){const mat=new T.MeshStandardMaterial({color:'#d5c5a4',roughness:1,side:T.DoubleSide,transparent:false,opacity:1,emissive:'#7b552c',emissiveIntensity:.10});this.materials.push(mat);pane.material=mat;}
+  // Replace the old bottom rail with one solid sill bridging indoor floor and sidewalk.
+  for(const o of [...entrance.children])if(o instanceof T.Mesh&&Math.abs(o.position.y)<1e-6){o.visible=false;o.removeFromParent();o.geometry.dispose();}
+  const e=ENTRY_THRESHOLD;this.box(this.root,[e.halfWidth*2,e.height,e.halfDepth*2],[e.x,e.height/2,e.z],'#a5957b',false).name='cafe-entry-threshold';
   const nosePlate=this.box(pivot,[.16,.15,.045],[.58,.69,-.10],'#bca776',false);nosePlate.name='door-nose-push-plate';this.props.set('nose-plate',nosePlate);
   this.props.set('door',pivot);return pivot;
  }
@@ -184,7 +187,15 @@ export class EpisodeWorld{
   this.box(homeTrim,[4.4,.10,.055],[2.25,.27,16.075],'#b19c7e',false);
   for(const x of [-.015,4.515])this.box(homeTrim,[.055,.10,3.7],[x,.27,14.2],'#b19c7e',false);
   const rug=this.box(homeTrim,[1.3,.012,1.65],[1.1,.206,13.8],'#647c7a',false);rug.name='home-woven-rug';
-  for(const x of [.52,1.68])this.box(homeTrim,[.035,.002,1.5],[x,.213,13.8],'#a8ac96',false);
+  const rugCanvas=document.createElement('canvas');rugCanvas.width=rugCanvas.height=256;const rugPaint=rugCanvas.getContext('2d')!;rugPaint.fillStyle='#647c7a';rugPaint.fillRect(0,0,256,256);rugPaint.fillStyle='#a8ac96';for(const x of [12,237])rugPaint.fillRect(x,12,7,232);
+  const rugTexture=new T.CanvasTexture(rugCanvas);rugTexture.colorSpace=T.SRGBColorSpace;rugTexture.anisotropy=8;this.textures.push(rugTexture);(rug.material as T.MeshStandardMaterial).map=rugTexture;(rug.material as T.MeshStandardMaterial).color.set('#ffffff');
+  // Keep the original planter fixed; give its close-up a solid rim and rooted foliage.
+  const plant=this.cafe.fixtures.get('entrance-plant')!;
+  this.cylinder(plant,.25,.25,.03,[0,.015,0],'#945f48').name='planter-saucer';
+  this.cylinder(plant,.252,.252,.018,[0,.462,0],'#554a3e').name='planter-soil';
+  const rim=this.add(plant,new T.TorusGeometry(.274,.027,10,32),this.mat('#be825e'),[0,.46,0],false);rim.rotation.x=Math.PI/2;rim.name='planter-solid-rim';
+  this.cylinder(plant,.018,.021,.28,[0,.53,0],'#4d6c51').name='planter-stem';
+  const cafeRug=this.cafe.fixtures.get('cat-rug')!;for(const child of cafeRug.children)if(child instanceof T.Mesh&&Math.abs(child.position.y-.006)<.0001)child.position.y=.015;
   const cushion=this.box(homeTrim,[.38,.13,.32],[2.75,.445,15.45],'#ad876b',false);cushion.rotation.y=.2;
   this.box(homeTrim,[.58,.055,.3],[4.34,1.65,15.3],'#997653');
   this.cylinder(homeTrim,.10,.08,.17,[4.34,1.76,15.3],'#9f9c7c');
@@ -257,7 +268,7 @@ export class EpisodeWorld{
   const light=new T.PointLight('#ffce91',8,8,2);light.position.set(0,.30,0);g.add(light);this.props.set('lantern',g);return light;
  }
  private cloth(name:string,color:string,w:number,h:number){
-  const geo=new T.PlaneGeometry(w,h,20,16),mat=this.mat(color);mat.side=T.DoubleSide;const cv=document.createElement('canvas');cv.width=cv.height=128;const g=cv.getContext('2d')!;g.fillStyle=color;g.fillRect(0,0,128,128);for(let i=0;i<4;i++){g.fillStyle='rgba(230,221,185,.14)';g.fillRect(i*32,0,9,128);g.fillRect(0,i*32,128,9);g.fillStyle='rgba(45,55,48,.12)';g.fillRect(i*32+13,0,2,128);g.fillRect(0,i*32+13,128,2);}const tx=new T.CanvasTexture(cv);tx.colorSpace=T.SRGBColorSpace;tx.wrapS=tx.wrapT=T.RepeatWrapping;tx.repeat.set(2,1.4);this.textures.push(tx);mat.map=tx;mat.color.set('#ffffff');const mesh=new T.Mesh(geo,mat);mesh.name=name;mesh.castShadow=mesh.receiveShadow=true;return mesh;
+  const geo=new T.PlaneGeometry(w,h,20,16),mat=this.mat(color);mat.side=T.DoubleSide;const cv=document.createElement('canvas');cv.width=cv.height=128;const g=cv.getContext('2d')!;g.fillStyle=color;g.fillRect(0,0,128,128);for(let i=0;i<4;i++){g.fillStyle='rgba(230,221,185,.14)';g.fillRect(i*32,0,9,128);g.fillRect(0,i*32,128,9);g.fillStyle='rgba(45,55,48,.12)';g.fillRect(i*32+13,0,2,128);g.fillRect(0,i*32+13,128,2);}const tx=new T.CanvasTexture(cv);tx.colorSpace=T.SRGBColorSpace;tx.wrapS=tx.wrapT=T.RepeatWrapping;tx.repeat.set(2,1.4);tx.anisotropy=8;this.textures.push(tx);mat.map=tx;mat.color.set('#ffffff');const mesh=new T.Mesh(geo,mat);mesh.name=name;mesh.castShadow=mesh.receiveShadow=true;return mesh;
  }
  private makeBowl(){
   this.bowl.name='fresh-water-bowl';this.cylinder(this.bowl,.19,.15,.12,[0,.06,0],'#acbda9');
@@ -303,12 +314,12 @@ export class EpisodeWorld{
    const v=column/20;
    const tug=.035*Math.sin(s.t*7)*beat(s.t,110,112)*(1-beat(s.t,114.5,115));
    const held:V3=[Math.max(-3.7,Math.min(3.7,mouth[0]+right.x*v*2.3)),.006+(mouth[1]-.006)*(1-u)*(1-.85*Math.sqrt(v))+tug*v*(1-u)+.025*Math.sin(v*19+u*5)**2*v*(1-u),Math.min(4.10,mouth[2]+right.z*v*2.3+u*.42)];
-   const spread:V3=[2.22+x*1.9,.004+.012*Math.sin(x*16)**2*Math.sin(u*Math.PI),2.72+u*1.32];
+   const spread:V3=[2.22+x*1.9,.010+.012*Math.sin(x*16)**2*Math.sin(u*Math.PI),2.72+u*1.32];
    const point=mix(held,spread,s.blanketLay);p.setXYZ(i,...point);
   }p.needsUpdate=true;this.blanket.geometry.computeVertexNormals();this.blanket.geometry.computeBoundingBox();this.blanket.geometry.computeBoundingSphere();this.blanket.visible=s.t>=85&&!(s.shot.number===58&&s.shot.variant===0||s.shot.number===59&&s.shot.variant===1);
   // A cloth dome over the body, with a lowered front opening for the listening reaction.
   const cover=beat(s.t,78,80.5)*(1-beat(s.t,83.15,84.30));this.homeBlanket.visible=s.t>=54;this.homeBlanket.position.set(.85,.20,13.1);this.homeBlanket.rotation.x=0;
-  const hp=this.homeBlanket.geometry.getAttribute('position');for(let i=0;i<hp.count;i++){const x=(i%21)/20-.5,z=Math.floor(i/21)/16-.5;hp.setXYZ(i,x*1.25,.004+cover*(.04+.94*Math.sqrt(Math.max(0,1-(x*2)**2))*(.65+.35*Math.cos(z*Math.PI*1.5))+.026*Math.sin(x*25+z*8)**2*Math.sin((z+.5)*Math.PI)),z*1.45);}hp.needsUpdate=true;this.homeBlanket.geometry.computeVertexNormals();this.homeBlanket.geometry.computeBoundingBox();this.homeBlanket.geometry.computeBoundingSphere();
+  const hp=this.homeBlanket.geometry.getAttribute('position');for(let i=0;i<hp.count;i++){const x=(i%21)/20-.5,z=Math.floor(i/21)/16-.5;hp.setXYZ(i,x*1.25,.018+cover*(.04+.94*Math.sqrt(Math.max(0,1-(x*2)**2))*(.65+.35*Math.cos(z*Math.PI*1.5))+.026*Math.sin(x*25+z*8)**2*Math.sin((z+.5)*Math.PI)),z*1.45);}hp.needsUpdate=true;this.homeBlanket.geometry.computeVertexNormals();this.homeBlanket.geometry.computeBoundingBox();this.homeBlanket.geometry.computeBoundingSphere();
   this.rain.visible=s.rain>.01;const ra=this.rain.geometry.getAttribute('position');for(let i=0;i<240;i++){
    const hash=(n:number)=>{const a=Math.sin(n*75.31+16.7)*43758.5453;return a-Math.floor(a);};
    const x=-8+hash(i)*16,z=4.8+hash(i+110)*7.1,y=((hash(i+300)*7-s.frame/30*4)%7+7)%7;

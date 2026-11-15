@@ -1,3 +1,9 @@
+# Current five-fix wrap-up
+
+See the top of LAST_MINOR_FIXES.md for the latest source candidate and user clarification about the cafe threshold. The preceding twelve-fix pass remains preserved. Current movie timing/audio is unchanged; visual approval requires the new local render. No paid requests were made.
+
+---
+
 # Newest correction list
 
 `LAST_MINOR_FIXES.md` supersedes earlier request lists for the latest source candidate. All twelve requested fixes are implemented and technical frame checks passed; updated local motion/visual approval remains pending. The separate new-narration visual integration is still pending.

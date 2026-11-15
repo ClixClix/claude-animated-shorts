@@ -2,6 +2,10 @@
 
 Delivery branch: `v2-local-render`. Worktree branch may differ. Inspect Git status/log before edits. Preserve uncommitted files and prior movies.
 
+## Wrap-up at 3% usage
+
+The five newest source corrections are recorded at the top of LAST_MINOR_FIXES.md: quicker visual safe-lights beat, solid door threshold/shared floor support, illustrated 2D city horizon layers, one stable switch-contact shot, and a solid planter with matching camera endpoint. Current edit: 81 cuts / 3,349 frames; original continuous narration unchanged. The user clarified the floor issue is immediately before the cafe door. Stop scope expansion; upload this source and review the actual updated LOCAL preview next. The separate new-narration integration remains pending.
+
 ## Latest minor-fix pass
 
 Read `LAST_MINOR_FIXES.md` for the newest request-by-request record. All twelve requested small corrections are implemented against the current edit: pole clearance, one sidewalk surface, stable shrug shot, alley/bins/avoidance action, distant city fill and blackout framing, puddle skid, readable sign, Mocha nose interactions, and the dumpster jump before the cut. Technical all-frame checks passed; actual updated LOCAL visual review remains pending. The user has low usage; preserve this pass and keep changes small.
