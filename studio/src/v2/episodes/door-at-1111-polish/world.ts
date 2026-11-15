@@ -5,7 +5,7 @@ import {batchCafe} from './batch';
 import {CafeEnvironment} from '../../cafe/environment';
 import {NOINK} from '../../../videos/bridge/ink';
 import {V3} from '../../cafe/config';
-import {EpisodeState,HOME,CLOCK,SIGN,LANTERN,STREETLIGHTS,clamp,beat,lerp,mix} from './timeline';
+import {EpisodeState,HOME,CLOCK,SIGN,LANTERN,STREETLIGHTS,mouseAt,clamp,beat,lerp,mix} from './timeline';
 
 /** Episode extensions only. The permanent café constructor/configuration remain the sole source. */
 export class EpisodeWorld{
@@ -21,7 +21,7 @@ export class EpisodeWorld{
  readonly shadowScreen:T.Mesh;readonly rainPositions:Float32Array;
  constructor(optimize=true){
   this.root.name='door-at-1111-extensions';this.root.add(this.cafe.root);this.door=this.rigDoor();
-  this.home();this.street();this.busStop();this.makeBus();this.parkedCars();this.livingDetails();this.cityBlocks();
+  this.home();this.street();this.busStop();this.makeBus();this.parkedCars();this.livingDetails();this.makeMouse();this.cityBlocks();
   this.clockCanvas.width=this.clockCanvas.height=768;this.clockTexture=new T.CanvasTexture(this.clockCanvas);this.clockTexture.colorSpace=T.SRGBColorSpace;this.textures.push(this.clockTexture);
   const clockGroup=new T.Group();clockGroup.name='episode-clock';clockGroup.position.set(...CLOCK);this.root.add(clockGroup);this.props.set('clock',clockGroup);
   this.cylinder(clockGroup,1.15,1.15,.10,[0,0,-.04],'#bda36d').rotation.x=Math.PI/2;
@@ -131,6 +131,20 @@ export class EpisodeWorld{
   for(const x of [-.65,1.35])this.box(g,[.045,1.75,.06],[x,1.20,-.61],'#344d59',false);
   this.box(g,[2.08,.045,.06],[.35,.34,-.61],'#344d59',false);
   this.box(g,[1.45,.10,.44],[.40,.48,-.35],'#997c56');for(const x of [-.1,.9])this.box(g,[.08,.45,.27],[x,.225,-.35],'#344b50');this.props.set('bus-stop',g);
+ }
+ private makeMouse(){
+  // Episode-only stylized mouse: a real moving actor, not an unexplained camera pan.
+  const m=new T.Group();m.name='alley-chase-mouse';this.root.add(m);this.props.set('alley-chase-mouse',m);
+  const fur=this.mat('#86766c'),nose=this.mat('#c58d8b'),ear=this.mat('#b9908f'),eye=this.mat('#202832');
+  this.add(m,new T.SphereGeometry(.145,12,8),fur,[0,.12,0],false).scale.set(1.5,.72,.75);
+  this.add(m,new T.SphereGeometry(.085,12,8),fur,[.12,.17,-.015],false);
+  for(const side of [-1,1]){
+   this.add(m,new T.SphereGeometry(.058,10,8),ear,[.105,.255,side*.052],false).scale.set(1,.80,.65);
+   this.add(m,new T.SphereGeometry(.018,8,6),eye,[.184,.182,side*.042],false);
+  }
+  this.add(m,new T.SphereGeometry(.022,8,6),nose,[.204,.141,-.01],false);
+  const tailCurve=new T.CatmullRomCurve3([new T.Vector3(-.15,.13,0),new T.Vector3(-.28,.14,.03),new T.Vector3(-.38,.22,.10),new T.Vector3(-.46,.21,.12)]);
+  this.add(m,new T.TubeGeometry(tailCurve,12,.014,6,false),ear,[0,0,0],false);
  }
  private makeBus(){
   // Front faces -X, matching its departure. Wheels meet the road; both sides have windows.
@@ -263,7 +277,8 @@ export class EpisodeWorld{
   const clouds=this.props.get('clouds');if(clouds){clouds.visible=s.t>=26.5;clouds.position.x=-10.8+3*beat(s.t,26.5,28.5);}
   const openingEnd=s.editShots?.filter(q=>q.number===1).at(-1)?.end??54,dusk=s.shot.number===1?1-beat(s.frame,0,openingEnd*.85):0;const sun=this.root.getObjectByName('opening-setting-sun')!;sun.visible=dusk>0;sun.position.set(-52,55,-105);(sun.material as T.MeshBasicMaterial).opacity=dusk;(this.root.getObjectByName('opening-dusk-light') as T.DirectionalLight).intensity=.85*dusk;
   this.door.rotation.y=-s.door;this.homeDoor.rotation.y=-s.homeDoor*1.35;
-  this.traffic.forEach((car,i)=>{car.position.set(i? -12+s.t*2.1:9-s.t*2.2,.03,i?8.85:7.45);car.rotation.y=i?0:Math.PI;car.visible=s.t<29;});
+  const mouse=this.props.get('alley-chase-mouse')!;mouse.visible=s.t>=26.5&&s.t<30.55||s.t>=81.0&&s.t<82.2;if(mouse.visible){const pos=mouseAt(s.t);mouse.position.set(...pos);mouse.rotation.y=s.t>=81?Math.PI/2:Math.atan2(pos[2]-mouseAt(Math.min(82.2,s.t+.06))[2],pos[0]-mouseAt(Math.min(82.2,s.t+.06))[0]);}
+   this.traffic.forEach((car,i)=>{car.position.set(i? -12+s.t*2.1:9-s.t*2.2,.03,i?8.85:7.45);car.rotation.y=i?0:Math.PI;car.visible=s.t<29;});
   this.backgroundTraffic.forEach((car,i)=>{const direction=i%2?1:-1;car.position.set((i<3?18:-18)+direction*1.1,.03,-30+i*11+direction*s.t*2.2);car.rotation.y=direction>0?-Math.PI/2:Math.PI/2;car.visible=s.t<29;});
   const busCallback=s.shot.number===58&&s.shot.variant===2;const busX=busCallback?-2.8-s.u*3.4:s.t<2?-4.5-s.t*2.9:-15;this.bus.position.set(busX,.03,7.7);this.bus.visible=s.t<3||busCallback;
   for(let i=0;i<9;i++){
@@ -298,7 +313,7 @@ export class EpisodeWorld{
    const held:V3=[Math.max(-3.7,Math.min(3.7,mouth[0]+right.x*v*2.3)),.006+(mouth[1]-.006)*(1-u)*(1-.85*Math.sqrt(v))+tug*v*(1-u)+.025*Math.sin(v*19+u*5)**2*v*(1-u),Math.min(4.10,mouth[2]+right.z*v*2.3+u*.42)];
    const spread:V3=[2.22+x*1.9,.004+.012*Math.sin(x*16)**2*Math.sin(u*Math.PI),2.72+u*1.32];
    const point=mix(held,spread,s.blanketLay);p.setXYZ(i,...point);
-  }p.needsUpdate=true;this.blanket.geometry.computeVertexNormals();this.blanket.geometry.computeBoundingBox();this.blanket.geometry.computeBoundingSphere();this.blanket.visible=s.t>=18&&!(s.shot.number===58&&s.shot.variant===0||s.shot.number===59&&s.shot.variant===1);
+  }p.needsUpdate=true;this.blanket.geometry.computeVertexNormals();this.blanket.geometry.computeBoundingBox();this.blanket.geometry.computeBoundingSphere();this.blanket.visible=((s.t>=18&&s.t<26.5)||s.t>=84.5)&&!(s.shot.number===58&&s.shot.variant===0||s.shot.number===59&&s.shot.variant===1);
   // A cloth dome over the body, with a lowered front opening for the listening reaction.
   const cover=beat(s.t,78,80.5)*(1-beat(s.t,83.15,84.30));this.homeBlanket.visible=s.t>=54;this.homeBlanket.position.set(.85,.20,13.1);this.homeBlanket.rotation.x=0;
   const hp=this.homeBlanket.geometry.getAttribute('position');for(let i=0;i<hp.count;i++){const x=(i%21)/20-.5,z=Math.floor(i/21)/16-.5;hp.setXYZ(i,x*1.25,.004+cover*(.04+.94*Math.sqrt(Math.max(0,1-(x*2)**2))*(.65+.35*Math.cos(z*Math.PI*1.5))+.026*Math.sin(x*25+z*8)**2*Math.sin((z+.5)*Math.PI)),z*1.45);}hp.needsUpdate=true;this.homeBlanket.geometry.computeVertexNormals();this.homeBlanket.geometry.computeBoundingBox();this.homeBlanket.geometry.computeBoundingSphere();
