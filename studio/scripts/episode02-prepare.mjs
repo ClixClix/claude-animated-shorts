@@ -39,11 +39,12 @@ const words=(narrationText.match(/[^\s]+/g)||[]).flatMap(item=>{
 // Expected: array of {text,start,end}, timings in seconds from the FINAL processed voice take.
 let alignment=null;
 const alignPath=wantedPath('--words')??path.join(out,'Approved_Word_Timings.json');
-try{alignment=JSON.parse(await fs.readFile(alignPath,'utf8'));}catch(e){if(e.code!=='ENOENT')throw e;}
+try{alignment=JSON.parse(await fs.readFile(alignPath,'utf8'));}catch(e){if(e.code!=='ENOENT'||wantedPath('--words'))throw e;}
 let captions=[];
 if(alignment){
  if(!Array.isArray(alignment)||alignment.length<words.length*.75)throw new Error('Word alignment file is incomplete.');
  captions=alignment.map(x=>({start:Math.round(Number(x.start)*30),end:Math.round(Number(x.end)*30),text:String(x.text).trim()})).filter(c=>c.text&&c.end>c.start);
+ if(captions.some(c=>c.start<0||c.end>Math.ceil(voiceSeconds*30)+3))throw Error('Word timings exceed approved narration duration.');
 }else{
  // Scratch time guides only: a real performance can pause or speak unevenly.
  // Never claim these estimates are synchronized to actual spoken consonants.
