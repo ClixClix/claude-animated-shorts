@@ -1,3 +1,5 @@
+> **SUPERSEDED / NOT THE ACTIVE EPISODE 02.** User chose the box-transformation story. The active, still-unapproved preproduction drafts are `DRAFT_BOX_NARRATION.txt` and `DRAFT_BOX_SHOT_LIST.md` in this directory. This shadow document is retained only for history. Do not render or generate narration from it.
+
 # In This Town — Episode 02: The Shadow That Grew (DRAFT)
 
 > **Status:** Preproduction pitch + draft script only. Not user-approved. No voice credits authorized, no voice generated, no final camera/render/shot frame lock. Channel remains **What If Cats**. Story format is the new **In This Town** narrative series.
