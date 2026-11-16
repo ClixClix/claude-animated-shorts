@@ -72,6 +72,73 @@ function updateCharacter(ch:Character,pose:ActorPose,s:State,camera:T.Perspectiv
 }
 function contactMaterialOpacity(m:T.MeshBasicMaterial,opacity:number){m.opacity=opacity;}
 
+/** Separate episode-only narrative props; never alter permanent café fixtures. */
+function createStoryProps(){
+ const root=new T.Group();root.name='episode02-story-props';
+ const geometries:T.BufferGeometry[]=[];
+ const materials:T.Material[]=[];
+ const textures:T.Texture[]=[];
+ const board=new T.Group();board.name='episode02-town-cure-instructions';
+ board.position.set(.1,0,6.1);
+ const surface=document.createElement('canvas');surface.width=1024;surface.height=640;
+ const g=surface.getContext('2d')!;
+ g.fillStyle='#f7e8c5';g.fillRect(0,0,1024,640);
+ g.strokeStyle='#4b5e65';g.lineWidth=32;g.strokeRect(18,18,988,604);
+ g.textAlign='center';g.fillStyle='#253d4d';g.font='bold 74px Arial';g.fillText('HOW TO HELP',512,110);
+ g.font='bold 54px Arial';g.fillText('A CAT BECOME A CAT AGAIN',512,176);
+ const iconCat=(x:number,y:number,color:string)=>{
+  g.fillStyle=color;g.beginPath();g.ellipse(x,y,61,66,0,0,Math.PI*2);g.fill();
+  g.beginPath();g.moveTo(x-57,y-31);g.lineTo(x-56,y-105);g.lineTo(x-10,y-65);
+  g.lineTo(x+10,y-65);g.lineTo(x+55,y-106);g.lineTo(x+57,y-31);g.closePath();g.fill();
+  g.fillStyle='#f9e8cd';g.beginPath();g.arc(x-20,y-3,6,0,Math.PI*2);g.arc(x+20,y-3,6,0,Math.PI*2);g.fill();
+ };
+ const iconBox=(x:number,y:number)=>{
+  g.fillStyle='#b98d62';g.fillRect(x-87,y-55,174,126);
+  g.strokeStyle='#453d3f';g.lineWidth=7;g.strokeRect(x-87,y-55,174,126);
+  g.beginPath();g.moveTo(x-87,y-55);g.lineTo(x-112,y-90);g.lineTo(x+95,y-90);g.lineTo(x+87,y-55);g.closePath();g.stroke();
+ };
+ iconBox(206,364);iconCat(206,335,'#777e8a');
+ iconBox(514,364);iconCat(507,320,'#d0b8a8');iconCat(548,356,'#5b646d');
+ iconCat(818,328,'#777e8a');iconCat(876,365,'#d0b8a8');
+ g.fillStyle='#bd7656';g.font='bold 94px Arial';g.fillText('→',360,376);g.fillText('→',668,376);
+ g.fillStyle='#253d4d';g.font='bold 46px Arial';
+ g.fillText('BOXED',206,530);g.fillText('JOIN THEM',518,530);g.fillText('TOGETHER',847,530);
+ const texture=new T.CanvasTexture(surface);texture.colorSpace=T.SRGBColorSpace;textures.push(texture);
+ const boardMat=new T.MeshBasicMaterial({map:texture,side:T.DoubleSide});materials.push(boardMat);
+ const boardGeom=new T.PlaneGeometry(3.15,1.95);geometries.push(boardGeom);
+ const panel=new T.Mesh(boardGeom,boardMat);panel.name='episode02-cure-visual-panel';
+ panel.position.set(0,2.0,0);panel.layers.set(NOINK);board.add(panel);
+ const standMaterial=new T.MeshStandardMaterial({color:'#58635e',roughness:.8});materials.push(standMaterial);
+ for(const x of [-1.25,1.25]){
+  const geo=new T.BoxGeometry(.09,1.35,.12);geometries.push(geo);
+  const stand=new T.Mesh(geo,standMaterial);stand.position.set(x,.70,-.08);board.add(stand);
+ }
+ root.add(board);
+
+ const sign=new T.Group();sign.name='episode02-closed-sign';
+ sign.position.set(2.35,2.45,4.60);
+ const signCanvas=document.createElement('canvas');signCanvas.width=560;signCanvas.height=240;
+ const sc=signCanvas.getContext('2d')!;
+ sc.fillStyle='#355961';sc.fillRect(0,0,560,240);sc.strokeStyle='#e0c38d';sc.lineWidth=22;sc.strokeRect(12,12,536,216);
+ sc.font='bold 116px Arial';sc.textAlign='center';sc.textBaseline='middle';sc.fillStyle='#fbefd5';sc.fillText('CLOSED',280,124);
+ const st=new T.CanvasTexture(signCanvas);st.colorSpace=T.SRGBColorSpace;textures.push(st);
+ const sm=new T.MeshBasicMaterial({map:st,side:T.DoubleSide});materials.push(sm);
+ const sg=new T.PlaneGeometry(.68,.29);geometries.push(sg);
+ const signMesh=new T.Mesh(sg,sm);signMesh.layers.set(NOINK);sign.add(signMesh);root.add(sign);
+
+ const treat=new T.Group();treat.name='episode02-latte-fish-treat';
+ treat.position.set(-1.85,0,2.73);
+ const plateMat=new T.MeshStandardMaterial({color:'#d4cdb3',roughness:.85});materials.push(plateMat);
+ const plateGeo=new T.CylinderGeometry(.22,.22,.035,18);geometries.push(plateGeo);
+ const plate=new T.Mesh(plateGeo,plateMat);plate.position.y=.025;treat.add(plate);
+ const crumbMat=new T.MeshStandardMaterial({color:'#b57f56',roughness:.9});materials.push(crumbMat);
+ for(let i=0;i<5;i++){const geo=new T.SphereGeometry(.045,7,5);geometries.push(geo);
+  const piece=new T.Mesh(geo,crumbMat);piece.position.set(Math.cos(i*2.4)*.10,.07,Math.sin(i*2.4)*.10);treat.add(piece);}
+ root.add(treat);
+ return {root,board,sign,treat,dispose:()=>{root.removeFromParent();for(const geo of geometries)geo.dispose();
+  for(const mat of materials)mat.dispose();for(const tex of textures)tex.dispose();}};
+}
+
 const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  const frame=useCurrentFrame(),s=stateAt(frame,shots),{scene,camera,gl}=useThree();
  const world=useMemo(()=>{
@@ -113,6 +180,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
    const mesh=new T.Mesh(geo,mat);mesh.layers.set(NOINK);mesh.rotation.z=i*.48;root.add(mesh);return{mesh,geo,mat};
   });return {root,arr};
  },[]);
+ const props=useMemo(()=>createStoryProps(),[]);
  const atmosphere=useMemo(()=>{
   const sun=new T.DirectionalLight('#fff0d0',2.5);
   sun.position.set(-14,28,18);sun.name='episode02-morning-sun';
@@ -168,6 +236,9 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   updateCharacter(c,{position:positions[i],visible:active,walking:false,emotion:n===4?'surprised':'happy',headTurn:0,scale:.84,morph:0,gazeY:0},s,cam);
  }
  const n=s.shot.sequence;
+ props.board.visible=n===57;
+ props.sign.visible=n===24;
+ props.treat.visible=n===16;
  const mp=s.mocha.position,ep=s.essie.position,lp=s.latte.position;
  let mochaTarget:V3=[mp[0]-.25,mp[1]+.34,mp[2]+.16];
  let essieTarget:V3=[ep[0]-.2,ep[1]+.33,ep[2]+.14];
@@ -216,9 +287,9 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   }
   for(const p of dust.arr){p.geo.dispose();p.mat.dispose();}
   Object.values(paws).forEach(p=>p.dispose());
-  atmosphere.sun.dispose();atmosphere.night.dispose();
+  props.dispose();atmosphere.sun.dispose();atmosphere.night.dispose();
   effects.ink.dispose();effects.bloom.dispose();effects.tone.dispose();effects.grade.dispose();
- },[world,boxes,characters,dust,atmosphere,effects,paws]);
+ },[world,boxes,characters,dust,atmosphere,effects,paws,props]);
  return <><primitive object={world.root} dispose={null}/>
   <primitive object={atmosphere.root} dispose={null}/>
   {Object.values(boxes).map(b=><primitive key={b.root.name} object={b.root} dispose={null}/>)}
@@ -226,6 +297,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
    <React.Fragment key={c.id}><primitive object={c.card.mesh} dispose={null}/>
     <primitive object={c.contact} dispose={null}/></React.Fragment>)}
   {Object.entries(paws).map(([id,p])=><primitive key={id} object={p.group} dispose={null}/>)}
+  <primitive object={props.root} dispose={null}/>
   <primitive object={dust.root} dispose={null}/>
   <EffectComposer multisampling={4}>
    <primitive object={effects.ink} dispose={null}/>
