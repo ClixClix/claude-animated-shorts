@@ -45,3 +45,9 @@ Compilation, geometric tests, offscreen Canvas tests and contact sheets cannot p
 - `node scripts/door-polish-camera-preflight.mjs` (all-frame geometry; not a scene render)
 
 Browser-dependent scripts require an available Chrome/Edge selected by runtime.mjs (or CHROME). Windows tests/rendering must be reported honestly when only Linux checks were possible.
+
+## Current all-series release baseline (supersedes older delivery defaults)
+
+`QUALITY_BASELINE.md` is the release reference for **every future What If Cats and In This Town episode**. It is grounded in the completed *The Door at 11:11* final encoded MP4. The old Bridge skill's 2K export, no-caption and fixed music/SFX gain suggestions are **not** universal V2 release requirements. The two series keep distinct story rhythms; neither must copy the reference's runtime, narration style or SFX count.
+
+After the final encoded MP4 exists, run `scripts/release_quality_gate.py FINAL.mp4 --series what_if_cats --expected-frames N --init-review` (or `in_this_town`). The checker measures actual encoded video/audio, checks the complete decode, flags black/frozen/silent intervals for human review, and writes a SHA-bound review checklist. For a publish-ready decision, run it with `--require-approval`; no human/rights approval means **not ready** even if the technical gate passes. Music licensing remains a separate explicit requirement.
