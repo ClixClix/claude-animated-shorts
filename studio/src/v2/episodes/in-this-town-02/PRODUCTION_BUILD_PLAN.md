@@ -1,5 +1,14 @@
 # Episode 02 — The Cat Who Became a Box | Production Build Brief
 
+## 2026-11-16 — Final source-assembly handoff
+
+**The approved 60-shot episode now has a dedicated Remotion composition, deterministic shot/camera and cat acting states, articulated transformed boxes, original soundtrack/Foley generation, a voice source/timing gate, H.264 shot renderer, full-picture assembly, AAC master mixer, and independent post-build QA.** Key contacts include Essie's box drag, Mocha's flap touches and both rescues. Episode-specific props include a town cure explanation board, CLOSED sign and treat.
+
+The source is committed and included in `LOCAL_UPDATE_FILES.json`, but **no local or cloud render, TypeScript compile, box test, sound analysis, or actual-film review has been executed**. This is not a claim that the user has a finished MP4 or that Episode 2 visually matches Episode 1. All such checks remain deferred as requested.
+
+**Use `FINAL_BUILD_HANDOFF.md`:** Build the whole film with `Build-Episode02.cmd` or `node scripts/produce-box.mjs build` after approved Episode 2 voice is available. Only then use `Check-Episode02.cmd` for the single batch of technical and creative-evidence checks. A fully silent scratch alternative exists with explicit `--allow-scratch` but is not publishable. No paid voice call can occur through build/check.
+
+
 **Channel:** What If Cats | **Series format:** In This Town | **Story approved:** 2026-11-16
 **This document:** Implementation handoff and build order. It does not certify that scenes have been animated or rendered.
 
