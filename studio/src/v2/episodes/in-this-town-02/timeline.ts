@@ -64,7 +64,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  const focus=(p:V3,dist=2.8,fov=51,side=1.4)=>cameraPreset([p[0]+side,Math.max(1.3,p[1]+1.8),p[2]+dist],[p[0],p[1]+.75,p[2]],fov);
  if(n<=4){
   room='street';heroBox='demo';demoCat=actor(closer(HOME.demo,.06,0),n<3,'surprised',false);
-  cam=n===1?cameraPreset([4.2,1.0,9.2],[...HOME.demo].map((v,i)=>i===1?.6:v) as V3,38):
+  cam=n===1?cameraPreset([4.2,1.0,9.2],[3.45,.6,7.6] as V3,38):
       n===2?cameraPreset([3.4,5.0,7.6],[3.45,.10,7.6],48):
       n===3?focus(HOME.demo,2.1,40,.45):cameraPreset([6,1.65,9.2],[3.45,.5,7.6],62);
   if(n===3){demoCat.visible=true;demoCat.morph=ease(u);demoCat.position=[HOME.demo[0],0,HOME.demo[2]];morph.demo=ease(u);flap.demo=lerp(.8,.25,ease(u));}
@@ -106,6 +106,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   if(n===31)essie.position=[-9.1,0,2.8];if(n===34)essie.position=HOME.alleyBox;
   essie.emotion='happy';essie.walking=n===32;
   if(n>=31){show.essie=true;essieBox=n===32?walk([-9.1,0,2.7],HOME.alleyBox,u):HOME.alleyBox;}
+  if(n===32)essie.position=[essieBox[0]+.9,0,essieBox[2]+.16];
   cam=n===28?focus(HOME.busStop,3.0,61,2.4):n===29?focus(HOME.market,3.0,62,2.5):
     n===30?cameraPreset([-7.2,1.4,8.5],[-9.3,.7,3.0],58):
     n===31?cameraPreset([-7.2,5.5,8.1],[-9.15,.5,2.0],48):
@@ -129,8 +130,8 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   if(n>=51)morph.essie=0;
   essie.morph=morph.essie;
   if(n>=40&&n<=49)essie.visible=false;
-  if(n===49){mocha.position=walk([-8.4,0,1.8],HOME.alleyBox,u);mocha.morph=0;flap.essie=.95;}
-  if(n===50){mocha.position=walk(HOME.alleyBox,[-8.4,0,1.8],u);flap.essie=.95;}
+  if(n===49){mocha.position=walk([-8.4,0,1.8],HOME.alleyBox,u);mocha.scale=lerp(1,.63,ease(u));mocha.morph=0;flap.essie=.95;}
+  if(n===50){mocha.position=walk(HOME.alleyBox,[-8.4,0,1.8],u);mocha.scale=lerp(.63,1,ease(u));flap.essie=.95;}
   if(n>=51)mocha.position=[-8.40,0,1.8];
   cam=(n===35||n===37||n===38)?focus(HOME.alleyBox,2.25,42,1.05):
     (n===39||n===50||n===51)?cameraPreset([-7.0,1.75,3.7],[-9,.65,1.6],44):
@@ -147,8 +148,8 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   mocha.emotion=essie.emotion='happy';mocha.walking=essie.walking=n===53;
   latte.visible=n===55;latte.position=n===55?mix(HOME.latte,[HOME.latte[0],.25,HOME.latte[2]+.7],ease(u)):[...HOME.latte];latte.emotion='surprised';
   flap.latte=.93;heroBox='latte';
-  if(n===54)morph.latte=1;
-  if(n===55)morph.latte=1-ease(u);
+  if(n===54){morph.latte=1;mocha.position=walk([HOME.latte[0]+.35,0,HOME.latte[2]+.75],HOME.latte,u);mocha.scale=lerp(1,.65,ease(u));}
+  if(n===55){morph.latte=1-ease(u);mocha.position=walk(HOME.latte,[HOME.latte[0]+.75,0,HOME.latte[2]+.7],u);mocha.scale=lerp(.65,1,ease(u));}
   latte.morph=morph.latte;
   cam=n===53?cameraPreset([6,2,9.5],[2.4,.7,4.9],64):cameraPreset([1.4,1.7,4.4],[-1.8,.8,2.1],50);
  }
