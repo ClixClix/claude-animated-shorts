@@ -263,6 +263,16 @@ export class EpisodeWorld{
   for(const id of ['town-building-9','town-building-10','town-building-11']){const g=this.cafe.root.getObjectByName(id) as T.Group;g.rotation.y=Math.PI;this.box(g,[.85,1.8,.06],[0,1.0,2.045],'#344b52',false);this.box(g,[1.35,.10,.65],[0,.05,2.3],'#728482',false);}
   for(let i=1;i<=11;i++){const b=this.cafe.root.getObjectByName('town-building-'+i)!;this.box(b,[4.3,.22,4.3],[0,-.1,0],'#52636a',false);}
   const city=createCity();this.root.add(city.root);this.materials.push(...city.materials);this.textures.push(...city.textures);this.blockers.push(...city.blockers);
+  // One visible doorway surface only: the café's standalone beige entrance apron
+  // and the episode sidewalk previously occupied the exact same Y=.03 plane.
+  // A local 3-way render and ray hits confirmed the resulting z-fighting.
+  // Remove the café apron before its geometry can be included in static batching.
+  const cafeApron=this.cafe.root.getObjectByName('cafe-entry-apron') as T.Mesh|undefined;
+  if(!cafeApron)throw Error('Missing cafe-entry-apron: cannot deduplicate doorway floor');
+  cafeApron.removeFromParent();
+  const blockerIndex=this.cafe.blockers.indexOf(cafeApron);
+  if(blockerIndex>=0)this.cafe.blockers.splice(blockerIndex,1);
+  cafeApron.geometry.dispose();
   this.townWindows.push({mat:city.windowMaterial,color:city.windowMaterial.color.clone(),emissive:.32});
   for(let i=1;i<=11;i++){const b=this.cafe.root.getObjectByName('town-building-'+i)!;for(const y of [1.4,2.9,4.4])for(const x of [-1.1,1.1]){this.add(b,new T.BoxGeometry(.7,.85,.025),city.windowMaterial,[x,y,-2.025],false);for(const side of [-1,1]){const pane=this.add(b,new T.BoxGeometry(.7,.85,.025),city.windowMaterial,[side*2.025,y,x],false);pane.rotation.y=Math.PI/2;}}}
 
