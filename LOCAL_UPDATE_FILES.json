@@ -52,6 +52,7 @@
   "studio/scripts/door-at-1111-sfx.py",
   "studio/scripts/door-at-1111-tests.mjs",
   "studio/scripts/door-at-1111-video-qa.py",
+  "studio/scripts/door-floor-diagnose.mjs",
   "studio/scripts/door-polish-assemble.mjs",
   "studio/scripts/door-polish-boards.py",
   "studio/scripts/door-polish-camera-preflight.mjs",
