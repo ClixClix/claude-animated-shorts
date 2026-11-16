@@ -21,7 +21,7 @@
 
 ## Draft narration
 File: `studio/src/v2/episodes/in-this-town-02/DRAFT_NARRATION.txt`
-Approximate words: 342. Duration not locked; estimate ~105 seconds at Episode 01's observed final narration pace, **not** an audio timing measurement. Don't create exact shot frames or spend provider credits until script and voice are approved.
+Approximate words: 349. Duration not locked; estimate ~107 seconds at Episode 01's observed final narration pace, **not** an audio timing measurement. Don't create exact shot frames or spend provider credits until script and voice are approved.
 Narrator preset: `in_this_town` uses **Adam** with source generated at natural speed and offline **1.35x varispeed**, as currently defined in `studio/src/v2/narration/config.ts`. Do not silently substitute the V1 Daniel preset.
 
 ## Working visual and sound beat plan (NOT timing-locked)
