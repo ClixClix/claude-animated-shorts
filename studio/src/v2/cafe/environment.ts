@@ -116,7 +116,9 @@ export class CafeEnvironment {
    this.text(g,'THREE CATS',4.9,0.45,[-0.55,4.10,4.50],PAL.green,'#f3d6a0',110);
    const awning=this.box(g,[8.1,0.10,0.85],[0,3.63,4.65],PAL.oak);awning.rotation.x=-0.13;
    for(let i=0;i<15;i++)this.box(g,[0.27,0.16,0.065],[-3.87+i*0.55,3.47,5.08],i%2?PAL.cream:PAL.green);
-   this.box(g,[1.7,0.08,0.7],[2.25,-0.01,4.5],PAL.plaster);
+   // This standalone apron shares the episode sidewalk's Y=.03 top. Give it a stable ID.
+   const apron=this.box(g,[1.7,0.08,0.7],[2.25,-0.01,4.5],PAL.plaster);
+   apron.name='cafe-entry-apron';
    // Shelf dressing, jars, menu and towels all belong to permanent fixture parents.
  }
  private mug(g:T.Group,color:string){
