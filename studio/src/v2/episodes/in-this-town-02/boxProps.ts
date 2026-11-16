@@ -55,8 +55,8 @@ export function createEpisodeBox(identity:BoxIdentity) {
     mesh.castShadow=true;mesh.receiveShadow=true;resources.push(geometry);
     parent.add(mesh);
     const outline=new T.LineSegments(new T.EdgesGeometry(geometry),ink);
-    outline.name=name+'-ink';outline.position.copy(mesh.position);
-    resources.push(outline.geometry);parent.add(outline);
+    outline.name=name+'-ink';
+    resources.push(outline.geometry);mesh.add(outline); // follow any flap/tape pose or rotation
     return mesh;
   };
   // The interior stays hollow; the bottom is slightly above the actual Y=0 floor.
