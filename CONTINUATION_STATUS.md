@@ -1,3 +1,13 @@
+# Latest — Episode 02 box story source assembled (2026-11-16)
+
+The user approved **Episode 02 — The Cat Who Became a Box**, including a 403-word narration and 60-shot list. They then specifically requested **all implementation/source stages first, with all checks done together afterward**. The prior shadow Episode 02 pitch is superseded. The channel remains **What If Cats**, with **In This Town** as its story format.
+
+The production source now lives under `studio/src/v2/episodes/in-this-town-02/` and uses the dedicated Remotion composition `InThisTownEpisode02Box`. It has its own mutable box models, 60-shot deterministic scene/characters/cameras, story props, original procedural audio/score, resumable native renderer, segment assembly, audio finishing, voice gating, and deferred QA launchers. See `FINAL_BUILD_HANDOFF.md` and `PRODUCTION_BUILD_PLAN.md` for the exact build/check commands.
+
+**Critical truth/status:** These files are AUTHORED in GitHub, but no Episode 02 tests, local renders, preview MP4, or full-motion visual/audio checks have yet run. They are not proof of release quality. The new Adam narration requires the actual approved file or explicit separate paid-generation authorization. The code includes a protected one-time narrator generator but it has not been executed. `Build-Episode02.cmd` only builds once voice exists; `Check-Episode02.cmd` is the explicit one-batch post-build gate. Never overwrite Episode 01 or accidentally claim the silent scratch version is publishable.
+
+---
+
 # Current What If Cats V2 status
 
 Delivery branch: `v2-local-render`. Worktree branch may differ. Inspect Git status/log before edits. Preserve uncommitted files and prior movies.
