@@ -15,6 +15,7 @@ import {cardShade} from '../../../videos/bridge/cardshade';
 import {CHAR} from '../../../videos/bridge/shade';
 import {CARD_K} from '../../../videos/bridge/cardshade';
 import {EpisodeWorld} from '../door-at-1111-polish/world';
+import {pawRig} from '../door-at-1111-polish/actors';
 import {stateAt as previousEpisodeState,DRAFT_SHOTS} from '../door-at-1111-polish/timeline';
 import {createEpisodeBox} from './boxProps';
 import {SCRATCH_EDIT,stateAt,clamp,ease,type EpisodeEdit,type ActorPose,type State} from './timeline';
@@ -95,6 +96,15 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   audience:[makeCharacter('audience-a','latte','#d6c4d1'),makeCharacter('audience-b','essie','#b3a7a0'),
     makeCharacter('audience-c','mocha','#ddb8a9')]
  }),[]);
+ const paws=useMemo(()=>({
+  mocha:pawRig('#92958d','#fff8e8',.053),
+  essie:pawRig('#303039','#f3eddf',.046),
+  latte:pawRig('#eadbc0','#5b4944',.047),
+ }),[]);
+ const gesture=(a:V3,b:V3,active:boolean,id:'mocha'|'essie'|'latte')=>{
+  const start:[number,number,number]=[a[0]-.10,a[1]+.52,a[2]];
+  paws[id].update(start,b,active);
+ };
  const dust=useMemo(()=>{
   const root=new T.Group();root.name='episode02-cardboard-magical-fold';
   const arr=Array.from({length:22},(_,i)=>{
@@ -157,6 +167,33 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
     [[-1.8,0,7.1],[-.2,0,8.1],[3.3,0,8.3]];
   updateCharacter(c,{position:positions[i],visible:active,walking:false,emotion:n===4?'surprised':'happy',headTurn:0,scale:.84,morph:0,gazeY:0},s,cam);
  }
+ const n=s.shot.sequence;
+ const mp=s.mocha.position,ep=s.essie.position,lp=s.latte.position;
+ let mochaTarget:V3=[mp[0]-.25,mp[1]+.34,mp[2]+.16];
+ let essieTarget:V3=[ep[0]-.2,ep[1]+.33,ep[2]+.14];
+ let latteTarget:V3=[lp[0]-.2,lp[1]+.35,lp[2]+.15];
+ let mochaReach=false,essieReach=false,latteReach=false;
+ if([12,16,41,48,49,54,59].includes(n)){
+  const box=n<=16?s.latteBox:n<=49?s.essieBox:n===54?s.latteBox:s.sharedBox;
+  const top=n<=16?.72:n<=49?.84:n===54?.72:.90;
+  mochaTarget=[box[0]+.35,box[1]+top,box[2]+.25];
+  mochaReach=true;
+ }
+ if(n===20){mochaTarget=[ep[0]-.16,ep[1]+.6,ep[2]+.05];mochaReach=true;}
+ if(n===33){mochaTarget=[mp[0]-.4,mp[1]+.75,mp[2]-.28];mochaReach=true;}
+ if(n===42||n===51){mochaTarget=[s.essieBox[0]+.55,.6,s.essieBox[2]+.05];mochaReach=true;}
+ if(n===32){
+  essieTarget=[s.essieBox[0]+.52,.49,s.essieBox[2]+.35];essieReach=true;
+ }
+ if(n===54){
+  essieTarget=[s.latteBox[0]+.26,.77,s.latteBox[2]+.33];essieReach=true;
+ }
+ if(n===55){
+  latteTarget=[mp[0]+.04,.62,mp[2]-.07];latteReach=true;
+ }
+ gesture(mp,mochaTarget,mochaReach&&s.mocha.visible,'mocha');
+ gesture(ep,essieTarget,essieReach&&s.essie.visible,'essie');
+ gesture(lp,latteTarget,latteReach&&s.latte.visible,'latte');
  const activeMorph=s.morph.essie>0&&s.morph.essie<1?{p:s.essieBox,v:s.morph.essie}:
   s.morph.demo>0&&s.morph.demo<1?{p:s.demoBox,v:s.morph.demo}:
   s.shot.sequence===50?{p:s.essieBox,v:1-ease(s.u)}:
@@ -178,15 +215,17 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
    c.contactMaterial.dispose();c.contactGeometry.dispose();
   }
   for(const p of dust.arr){p.geo.dispose();p.mat.dispose();}
+  Object.values(paws).forEach(p=>p.dispose());
   atmosphere.sun.dispose();atmosphere.night.dispose();
   effects.ink.dispose();effects.bloom.dispose();effects.tone.dispose();effects.grade.dispose();
- },[world,boxes,characters,dust,atmosphere,effects]);
+ },[world,boxes,characters,dust,atmosphere,effects,paws]);
  return <><primitive object={world.root} dispose={null}/>
   <primitive object={atmosphere.root} dispose={null}/>
   {Object.values(boxes).map(b=><primitive key={b.root.name} object={b.root} dispose={null}/>)}
   {[characters.mocha,characters.essie,characters.latte,characters.demo,...characters.audience].map(c=>
    <React.Fragment key={c.id}><primitive object={c.card.mesh} dispose={null}/>
     <primitive object={c.contact} dispose={null}/></React.Fragment>)}
+  {Object.entries(paws).map(([id,p])=><primitive key={id} object={p.group} dispose={null}/>)}
   <primitive object={dust.root} dispose={null}/>
   <EffectComposer multisampling={4}>
    <primitive object={effects.ink} dispose={null}/>
