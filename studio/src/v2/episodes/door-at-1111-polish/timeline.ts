@@ -53,7 +53,7 @@ export const CLOCK:V3=[-8.4,15.2,-13.4];
 export const SIGN:V3=[-2.15,0.40,3.42];
 export const LANTERN:V3=[-0.96,0,2.62];
 export const ENTRY_THRESHOLD={x:2.25,z:4.24,halfWidth:.71,halfDepth:.09,height:.03};
-export function thresholdSurface(p:V3){const e=ENTRY_THRESHOLD;return Math.abs(p[0]-e.x)<=e.halfWidth&&Math.abs(p[2]-e.z)<=e.halfDepth?e.height*clamp((p[2]-(e.z-e.halfDepth))/(2*e.halfDepth)):0;}
+export function thresholdSurface(p:V3){const e=ENTRY_THRESHOLD;return Math.abs(p[0]-e.x)<=e.halfWidth&&Math.abs(p[2]-e.z)<=e.halfDepth?e.height:0;}
 
 export type Key={time:number;position:V3};
 export const KITTEN_PATH:Key[]=[{time:0,position:KITTEN_WAIT},{time:99,position:KITTEN_WAIT},{time:100,position:[4.6,.03,5.45]},{time:101,position:[4.6,.03,5.45]},{time:103,position:KITTEN_WAIT},{time:121.5,position:KITTEN_WAIT},{time:124,position:KITTEN_REST},{time:136,position:KITTEN_REST}];
