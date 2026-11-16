@@ -207,9 +207,28 @@ export class CafeEnvironment {
      this.box(g,[1.08,1.25,0.06],[0,0.625,0],PAL.oak);
      this.text(g,'THE NIGHT MENU\nESPRESSO   3\nCAPPUCCINO   4\nCHOCOLATE   4\nBUTTER CROISSANT   3',0.96,1.13,[0,0.625,0.04],PAL.dark,'#e9d9b7',44);
    }else if(s.role==='rug'){
-     this.box(g,[w,0.01,d],[0,0.005,0],'#917863',false);
-     this.box(g,[w-0.12,0.012,d-0.12],[0,0.006,0],'#b7a28a',false);
-     for(let x=-w/2+0.18;x<w/2;x+=0.25)this.box(g,[0.035,0.014,d-0.23],[x,0.009,0],'#9c876f',false);
+     // The previous layered stripe meshes overlapped the rug and shimmered in motion.
+     // Keep the same design on a single thin, mipmapped box so no faces compete.
+     const canvas=document.createElement('canvas');
+     canvas.width=canvas.height=256;
+     const ctx=canvas.getContext('2d')!;
+     ctx.fillStyle='#917863';ctx.fillRect(0,0,256,256);
+     ctx.fillStyle='#b7a28a';ctx.fillRect(8,8,240,240);
+     for(let x=22;x<244;x+=32){
+       ctx.fillStyle='#9c876f';
+       ctx.fillRect(x,16,5,224);
+     }
+     const texture=new T.CanvasTexture(canvas);
+     texture.colorSpace=T.SRGBColorSpace;
+     texture.generateMipmaps=true;
+     texture.minFilter=T.LinearMipmapLinearFilter;
+     texture.magFilter=T.LinearFilter;
+     texture.anisotropy=4;
+     this.textures.push(texture);
+     const rugMaterial=this.mat('#ffffff');
+     rugMaterial.map=texture;
+     const rug=this.box(g,[w,0.014,d],[0,0.002,0],rugMaterial,false);
+     rug.name='cat-rug-single-mesh';
    }
  }
  private street(){
