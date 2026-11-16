@@ -25,7 +25,7 @@ export function createCity(){
  const xs=[...new Set(pavementBounds.flatMap(r=>[r.x0,r.x1]))].sort((a,b)=>a-b),zs=[...new Set(pavementBounds.flatMap(r=>[r.z0,r.z1]))].sort((a,b)=>a-b);
  const positions=[[],[]] as number[][],uvs=[[],[]] as number[][];
  const inside=(x:number,z:number,list:typeof roads)=>list.some(r=>x>r.x0&&x<r.x1&&z>r.z0&&z<r.z1);
- for(let i=0;i<xs.length-1;i++)for(let j=0;j<zs.length-1;j++){const x0=xs[i],x1=xs[i+1],z0=zs[j],z1=zs[j+1],x=(x0+x1)/2,z=(z0+z1)/2,kind=inside(x,z,roads)?0:inside(x,z,walks)&&!inside(x,z,[opening])?1:-1;if(kind<0)continue;for(const [px,pz] of [[x0,z0],[x0,z1],[x1,z0],[x1,z0],[x0,z1],[x1,z1]]){positions[kind].push(px,kind===0?.018:.03,pz);uvs[kind].push(px/12,pz/12);}}
+ for(let i=0;i<xs.length-1;i++)for(let j=0;j<zs.length-1;j++){const x0=xs[i],x1=xs[i+1],z0=zs[j],z1=zs[j+1],x=(x0+x1)/2,z=(z0+z1)/2,kind=inside(x,z,roads)?0:(inside(x,z,walks)||inside(x,z,[opening]))?1:-1;if(kind<0)continue;for(const [px,pz] of [[x0,z0],[x0,z1],[x1,z0],[x1,z0],[x0,z1],[x1,z1]]){positions[kind].push(px,kind===0?.018:.03,pz);uvs[kind].push(px/12,pz/12);}}
  roadTexture.repeat.set(1,1);
  for(let kind=0;kind<2;kind++){const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(positions[kind],3));geo.setAttribute('uv',new T.Float32BufferAttribute(uvs[kind],2));geo.computeVertexNormals();mesh(geo,kind===0?asphalt:paving,[0,0,0],kind===0?'city-road-network':'city-sidewalk-network');}
  for(const x of [-18,18])for(const stripe of [-1.8,-1.2,-.6,0,.6,1.2,1.8])mesh(new T.BoxGeometry(.32,.006,2.2),marking,[x+stripe,.034,8.55],`crosswalk-${x}-${stripe}`);
