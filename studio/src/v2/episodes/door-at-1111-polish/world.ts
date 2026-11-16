@@ -6,7 +6,7 @@ import {batchCafe} from './batch';
 import {CafeEnvironment} from '../../cafe/environment';
 import {NOINK} from '../../../videos/bridge/ink';
 import {V3} from '../../cafe/config';
-import {EpisodeState,HOME,CLOCK,SIGN,LANTERN,STREETLIGHTS,ENTRY_THRESHOLD,mouseAt,clamp,beat,lerp,mix} from './timeline';
+import {EpisodeState,HOME,CLOCK,SIGN,LANTERN,STREETLIGHTS,mouseAt,clamp,beat,lerp,mix} from './timeline';
 
 /** Episode extensions only. The permanent café constructor/configuration remain the sole source. */
 export class EpisodeWorld{
@@ -74,11 +74,10 @@ export class EpisodeWorld{
   const entrance=this.cafe.root.getObjectByName('entrance') as T.Group;this.cafe.root.updateMatrixWorld(true);const pivot=new T.Group();pivot.name='episode-cafe-door-hinge';pivot.position.x=-.725;entrance.add(pivot);this.cafe.root.updateMatrixWorld(true);
   const leaf=entrance.children.filter(c=>c!==pivot&&(c.name.endsWith('/glass')||Math.abs(c.position.x+.02)<.001||Math.abs(c.position.y-.24)<.001||Math.abs(c.position.x-.48)<.001||Math.abs(c.position.y-2.3)<.001));for(const child of leaf)pivot.attach(child);
   const pane=leaf.find(o=>o.name.endsWith('/glass')) as T.Mesh|undefined;if(pane){const mat=new T.MeshStandardMaterial({color:'#d5c5a4',roughness:1,side:T.DoubleSide,transparent:false,opacity:1,emissive:'#7b552c',emissiveIntensity:.10});this.materials.push(mat);pane.material=mat;}
-  // Replace the old bottom rail with one solid sill bridging indoor floor and sidewalk.
+  // Remove overlapping café door bottom rail; city sidewalk now spans the opening.
   for(const o of [...entrance.children])if(o instanceof T.Mesh&&Math.abs(o.position.y)<1e-6){o.visible=false;o.removeFromParent();o.geometry.dispose();}
-  const e=ENTRY_THRESHOLD,geometry=new T.BoxGeometry(e.halfWidth*2,.06,e.halfDepth*2),points=geometry.getAttribute('position');
-  for(let i=0;i<points.count;i++)points.setY(i,points.getY(i)>0?e.height*(points.getZ(i)+e.halfDepth)/(2*e.halfDepth):-.03);geometry.computeVertexNormals();
-  const threshold=this.add(this.root,geometry,this.mat('#667673'),[e.x,0,e.z],false);threshold.name='cafe-entry-threshold';threshold.layers.set(NOINK);
+  // The single partitioned city sidewalk now supplies the entrance's full walking surface.
+  // Do not add a second sloped threshold over this sidewalk (caused shimmering raised patch).
   const nosePlate=this.box(pivot,[.16,.15,.045],[.58,.69,-.10],'#bca776',false);nosePlate.name='door-nose-push-plate';this.props.set('nose-plate',nosePlate);
   this.props.set('door',pivot);return pivot;
  }
