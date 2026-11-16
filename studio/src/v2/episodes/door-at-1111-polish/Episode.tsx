@@ -22,7 +22,7 @@ import {checkEpisodeCamera} from './cameraQA';
 import {createEpisodeCat,contactShadow,pawRig} from './actors';
 import {EpisodeShot,DRAFT_SHOTS,DOOR_PUSH_WINDOWS,doorAngleAt,stateAt,validateShots,LANTERN,HOME,CLOCK,SIGN,KITTEN_WAIT,KITTEN_REST,KITTEN_PATH,pointByDistance,supportHeight,kittenRevealed,beat,mix,lerp,clamp} from './timeline';
 const GRADE:GradeParams={ky:[.015,.09,.26,.52,.77,.92,1],sat:[.92,.98,.90],tintS:[.008,.002],tintM:[0,.002],tintH:[-.003,.002],vig:[.10,.4]};
-export type EpisodeProps={previewScale?:number;optimize?:boolean;floorDebug?:'no-ink'|'flat-floor'|'no-ground-shadows';shots:EpisodeShot[];cues?:{taps:number[]}};
+export type EpisodeProps={previewScale?:number;optimize?:boolean;floorDebug?:'no-ink'|'flat-floor'|'no-ground-shadows'|'no-sidewalk'|'no-batching';shots:EpisodeShot[];cues?:{taps:number[]}};
 const Inner:React.FC<EpisodeProps>=({shots,cues,optimize=true,previewScale=1,floorDebug})=>{
  const frame=useCurrentFrame(),s=stateAt(frame,shots,cues?.taps),{camera,scene,gl}=useThree();
  if(cues&&s.shot.number!==47)s.kittenTap=Math.max(0,...cues.taps.map(f=>1-Math.abs(frame-f)/6));
@@ -51,6 +51,8 @@ const Inner:React.FC<EpisodeProps>=({shots,cues,optimize=true,previewScale=1,flo
  if(floorDebug==='flat-floor'){
   const floor=w.cafe.root.getObjectByName('floor') as T.Mesh<T.BufferGeometry,T.MeshStandardMaterial>|undefined;
   if(floor&&floor.material.map){floor.material.map=null;floor.material.color.set('#b38d65');floor.material.needsUpdate=true;}
+ }else if(floorDebug==='no-sidewalk'){
+  const sidewalk=w.root.getObjectByName('city-sidewalk-network');if(sidewalk)sidewalk.visible=false;
  }else if(floorDebug==='no-ground-shadows'){
   for(const name of ['floor','city-sidewalk-network','city-road-network']){
    const surface=w.root.getObjectByName(name) as T.Mesh|undefined;
@@ -109,9 +111,9 @@ const Inner:React.FC<EpisodeProps>=({shots,cues,optimize=true,previewScale=1,flo
   w.root.updateMatrixWorld(true);population.root.updateMatrixWorld(true);cast.forEach(c=>c.card.mesh.updateMatrixWorld(true));kitten.mesh.updateMatrixWorld(true);
   const {visibility,cameraHits}=checkEpisodeCamera(w,s,cam,[...cast.map(c=>({id:c.id,mesh:c.card.mesh})),{id:'kitten',mesh:kitten.mesh},...population.actors]);
   // Exact foreground mesh intersections at four pixels crossing the reported jagged band.
-  const floorRay=s.shot.id==='04'&&frame===s.shot.start+14?[{x:215,y:640},{x:270,y:665},{x:325,y:700},{x:270,y:725}].map(sample=>{
+  const floorRay=s.shot.id==='04'&&frame===s.shot.start+14?[{x:215,y:640},{x:270,y:665},{x:325,y:700},{x:270,y:725},{x:215,y:755},{x:270,y:755},{x:325,y:755},{x:215,y:805},{x:270,y:805},{x:325,y:805}].map(sample=>{
    const ray=new T.Raycaster();ray.setFromCamera(new T.Vector2(sample.x/540*2-1,1-sample.y/960*2),cam);
-   const hits=ray.intersectObjects(w.root.children,true).slice(0,7).map(hit=>{
+   const hits=ray.intersectObjects(w.root.children,true).filter(hit=>{for(let obj:T.Object3D|null=hit.object;obj;obj=obj.parent)if(!obj.visible)return false;return hit.object.layers.test(cam.layers);}).slice(0,7).map(hit=>{
     const m=hit.object as T.Mesh;const mat=Array.isArray(m.material)?m.material[0]:m.material as T.MeshStandardMaterial|undefined;
     return {name:m.name,parent:m.parent?.name??'',distance:Number(hit.distance.toFixed(3)),point:hit.point.toArray().map(v=>Number(v.toFixed(3))),color:mat&&'color'in mat?String((mat as T.MeshStandardMaterial).color.getHexString()):null};
    });return {pixel:sample,hits};
