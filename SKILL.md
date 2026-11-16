@@ -5,6 +5,9 @@ description: Make a ~55-70 s vertical cartoon story short in the "2D characters 
 
 # Cartoon 3D story short (three.js + Remotion)
 
+> **V2 all-series quality override (November 2026):** For any future **What If Cats** or **In This Town** episode, use `QUALITY_BASELINE.md` and `studio/scripts/release_quality_gate.py` as the current final-delivery standard. The older Bridge-specific 'no captions', 1440×2560 and fixed mix-gain rules below do **not** override V2's 1080×1920/30, legible captions where appropriate, per-episode sound mix and ≤−1 dBTP encoded peak. Technical QA plus exact-MP4 creative/rights approval are required before release.
+
+
 Proven example: **The Bridge That Fell for a Song**. It is an original 67 s short about the 1831 Broughton bridge and 74 soldiers marching in step.
 - Code: `studio/src/videos/bridge/` (composition `BridgeShort`, 1080x1920, 30 fps).
 - Script, voice and sound: `studio/shorts/bridge/` (SCRIPT.md, voice/, audio/).
