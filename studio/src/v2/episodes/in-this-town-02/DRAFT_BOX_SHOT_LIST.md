@@ -2,7 +2,7 @@
 
 > **DRAFT FOR USER APPROVAL. NO RENDER OR PAID NARRATION AUTHORIZED.** This box episode supersedes the abandoned 'shadow' Episode 02 pitch, which is retained as historical draft only.
 
-**Scope:** 60 individually staged shots, provisional runtime **02:12.4**. 394-word narration is in `DRAFT_BOX_NARRATION.txt`. All timings are **editorial estimates**, not measured voice alignment. Final exact frames must be derived from the approved recorded narration before production.
+**Scope:** 60 individually staged shots, provisional runtime **02:12.4**. ~400-word narration is in `DRAFT_BOX_NARRATION.txt`. All timings are **editorial estimates**, not measured voice alignment. Final exact frames must be derived from the approved recorded narration before production.
 
 **Series requirements:** Follow `QUALITY_BASELINE.md`; native 1080×1920 at 30 FPS; each shot under 120 frames; keep one-word subtitles readable; Adam narrator from current `in_this_town` preset (natural generation, 1.35× offline varispeed). No API spending until separately authorized.
 
@@ -16,7 +16,7 @@
 | **04 · RULE** | 00:06.8–00:09.3 | nobody knows how | Low angle: baffled townspeople examine newly transformed box; one listens to a flap; no cure shown. | Faint trapped meow, questioning motif |
 | **05 · INTRO** | 00:09.3–00:11.3 | Mocha never liked boxes | Mocha approaches café, grimaces at an ordinary empty carton and sidesteps it, without touching it. | Disdainful sniff and quick side-step |
 | **06 · INTRO** | 00:11.3–00:13.9 | Latte loved his striped box | Close on chocolate-point Latte purring in SMALL STRIPED-TAPE box at FIXED café window location. | Happy purr and precise paper creaks |
-| **07 · INTRO** | 00:13.9–00:16.4 | Essie slept in her cardboard box | Match cut to black/white Essie asleep in LARGE PLAIN box at fixed café sleeping corner; night/dawn passage. | Soft sleep breath and fabric rustle |
+| **07 · INTRO** | 00:13.9–00:16.4 | Essie slept in her cardboard box | Match cut: black/white Essie in LARGE PLAIN box at fixed café sleeping corner. She leaves a space and invites Mocha with a paw; he walks past. Night/dawn passage. | Soft sleep breath and fabric rustle |
 | **08 · LATTE** | 00:16.4–00:18.9 | One morning, Mocha returned | Morning exterior: Mocha follows established pavement route toward café with opening keys; door visible. | Keys, birds, footsteps |
 | **09 · LATTE** | 00:18.9–00:20.9 | Latte was gone | OTS doorway: Mocha scans counter, floor and empty space near window; worried eye movement. | Door bell, ambience suddenly thins |
 | **10 · LATTE** | 00:20.9–00:23.5 | striped box was still beneath the window | Tracking detail reveals SAME STRIPED box unmoved at window, one flap twitching. | Single ominous flap twitch |
@@ -55,7 +55,7 @@
 | **43 · AFTERMATH** | 01:31.6–01:33.1 | Still nothing | Tight Mocha reaction looking down; box remains partially in frame, avoid dead still hold. | Single low note |
 | **44 · CURE** | 01:33.1–01:34.9 | The alley turned cold | Breeze curls loose paper beside lamp; Mocha shivers and edges nearer box. | Wind gust and flutter |
 | **45 · CURE** | 01:34.9–01:37.1 | Mocha looked inside | POV through open flaps: visibly dry, sheltered box interior; sound of wind muffles. | Exterior sound filtered inside cardboard |
-| **46 · CURE** | 01:37.1–01:39.6 | why his friends loved boxes | Quick warm memory flashes of Latte curled under café window and Essie relaxed in her box; return to Mocha POV. | Two brief cozy purrs, memory melody |
+| **46 · CURE** | 01:37.1–01:39.6 | why his friends loved boxes | Quick warm memory flashes of Latte curled under café window and Essie leaving a space beside her while inviting Mocha in; return to Mocha POV. | Two brief cozy purrs, memory melody |
 | **47 · CURE** | 01:39.6–01:41.9 | warm / Dry / felt safe | Mocha shelters his paw inside the box and looks surprised at the warmth; warmer practical light reveals interior. | Warm major chord; fur flutter settles |
 | **48 · CURE** | 01:41.9–01:44.2 | couldn't leave her alone | Eye-level on Mocha hesitating at box, then reaching decisively for flaps; emotionally motivated push. | Determined inhale, gentle music lift |
 | **49 · CURE** | 01:44.2–01:46.4 | So he climbed in | Low side view Mocha steps into same large box, each paw supported; flaps and camera stay clear. | Two firm cardboard footfalls |
