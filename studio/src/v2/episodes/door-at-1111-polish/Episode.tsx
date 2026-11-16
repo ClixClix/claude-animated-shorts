@@ -22,8 +22,8 @@ import {checkEpisodeCamera} from './cameraQA';
 import {createEpisodeCat,contactShadow,pawRig} from './actors';
 import {EpisodeShot,DRAFT_SHOTS,DOOR_PUSH_WINDOWS,doorAngleAt,stateAt,validateShots,LANTERN,HOME,CLOCK,SIGN,KITTEN_WAIT,KITTEN_REST,KITTEN_PATH,pointByDistance,supportHeight,kittenRevealed,beat,mix,lerp,clamp} from './timeline';
 const GRADE:GradeParams={ky:[.015,.09,.26,.52,.77,.92,1],sat:[.92,.98,.90],tintS:[.008,.002],tintM:[0,.002],tintH:[-.003,.002],vig:[.10,.4]};
-export type EpisodeProps={previewScale?:number;optimize?:boolean;shots:EpisodeShot[];cues?:{taps:number[]}};
-const Inner:React.FC<EpisodeProps>=({shots,cues,optimize=true,previewScale=1})=>{
+export type EpisodeProps={previewScale?:number;optimize?:boolean;floorDebug?:'no-ink'|'flat-floor'|'no-ground-shadows';shots:EpisodeShot[];cues?:{taps:number[]}};
+const Inner:React.FC<EpisodeProps>=({shots,cues,optimize=true,previewScale=1,floorDebug})=>{
  const frame=useCurrentFrame(),s=stateAt(frame,shots,cues?.taps),{camera,scene,gl}=useThree();
  if(cues&&s.shot.number!==47)s.kittenTap=Math.max(0,...cues.taps.map(f=>1-Math.abs(frame-f)/6));
  const w=useMemo(()=>new EpisodeWorld(optimize),[optimize]);
@@ -47,6 +47,16 @@ const Inner:React.FC<EpisodeProps>=({shots,cues,optimize=true,previewScale=1})=>
  CHAR.uCharTint.value.set(1,.96,.92);CHAR.uCharShade.value=.88;CHAR.uGrad.value=.055;CHAR.uBodyGrad.value=.15;CHAR.uSideTint.value.set(.80,.88,1);CARD_K.uPx.value=previewScale;
  fx.lens.focus=new T.Vector3(...s.target).sub(cam.position).dot(cam.getWorldDirection(new T.Vector3()));fx.lens.cInf=s.blur;
  w.update(s);
+ // Diagnostic only: three A/B modes leave the standard production render unchanged.
+ if(floorDebug==='flat-floor'){
+  const floor=w.cafe.root.getObjectByName('floor') as T.Mesh<T.BufferGeometry,T.MeshStandardMaterial>|undefined;
+  if(floor&&floor.material.map){floor.material.map=null;floor.material.color.set('#b38d65');floor.material.needsUpdate=true;}
+ }else if(floorDebug==='no-ground-shadows'){
+  for(const name of ['floor','city-sidewalk-network','city-road-network']){
+   const surface=w.root.getObjectByName(name) as T.Mesh|undefined;
+   if(surface)surface.receiveShadow=false;
+  }
+ }
  // Exact influence-volume culling: finite-distance point lights contribute zero outside their sphere.
  // This preserves the light field while avoiding invisible lights in software-rendered close-ups.
  if(optimize){w.root.updateMatrixWorld(true);const frustum=new T.Frustum().setFromProjectionMatrix(new T.Matrix4().multiplyMatrices(cam.projectionMatrix,cam.matrixWorldInverse));w.root.traverse(o=>{if(o instanceof T.PointLight)o.visible=o.intensity>0&&(o.distance<=0||frustum.intersectsSphere(new T.Sphere(o.getWorldPosition(new T.Vector3()),o.distance)));});}
@@ -98,11 +108,19 @@ const Inner:React.FC<EpisodeProps>=({shots,cues,optimize=true,previewScale=1})=>
  useEffect(()=>{
   w.root.updateMatrixWorld(true);population.root.updateMatrixWorld(true);cast.forEach(c=>c.card.mesh.updateMatrixWorld(true));kitten.mesh.updateMatrixWorld(true);
   const {visibility,cameraHits}=checkEpisodeCamera(w,s,cam,[...cast.map(c=>({id:c.id,mesh:c.card.mesh})),{id:'kitten',mesh:kitten.mesh},...population.actors]);
-  const audit={frame,shot:s.shot.id,sourceShot:s.shot.number,baseFrame:s.t*30,camera:s.camera,target:s.target,visibility,cameraHits,latte:lp,mocha:mp,essie:ep,kitten:kid,feet:{latte:s.latte.feet,latteKeys:s.latte.footKeys},bowl:s.bowl,bowlContact:s.bowlContact,door:s.door,failed:s.failed,clock:s.clock,flashback:s.flashback,openerVisible:cast.find(c=>c.id==='mocha')!.card.mesh.visible||paws.mocha.group.visible,kittenVisible:kitten.mesh.visible,earlyInteriorVisible:s.shot.number<50&&(cast.find(c=>c.id==='essie')!.card.mesh.visible||population.actors.slice(2,4).some(c=>c.mesh.visible)),kittenPawVisible:paws.kitten.group.visible,streetResidentsVisible:population.actors.slice(0,2).some(c=>c.mesh.visible),shadow:{source:source.toArray(),sourceCharacter:'approved-mocha-texture',factor,blanket:'actual-cloth-geometry'},counterRoles:[...w.cafe.fixtures].filter(([,o])=>o.userData.role?.includes('counter')).map(([id,o])=>({id,role:o.userData.role}))};
+  // Exact foreground mesh intersections at four pixels crossing the reported jagged band.
+  const floorRay=s.shot.id==='04'&&frame===s.shot.start+14?[{x:215,y:640},{x:270,y:665},{x:325,y:700},{x:270,y:725}].map(sample=>{
+   const ray=new T.Raycaster();ray.setFromCamera(new T.Vector2(sample.x/540*2-1,1-sample.y/960*2),cam);
+   const hits=ray.intersectObjects(w.root.children,true).slice(0,7).map(hit=>{
+    const m=hit.object as T.Mesh;const mat=Array.isArray(m.material)?m.material[0]:m.material as T.MeshStandardMaterial|undefined;
+    return {name:m.name,parent:m.parent?.name??'',distance:Number(hit.distance.toFixed(3)),point:hit.point.toArray().map(v=>Number(v.toFixed(3))),color:mat&&'color'in mat?String((mat as T.MeshStandardMaterial).color.getHexString()):null};
+   });return {pixel:sample,hits};
+  }):undefined;
+  const audit={floorRay,frame,shot:s.shot.id,sourceShot:s.shot.number,baseFrame:s.t*30,camera:s.camera,target:s.target,visibility,cameraHits,latte:lp,mocha:mp,essie:ep,kitten:kid,feet:{latte:s.latte.feet,latteKeys:s.latte.footKeys},bowl:s.bowl,bowlContact:s.bowlContact,door:s.door,failed:s.failed,clock:s.clock,flashback:s.flashback,openerVisible:cast.find(c=>c.id==='mocha')!.card.mesh.visible||paws.mocha.group.visible,kittenVisible:kitten.mesh.visible,earlyInteriorVisible:s.shot.number<50&&(cast.find(c=>c.id==='essie')!.card.mesh.visible||population.actors.slice(2,4).some(c=>c.mesh.visible)),kittenPawVisible:paws.kitten.group.visible,streetResidentsVisible:population.actors.slice(0,2).some(c=>c.mesh.visible),shadow:{source:source.toArray(),sourceCharacter:'approved-mocha-texture',factor,blanket:'actual-cloth-geometry'},counterRoles:[...w.cafe.fixtures].filter(([,o])=>o.userData.role?.includes('counter')).map(([id,o])=>({id,role:o.userData.role}))};
   (window as unknown as {__EPISODE_AUDIT:unknown}).__EPISODE_AUDIT=audit;console.log('EPISODE_AUDIT '+JSON.stringify(audit));
  },[frame,w,cast,kitten,cam]);
  useEffect(()=>()=>{w.dispose();population.dispose();cast.forEach(c=>{c.card.dispose();c.shadow.dispose();});kitten.dispose();kittenShadow.dispose();Object.values(paws).forEach(p=>p.dispose());projected.cat.geometry.dispose();projected.cloth.geometry.dispose();projected.mat.dispose();projected.clothMat.dispose();fx.ink.dispose();fx.lens.pre.dispose();fx.lens.main.dispose();fx.bloom.dispose();fx.tone.dispose();fx.grade.dispose();splashes.forEach(p=>{p.line.geometry.dispose();p.mat.dispose();});},[w,cast,kitten,kittenShadow,paws,projected,fx,splashes]);
- return <><primitive object={population.root} dispose={null}/><primitive object={w.root} dispose={null}/>{cast.map(c=><React.Fragment key={c.id}><primitive object={c.card.legs} dispose={null}/><primitive object={c.card.mesh} dispose={null}/><primitive object={c.shadow.mesh} dispose={null}/></React.Fragment>)}<primitive object={kitten.mesh} dispose={null}/><primitive object={kittenShadow.mesh} dispose={null}/>{Object.entries(paws).map(([id,p])=><primitive key={id} object={p.group} dispose={null}/>)}{splashes.map((p,i)=><primitive key={'splash-'+i} object={p.line} dispose={null}/>)}<primitive object={projected.cat} dispose={null}/><primitive object={projected.cloth} dispose={null}/><EffectComposer multisampling={4}>{[<primitive key="ink" object={fx.ink} dispose={null}/>,...(s.blur>0?[<primitive key="pre" object={fx.lens.pre} dispose={null}/>,<primitive key="lens" object={fx.lens.main} dispose={null}/>]:[]),<primitive key="bloom" object={fx.bloom} dispose={null}/>,<primitive key="tone" object={fx.tone} dispose={null}/>,<primitive key="grade" object={fx.grade} dispose={null}/>]}</EffectComposer></>;
+ return <><primitive object={population.root} dispose={null}/><primitive object={w.root} dispose={null}/>{cast.map(c=><React.Fragment key={c.id}><primitive object={c.card.legs} dispose={null}/><primitive object={c.card.mesh} dispose={null}/><primitive object={c.shadow.mesh} dispose={null}/></React.Fragment>)}<primitive object={kitten.mesh} dispose={null}/><primitive object={kittenShadow.mesh} dispose={null}/>{Object.entries(paws).map(([id,p])=><primitive key={id} object={p.group} dispose={null}/>)}{splashes.map((p,i)=><primitive key={'splash-'+i} object={p.line} dispose={null}/>)}<primitive object={projected.cat} dispose={null}/><primitive object={projected.cloth} dispose={null}/><EffectComposer multisampling={4}>{[...(floorDebug==='no-ink'?[]:[<primitive key="ink" object={fx.ink} dispose={null}/>]),...(s.blur>0?[<primitive key="pre" object={fx.lens.pre} dispose={null}/>,<primitive key="lens" object={fx.lens.main} dispose={null}/>]:[]),<primitive key="bloom" object={fx.bloom} dispose={null}/>,<primitive key="tone" object={fx.tone} dispose={null}/>,<primitive key="grade" object={fx.grade} dispose={null}/>]}</EffectComposer></>;
 };
 export const DoorEpisode:React.FC<EpisodeProps>=props=><AbsoluteFill style={{background:'#14283c'}}><ThreeCanvas width={1080} height={1920} dpr={props.previewScale??1} shadows gl={{antialias:false,stencil:false,powerPreference:'high-performance',toneMappingExposure:1}} camera={{near:.08,far:220,fov:48}}><Inner {...props}/></ThreeCanvas><EpisodeCaptions/></AbsoluteFill>;
 export const DoorPolishComposition:React.FC=()=><Composition id="InThisTownTheDoorAt1111Polish" component={DoorEpisode} defaultProps={edit as EpisodeProps} calculateMetadata={({props})=>{validateShots(props.shots);return {durationInFrames:props.shots.at(-1)!.end};}} durationInFrames={edit.shots.at(-1)!.end} width={1080} height={1920} fps={30}/>;
