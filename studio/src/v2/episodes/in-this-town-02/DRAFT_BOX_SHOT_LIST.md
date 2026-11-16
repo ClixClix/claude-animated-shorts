@@ -1,6 +1,6 @@
 # What If Cats / In This Town — Episode 02: The Cat Who Became a Box
 
-> **DRAFT FOR USER APPROVAL. NO RENDER OR PAID NARRATION AUTHORIZED.** This box episode supersedes the abandoned 'shadow' Episode 02 pitch, which is retained as historical draft only.
+> **CREATIVE OUTLINE APPROVED — user replied “good” on 2026-11-16. NO RENDER OR PAID NARRATION AUTHORIZED.** This box episode supersedes the abandoned 'shadow' Episode 02 pitch, which is retained as historical draft only.
 
 **Scope:** 60 individually staged shots, provisional runtime **02:09.2**. ~400-word narration is in `DRAFT_BOX_NARRATION.txt`. All timings are **editorial estimates**, not measured voice alignment. The visual magic reveal now occurs by 00:03.6 while the opening narration naturally continues across cuts—do not artificially speed the voice to match individual shot ends. Final exact frames must be derived from the approved recorded narration before production.
 
@@ -76,7 +76,7 @@
 1. **Latte box:** small, striped tape; unchanged location **beneath café window** through discovery and later recovery. Scene prop and transformed form must look identical, including stripes.
 2. **Essie box:** distinct **larger plain brown** carton. Starts at fixed interior sleeping corner, disappears when Essie drags it away, and remains on the alley floor throughout her transformation, Mocha's attempts, and rescue.
 3. **Final shared box:** new extra-large, unstriped carton **beside café window**, visibly roomy enough for three cats; not an unexplained scaled copy of Latte's box.
-4. **Transformation rule, proposed for approval:** a cat left inside their box too long becomes that very hollow box. Another cat can restore them by willingly entering **the transformed box**; this acts instantly before the rescuer could turn. Tapping, lifting and hugging do not work. Preserve each transformed cat's identity through unique box design and a muffled meow.
+4. **Transformation rule, approved as part of outline:** a cat left inside their box too long becomes that very hollow box. Another cat can restore them by willingly entering **the transformed box**; this acts instantly before the rescuer could turn. Tapping, lifting and hugging do not work. Preserve each transformed cat's identity through unique box design and a muffled meow.
 5. **Time threshold:** do not claim a specific number of minutes. Essie sits in the box before Mocha catches up; maintain an implied passage of time using his run and slight lamp/sky changes. No instantaneous touch-to-transform inconsistency.
 6. **Acting:** Mocha fears/dislikes boxes initially, then chooses to enter Essie's despite his fear. The emotional conclusion is *companionship*, not 'all boxes are good'. No sad blank pauses; reactions have visible eye and paw motion.
 7. **Geography:** SAME café interior (serving counter plus rear prep counter), same door and threshold geometry; café → bus stop → market street → mapped alley → café. All shots share world coordinates. Never shift furniture to fix a camera. Crowd only during realistic town activity and the next-morning announcement.
@@ -84,11 +84,10 @@
 9. **Framing:** phone-readable faces, small safe-zone captions, and motivated push-ins/low camera angles; use an identifiable spatial axis throughout the alley and café. Extra objects must not occlude the important cat/box contact.
 10. **Sound:** original procedural SFX or licensed source for every consequential action, clear meow identity, narration sidechain music ducking and no unwarranted dead space. Master encoded H.264/AAC for −16 ±2 LUFS and ≤−1 dBTP, with complete final encoded frame/audio QA.
 11. **Music rights:** do not reuse TEMPOREX or any other commercial track unless licensed. Passing Content ID is not permission.
-12. **No implicit execution:** these are documents only. Wait for explicit user sign-off on script, the voluntary-join cure and staging, then seek separate permission for any paid voice request. Only after audio timing and storyboard sign-off should local rendering be prepared.
+12. **No implicit execution:** user has accepted the script and shot list as a creative outline. This does **not** authorize paid voice synthesis, coding or local rendering. Obtain separate authorization for paid generation and for moving into production; retime provisional shots to real audio before any render.
 
-## Open decisions for the user
-- Approve or adjust the magical cure: another cat climbs inside the transformed box.
-- Is the roughly 2-minute format preferable to a shorter cut? Do not amputate emotional beats to fit an arbitrary cap.
-- Approve both distinctive box designs and the cozy three-cat final image.
+## Creative approval record
+- User responded **“good”** to the proposed complete narration and 60-shot plan on **2026-11-16**. Treat the companion-in-box cure, distinctive props, approximate 2-minute format and three-cat closing image as **creative-approved**.
+- **Not approved:** any paid ElevenLabs request, implementation/animation changes, local/cloud rendering or publication. The shot timecodes remain estimates pending actual narrator audio.
 
-**STATUS: USER_APPROVAL_PENDING.**
+**STATUS: CREATIVE_APPROVED / PRODUCTION_NOT_AUTHORIZED.**
