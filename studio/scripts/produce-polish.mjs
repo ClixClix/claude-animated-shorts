@@ -18,4 +18,10 @@ if(stage==='preview'){
 }else{
  if(stage==='all'){py('sfx');node('render','render','--concurrency',String(c));node('assemble');node('finish');}
  py('video-qa');py('boards');py('motion-boards','--native');node('reports');
+ // Shared final-MP4 release gate: technical evidence only, never auto-approve rights or creative quality.
+ const manifest=JSON.parse(readFileSync(path.join(studioRoot,'out/v2-episodes/door-at-1111-polish/The_Door_At_1111_Polish_Shot_Manifest.json'),'utf8'));
+ for(const label of ['With_Music','No_Music']){
+  const movie=path.join(studioRoot,'out/v2-episodes/door-at-1111-polish',`The_Door_At_1111_Polish_Final_${label}.mp4`);
+  run(python,['scripts/release_quality_gate.py',movie,'--series','in_this_town','--expected-frames',String(manifest.durationInFrames)]);
+ }
 }
