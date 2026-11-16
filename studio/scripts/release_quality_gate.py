@@ -94,8 +94,8 @@ def analyze(video, expected_frames=None):
         if actual != expected:
             errors.append(f'Audio {key}: expected {expected}, found {actual}.')
     frames = int(v.get('nb_frames') or 0)
-    expected_frames = round(duration * 30)
-    if frames and abs(frames - expected_frames) > 1:
+    frames_from_duration = round(duration * 30)
+    if frames and abs(frames - frames_from_duration) > 1:
         errors.append(f'Video frame count {frames} inconsistent with {duration:.3f}s at 30fps.')
     if not frames:
         warnings.append('No declared frame count; full decode was checked instead.')
