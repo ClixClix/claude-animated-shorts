@@ -1,3 +1,16 @@
+## Episode 02 — The Cat Who Became a Box
+
+The newly approved What If Cats / In This Town Episode 02 uses the **independent** Remotion composition `InThisTownEpisode02Box` and an isolated source-only build. Its 60-shot creative plan is complete; source files for the animated scene, box transformations, custom Foley/original score, local renderer, assembler, audio finishing and deferred one-batch QA have been authored.
+
+**Full instructions:** [Episode 02 final build handoff](studio/src/v2/episodes/in-this-town-02/FINAL_BUILD_HANDOFF.md).
+
+- `Build-Episode02.cmd`: full Windows local build with *approved* narration; **no checks**.
+- `Check-Episode02.cmd`: afterward, one technical/visual-evidence check batch.
+- `node scripts/produce-box.mjs build --allow-scratch`: explicit silent scratch alternative that must not be published.
+- `node scripts/episode02-generate-voice.mjs`: separate, explicitly pay-gated Adam synthesis; never invoked by the build/check scripts.
+
+The source is committed but has **not yet been rendered or batch-checked**. Do not confuse authored production code with a finished movie. Existing Episode 01 source/movies remain untouched.
+
 > **What If Cats V2 local production:** start with [START_HERE.md](START_HERE.md). Use Setup-V2.ps1 and Render-Episode.ps1 for this handoff. The original repository documentation is preserved below.
 
 # Claude Animated Shorts: ready to run
