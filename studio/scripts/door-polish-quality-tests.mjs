@@ -12,6 +12,13 @@ let checks=0,maxShear=0,maxHipX=0;
 const check=(v,m)=>{assert.ok(v,m);checks++;};
 const clean={frame:1,sourceShot:31,openerVisible:false,kittenVisible:false,earlyInteriorVisible:false,cameraHits:[],visibility:[{id:'latte',inFrame:true,occluder:null}]};
 check(qualityErrors([clean]).length===0,'Clean local sample rejected');
+// Regression: the apron and sidewalk used to occupy the same Y=.03 surface.
+const cafeSource=await fs.readFile('src/v2/cafe/environment.ts','utf8');
+const episodeWorldSource=await fs.readFile('src/v2/episodes/door-at-1111-polish/world.ts','utf8');
+check(cafeSource.includes("apron.name='cafe-entry-apron'"),'Standalone café entrance apron lost its stable identifier');
+check(episodeWorldSource.includes("cafeApron.removeFromParent();"),'Episode has reintroduced the overlapping café apron');
+check(episodeWorldSource.indexOf("cafeApron.removeFromParent();")<episodeWorldSource.indexOf('batchCafe(this.cafe.root,this.door)'), 'Entrance apron must be removed BEFORE static geometry batching');
+
 for(const mutation of [{earlyInteriorVisible:true},{openerVisible:true},{kittenVisible:true},{cameraHits:['wall']},{visibility:[{id:'latte',inFrame:false}]},{visibility:[{id:'kitten',inFrame:true,occluder:'doorframe'}]}])check(qualityErrors([{...clean,...mutation}]).length>0,'Broken actual-frame audit accepted');
 check(['01A','22','44','56','60C'].every(id=>criticalShots.includes(id)),'Critical review order omits a known failed beat');
 check(t.CITY_BUILDINGS.length>=65,'City must have several connected districts');
