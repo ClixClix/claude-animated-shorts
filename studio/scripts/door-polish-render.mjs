@@ -13,10 +13,10 @@ const after=k=>{const i=process.argv.indexOf(k);return i<0?undefined:process.arg
 const unbatched=process.argv.includes('--unbatched');
 const out=path.resolve('out/v2-episodes/door-at-1111-polish'),props=JSON.parse(await fs.readFile(path.join(out,'render-props.json'),'utf8'));
 const floorDebug=after('--floor-debug');
-if(floorDebug&&!['no-ink','flat-floor','no-ground-shadows'].includes(floorDebug))throw Error('Unknown --floor-debug mode.');
+if(floorDebug&&!['no-ink','flat-floor','no-ground-shadows','no-sidewalk','no-batching'].includes(floorDebug))throw Error('Unknown --floor-debug mode.');
 if(floorDebug&&mode!=='motion')throw Error('Floor diagnostics are allowed only for short motion preview renders.');
 if(floorDebug)props.floorDebug=floorDebug;
-props.optimize=!unbatched;props.previewScale=draft||mode==='motion'?.5:1;
+props.optimize=!(unbatched||floorDebug==='no-batching');props.previewScale=draft||mode==='motion'?.5:1;
 const pick=after('--shots')?.split(',');const selected=props.shots.filter(s=>!pick||pick.includes(s.id)||pick.includes(String(s.number)));
 if(mode==='motion')selected.sort((a,b)=>{const rank=id=>criticalShots.includes(id)?criticalShots.indexOf(id):criticalShots.length;return rank(a.id)-rank(b.id)||a.start-b.start;});
 const serveUrl=await bundle({entryPoint:path.resolve('src/index.ts')});
