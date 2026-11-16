@@ -95,11 +95,14 @@ Essie's full transformation starts after she has been inside for **a meaningful 
 
 - [x] Approved story and 60-shot editorial list
 - [x] Source-specific build brief and first-pass prop contracts
-- [ ] Physical box assets built and tested in Three.js scene
+- [x] Initial distinct 3D cardboard box meshes and articulated flaps authored in `boxProps.ts` (no visual approval yet)
+- [x] 60-shot machine-readable *scratch* manifest generated and programmatically checked for gapless frames, unique sequence, and <120-frame shots; not locked to narrator timing
+- [x] Offline asset/fixture test script authored: `node scripts/episode02-box-tests.mjs` (not executed in user's local studio yet)
+- [ ] Box assets pass actual local test and native visual review
 - [ ] Working scene/world composition for Episode 02
 - [ ] Rendered transformations and visual review
 - [ ] Paid narrator track (separate permission required)
 - [ ] 60-shot rough preview and review
 - [ ] Local final render and release QA
 
-**Current status:** PREPRODUCTION_BUILD_BRIEF_COMPLETE. The steps beyond this document are implementation tasks, not completed deliverables. Do not create a shortcut that accidentally rerenders or overwrites the Episode 01 movie.
+**Current status:** EPISODE02_SOURCE_SCAFFOLD_READY_FOR_LOCAL_TEST. The articulated box meshes and preliminary 60-shot editorial data are real source files in this branch. **They are not registered in a new Remotion composition, not native-rendered and not visually approved.** The next real step is local offline tests and a dedicated transformation/key-contact prototype. Do not create a shortcut that accidentally rerenders or overwrites the Episode 01 movie.
