@@ -1,3 +1,4 @@
+import {BoxEpisodeComposition} from './v2/episodes/in-this-town-02/Episode';
 import {DoorPolishComposition} from './v2/episodes/door-at-1111-polish/Episode';
 import React from "react";
 import { Composition } from "remotion";
@@ -31,5 +32,6 @@ export const Root: React.FC = () => (
     <PolishComposition />
     <DoorEpisodeComposition />
     <DoorPolishComposition />
+    <BoxEpisodeComposition />
   </>
 );
