@@ -12,6 +12,10 @@ const mode=process.argv[2]??'stills',draft=process.argv.includes('--draft');
 const after=k=>{const i=process.argv.indexOf(k);return i<0?undefined:process.argv[i+1];};
 const unbatched=process.argv.includes('--unbatched');
 const out=path.resolve('out/v2-episodes/door-at-1111-polish'),props=JSON.parse(await fs.readFile(path.join(out,'render-props.json'),'utf8'));
+const floorDebug=after('--floor-debug');
+if(floorDebug&&!['no-ink','flat-floor','no-ground-shadows'].includes(floorDebug))throw Error('Unknown --floor-debug mode.');
+if(floorDebug&&mode!=='motion')throw Error('Floor diagnostics are allowed only for short motion preview renders.');
+if(floorDebug)props.floorDebug=floorDebug;
 props.optimize=!unbatched;props.previewScale=draft||mode==='motion'?.5:1;
 const pick=after('--shots')?.split(',');const selected=props.shots.filter(s=>!pick||pick.includes(s.id)||pick.includes(String(s.number)));
 if(mode==='motion')selected.sort((a,b)=>{const rank=id=>criticalShots.includes(id)?criticalShots.indexOf(id):criticalShots.length;return rank(a.id)-rank(b.id)||a.start-b.start;});
@@ -31,7 +35,7 @@ try{
    console.log(JSON.stringify({shot:shot.id,frame,seconds:(Date.now()-start)/1000,visibility:audit?.visibility,cameraHits:audit?.cameraHits}));
   }
  }else if(mode==='motion'||mode==='render'){
-  const dir=path.join(out,mode==='motion'?'motion':after('--sample')?'native-samples':'segments');await fs.mkdir(dir,{recursive:true});
+  const dir=path.join(out,floorDebug?'floor-diagnostic/'+floorDebug:mode==='motion'?'motion':after('--sample')?'native-samples':'segments');await fs.mkdir(dir,{recursive:true});
   for(const shot of selected){
    const file=path.join(dir,shot.id+'.mp4');
    const sample=Number(after('--sample')??0),middle=shot.start+Math.round((shot.end-shot.start)*Number(after('--at')??.55));
