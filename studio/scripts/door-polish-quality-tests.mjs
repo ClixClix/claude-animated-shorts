@@ -17,7 +17,8 @@ const cafeSource=await fs.readFile('src/v2/cafe/environment.ts','utf8');
 const episodeWorldSource=await fs.readFile('src/v2/episodes/door-at-1111-polish/world.ts','utf8');
 check(cafeSource.includes("apron.name='cafe-entry-apron'"),'Standalone café entrance apron lost its stable identifier');
 check(episodeWorldSource.includes("cafeApron.removeFromParent();"),'Episode has reintroduced the overlapping café apron');
-check(episodeWorldSource.indexOf("cafeApron.removeFromParent();")<episodeWorldSource.indexOf('batchCafe(this.cafe.root,this.door)'), 'Entrance apron must be removed BEFORE static geometry batching');
+const constructorSequence=episodeWorldSource.slice(episodeWorldSource.indexOf('constructor(optimize=true)'),episodeWorldSource.indexOf('private prepareRainRoofs()'));
+check(constructorSequence.includes('this.cityBlocks()')&&constructorSequence.indexOf('this.cityBlocks()')<constructorSequence.indexOf('batchCafe(this.cafe.root,this.door)'), 'City world setup and apron deduplication must run BEFORE static geometry batching');
 
 for(const mutation of [{earlyInteriorVisible:true},{openerVisible:true},{kittenVisible:true},{cameraHits:['wall']},{visibility:[{id:'latte',inFrame:false}]},{visibility:[{id:'kitten',inFrame:true,occluder:'doorframe'}]}])check(qualityErrors([{...clean,...mutation}]).length>0,'Broken actual-frame audit accepted');
 check(['01A','22','44','56','60C'].every(id=>criticalShots.includes(id)),'Critical review order omits a known failed beat');
