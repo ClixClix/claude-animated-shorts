@@ -27,5 +27,6 @@ Do not place images merely because a word is spoken. The image must make the sto
 4. Consecutive actual frames for stepping, turning, object contact, entry and reveals.
 5. Full narrated local preview and reference-quality review.
 6. Native local render, independent music mix, encoded audio/video QA, user approval.
+7. **Mandatory final-MP4 release gate:** run `studio/scripts/release_quality_gate.py` with the approved edit's `--expected-frames` and the correct series. Require 1080×1920/30 H.264, AAC stereo/48 kHz, −16 ±2 LUFS, ≤−1 dBTP encoded true peak, full decode and an exact-file human review/rights signoff. See `QUALITY_BASELINE.md`. Never call an unreviewed or unlicensed render publish-ready.
 
 Record actual evidence paths and unresolved issues at each gate. Passing code checks is not picture approval. No automatic new paid audio or publication.
