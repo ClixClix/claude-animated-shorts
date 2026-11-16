@@ -25,7 +25,7 @@ check(t.distance(potBefore.camera,potAfter.camera)<.03&&Math.abs(potBefore.fov-p
 const first=t.stateAt(shot('50A').start,shots),last=t.stateAt(shot('50A').end-1,shots);
 check(first.required.includes('latte')&&first.latte.pose.blink>.95&&last.latte.pose.blink<.05,'Latte must visibly reopen eyes before Mocha');
 check(t.stateAt(shot('50B').start,shots).required.includes('mocha'),'Mocha reveal must follow eyes opening');
-check(t.stateAt(shot('57B').end-1,shots).latte.pose.gazeX<-.8,'Latte must look off screen toward the sign');
+const signLook=t.stateAt(shot('57B').end-1,shots),signSide=(t.SIGN[0]-signLook.latte.position[0])*(signLook.camera[2]-signLook.latte.position[2])-(t.SIGN[2]-signLook.latte.position[2])*(signLook.camera[0]-signLook.latte.position[0]);check(signLook.latte.pose.gazeX>.8&&Math.sign(signLook.latte.pose.yaw)===Math.sign(signSide),'Latte head and pupils must point toward the sign in the camera view');
 check(t.stateAt(shot('57C').end-1,shots).required.includes('sign'),'Pan to sign after Latte notices it');
 const decode=file=>execFileSync('ffmpeg',['-nostdin','-v','error','-i',file,'-ar','48000','-ac','1','-f','f32le','pipe:1'],{maxBuffer:64*1024*1024});
 const original=decode(plan.narration.source),stem=decode(path.join(out,'Narration_Stem.wav'));
@@ -57,6 +57,7 @@ for(let frame=shot('58A').start;frame<plan.durationInFrames;frame++){
   check(JSON.stringify(a)===JSON.stringify(t.shelterState(s,i)),'Non-deterministic supporting actor');
   if(previous)check(t.distance(a.position,previous.position)<.16,'Shelter guest moved too far '+JSON.stringify({frame,index:i,distance:t.distance(a.position,previous.position)}));
   check(a.position[1]>=0&&a.position[1]<=(i===2?.76:.031),'Supporting cat floats or clips floor');
+  if(i===2)check(Math.hypot(a.position[0]-t.LANTERN[0],a.position[2]-t.LANTERN[2])>.45,'Shelter kitten intersects the lantern');
   if(Math.abs(a.position[2]-4.2)<.15&&Math.abs(a.position[0])<4.1)check(a.position[0]>1.8&&a.position[0]<2.8,'Supporting cat crosses a wall instead of entrance');
   for(const f of t.FIXTURES.filter(f=>['serving-counter','preparation-counter','customer-table','chair','bench'].includes(f.role))){
    check(!(Math.abs(a.position[0]-f.position[0])<f.size[0]/2+.10&&Math.abs(a.position[2]-f.position[2])<f.size[2]/2+.10),'Supporting cat intersects '+f.id);
@@ -64,6 +65,8 @@ for(let frame=shot('58A').start;frame<plan.durationInFrames;frame++){
   prior.set(i,a);
  }
 }
+check(t.stateAt(shot('12B').start,shots).latte.pose.expression==='happy','Felt safe must show a smile');
+check(t.stateAt(shot('10').start,shots).latte.emotion>=.75,'Afraid beat needs a clear frightened reaction');
 const shyStart=t.shelterState(t.stateAt(shot('58D').start,shots),2),shyEnd=t.shelterState(t.stateAt(plan.durationInFrames-1,shots),2);
 check(shyStart.progress===0&&shyEnd.progress===1,'Same hesitant cat must emerge and reach shelter');
 const jump=Array.from({length:shot('58D').end-shot('58D').start},(_,i)=>t.shelterState(t.stateAt(shot('58D').start+i,shots),2));

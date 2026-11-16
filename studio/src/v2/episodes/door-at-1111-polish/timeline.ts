@@ -52,8 +52,8 @@ export const BOWL_REST:V3=[3.124228,0,3.424509];
 export const CLOCK:V3=[-8.4,15.2,-13.4];
 export const SIGN:V3=[-2.15,0.40,3.42];
 export const LANTERN:V3=[-0.96,0,2.62];
-export const ENTRY_THRESHOLD={x:2.25,z:4.24,halfWidth:.71,halfDepth:.09,height:.05};
-export function thresholdSurface(p:V3){const e=ENTRY_THRESHOLD;return Math.abs(p[0]-e.x)<=e.halfWidth&&Math.abs(p[2]-e.z)<=e.halfDepth?e.height:0;}
+export const ENTRY_THRESHOLD={x:2.25,z:4.24,halfWidth:.71,halfDepth:.09,height:.03};
+export function thresholdSurface(p:V3){const e=ENTRY_THRESHOLD;return Math.abs(p[0]-e.x)<=e.halfWidth&&Math.abs(p[2]-e.z)<=e.halfDepth?e.height*clamp((p[2]-(e.z-e.halfDepth))/(2*e.halfDepth)):0;}
 
 export type Key={time:number;position:V3};
 export const KITTEN_PATH:Key[]=[{time:0,position:KITTEN_WAIT},{time:99,position:KITTEN_WAIT},{time:100,position:[4.6,.03,5.45]},{time:101,position:[4.6,.03,5.45]},{time:103,position:KITTEN_WAIT},{time:121.5,position:KITTEN_WAIT},{time:124,position:KITTEN_REST},{time:136,position:KITTEN_REST}];
@@ -69,8 +69,8 @@ function pathAt(t:number,keys:Key[]){
 }
 const LATTE_PATH:Key[]=[
  {time:0,position:[-1.45,.03,6.1]},{time:10.5,position:[-1.45,.03,6.1]},{time:12.99,position:[-2,.03,6.6]},{time:13,position:[-2,.03,6.1]},
- {time:26.49,position:[-2.0,0.03,6.10]}, {time:26.5,position:[-2.50,0.03,6.3]},
- {time:27.3,position:[.5,.03,5.6]},{time:28.2,position:[4.05,.03,5.6]},{time:28.5,position:[4.5,.03,5.45]},{time:28.8,position:[4.6,.03,5.05]},{time:30.5,position:[4.6,.028,1.0]},{time:31.2,position:[4.6,.028,1.0]},{time:34,position:[4.6,.03,5.6]},{time:37,position:[-2.5,.03,6.3]},{time:39.5,position:[-2.50,0.03,6.3]}, {time:44.5,position:[-2.50,0.03,8.00]},
+ {time:26.49,position:[-2.0,0.03,6.10]}, {time:26.5,position:[-2.50,0.03,6.8]},
+ {time:27.3,position:[-6,.03,6.8]},{time:28.2,position:[-9.15,.03,5.6]},{time:28.5,position:[-9.15,.03,5.45]},{time:28.8,position:[-9.15,.03,5.05]},{time:30.5,position:[-9.15,.03,1.0]},{time:31.2,position:[-9.15,.03,1.0]},{time:34,position:[-9.15,.03,5.6]},{time:37,position:[-2.5,.03,6.3]},{time:39.5,position:[-2.50,0.03,6.3]}, {time:44.5,position:[-2.50,0.03,8.00]},
  {time:46.5,position:[-1.80,0.03,8.25]}, {time:49,position:[-0.70,0.03,9.0]},
  {time:51.5,position:[2.0,0.03,10.8]}, {time:51.9,position:[3.15,.03,11.1]}, {time:52.5,position:[3.15,.18,11.7]}, {time:54,position:[3.15,0.20,12.08]},
  {time:56,position:[3.68,0.20,13.10]}, {time:56.8,position:[4.08,.20,13.10]},{time:57.6,position:[4.08,.20,13.10]},{time:58.5,position:[3.68,0.20,13.10]},
@@ -81,7 +81,7 @@ const LATTE_PATH:Key[]=[
  {time:105.5,position:[3.80,0.03,5.55]}, {time:107.5,position:[4.15,0.03,5.85]}, {time:122,position:[4.15,0.03,5.85]}, {time:123,position:[2.25,.03,5.45]}, {time:124,position:[2.25,.03,5.45]}, {time:125.1,position:[2.25,.03,4.4]}, {time:125.3,position:[2.25,0,4.1]}, {time:125.8,position:[2.25,0,3.6]},
  {time:126,position:[1.93,0,3.30]}, {time:132.5,position:[1.93,0,3.30]}, {time:135,position:[2.15,0,3.30]}, {time:136,position:[2.15,0,3.30]},
 ];
-export function mouseAt(t:number):V3{const p=pathAt(Math.min(t+.22,30.5),LATTE_PATH).position;p[0]+=.55*beat(t,27.7,28.5);return t<30.5?p:mix(p,[6.52,.028,1.0],beat(t,30.5,31.0));}
+export function mouseAt(t:number):V3{const p=pathAt(Math.min(t+.22,30.5),LATTE_PATH).position;p[0]-=.35*beat(t,27.7,28.5);return t<30.5?p:mix(p,[-9.95,.03,1.0],beat(t,30.5,31.0));}
 const ESSIE_PATH:Key[]=[{time:99,position:[0.02,0.6,-2.08]},{time:100.5,position:[0.48,0.6,-2.08]},{time:102,position:[0.91,0,-2.08]},{time:104,position:[1.40,0,-1.8]},{time:107,position:[1.4,0,0.5]},{time:109,position:[3.55,0,0.6]},{time:113.5,position:[3.55,0,2.9]},{time:117,position:[3.32,0,3.34]},{time:127,position:[3.32,0,3.34]},{time:129.5,position:[3.65,0,3.34]},{time:132,position:[3.65,0,.9]},{time:136,position:[3.65,0,.9]}];
 const MOCHA_PATH:Key[]=[{time:0,position:[2.25,0,3.90]},{time:6,position:[2.25,0,3.90]},{time:10,position:[-.96,0,3.30]},{time:12.99,position:[-.96,0,3.30]},{time:13,position:[2.25,0,3.90]},{time:17,position:[2.25,0,3.90]},{time:21,position:[-.96,0,3.30]},{time:26.5,position:[-.96,0,3.65]},{time:64.5,position:[-.96,0,3.65]},{time:67,position:[2.25,0,3.90]},{time:69,position:[2.25,0,3.90]},{time:75,position:[-.96,0,3.65]},{time:85,position:[-.96,0,3.65]},{time:87.5,position:[-.96,0,3.30]},{time:89.5,position:[-.96,0,3.30]},{time:93.5,position:[-.50,0,3.30]},{time:101,position:[-.96,0,3.30]},{time:105.5,position:[-.96,0,3.10]},{time:107.5,position:[-.96,0,3.10]},{time:109,position:[2.25,0,3.90]},{time:112,position:[2.25,0,3.90]},{time:114.5,position:[1.18,0,3.32]},{time:127,position:[1.18,0,3.32]},{time:128,position:[.25,0,3.32]},{time:129,position:[.25,0,1.25]},{time:130.3,position:[-3.45,0,1.25]},{time:136,position:[-3.45,0,1.25]}];
 
@@ -108,6 +108,7 @@ export function blanketSurface(p:V3){
 }
 export function supportHeight(p:V3,seed:number){
  if(thresholdSurface(p)>0)return thresholdSurface(p);
+ if(p[0]>=-10&&p[0]<=-8.35&&p[2]>=-2&&p[2]<=6.325)return .03;
  if(seed===0&&p[2]<4.25&&blanketSurface(p)>0)return blanketSurface(p);
  if(seed===2&&p[0]>=-.505&&p[0]<=.545&&p[2]>=-2.58&&p[2]<=-1.58)return .6;
  if(seed===0&&p[2]>=12.3)return .20;
@@ -158,8 +159,8 @@ export function stateAt(frame:number,shots:EpisodeShot[]=DRAFT_SHOTS,taps:number
  // Fear builds and releases; closed-mouth concern is the baseline between actual shocks.
  latte.pose.expression=t>=124?'neutral':'concerned';
  latte.emotion=t<26.5?.12:t<39.5?.24:t<54?.52:t<71?.28:t<78?.62:t<83?.94:t<86?.26:t<95?.66:t<103?.42:t<108?.88:.5*(1-beat(t,108,121));
- if(n===10)latte.emotion=.52;
- if(n===12&&sample.shot.variant===1){latte.emotion=.08;latte.pose.headTilt=-.035;latte.pose.earLeft=latte.pose.earRight=-.08;}
+ if(n===10){latte.emotion=.8;latte.pose.headTilt=.025*Math.sin(frame*1.1);latte.pose.earLeft=latte.pose.earRight=.75;}
+ if(n===12&&sample.shot.variant===1){latte.emotion=.08;latte.pose.expression='happy';latte.pose.headTilt=-.035;latte.pose.earLeft=latte.pose.earRight=-.08;}
  if(n===13||n===14){latte.emotion=0;latte.pose.expression='happy';latte.pose.tail=.4;}
  if(n===34)latte.emotion=.5+.18*sample.shot.variant;
  if(n===38||n===43){latte.pose.expression=sample.u<.23?'surprised':'concerned';latte.emotion=sample.u<.23?.7:.28;}
@@ -191,6 +192,7 @@ export function stateAt(frame:number,shots:EpisodeShot[]=DRAFT_SHOTS,taps:number
   if(a===latte&&[43,44].includes(n)){a.pose.headTurn=.35*Math.sin(frame*.12);a.pose.gazeX=.7*Math.sin(frame*.12);}
  }
  if(Math.abs(latte.pose.yaw??0)>.72)latte.pose.headTurn=0;
+ if(n===57&&sample.shot.variant===1){const dx=s.camera[0]-latte.position[0],dz=s.camera[2]-latte.position[2],direction=Math.sign((SIGN[0]-latte.position[0])*dz-(SIGN[2]-latte.position[2])*dx)||1;latte.pose.yaw=.12*direction;latte.pose.headTurn=.60*direction*beat(s.u,.1,.65);latte.pose.gazeX=.88;latte.pose.gazeY=-.12;}
  if(n===58&&sample.shot.variant===0){mocha.position[2]=3.80;mocha.pose.yaw=.96;mocha.pose.headTurn=0;mocha.pose.headTilt=0;}
  if(n===59&&sample.shot.variant===1){mocha.pose.yaw=-.96;mocha.pose.headTurn=0;mocha.pose.headTilt=0;}
  if(n===22&&t>47.55&&t<48.55){latte.pose.expression='surprised';latte.pose.headTilt=-.32*Math.sin(Math.PI*(t-47.55));}
@@ -210,15 +212,15 @@ function setCamera(s:EpisodeState){
  case 3:case 4:{const q=groupedProgress(s,[3,4]);set(mix([5.7,5.7,10.0],[3.4,1.5,7.0],ease(q)),mix([0,2.4,4.2],[2.25,1.5,4.2],ease(q)),94-32*ease(q),q<.35?['cafe']:['door']);break;}
  
  case 5:if(v===0)set([-.5,1.4,9.5],[2.25,1.4,4.2],80,['door']);else {const p=streetCatPosition(s,0);set([p[0]+.55,1.15,p[2]+2.2],[p[0],.57,p[2]],64,['confused-cat']);}break;
- case 6:{const p=streetCatPosition(s,0);set([5.1,1.8,8.5],mix([p[0],.65,p[2]],[5.6,.9,1.6],.45),96,['confused-cat','alley']);break;}
+ case 6:{const p=streetCatPosition(s,0);set([-9.1,1.8,8.5],mix([p[0],.65,p[2]],[-9.15,.9,1.6],.45),96,['confused-cat','dark-alley']);break;}
  case 7:set([.55,3.18,5.65],CLOCK,65,['clock']);break;
  case 8:set([5.7,2.8,12.0],[1.2,2.2,4.2],52,['door']);break;
  case 9:set([-.80,1.8,6.05],[-.90,2.1,4.24],62,['shadow']);break;
  case 10:set([-.6,1.25,8.5],latte,40,['latte']);break;
  case 11:{const q=groupedProgress(s,[11]);set([s.latte.position[0]+.15,1.20,s.latte.position[2]+.55],mix([-6,3.05,6.5],[4.5,3.05,12],ease(q)),92,[]);break;}
  case 12:if(!v){const p=STREETLIGHTS[2];set([p[0]+1.4,2.4,p[2]+2.3],[p[0],3.08,p[2]],62,['light-3'],.35);}else set([-1.00,1.15,8.1],latte,40,['latte']);break;
- case 13:{const m=mouseAt(t);set([s.latte.position[0]+2.6,1.7,5.05],mix(latte,[m[0],.4,m[2]],.25),80,['latte','mouse']);break;}
- case 14:{const m=mouseAt(t);set([5.9,1.8,s.latte.position[2]+2.0],mix(latte,[m[0],.4,m[2]],.25),78,['latte','mouse']);break;}
+ case 13:{const m=mouseAt(t);set([s.latte.position[0]-2.4,2.0,s.latte.position[2]+1.4],mix(latte,[m[0],.4,m[2]],.25),80,['latte','mouse']);break;}
+ case 14:{const m=mouseAt(t);set([-9.8,2.2,s.latte.position[2]-1.3],mix(latte,[m[0],.4,m[2]],.25),82,['latte','mouse']);break;}
  case 15:{const p=STREETLIGHTS[0];set([p[0]+1.6,2.6,p[2]+2.6],[p[0],3.05,p[2]],52,['light-1']);break;}
  case 16:{const p=STREETLIGHTS[1];set([p[0]+1.6,2.6,p[2]+2.6],[p[0],3.05,p[2]],52,['light-2']);break;}
  case 17:{const p=STREETLIGHTS[2];set([p[0]+1.6,2.6,p[2]+2.6],[p[0],3.05,p[2]],52,['light-3']);break;}
@@ -240,7 +242,7 @@ function setCamera(s:EpisodeState){
  case 34:{const cameras:V3[]=[[1.7,1.3,15.2],[1.05,1.3,14.6],[.35,1.35,15.1]];set(cameras[v],latte,66,['latte']);break;}
  case 35:latteHome(true);break;
  case 36:latteHome();s.camera=mix(s.camera,s.target,.12*ease(groupedProgress(s,[36])));s.required=['home-blanket'];break;
- case 37:if(!v)set([-10,1.7,9],[-2,1.7,22],90,['other-buildings']);else set([5.35,1.5,6.3],[5.45,.7,-1.7],70,['alley']);break;
+ case 37:if(!v)set([-10,1.7,9],[-2,1.7,22],90,['other-buildings']);else set([-9.15,1.5,6.3],[-9.15,.7,1.0],70,['dark-alley']);break;
  case 38:latteHome(v>0);if(!v)s.required=['home-blanket'];break;
  case 39:set([.85,1.4,14.3],[-.9,2.0,4.258],88-58*ease(groupedProgress(s,[39])),['shadow']);break;
  case 40:set([.85,1.4,14.3],mix([-.9,2.0,4.258],[-.9,2.55,4.258],ease(u)),30-6*ease(u),['shadow-top']);break;

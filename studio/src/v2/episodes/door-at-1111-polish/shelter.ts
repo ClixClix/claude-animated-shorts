@@ -9,7 +9,7 @@ export function shelterState(s:EpisodeState,index:number){
  const finish=index===3?end:index===2?settle:anchor('60A',3200);
  let progress=ease((s.frame-begin)/Math.max(30,finish-begin));
  if(index===2){const u=Math.max(0,Math.min(1,(s.frame-begin)/(finish-begin))),r=.08;progress=u<r?u*u/(2*r*(1-r)):u>1-r?1-(1-u)**2/(2*r*(1-r)):(u-r/2)/(1-r);}
- const route:V3[]=index===3?[[3.70,.03,5.65],[2.5,.03,5.65],[2.5,0,3.6],[-.5,0,2.5]]:index===2?[[5.45,.03,-1.7],[5.45,.03,4.9],[2.6,.03,5.85],[2.6,0,3.9],[3.5,0,3.65],[3.5,0,2.9],[-1.0,0,2.7]]:index===0?[[2.05,.03,5.9],[2.05,0,3.55],[.35,0,3.05],[.35,0,.8]]:[[2.65,.03,6.7],[2.65,0,3.65],[-.35,0,3.05],[-.35,0,1.7]];
+ const route:V3[]=index===3?[[3.70,.03,5.65],[2.5,.03,5.65],[2.5,0,3.6],[-.5,0,2.5]]:index===2?[[5.45,.03,-1.7],[5.45,.03,4.9],[2.6,.03,5.85],[2.6,0,3.9],[3.5,0,3.65],[3.5,0,2.9],[.35,0,2.82],[-.25,0,3.18],[-1.3,0,3.18],[-1.65,0,2.55]]:index===0?[[2.05,.03,5.9],[2.05,0,3.55],[.35,0,3.05],[.35,0,.8]]:[[2.65,.03,6.7],[2.65,0,3.65],[-.35,0,3.05],[-.35,0,1.7]];
  if(index===3){const threshold=anchor('58A',3892),entryFraction=3.25/(3.25+Math.hypot(3,1.1));progress=s.frame<threshold?entryFraction*ease((s.frame-begin)/Math.max(1,threshold-begin)):entryFraction+(1-entryFraction)*ease((s.frame-threshold)/Math.max(1,finish-threshold));}
  const lengths=route.slice(1).map((p,i)=>Math.hypot(...p.map((v,j)=>v-route[i][j]))),total=lengths.reduce((a,b)=>a+b,0);
  let distance=progress*total,position=route.at(-1)!;
@@ -20,6 +20,6 @@ export function shelterState(s:EpisodeState,index:number){
 
 export function streetCatPosition(s:Pick<EpisodeState,'t'>,index:number):V3{
  const t=s.t,rush=Math.min(t,3),walk=Math.max(0,t-3);
- if(index===0){const approach=ease((t-9.5)/1.2),turn=ease((t-11.5)/1.5),leave=ease((t-13)/13.5);return [5.45-1.85*turn-9.1*leave,.03,6.2-.8*approach+.2*turn];}
- return [-2.5+rush*1.2-walk*.42,.03,6.05];
+ if(index===0){const approach=ease((t-9.5)/1.2),turn=ease((t-11.5)/1.5),leave=ease((t-13)/13.5);return [-9.15-1.65*turn-3.4*leave,.03,6.2-.8*approach+.2*turn];}
+ return [t<=13?-2.5+rush*1.2-walk*.42:-3.1-(t-13),.03,6.05];
 }

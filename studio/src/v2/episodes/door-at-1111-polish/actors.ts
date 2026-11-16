@@ -21,6 +21,7 @@ export function createEpisodeCat(id:CatId){
  function render(ctx:CanvasRenderingContext2D,actor:Actor,s:EpisodeState,pose:Partial<CatPose>){
   ctx.setTransform(2,0,0,2,0,0);ctx.clearRect(0,0,500,550);
   const crouch=id==='latte'?beat(s.t,77.5,79)*(1-beat(s.t,83,84)):0;ctx.setTransform(2,0,0,2*(1-.18*crouch),0,2*480*.18*crouch);
+  if(id==='latte'&&s.shot.number===10)ctx.translate(Math.sin(s.frame*1.55)*2.5,Math.sin(s.frame*1.1)*.6);
   const original=nativeTranslations.get(ctx)!,scale=nativeScales.get(ctx)!;
   // Retain the approved torso paths/palette; remove the legacy pancake squash in locomotion.
   ctx.scale=(x,y)=>scale(actor.moving&&y===.68?x-.25+.25*Math.abs(pose.yaw??0):x,actor.moving&&y===.68?.82:y);

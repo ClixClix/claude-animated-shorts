@@ -2,6 +2,10 @@
 
 Delivery branch: `v2-local-render`. Worktree branch may differ. Inspect Git status/log before edits. Preserve uncommitted files and prior movies.
 
+## Latest 2% wrap-up
+
+Read the top of LAST_MINOR_FIXES.md. Current source includes the screenshot's blended ramp/sidewalk correction, question marks replacing shrugging, fear shiver/safe smile, the separate west-block dark alley, nearby infill and windows on all 3D facade directions, sign eyeline correction, lantern-safe kitten route and city-wide roof-masked rain. Only local review is authorized; original narration/current edit are preserved. Do not restart or expand scope. The separate new narration still needs visual integration as described below; no more paid requests.
+
 ## Wrap-up at 3% usage
 
 The five newest source corrections are recorded at the top of LAST_MINOR_FIXES.md: quicker visual safe-lights beat, solid door threshold/shared floor support, illustrated 2D city horizon layers, one stable switch-contact shot, and a solid planter with matching camera endpoint. Current edit: 81 cuts / 3,349 frames; original continuous narration unchanged. The user clarified the floor issue is immediately before the cafe door. Stop scope expansion; upload this source and review the actual updated LOCAL preview next. The separate new-narration integration remains pending.

@@ -1,5 +1,6 @@
 import * as T from 'three';
 import {createCity} from './city';
+import {CITY_BUILDINGS,CITY_BACKDROP} from './cityConfig';
 import {mouthAnchor} from './contacts';
 import {batchCafe} from './batch';
 import {CafeEnvironment} from '../../cafe/environment';
@@ -18,10 +19,11 @@ export class EpisodeWorld{
  private townWindows:{mat:T.MeshStandardMaterial;color:T.Color;emissive:number}[]=[];
  private permanentLights:{light:T.Light;intensity:number}[]=[];private pendantBulbs:{mat:T.MeshStandardMaterial;emissive:number}[]=[];
  private traffic:T.Group[]=[];private backgroundTraffic:T.Group[]=[];
+ private rainRoofs=new Float32Array(360*360);
  readonly shadowScreen:T.Mesh;readonly rainPositions:Float32Array;
  constructor(optimize=true){
   this.root.name='door-at-1111-extensions';this.root.add(this.cafe.root);this.door=this.rigDoor();
-  this.home();this.street();this.busStop();this.makeBus();this.parkedCars();this.livingDetails();this.cityBlocks();
+  this.home();this.street();this.busStop();this.makeBus();this.parkedCars();this.livingDetails();this.cityBlocks();this.prepareRainRoofs();
   this.clockCanvas.width=this.clockCanvas.height=768;this.clockTexture=new T.CanvasTexture(this.clockCanvas);this.clockTexture.colorSpace=T.SRGBColorSpace;this.textures.push(this.clockTexture);
   const clockGroup=new T.Group();clockGroup.name='episode-clock';clockGroup.position.set(...CLOCK);this.root.add(clockGroup);this.props.set('clock',clockGroup);
   this.cylinder(clockGroup,1.15,1.15,.10,[0,0,-.04],'#bda36d').rotation.x=Math.PI/2;
@@ -43,7 +45,7 @@ export class EpisodeWorld{
   this.blanket=this.cloth('mocha-blanket','#9c9d7f',2.5,1.8);this.homeBlanket=this.cloth('latte-home-blanket','#a59a7e',1.25,1.45);
   this.root.add(this.blanket,this.homeBlanket);this.props.set('blanket',this.blanket);this.props.set('home-blanket',this.homeBlanket);
   this.makeBowl();this.root.add(this.bowl);this.props.set('bowl',this.bowl);
-  this.rainPositions=new Float32Array(240*6);const rg=new T.BufferGeometry();rg.setAttribute('position',new T.BufferAttribute(this.rainPositions,3));
+  this.rainPositions=new Float32Array(4000*6);const rg=new T.BufferGeometry();rg.setAttribute('position',new T.BufferAttribute(this.rainPositions,3));
   this.rain=new T.LineSegments(rg,new T.LineBasicMaterial({color:'#a1b7c2',transparent:true,opacity:.25,depthWrite:false}));this.rain.name='rain-outside-only';this.rain.layers.set(NOINK);this.root.add(this.rain);
   // Retain baseline intensities; episode blackout is a deterministic state, never a saved layout edit.
   this.cafe.root.traverse(o=>{
@@ -52,6 +54,12 @@ export class EpisodeWorld{
   });
   if(optimize)this.root.add(batchCafe(this.cafe.root,this.door));
   const clouds=new T.Group();clouds.name='rain-clouds';clouds.position.set(-10.8,12.5,-25);for(let i=0;i<4;i++){const c=this.add(clouds,new T.SphereGeometry(.75,12,8),this.mat('#253c50'),[(i-1.5)*.72,Math.sin(i)*.12,0],false);c.scale.set(1.3,.50,.7);}this.root.add(clouds);this.props.set('clouds',clouds);
+ }
+ private prepareRainRoofs(){
+  const stamp=(x0:number,x1:number,z0:number,z1:number,h:number)=>{for(let z=Math.max(0,Math.floor(z0+180));z<Math.min(360,Math.ceil(z1+180));z++)for(let x=Math.max(0,Math.floor(x0+180));x<Math.min(360,Math.ceil(x1+180));x++)this.rainRoofs[x+z*360]=Math.max(this.rainRoofs[x+z*360],h);};
+  stamp(-4.4,4.4,-4.7,4.7,6);stamp(-.3,4.9,11.4,16.4,4);stamp(-5.1,-3.0,5.15,6.4,2.3);
+  for(const b of [...CITY_BUILDINGS,...CITY_BACKDROP])stamp(b.position[0]-b.width/2,b.position[0]+b.width/2,b.position[2]-b.depth/2,b.position[2]+b.depth/2,b.height+.8);
+  this.cafe.root.updateMatrixWorld(true);for(let i=1;i<=11;i++){const b=new T.Box3().setFromObject(this.cafe.root.getObjectByName('town-building-'+i)!);stamp(b.min.x,b.max.x,b.min.z,b.max.z,b.max.y);}
  }
  private mat(c:string){const m=new T.MeshStandardMaterial({color:c,roughness:.9,metalness:.02});this.materials.push(m);return m;}
  private add(parent:T.Object3D,g:T.BufferGeometry,m:T.Material,p:V3,solid=true){const mesh=new T.Mesh(g,m);mesh.name=`${parent.name||'episode'}/part-${++this.serial}`;mesh.position.set(...p);mesh.castShadow=solid;mesh.receiveShadow=true;parent.add(mesh);if(solid)this.blockers.push(mesh);return mesh;}
@@ -68,7 +76,9 @@ export class EpisodeWorld{
   const pane=leaf.find(o=>o.name.endsWith('/glass')) as T.Mesh|undefined;if(pane){const mat=new T.MeshStandardMaterial({color:'#d5c5a4',roughness:1,side:T.DoubleSide,transparent:false,opacity:1,emissive:'#7b552c',emissiveIntensity:.10});this.materials.push(mat);pane.material=mat;}
   // Replace the old bottom rail with one solid sill bridging indoor floor and sidewalk.
   for(const o of [...entrance.children])if(o instanceof T.Mesh&&Math.abs(o.position.y)<1e-6){o.visible=false;o.removeFromParent();o.geometry.dispose();}
-  const e=ENTRY_THRESHOLD;this.box(this.root,[e.halfWidth*2,e.height,e.halfDepth*2],[e.x,e.height/2,e.z],'#a5957b',false).name='cafe-entry-threshold';
+  const e=ENTRY_THRESHOLD,geometry=new T.BoxGeometry(e.halfWidth*2,.06,e.halfDepth*2),points=geometry.getAttribute('position');
+  for(let i=0;i<points.count;i++)points.setY(i,points.getY(i)>0?e.height*(points.getZ(i)+e.halfDepth)/(2*e.halfDepth):-.03);geometry.computeVertexNormals();
+  const threshold=this.add(this.root,geometry,this.mat('#667673'),[e.x,0,e.z],false);threshold.name='cafe-entry-threshold';threshold.layers.set(NOINK);
   const nosePlate=this.box(pivot,[.16,.15,.045],[.58,.69,-.10],'#bca776',false);nosePlate.name='door-nose-push-plate';this.props.set('nose-plate',nosePlate);
   this.props.set('door',pivot);return pivot;
  }
@@ -181,7 +191,7 @@ export class EpisodeWorld{
   for(const [i,z] of [.8,2.25].entries()){const picture=this.label(this.root,i?'NIGHT GARDEN':'THE HARBOR',.92,.68,[-3.975,2.25,z],'#566f73','#dfcbaa',35);picture.rotation.y=Math.PI/2;picture.name='cafe-framed-painting-'+i;this.box(this.root,[.06,.78,1.02],[-4.02,2.25,z],'#99784f',false);const cv=(picture.material as T.MeshBasicMaterial).map!.image as HTMLCanvasElement,g=cv.getContext('2d')!;g.fillStyle=i?'#657d70':'#648394';g.fillRect(20,20,cv.width-40,cv.height-40);g.fillStyle='#e8d4a0';g.beginPath();g.arc(560,110,45,0,Math.PI*2);g.fill();for(const [color,y] of [['#3c5c61',260],['#29454c',380]] as [string,number][]){g.fillStyle=color;g.beginPath();g.moveTo(20,cv.height-20);g.lineTo(20,y);for(let x=20;x<cv.width-20;x+=40)g.lineTo(x,y+Math.sin(x*.018+i)*42);g.lineTo(cv.width-20,cv.height-20);g.fill();}(picture.material as T.MeshBasicMaterial).map!.needsUpdate=true;}
   const mouse=new T.Group();mouse.name='chased-mouse';this.root.add(mouse);this.props.set('mouse',mouse);
   const body=this.add(mouse,new T.SphereGeometry(1,12,8),this.mat('#8e928b'),[0,.065,0],false);body.scale.set(.15,.065,.075);const nose=this.add(mouse,new T.SphereGeometry(.065,12,8),this.mat('#a4a399'),[.11,.07,0],false);for(const z of [-.043,.043]){this.add(mouse,new T.SphereGeometry(.035,10,8),this.mat('#bba4a0'),[.08,.13,z],false);this.add(mouse,new T.SphereGeometry(.011,8,6),this.mat('#202a30'),[.15,.092,z],false);}const tail=new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3([new T.Vector3(-.12,.04,0),new T.Vector3(-.23,.025,.03),new T.Vector3(-.33,.02,-.03)]),12,.009,6,false),this.mat('#a39186'));mouse.add(tail);
-  const hole=this.add(this.root,new T.CircleGeometry(.11,20),new T.MeshBasicMaterial({color:'#243138',side:T.DoubleSide}),[6.525,.11,1.0],false);hole.rotation.y=-Math.PI/2;hole.name='mouse-service-hole';this.materials.push(hole.material);
+  const hole=this.add(this.root,new T.CircleGeometry(.11,20),new T.MeshBasicMaterial({color:'#243138',side:T.DoubleSide}),[-9.97,.11,1.0],false);hole.rotation.y=Math.PI/2;hole.name='mouse-service-hole';this.materials.push(hole.material);
   const shadowMat=new T.MeshBasicMaterial({color:'#14212b',transparent:true,opacity:.7,side:T.DoubleSide,depthWrite:false});this.materials.push(shadowMat);const unknown=this.add(this.root,new T.CircleGeometry(.22,32),shadowMat,[6.525,.30,-1.7],false);unknown.name='unidentified-alley-shadow';unknown.rotation.y=-Math.PI/2;this.props.set('alley-motion',unknown);
   const homeTrim=new T.Group();homeTrim.name='home-interior-finish';this.root.add(homeTrim);
   this.box(homeTrim,[4.4,.10,.055],[2.25,.27,16.075],'#b19c7e',false);
@@ -209,6 +219,7 @@ export class EpisodeWorld{
   const alleyShelf=new T.Group();alleyShelf.name='alley-storage';alleyShelf.position.set(6.0,0,-.7);this.root.add(alleyShelf);
   for(const [i,z] of [-.8,.1,.9].entries()){this.box(alleyShelf,[.68,.55,.6],[i%2*.3,.275,z],'#7c715e');for(const y of [.12,.4])this.box(alleyShelf,[.7,.055,.63],[i%2*.3,y,z],'#a28b67',false);}
   this.cylinder(alleyShelf,.035,.035,2.4,[-1.8,1.2,-3.2],'#52676b');for(const y of [.35,1.3,2.2])this.box(alleyShelf,[.12,.05,.10],[-1.84,y,-3.2],'#7b8884',false);
+  for(const z of [-.5,.3]){const trash=new T.Group();trash.name='west-dark-alley-bin-'+z;trash.position.set(-9.68,.03,z);this.root.add(trash);this.cylinder(trash,.21,.19,.58,[0,.29,0],'#3d5058');this.cylinder(trash,.24,.24,.06,[0,.61,0],'#2c3d46');}
   const box=new T.Group();box.name='latte-hiding-box';box.position.set(.55,.2,15.05);this.root.add(box);this.props.set('hiding-box',box);
   for(const x of [-.40,.40])this.box(box,[.055,.60,.78],[x,.30,0],'#9b805f');this.box(box,[.85,.055,.78],[0,.027,0],'#a58b68');this.box(box,[.85,.60,.055],[0,.30,.39],'#9b805f');
   this.box(box,[.85,.055,.45],[0,.59,.2],'#ae9571').rotation.x=.18;
@@ -254,6 +265,8 @@ export class EpisodeWorld{
   for(let i=1;i<=11;i++){const b=this.cafe.root.getObjectByName('town-building-'+i)!;this.box(b,[4.3,.22,4.3],[0,-.1,0],'#52636a',false);}
   const city=createCity();this.root.add(city.root);this.materials.push(...city.materials);this.textures.push(...city.textures);this.blockers.push(...city.blockers);
   this.townWindows.push({mat:city.windowMaterial,color:city.windowMaterial.color.clone(),emissive:.32});
+  for(let i=1;i<=11;i++){const b=this.cafe.root.getObjectByName('town-building-'+i)!;for(const y of [1.4,2.9,4.4])for(const x of [-1.1,1.1]){this.add(b,new T.BoxGeometry(.7,.85,.025),city.windowMaterial,[x,y,-2.025],false);for(const side of [-1,1]){const pane=this.add(b,new T.BoxGeometry(.7,.85,.025),city.windowMaterial,[side*2.025,y,x],false);pane.rotation.y=Math.PI/2;}}}
+
   const road=this.root.getObjectByName('episode-road') as T.Mesh;road.removeFromParent();road.geometry.dispose();for(const id of ['entrance-apron-left','entrance-apron-right'])this.root.getObjectByName(id)?.removeFromParent();
   // All sidewalk/apron/lane top surfaces belong to the partitioned city mesh.
  }
@@ -278,7 +291,7 @@ export class EpisodeWorld{
   const clouds=this.props.get('clouds');if(clouds){clouds.visible=s.t>=26.5;clouds.position.x=-10.8+3*beat(s.t,26.5,28.5);}
   const openingEnd=s.editShots?.filter(q=>q.number===1).at(-1)?.end??54,dusk=s.shot.number===1?1-beat(s.frame,0,openingEnd*.85):0;const sun=this.root.getObjectByName('opening-setting-sun')!;sun.visible=dusk>0;sun.position.set(-30,30+12*dusk,-100);(sun as T.Mesh<T.BufferGeometry,T.MeshBasicMaterial>).material.transparent=true;(sun as T.Mesh<T.BufferGeometry,T.MeshBasicMaterial>).material.opacity=dusk;(this.root.getObjectByName('opening-dusk-light') as T.DirectionalLight).intensity=.85*dusk;
   this.root.getObjectByName('switch-toggle')!.rotation.z=-.25*beat(s.t,56.98,57.1);
-  const mouse=this.props.get('mouse')!;mouse.position.set(...mouseAt(s.t));mouse.visible=s.t>=26.5&&s.t<31;const ahead=mouseAt(s.t+.03),behind=mouseAt(s.t-.03);mouse.rotation.y=-Math.atan2(ahead[2]-behind[2],ahead[0]-behind[0]);const unknown=this.props.get('alley-motion')!;unknown.visible=s.shot.number===37&&s.shot.variant===1;unknown.position.z=-1.7+1.4*beat(s.u,0,1);unknown.scale.set(1.6,.7+.3*Math.sin(s.u*Math.PI),1);
+  const mouse=this.props.get('mouse')!;mouse.position.set(...mouseAt(s.t));mouse.visible=s.t>=26.5&&s.t<31;const ahead=mouseAt(s.t+.03),behind=mouseAt(s.t-.03);mouse.rotation.y=-Math.atan2(ahead[2]-behind[2],ahead[0]-behind[0]);const unknown=this.props.get('alley-motion')!;unknown.visible=s.shot.number===37&&s.shot.variant===1;unknown.position.set(-8.37,.8,1.1+1.4*beat(s.u,0,1));unknown.scale.set(1.6,.7+.3*Math.sin(s.u*Math.PI),1);
   this.door.rotation.y=-s.door;this.homeDoor.rotation.y=-s.homeDoor*1.35;
   this.root.getObjectByName('cafe-nose-switch')!.rotation.z=-.2*beat(s.u,.35,.60)*(s.shot.number===59&&s.shot.variant===1?1:0);
   this.traffic.forEach((car,i)=>{car.position.set(i? -12+s.t*2.1:9-s.t*2.2,.03,i?9.45:7.45);car.rotation.y=i?0:Math.PI;car.visible=s.t<29;});
@@ -320,10 +333,11 @@ export class EpisodeWorld{
   // A cloth dome over the body, with a lowered front opening for the listening reaction.
   const cover=beat(s.t,78,80.5)*(1-beat(s.t,83.15,84.30));this.homeBlanket.visible=s.t>=54;this.homeBlanket.position.set(.85,.20,13.1);this.homeBlanket.rotation.x=0;
   const hp=this.homeBlanket.geometry.getAttribute('position');for(let i=0;i<hp.count;i++){const x=(i%21)/20-.5,z=Math.floor(i/21)/16-.5;hp.setXYZ(i,x*1.25,.018+cover*(.04+.94*Math.sqrt(Math.max(0,1-(x*2)**2))*(.65+.35*Math.cos(z*Math.PI*1.5))+.026*Math.sin(x*25+z*8)**2*Math.sin((z+.5)*Math.PI)),z*1.45);}hp.needsUpdate=true;this.homeBlanket.geometry.computeVertexNormals();this.homeBlanket.geometry.computeBoundingBox();this.homeBlanket.geometry.computeBoundingSphere();
-  this.rain.visible=s.rain>.01;const ra=this.rain.geometry.getAttribute('position');for(let i=0;i<240;i++){
+  this.rain.visible=s.rain>.01;const ra=this.rain.geometry.getAttribute('position');for(let i=0;i<4000;i++){
    const hash=(n:number)=>{const a=Math.sin(n*75.31+16.7)*43758.5453;return a-Math.floor(a);};
-   const x=-8+hash(i)*16,z=4.8+hash(i+110)*7.1,y=((hash(i+300)*7-s.frame/30*4)%7+7)%7;
-   ra.setXYZ(i*2,x,y,z);ra.setXYZ(i*2+1,x+.035,y+.30,z+.03);
+   const near=i<2400,x=near?-24+hash(i)*48:-168+hash(i)*336,z=near?-24+hash(i+110)*56:-168+hash(i+110)*336,span=near?18:52,y=((hash(i+300)*span-s.frame/30*4)%span+span)%span;
+   const roof=this.rainRoofs[Math.max(0,Math.min(359,Math.floor(x+180)))+360*Math.max(0,Math.min(359,Math.floor(z+180)))],falling=y>roof+.04;
+   ra.setXYZ(i*2,x,falling?y:roof+.04,z);ra.setXYZ(i*2+1,falling?x+.035:x,falling?y+.30:roof+.04,falling?z+.03:z);
   }ra.needsUpdate=true;this.rain.geometry.computeBoundingSphere();
  }
  dispose(){this.cafe.dispose();this.root.traverse(o=>{if(o instanceof T.Mesh||o instanceof T.LineSegments||o instanceof T.Points)o.geometry.dispose();if(o instanceof T.Light)o.dispose();});this.materials.forEach(m=>m.dispose());this.textures.forEach(t=>t.dispose());}

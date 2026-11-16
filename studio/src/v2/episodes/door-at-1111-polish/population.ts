@@ -29,7 +29,9 @@ export class TownPopulation{
   const geo=new T.PlaneGeometry(.84,1.05);geo.translate(0,.449,0);
   const mesh=new T.Mesh(geo,mat);mesh.name='supporting-cat-'+i;mesh.layers.set(NOINK);
   const shadow=contactShadow(.56,.35);this.root.add(mesh,shadow.mesh);
-  return {canvas,texture,mat,geo,mesh,shadow};
+  const markCanvas=document.createElement('canvas');markCanvas.width=96;markCanvas.height=128;const pen=markCanvas.getContext('2d')!;pen.font='bold 90px Arial';pen.textAlign='center';pen.lineWidth=9;pen.strokeStyle='#292b38';pen.fillStyle='#f4dfb4';pen.strokeText('?',48,105);pen.fillText('?',48,105);
+  const markTexture=new T.CanvasTexture(markCanvas);markTexture.colorSpace=T.SRGBColorSpace;const markMaterial=new T.MeshBasicMaterial({map:markTexture,transparent:true,alphaTest:.1,side:T.DoubleSide,depthWrite:false});const markGeometry=new T.PlaneGeometry(.24,.32),question=new T.Mesh(markGeometry,markMaterial);question.name='confused-question-'+i;question.position.set(0,1.08,.01);question.layers.set(NOINK);mesh.add(question);
+  return {canvas,texture,mat,geo,mesh,shadow,question,markTexture,markMaterial,markGeometry};
  });
  constructor(){this.root.name='town-supporting-cast';}
  get actors(){return this.cats.map((cat,i)=>({id:'supporting-cat-'+i,mesh:cat.mesh}));}
@@ -37,6 +39,7 @@ export class TownPopulation{
   this.steam.forEach((p,j)=>{const phase=(s.t*.13+j*.25)%1,positions=p.geo.getAttribute('position');for(let i=0;i<16;i++){const u=i/15;positions.setXYZ(i,Math.sin(u*7+s.t*.9+j)*.018,u*.34+phase*.12,Math.cos(u*5+j)*.01);}positions.needsUpdate=true;p.geo.computeBoundingSphere();p.mat.opacity=.13*Math.sin(Math.PI*phase);});
   this.cats.forEach((cat,i)=>{
    const guest=i>=4?shelterState(s,i-4):undefined;
+   cat.question.visible=i<2&&s.shot.number===5&&s.shot.variant>0;
    const walking=guest?guest.walking:i<2&&!(s.shot.number===6&&s.t>=10.8&&s.t<11.5),t=s.t;
    // Street activity clears before the blackout. Patrons stay in fixed existing seats.
    cat.mesh.visible=cat.shadow.mesh.visible=guest?guest.visible:i<2?streetActivity(s):s.shot.number>=50&&!(s.shot.number===59&&s.shot.variant===0);
@@ -56,7 +59,6 @@ export class TownPopulation{
    g.save();if(s.shot.number===5){g.translate(0,171);g.rotate(i%2?-.12:.12);g.translate(0,-171);}
    shape(()=>{g.moveTo(-71,151);g.lineTo(-89,38+(guest?.fear??0)*23);g.lineTo(-29,105);g.lineTo(32,105);g.lineTo(88,38+(guest?.fear??0)*23);g.lineTo(72,156);g.closePath();},coat);
    oval(0,171,88,79,coat);oval(0,205,44,28,'#d5c6ad');
-   if(s.shot.number===5&&s.shot.variant===2){const shrug=Math.sin(Math.PI*s.u);for(const side of [-1,1])oval(side*76,272-shrug*18,20,13,coat);}
    const blink=(t+i*.8)%4.3>4.13;
    for(const x of [-34,34]){oval(x,165,18,blink?2:13,'#d6d5b3');if(!blink)oval(x+(i%2?2:-2),165,6,12,'#283240');}
    shape(()=>{g.moveTo(-9,194);g.lineTo(9,194);g.lineTo(0,203);g.closePath();},'#705550');
@@ -65,5 +67,5 @@ export class TownPopulation{
    cat.mat.color.setRGB(...cafeCardLightAt(pos as V3,[shade*.94,shade,shade*1.04]));cat.texture.needsUpdate=true;
   });
  }
- dispose(){for(const cat of this.cats){cat.geo.dispose();cat.mat.dispose();cat.texture.dispose();cat.shadow.dispose();}for(const p of this.steam){p.geo.dispose();p.mat.dispose();}}
+ dispose(){for(const cat of this.cats){cat.geo.dispose();cat.mat.dispose();cat.texture.dispose();cat.shadow.dispose();cat.markGeometry.dispose();cat.markMaterial.dispose();cat.markTexture.dispose();}for(const p of this.steam){p.geo.dispose();p.mat.dispose();}}
 }

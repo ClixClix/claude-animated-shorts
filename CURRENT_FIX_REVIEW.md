@@ -1,3 +1,9 @@
+# Latest supplied screenshot and nitpicks
+
+The newest source pass is documented at the top of LAST_MINOR_FIXES.md. Preserve the 2% wrap-up and review the updated LOCAL movie next. Original previews/audio remain intact. No new paid narration or cloud scene render.
+
+---
+
 # Current five-fix wrap-up
 
 See the top of LAST_MINOR_FIXES.md for the latest source candidate and user clarification about the cafe threshold. The preceding twelve-fix pass remains preserved. Current movie timing/audio is unchanged; visual approval requires the new local render. No paid requests were made.
