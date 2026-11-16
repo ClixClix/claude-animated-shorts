@@ -19,3 +19,13 @@ powershell -ExecutionPolicy Bypass -File C:\V2\Render-Episode.ps1 -Concurrency 2
 ```
 
 This shortcut was prepared and statically checked on Linux. Windows shortcut/PowerShell execution still needs your first local check. No cloud render or paid narration call is involved.
+
+## Mandatory final-MP4 quality gate for new episodes
+
+After rendering and mastering **any** new episode, run the source-agnostic quality gate from `C:\\V2\\studio`:
+
+```powershell
+& "C:\\V2\\.venv\\Scripts\\python.exe" scripts\\release_quality_gate.py "C:\\path\\to\\FINAL.mp4" --series what_if_cats --expected-frames 1200 --init-review
+```
+
+Replace `1200` with the episode's **approved** frame count and select `in_this_town` for that series. Review the final MP4 on a phone and headphones, verify soundtrack/asset rights, complete the generated review JSON, then rerun with `--require-approval`. The checker writes a technical/creative release report and never publishes anything. See `QUALITY_BASELINE.md` for the cross-series quality standard. The existing `door-polish` full render now runs this technical gate automatically at the end; other/new episode pipelines must call it too.
