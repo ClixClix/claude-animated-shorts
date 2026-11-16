@@ -52,7 +52,7 @@ const namedApronBlock=[
  "   // This standalone apron shares the episode sidewalk's Y=.03 top. Give it a stable ID.",
  "   const apron=this.box(g,[1.7,0.08,0.7],[2.25,-0.01,4.5],PAL.plaster);",
  "   apron.name='cafe-entry-apron';"
-].join('\\n');
+].join('\n');
 for(const [p,sha] of Object.entries(baseline)){
  const raw=await fs.readFile(path.resolve('..',p));
  const actual=createHash('sha256').update(raw).digest('hex'),adjustment=portability[p];
