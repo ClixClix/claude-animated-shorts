@@ -89,7 +89,7 @@ record('shared-box-same-cafe-floor',spec.home[0]===timeline.HOME.shared[0]&&
 const left=timeline.HOME.shared[0]-spec.width/2,right=left+spec.width;
 const front=timeline.HOME.shared[2]+spec.depth/2,back=front-spec.depth;
 const rim=spec.height+.04;
-let badJumpFrames=[],badCatFrames=[],finalFraming=[];
+let badJumpFrames=[],badCatFrames=[],finalFraming=[],airborneFraming=[];
 for(let n=58;n<=60;n++){
  const shot=begin(n);
  for(let frame=shot.start;frame<shot.end;frame++){
@@ -106,6 +106,12 @@ for(let n=58;n<=60;n++){
    if(cat.position[0]<left&&cat.position[0]+half>left&&
       cat.position[1]<rim+.015){
     badJumpFrames.push({frame,x:cat.position[0],y:cat.position[1],half,left,rim});
+   }
+   // After takeoff, both ears/body must remain in a usable portrait frame.
+   // A prior locked camera made the entire jump happen off the left edge.
+   if(s.u>=.24&&s.u<=.74){
+    const f=catFace(cat,cam);
+    if(!f.fullyVisible)airborneFraming.push({frame,u:s.u,face:f});
    }
   }
   if(n===60){
@@ -124,6 +130,7 @@ for(let n=58;n<=60;n++){
  }
 }
 record('no-premature-left-wall-crossover',badJumpFrames.length===0,badJumpFrames.slice(0,10));
+record('entire-airborne-cat-visible',airborneFraming.length===0,airborneFraming.slice(0,10));
 record('only-one-final-shared-box-and-physical-cats',badCatFrames.length===0,badCatFrames.slice(0,10));
 record('all-end-shot-cats-in-portrait-frame',finalFraming.length===0,finalFraming.slice(0,10));
 record('all-three-end-characters-visible',["mocha","essie","latte"].every(id=>final[id].visible));
