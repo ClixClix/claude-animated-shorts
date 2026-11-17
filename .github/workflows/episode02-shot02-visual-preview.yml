@@ -69,8 +69,25 @@ jobs:
           npm run typecheck
           npm run episode2:style-check
 
-      - name: Prepare all 60 shot boundaries without audio requests
-        run: node scripts/episode02-prepare.mjs --allow-scratch
+      - name: Prepare silent 60-shot manifest without external FFmpeg
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const source=JSON.parse(fs.readFileSync('src/v2/episodes/in-this-town-02/EDITORIAL_SCRATCH_PLAN.json','utf8'));
+          const shots=source.shots.map(s=>({
+            id:s.id,sequence:s.sequence,act:s.act,
+            start:s.estimateStartFrame,end:s.estimateEndFrame,
+            narrationAnchor:s.narrationAnchor,
+            cameraAndAction:s.cameraAndAction,soundCue:s.soundCue
+          }));
+          if(shots.length!==60||shots[1].start!==84||shots[1].end!==105||shots[59].end!==3876)throw Error('Shot timeline mismatch');
+          const out='out/v2-episodes/in-this-town-02';
+          fs.mkdirSync(out,{recursive:true});
+          fs.writeFileSync(out+'/render-props.json',JSON.stringify({
+            shots,captions:[],previewScale:1,optimize:true,audioApproved:false
+          },null,2));
+          NODE
 
       - name: Render only the newly designed 21-frame Shot 02
         run: node scripts/episode02-render.mjs preview --shots 02 --force
