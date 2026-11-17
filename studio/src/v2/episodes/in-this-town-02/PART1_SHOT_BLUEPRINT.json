@@ -10,9 +10,9 @@
   "width": 1080,
   "height": 1920,
   "stage": {
-    "location": "Episode 01 café front SIDEWALK, directly in front of the left window; no asphalt-road staging",
+    "location": "Episode 01 café front sidewalk at x=-2.5, safely BETWEEN the streetlamps at x=-6 and x=0; keep the original streetlights and café geometry intact",
     "boxWorldPosition": [
-      0,
+      -2.5,
       0.04,
       5.35
     ],
@@ -42,19 +42,19 @@
       "id": "01",
       "start": 0,
       "end": 27,
-      "action": "Medium-wide café sidewalk: chestnut guest approaches one SMALL cardboard box, reaches toward rim with near paw; face and full box visible",
+      "action": "Hero cat walks to small cardboard box on Episode 01 café sidewalk, reaches rim, makes a motivated brief hop into it at end of shot; full body and box always readable, no streetlamp crossing",
       "camera": {
         "position": [
-          1,
-          1.62,
-          8.75
+          -2.85,
+          1.55,
+          8.95
         ],
         "target": [
-          -0.12,
-          0.76,
-          5.3
+          -2.85,
+          0.78,
+          5.35
         ],
-        "fov": 72
+        "fov": 78
       },
       "subject": [
         "guest paws",
@@ -66,19 +66,19 @@
       "id": "02",
       "start": 27,
       "end": 63,
-      "action": "Three-quarter overhead: curled guest body and recognizable head are inside same box; head settles while afternoon light moves",
+      "action": "Same cat already landed in the same box, curls into a nap, closes eyes, ear/head relaxes while outdoor sun direction shifts. Box flaps are folded outward so face never disappears behind them.",
       "camera": {
         "position": [
-          1.15,
-          2.47,
-          8.15
+          -1.65,
+          2.55,
+          8.05
         ],
         "target": [
-          0,
-          0.55,
+          -2.5,
+          0.56,
           5.35
         ],
-        "fov": 74
+        "fov": 76
       },
       "subject": [
         "cat visible over rim",
@@ -90,16 +90,16 @@
       "id": "03",
       "start": 63,
       "end": 108,
-      "action": "Single uninterrupted cat-to-cardboard transition: guest head and ears turn papery before box flaps close, not just disappear behind box",
+      "action": "Same cat's ears and face gradually acquire paper folds and cardboard color while still visible; magic particles flutter; cat collapses into the one physical box and the flaps fold afterward.",
       "camera": {
         "position": [
-          0.95,
-          1.67,
-          8.8
+          -1.65,
+          1.93,
+          8.6
         ],
         "target": [
-          0,
-          0.7,
+          -2.5,
+          0.73,
           5.35
         ],
         "fov": 73
@@ -114,19 +114,19 @@
       "id": "04",
       "start": 108,
       "end": 183,
-      "action": "Medium-wide: three distinct detailed supporting cats converge from either side, visibly baffled, one taps box edge; no limb extending across the box",
+      "action": "Three townspeople form staggered arc around transformed box. All THREE heads and full silhouettes visible, no foreground streetlamp, no stretchy probing arm. Subtle walking, startled eyes and head tilts.",
       "camera": {
         "position": [
-          0,
-          2,
-          10.1
+          -2.5,
+          1.85,
+          9.45
         ],
         "target": [
-          0,
-          0.78,
+          -2.5,
+          0.66,
           5.35
         ],
-        "fov": 80
+        "fov": 78
       },
       "subject": [
         "one transformed box",
@@ -153,7 +153,10 @@
       "Episode 01 matching linework and lighting",
       "Box sits on actual cafe SIDEWALK rather than dark asphalt roadway",
       "No simplistic smiley-face supporting-cat sprites in hero shots",
-      "Box does not hide guest head/eyes before transformation begins"
+      "Box does not hide guest head/eyes before transformation begins",
+      "No Episode 01 streetlight may cross box, cat head, or central action (must raycast streetlight meshes, not just solid-blocker list)",
+      "All three townspeople visible and distinguishable, no back-witness hiding behind cardboard",
+      "Shot 01 has a recognizable body movement toward/into box, not a one-frame teleport to the next shot"
     ]
   },
   "approval": "All four shots must pass actual rendered visual review before shots 05–60 are rebuilt."
