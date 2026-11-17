@@ -55,9 +55,9 @@ const Inner:React.FC<Props>=({previewScale=1,optimize=true})=>{
  const box=useMemo(()=>createEpisodeBox('demo'),[]);
  const performer=useMemo(()=>createArticulatedGuest(getRuleGuestDesign('hazel')),[]);
  const camera3=camera as T.PerspectiveCamera;
- camera3.position.set(...cameraPose.position);
+ camera3.position.set(cameraPose.position[0],cameraPose.position[1],cameraPose.position[2]);
  camera3.fov=cameraPose.fov;camera3.near=.08;camera3.far=320;
- camera3.lookAt(...cameraPose.target);camera3.layers.enable(NOINK);
+ camera3.lookAt(cameraPose.target[0],cameraPose.target[1],cameraPose.target[2]);camera3.layers.enable(NOINK);
  camera3.updateProjectionMatrix();camera3.updateMatrixWorld(true);
  scene.background=new T.Color('#253b4c');
  scene.fog=new T.Fog('#253b4c',45,245);
