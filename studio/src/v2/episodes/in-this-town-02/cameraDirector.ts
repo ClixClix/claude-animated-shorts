@@ -1,5 +1,6 @@
 import type {V3} from '../../cafe/config';
 import type {State} from './timeline';
+import {stateAt as sampleShotState,ease as easeTrack} from './timeline';
 import {BOX_SPECS} from './boxProps';
 
 /** Portrait-safe framing director for Episode 02.
@@ -160,14 +161,14 @@ function fit(s:State){
  // 60 begins at the end of 59's pose/lens; no hard reframing cut.
  if(s.shot.sequence>=58){
   const n=s.shot.sequence,u=clamp(s.u,0,1);
-  const seekX=clamp(s.mocha.position[0]+.36,-2.95,-1.45);
-  const c=n===59?clamp((u-.58)/.42,0,1):n===60?1:0;
-  const recenter=c*c*(3-2*c);
-  const trackX=n===58?-2.95:n===59?
-   seekX+(-1.45-seekX)*recenter:-1.45;
-  const camera:V3=[trackX,1.98,4.12-(n===60?.08*u:0)];
+  // A fixed start lens observes Mocha's decision. Pan ONCE, gently,
+  // only after take-off, instead of chasing the cat then reversing direction
+  // toward the group mid-jump. Match the end of 59 to the start of 60.
+  const recenter=n===59?easeTrack((u-.62)/.38):n===60?1:0;
+  const trackX=-2.95+1.50*recenter;
+  const camera:V3=[trackX,1.98,4.12-(n===60?.08*easeTrack(u):0)];
   const target:V3=[trackX,.83,2.11];
-  const fov=98-10*recenter; // Keep enlarged Episode01 cats fully inside 9:16 through the final push.
+  const fov=98-(n===60?5*easeTrack(u):0); // Constant lens through jump; small final push.
   return {camera,target,fov,region:r,
    framing:projections(corners(focus),target,camera,fov),
    shot:n,selectedIds:focus.map(x=>x.id)};
@@ -331,7 +332,36 @@ function fit(s:State){
   framing:projections(points,center,camera,selected.fov),
   shot:s.shot.sequence,selectedIds:focus.map(f=>f.id)};
 }
-/** Deterministic camera profile for all frames. No mutable state or accumulated camera drift. */
+/** Episode 02 camera grammar: measured, stable holds plus deliberate eased tracks.
+ * Do not automatically orbit/zoom around every animated head or box:
+ * fit(s) can change its selected FOV in 3-degree steps as living subjects move,
+ * leading to small but visible zoom snaps and accidental pivots. Camera
+ * direction is authored per shot, never dependent on the preceding render.
+ */
+const DOLLY_TRACK_SHOTS=new Set([5,8,20,27,28,29,30,32,36,49,50,54,55]);
+const blend3=(a:V3,b:V3,u:number):V3=>[
+ a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u,a[2]+(b[2]-a[2])*u
+];
 export function directEpisodeCamera(s:State){
- return fit(s);
+ const n=s.shot.sequence;
+ // 46 deliberately cuts inside the shot to two brief café memories.
+ // 58–60 have a single explicitly choreographed, cut-continuous finale.
+ if(n===46||n>=58)return fit(s);
+ const oneShot=[s.shot];
+ if(DOLLY_TRACK_SHOTS.has(n)){
+  const from=fit(sampleShotState(s.shot.start,oneShot));
+  const to=fit(sampleShotState(s.shot.end-1,oneShot));
+  const u=easeTrack(s.u);
+  const camera=blend3(from.camera,to.camera,u);
+  const target=blend3(from.target,to.target,u);
+  const fov=from.fov+(to.fov-from.fov)*u;
+  return {...from,camera,target,fov,
+   framing:projections(corners(focusSet(s)),target,camera,fov)};
+ }
+ // On a held reaction, reframe once at the shot midpoint instead of
+ // re-solving the FOV, dolly distance and look-at on every moving frame.
+ const middle=Math.floor((s.shot.start+s.shot.end-1)/2);
+ const held=fit(sampleShotState(middle,oneShot));
+ return {...held,
+  framing:projections(corners(focusSet(s)),held.target,held.camera,held.fov)};
 }

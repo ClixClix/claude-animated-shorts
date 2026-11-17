@@ -250,7 +250,9 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // Drive the EXACT Episode 01 actor/cards from Episode 02's approved story
  // timing. Their silhouettes, whiskers, tail and separate foot drawings never
  // get replaced by the failed Episode 02 "oval body / stick legs" renderer.
- const next=stateAt(Math.min(frame+1,shots.at(-1)!.end-1),shots);
+ // Keep forward gait/foot-heading sampling inside THIS shot. Reading the next
+ // shot on its preceding final frame can flip Episode01 paw directions once.
+ const next=stateAt(Math.min(frame+1,s.shot.end-1),shots);
  characters.mocha.update(s.mocha,next.mocha,s,cam,catBehaviorFor(s,'mocha'));
  characters.essie.update(s.essie,next.essie,s,cam,catBehaviorFor(s,'essie'));
  characters.latte.update(s.latte,next.latte,s,cam,catBehaviorFor(s,'latte'));
