@@ -38,6 +38,8 @@ function focusSet(s:State):Extents[]{
   const p=id==='latte'?s.latteBox:id==='essie'?s.essieBox:id==='shared'?s.sharedBox:s.demoBox;
   return box(id,p,id);
  };
+ if(n===46&&s.room==='cafe')return s.heroBox==='latte'?
+  [B('latte'),C('latte')]:[B('essie'),C('essie')];
  if(n===4)return [B('demo'),cat('guest-1',[.55,.03,6.45],.6),
   cat('guest-2',[2.9,.03,6.2],.6),cat('guest-3',[3.8,.03,6.75],.6)];
  if(n<=3)return n<=2?[B('demo'),C('demoCat')]:[B('demo'),C('demoCat')];
@@ -179,6 +181,32 @@ function fit(s:State){
   return {camera,target,fov:52,region:r,
    framing:projections(corners(focus),target,camera,52),
    shot:2,selectedIds:focus.map(x=>x.id)};
+ }
+ // Show the planned warm memory images, then return to Mocha's alley POV.
+ if(s.shot.sequence===46){
+  const memory=s.room==='cafe',latte=s.heroBox==='latte';
+  const camera:V3=memory?(latte?[.15,1.65,4.85]:[1.65,1.65,3.50]):[-9.25,1.55,4.55];
+  const target:V3=memory?(latte?[-1.9,.75,2.1]:[.25,.75,.3]):[-9.25,.73,2.65];
+  const fov=memory?62:63;
+  return {camera,target,fov,region:r,framing:projections(corners(focus),target,camera,fov),
+   shot:46,selectedIds:focus.map(x=>x.id)};
+ }
+ // Change shot scale/angle at the emotional box decision, avoiding three
+ // consecutive identical wide shots of the alley.
+ if(s.shot.sequence===47||s.shot.sequence===48){
+  const isBox=s.shot.sequence===47;
+  const camera:V3=isBox?[-9.25,2.35,4.55]:[-9.25,1.40,4.40];
+  const target:V3=isBox?[-9.15,.43,1.60]:[-9.25,.77,2.62];
+  const fov=isBox?65:61;
+  return {camera,target,fov,region:r,framing:projections(corners(focus),target,camera,fov),
+   shot:s.shot.sequence,selectedIds:focus.map(x=>x.id)};
+ }
+ // A closer three-cat gathering rather than tiny silhouettes beneath a
+ // giant storefront. The original Episode01 character art is unchanged.
+ if(s.shot.sequence===56){
+  const camera:V3=[1.20,1.65,10.60],target:V3=[1.20,.83,6.35],fov=86;
+  return {camera,target,fov,region:r,framing:projections(corners(focus),target,camera,fov),
+   shot:56,selectedIds:focus.map(x=>x.id)};
  }
  // Close enough to read the cure diagram; the prior exterior framing was tiny.
  if(s.shot.sequence===57){

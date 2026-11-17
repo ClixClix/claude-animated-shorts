@@ -21,7 +21,7 @@ export const HOME={
   cafeMocha:[-.35,0,1.4] as V3,
   door:[2.25,0,4.45] as V3,
   entrance:[2.4,0,6.65] as V3,
-  busStop:[-4.4,0,6.1] as V3,
+  busStop:[-5.20,0,6.1] as V3, // Past the shelter sign pole; shot28/29 remain continuous.
   market:[-7.3,0,6.5] as V3,
   alleyMouth:[-9.25,0,4.7] as V3,
   alleyBox:[-9.15,0,1.4] as V3,
@@ -51,7 +51,7 @@ export const locateShot=(frame:number,shots:EditShot[])=>{
 };
 export function stateAt(frame:number,shots:EditShot[]):State{
  const sh=locateShot(frame,shots),n=sh.sequence,u=clamp((frame-sh.start)/Math.max(1,sh.end-sh.start-1)),t=frame/30;
- const day=n<=23||n>=56;
+ let day=n<=23||n>=56;
  let mocha=actor(HOME.cafeMocha,n>=5,'neutral'),essie=actor(closer(HOME.essie),n===7||(n>=18&&n<=23),'happy'),latte=actor(closer(HOME.latte),n===6,'happy');
  let demoCat=actor(closer(HOME.demo,.2,0),n<=3,'happy');
  const latteBox=[...HOME.latte] as V3,sharedBox=[...HOME.shared] as V3,demoBox=[...HOME.demo] as V3;
@@ -88,7 +88,15 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   else if(n===11||n===14||n===17)cam=focus(mocha.position,2.2,35,1.05);
   else if(n===12||n===13)cam=focus(HOME.latte,1.3,38,.4);
   else cam=cameraPreset([1.7,2.0,4.0],[-1.8,.7,2.0],58);
-  flap.latte=n===12?lerp(.15,.95,ease(u)):n===13?.95:.84;
+  flap.latte=n===12?.84:n===13?.95:.84;
+  if(n===12){
+   // Lean the original Episode01 cat's muzzle to the actual front rim.
+   // Episode.tsx sequences two physical flap pivots, never human hands.
+   const contact=ease((u-.10)/.56);
+   mocha.position=[lerp(-.80,-1.03,contact),0,lerp(2.80,2.68,contact)];
+   mocha.headTurn=-.10-.16*contact;mocha.gazeY=-.16*contact;
+   mocha.walking=u>.12&&u<.62;
+  }
   if(n===16)mocha.position=walk([-1.4,0,2.6],[-1.8,0,2.3],u);
  }
  if(n>=18&&n<=23){
@@ -158,6 +166,22 @@ export function stateAt(frame:number,shots:EditShot[]):State{
     n===49?cameraPreset([-7.3,1.4,2.8],[-9.15,.45,1.4],50):
     cameraPreset([-6.8,1.8,4.1],[-8.95,.7,1.8],55);
  }
+ if(n===46){
+  // Quick actual cafe memory cutaways: the earlier cloud movie repeated
+  // three near-identical alley views instead of showing either friend.
+  const rememberLatte=u>=.23&&u<.43,rememberEssie=u>=.43&&u<.66;
+  if(rememberLatte||rememberEssie){
+   room='cafe';day=true;mocha.visible=false;
+   latte.visible=rememberLatte;essie.visible=rememberEssie;
+   if(rememberLatte){
+    heroBox='latte';show.latte=true;show.essie=false;
+    latte.position=[HOME.latte[0],.13,HOME.latte[2]];latte.scale=.74;
+   }else{
+    heroBox='essie';show.latte=false;show.essie=true;
+    essieBox=[...HOME.essie];essie.position=[HOME.essie[0],.12,HOME.essie[2]];essie.scale=.78;
+   }
+  }
+ }
  if(n>=53&&n<=55){
   // Cut to the cafe approach rather than sprinting 12m through the bus shelter.
   mocha.position=n===53?walk([1.15,0,6.25],HOME.door,u):[HOME.latte[0]+.3,0,HOME.latte[2]+.6];
@@ -182,6 +206,12 @@ export function stateAt(frame:number,shots:EditShot[]):State{
     cameraPreset([.9,1.45,4.5-(n===60?u*.55:0)],[-1.45,.6,2.5],n===60?49:55);
  }
  if(n===52){essie.visible=true;essie.position=[-9.2,0,1.4];}
+ if(n===1){
+  // The opening kitten peeks above the real box rim instead of holding still.
+  demoCat.position=[HOME.demo[0],.04+.06*Math.sin(Math.PI*u),HOME.demo[2]];
+  demoCat.headTurn=.14*Math.sin(Math.PI*u);
+  flap.demo=.84+.10*Math.sin(Math.PI*u);
+ }
  if(n===25)mocha.headTurn=lerp(-.18,.30,ease(u));
  if(n>=31&&n<=48){
   mocha.headTurn=.16*Math.sin(u*Math.PI*1.25);

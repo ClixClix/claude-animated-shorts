@@ -200,6 +200,19 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   {key:'demo',obj:boxes.demo,pos:s.demoBox,visible:s.show.demo,flap:s.flap.demo},
  ] as const;
  for(const b of boxArray){b.obj.root.position.set(...b.pos);b.obj.root.visible=b.visible;b.obj.setOpenAmount(b.flap);}
+ // The striped box must twitch visibly in shot 10, not remain frozen.
+ if(s.shot.sequence===10){
+  const twitch=ease((s.u-.46)/.12)*(1-ease((s.u-.60)/.15));
+  boxes.latte.flaps.front.rotation.x+=.30*twitch;
+ }
+ // Mocha nudges two REAL flaps sequentially while his original Episode01
+ // muzzle approaches the rim; no human-like paws or floating flap opening.
+ if(s.shot.sequence===12){
+  const first=ease((s.u-.18)/.30),second=ease((s.u-.55)/.30);
+  const angle=Math.PI*.92;
+  boxes.latte.flaps.front.rotation.x=angle*(.80+.17*first);
+  boxes.latte.flaps.left.rotation.z=angle*(.80+.17*second);
+ }
   // The shared box's left flap folds DOWN along the outside wall, rather
   // than extending into Mocha's hesitant approach and masking his face.
   // Keep the same physical flap and original Episode01 scene assets.
