@@ -69,10 +69,10 @@ const fallback:Record<string,V3>={
  latte:[2.8,1.8,-.30],
  essie:[.70,1.75,3.35],
  group:[2.8,1.8,-.30],
- shared:[1.0,1.8,-.45],
+ shared:[-1.45,1.85,3.55],
  bus:[-1.8,1.95,10.9],
  market:[-5.5,1.85,11.0],
- alley:[-11.25,1.75,5.1],
+ alley:[-9.15,1.85,5.2],
  town:[3.5,2.0,11.6],
 };
 type Region='outside'|'demo'|'latte'|'essie'|'group'|'shared'|'bus'|'market'|'alley'|'town';
@@ -149,9 +149,10 @@ function fit(s:State){
  const focus=focusSet(s),center=boundsCenter(focus),r=region(s);
  const origin=fallback[r];
  let dir=norm(sub(origin,regionAnchor[r]));
- // Alley cinematography must come from the WEST side of the -6.9m shop.
- // Previous cameras at X≈-7 entered a solid building and obscured the actors.
- if(r==='alley'&&dir[0]>-.22)dir=norm([-1.2,.45,2.4]);
+ // The playable alley is a narrow corridor at x roughly -9.15.
+ // Aim ALONG its open z-axis. Any sideward camera enters the shop wall,
+ // which obscured Mocha and Essie in real shot37/49/50 frames.
+ if(r==='alley')dir=norm([0,.40,1]);
  const interior=['latte','essie','group','shared'].includes(r);
  const points=corners(focus);
  const maxDistance=interior?safeInteriorDistance(center,dir):21;
