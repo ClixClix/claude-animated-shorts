@@ -182,6 +182,44 @@ function fit(s:State){
    framing:projections(corners(focus),target,camera,52),
    shot:2,selectedIds:focus.map(x=>x.id)};
  }
+ // Actual 60-shot cloud footage showed 31–45 repeating one straight-on
+ // alley composition. Cover the distinct story actions from opposite ends
+ // of the EXISTING open service lane; keep every camera between the real
+ // solid facades (west shop begins x=-8.35, open lane centered at -9.15).
+ // This changes lens/staging only, never city meshes or Episode 01 assets.
+ if([32,35,37,38,41,42,45].includes(s.shot.sequence)){
+  const n=s.shot.sequence,p=s.essieBox;
+  const profile:Record<number,{camera:V3;target:V3;fov:number}>={
+   // Follow Essie's DRAGGING action instead of hiding it in a huge long shot.
+   32:{camera:[p[0]-.56,1.50,p[2]+2.70],
+       target:[p[0],.57,p[2]+.50],fov:63},
+   // Stay behind the cardboard when Essie settles; Mocha is further up
+   // the alley and must not stand between our camera and her face.
+   35:{camera:[p[0]-.46,1.66,p[2]-1.66],
+       target:[p[0],.58,p[2]],fov:62},
+   // One close view for the first papery features, one even more intimate
+   // view for the whisker/paw transformation, without entering the box.
+   37:{camera:[p[0]-.50,1.66,p[2]-1.46],
+       target:[p[0],.60,p[2]],fov:58},
+   38:{camera:[p[0]-.53,1.43,p[2]-1.19],
+       target:[p[0],.56,p[2]],fov:60},
+   // The box and Mocha occupy opposite depth layers: readable tapping.
+   41:{camera:[p[0]-.50,1.65,p[2]-.98],
+       target:[p[0],.52,p[2]+.19],fov:62},
+   // Reverse for the hug, honoring the same axis and keeping the actor
+   // on the open-lane side of the shop wall.
+   42:{camera:[p[0]-.48,1.42,p[2]+2.26],
+       target:[p[0],.64,p[2]+.35],fov:60},
+   // Raised three-quarter "looking inside" avoids a literal camera
+   // embedded in cardboard (which rendered an obstructed black cavity).
+   45:{camera:[p[0]-.27,2.00,p[2]-1.05],
+       target:[p[0],.18,p[2]],fov:64}
+  };
+  const q=profile[n];
+  return {camera:q.camera,target:q.target,fov:q.fov,region:r,
+   framing:projections(corners(focus),q.target,q.camera,q.fov),
+   shot:n,selectedIds:focus.map(x=>x.id)};
+ }
  // Show the planned warm memory images, then return to Mocha's alley POV.
  if(s.shot.sequence===46){
   const memory=s.room==='cafe',latte=s.heroBox==='latte';
