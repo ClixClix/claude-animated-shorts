@@ -86,7 +86,7 @@ function createStoryProps(){
  g.fillStyle='#f7e8c5';g.fillRect(0,0,1024,640);
  g.strokeStyle='#4b5e65';g.lineWidth=32;g.strokeRect(18,18,988,604);
  g.textAlign='center';g.fillStyle='#253d4d';g.font='bold 74px Arial';g.fillText('HOW TO HELP',512,110);
- g.font='bold 54px Arial';g.fillText('A CAT BECOME A CAT AGAIN',512,176);
+ g.font='bold 54px Arial';g.fillText('TURN A BOX BACK INTO A CAT',512,176);
  const iconCat=(x:number,y:number,color:string)=>{
   g.fillStyle=color;g.beginPath();g.ellipse(x,y,61,66,0,0,Math.PI*2);g.fill();
   g.beginPath();g.moveTo(x-57,y-31);g.lineTo(x-56,y-105);g.lineTo(x-10,y-65);
@@ -147,9 +147,18 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   const w=new EpisodeWorld(optimize);
   const stable=previousEpisodeState(0,DRAFT_SHOTS);
   w.update(stable);
-  for(const n of ['chased-mouse','home-blanket','blanket','fresh-water-bowl','last-bus',
-    'latte-hiding-box','welcome-sign','alley-motion','opening-setting-sun','rain-outside-only',
-    'door-open-plaque'])w.root.getObjectByName(n)?.traverse(o=>o.visible=false);
+  // Preserve the established buildings/café/floor and its fixed furniture.
+  // Disable ONLY props belonging to Episode 01's clock/shelter/kitten plot.
+  // Leaving them alive inside Episode 02 causes unrelated giant landmarks and
+  // physical clutter to block already-narrow portrait compositions.
+  for(const n of ['chased-mouse','home-blanket','blanket','fresh-water-bowl',
+    'last-bus','latte-hiding-box','welcome-sign','alley-motion',
+    'opening-setting-sun','rain-outside-only','door-open-plaque',
+    'episode-clock','city-clock-tower','backup-lantern','latte-home',
+    'home-interior-finish','home-low-bookcase','alley-storage',
+    'alley-dumpster','home-cat-tower','latte-cat-bed',
+    'alley-service-details','home-food','home-water','home-moonlight'])
+      w.root.getObjectByName(n)?.traverse(o=>{o.visible=false;});
   // No attempt to modify the original source files or cache.
   return w;
  },[optimize]);
