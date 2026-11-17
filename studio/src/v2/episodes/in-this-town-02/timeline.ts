@@ -205,7 +205,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
        +.12*ease((hop-.86)/.14),
     2.17
    ];
-   mocha.scale=lerp(.72,.67,entry);
+   mocha.scale=lerp(.72,.67,ease((u-.24)/.48));
    mocha.walking=u<.22;
   }else{
    const warm=ease(u);
