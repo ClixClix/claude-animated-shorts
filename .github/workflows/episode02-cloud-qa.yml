@@ -1,0 +1,81 @@
+name: Episode 02 Cloud QA and Frame Review
+
+on:
+  push:
+    branches:
+      - v2-local-render
+    paths:
+      - ".github/workflows/episode02-cloud-qa.yml"
+      - "studio/**"
+      - "LOCAL_UPDATE_FILES.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: episode02-cloud-qa-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  code-and-frame-review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: studio
+    env:
+      CI: "true"
+      V2_GL: "swangle"
+      V2_RENDER_CONCURRENCY: "1"
+      REMOTION_SKIP_NEW_VERSION_NOTIFICATION: "1"
+    steps:
+      - name: Checkout exact QA branch commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+
+      - name: Set Chrome / Chromium executable
+        shell: bash
+        run: |
+          set -e
+          CHROME_PATH="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -n "$CHROME_PATH" ]; then
+            echo "CHROME=$CHROME_PATH" >> "$GITHUB_ENV"
+            "$CHROME_PATH" --version
+          else
+            echo "No system Chrome found; Remotion may install its compatible browser."
+          fi
+
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Full deterministic episode source and geometry audit
+        run: npm run episode2:code-audit
+
+      - name: Actual Remotion frame previews and review board
+        run: npm run episode2:style-preview
+
+      - name: List evidence and report output
+        if: always()
+        shell: bash
+        run: |
+          find out/v2-episodes/in-this-town-02 -type f \
+            \( -iname '*.png' -o -iname '*.json' -o -iname '*.html' \) \
+            2>/dev/null | sort || true
+
+      - name: Save QA logs, actual rendered frames, and review sheet
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: episode02-cloud-qa-${{ github.run_number }}
+          path: studio/out/v2-episodes/in-this-town-02/
+          if-no-files-found: warn
+          retention-days: 7
