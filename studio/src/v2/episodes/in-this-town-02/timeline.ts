@@ -17,7 +17,7 @@ export const mix=(a:V3,b:V3,t:number):V3=>[lerp(a[0],b[0],t),lerp(a[1],b[1],t),l
 export const HOME={
   latte:[-1.9,0,2.1] as V3,
   essie:[.25,0,.3] as V3,
-  shared:[-1.45,0,2.5] as V3,
+  shared:[-1.45,0,2.1] as V3,
   cafeMocha:[-.35,0,1.4] as V3,
   door:[2.25,0,4.45] as V3,
   entrance:[2.4,0,6.65] as V3,
@@ -178,9 +178,18 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  if(n>=59){
   // Shared cardboard sits on the café floor: actual curled cats stay
   // grounded IN it, not hovering 60 cm above the base.
-  mocha.position=[-2.18,.11,2.5];mocha.scale=.56;
-  essie.position=[-1.45,.11,2.5];essie.scale=.56;
-  latte.position=[-.72,.11,2.5];latte.scale=.56;
+  // Final Episode 01 character art: group them close enough to read as a
+  // cuddle rather than three tiny separated decorations. Their heads remain
+  // individually visible, inside ONE original-geometry floor box.
+  mocha.position=[-2.02,.12,2.18];mocha.scale=.64;
+  essie.position=[-1.45,.12,2.06];essie.scale=.64;
+  latte.position=[-.88,.12,2.18];latte.scale=.64;
+  // Quiet feline nuzzle: heads/gazes turn INWARD. No hands or reaching arms.
+  const settle=ease(n===59?u:1);
+  mocha.headTurn=.10+.12*settle;
+  essie.headTurn=0;
+  latte.headTurn=-.10-.12*settle;
+  mocha.gazeY=essie.gazeY=latte.gazeY=-.08;
  }
  const openShared=n>=58;
  const inTown=n>=56&&n<=57;
