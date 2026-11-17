@@ -3,23 +3,31 @@
   "episodeId": "in-this-town-ep02",
   "part": "01",
   "storyTitle": "The Cat Who Became a Box",
-  "proofType": "VISUAL_PILOT_NOT_PUBLISHABLE",
+  "proofType": "SHOT_01_BLOCKING_TEST_NOT_ANIMATION_APPROVAL",
   "referenceEpisode": "In This Town — The Door at 11:11 (Episode 01)",
   "compositionId": "InThisTownEpisode02Part1",
   "fps": 30,
   "width": 1080,
   "height": 1920,
   "stage": {
-    "location": "Episode 01 café front sidewalk at x=-2.5, safely BETWEEN the streetlamps at x=-6 and x=0; keep the original streetlights and café geometry intact",
+    "location": "Episode 01 café exterior, right of the streetlamp at x=0 and well clear of the bus shelter at x≈-4.4; storefront entrance in background; exact placement must PASS geometry check",
     "boxWorldPosition": [
-      -2.5,
+      1.8,
       0.04,
       5.35
     ],
     "boxSpecId": "RULE_DEMO_BOX",
     "guestSource": "Dedicated distinct town guest using Episode 01 detailed drawCat illustrated head/body rig",
     "audienceSource": "Three Episode 01 detailed drawCat palette variants (slate, honey, sage), not simplified TownPopulation background sprites",
-    "fixedSet": true
+    "fixedSet": true,
+    "requiredClearanceWorldUnits": 0.1,
+    "avoidSetGroups": [
+      "bus-stop",
+      "streetlight-3",
+      "streetlight-4",
+      "streetlight-1",
+      "streetlight-2"
+    ]
   },
   "controls": {
     "boxCount": 1,
@@ -45,16 +53,16 @@
       "action": "Hero cat walks to small cardboard box on Episode 01 café sidewalk, reaches rim, makes a motivated brief hop into it at end of shot; full body and box always readable, no streetlamp crossing",
       "camera": {
         "position": [
-          -2.85,
+          1.6,
           1.55,
           8.95
         ],
         "target": [
-          -2.85,
-          0.78,
+          1.4,
+          0.73,
           5.35
         ],
-        "fov": 78
+        "fov": 79
       },
       "subject": [
         "guest paws",
@@ -69,16 +77,16 @@
       "action": "Same cat already landed in the same box, curls into a nap, closes eyes, ear/head relaxes while outdoor sun direction shifts. Box flaps are folded outward so face never disappears behind them.",
       "camera": {
         "position": [
-          -1.65,
-          2.55,
-          8.05
+          2.42,
+          2.45,
+          8.35
         ],
         "target": [
-          -2.5,
-          0.56,
+          1.8,
+          0.55,
           5.35
         ],
-        "fov": 76
+        "fov": 75
       },
       "subject": [
         "cat visible over rim",
@@ -93,16 +101,16 @@
       "action": "Same cat's ears and face gradually acquire paper folds and cardboard color while still visible; magic particles flutter; cat collapses into the one physical box and the flaps fold afterward.",
       "camera": {
         "position": [
-          -1.65,
-          1.93,
-          8.6
+          2.25,
+          1.95,
+          8.75
         ],
         "target": [
-          -2.5,
-          0.73,
+          1.8,
+          0.65,
           5.35
         ],
-        "fov": 73
+        "fov": 75
       },
       "subject": [
         "guest face",
@@ -117,16 +125,16 @@
       "action": "Three townspeople form staggered arc around transformed box. All THREE heads and full silhouettes visible, no foreground streetlamp, no stretchy probing arm. Subtle walking, startled eyes and head tilts.",
       "camera": {
         "position": [
-          -2.5,
-          1.85,
-          9.45
+          1.8,
+          2,
+          10.15
         ],
         "target": [
-          -2.5,
-          0.66,
+          1.8,
+          0.65,
           5.35
         ],
-        "fov": 78
+        "fov": 79
       },
       "subject": [
         "one transformed box",
@@ -159,5 +167,5 @@
       "Shot 01 has a recognizable body movement toward/into box, not a one-frame teleport to the next shot"
     ]
   },
-  "approval": "All four shots must pass actual rendered visual review before shots 05–60 are rebuilt."
+  "approval": "Shot 01 alone: approve isolated real rendered action and staging before spending renders on shots 02–04 or full episodes."
 }
