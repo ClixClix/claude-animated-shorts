@@ -1,3 +1,23 @@
+# LATEST — Episode 02 main source reuses real Episode 01 assets, not puppet redrawing (2026-11-17)
+
+User explicitly asked **"please use the items in ep1 to make ep 2"**. Source edits committed to `v2-local-render`. These are SOURCE-ONLY; **no local TypeScript compile or new visual render has occurred yet**. No publishable episode and no paid voice generated.
+
+Exact reuse in `studio/src/v2/episodes/in-this-town-02/Episode.tsx`:
+- Swapped out `makeCharacter()` and generic `createCatCard()` for **`createEpisode1CastCat('mocha'/'essie'/'latte')`**; in `episode1Cast.ts` this calls the literal `createEpisodeCat(id)` from Episode 01 `door-at-1111-polish/actors.ts`, retaining the **original full cat drawings, shaded material, true 4-leg planted walking art, ink and original palettes**. It adapts EP02 timed `ActorPose` to EP01's `Actor` interface and disables unrelated episode1 timed nose/head gestures (EP01 frame/t 0). It does NOT generate a new imitation or replace a lead palette.
+- Original `createKitten()` from EP01 `animation/kitten.ts` replaces the recycled/recolored Essie demonstration cat.
+- Original `TownPopulation` is reused as background onlookers only; no simplified extras promoted as lead cats.
+- Same `EpisodeWorld`, café fixtures and original streetlights, shelter, alley storage/dumpster/service dressing, Episode1 `LensBlur`, ink, grade and shade.
+- Distinct Episode2 magical props still new because EP1 never had the required four identity boxes; demo uses correctly small `createEpisodeBox('demo')`, demo home changed to [1.8,0,5.35] and `cameraDirector` uses real demo dimensions.
+- Keeps 60-shot story order; rescues Essie then Latte. The black-screen/shrink-to-box morph in draft is NOT yet visually solved. Don't claim professional finished movie.
+
+**New local low-cost test**: sync, then double-click `C:\V2\Build-Episode02-EP1-Assets.cmd` or run `node scripts/episode02-episode1-assets-preview.mjs` from `C:\V2\studio`. Runs static source authenticity contract, TypeScript preflight, then outputs 12 genuine 540×960 still images of 02 storyline (shots 05,06,07,12,19,37,49,50,54,55,59,60) plus JSON report in `out\v2-episodes\in-this-town-02\ep1-asset-reuse-proof\`. No full 60-shot render/audio/spend. Need upload 4 representative stills for review and error log if preflight fails. `LOCAL_UPDATE_FILES.json` includes new adapter, script, doc and launcher. `episode02-render.mjs` hash includes EP1 reused source to prevent stale cached segments.
+
+**Crucial caveat**: Source wiring confirmed by retrieving GitHub files, but full TypeScript build and visuals have NOT been run on user's Windows machine. Do NOT call it Episode1-quality until camera, box contact and morph tests pass real output review. The old independent failed `articulatedGuest.ts` still exists for history but is NOT imported by main Episode2 production.
+
+Reference design documentation: `studio/src/v2/episodes/in-this-town-02/EPISODE1_ASSET_REUSE_CONTRACT.md`.
+
+---
+
 # LATEST — New articulated Episode 2 shot-01 performance proof source committed (2026-11-17)
 
 User responded **"go"** to the reset plan after rejecting the third 4-shot Episode2 pilot. Source work has been committed to branch `v2-local-render`; it is **NOT** visually approved or locally rendered by ChatGPT.
