@@ -96,7 +96,10 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   if(n===9)cam=cameraPreset([3.6,2.2,3.8],[-1.25,.8,1.1],65);
   else if(n===10||n===15)cam=focus(HOME.latte,2.55,n===10?42:58,1.5);
   else if(n===11||n===14||n===17)cam=focus(mocha.position,2.2,35,1.05);
-  else if(n===12||n===13)cam=focus(HOME.latte,1.3,38,.4);
+  else if(n===12)cam=focus(HOME.latte,1.3,38,.4);
+   else if(n===13)cam=cameraPreset(
+    [HOME.latte[0],.76,HOME.latte[2]+.10],
+    [mocha.position[0],.92,mocha.position[2]],58);
   else cam=cameraPreset([1.7,2.0,4.0],[-1.8,.7,2.0],58);
   flap.latte=n===12?.84:n===13?.95:.84;
   if(n===12){
