@@ -40,7 +40,7 @@ export function shot01Pose(frame:number,box:[number,number,number]):GuestRigPose
  const settle=ease((t-2.18)/.36);
  // Delay lateral motion until the feet are ABOVE the near cardboard rim.
  const progressed=flight?ease((jump-.18)/.76):t>=1.89?1:0;
- const jumpHeight=flight?.83*Math.sin(Math.PI*jump):0;
+ const jumpHeight=flight?.83*Math.sin(Math.PI*jump)+.06*ease((jump-.82)/.18):0;
  const sx=flight?mix(x-.96,x,progressed):t>=1.89?x:mix(x-1.25,x-.96,approach);
  const footHeight=t>=1.89?mix(.10,.085,land):.04+jumpHeight;
  return {
