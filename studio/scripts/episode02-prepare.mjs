@@ -46,17 +46,11 @@ if(alignment){
  captions=alignment.map(x=>({start:Math.round(Number(x.start)*30),end:Math.round(Number(x.end)*30),text:String(x.text).trim()})).filter(c=>c.text&&c.end>c.start);
  if(captions.some(c=>c.start<0||c.end>Math.ceil(voiceSeconds*30)+3))throw Error('Word timings exceed approved narration duration.');
 }else{
- // Scratch time guides only: a real performance can pause or speak unevenly.
- // Never claim these estimates are synchronized to actual spoken consonants.
- const sum=words.reduce((n,w)=>n+Math.max(1,w.length)**.58,0);
- let current=0;
- captions=words.map(w=>{
-  const weight=Math.max(1,w.length)**.58;
-  const start=Math.round(current/sum*(voiceSeconds*30));
-  current+=weight;
-  const end=Math.round(current/sum*(voiceSeconds*30));
-  return {start,end:Math.max(start+1,end),text:w};
- });
+ // Do not fabricate speech-word captions. A synthetic word-by-word clock is
+ // visibly wrong when the narration is silent or has natural pauses.
+ // The approved script remains in the production file; the overlay stays
+ // blank until actual Adam word alignment is supplied.
+ captions=[];
 }
 const props={shots,captions,previewScale:1,optimize:true,audioApproved:voiceExists};
 const hash=x=>crypto.createHash('sha256').update(x).digest('hex');
@@ -70,7 +64,7 @@ execFileSync('ffmpeg',['-nostdin','-hide_banner','-v','error','-y','-i',file,
 await fs.writeFile(path.join(out,'PRODUCTION_READINESS.json'),JSON.stringify({
  stage:'PREPARED_NOT_CHECKED',sourceSignature:signature,durationInFrames:cursor,durationSeconds:duration,
  shots:shots.length,voiceInput:file,voiceProvided:voiceExists,
- captionAlignment:alignment?'provided_exact_timings':'ESTIMATED_NOT_VERIFIED',
+ captionAlignment:alignment?'provided_exact_timings':'NONE_NO_CAPTIONS',
  publishingAllowed:false,paidGenerationRequests:0,
  note:voiceExists?'Narration supplied locally by user. Rights, voice match and sync not reviewed.':'Silent SCRATCH only. Must supply approved narration before release.'
 },null,2)+'\n');
