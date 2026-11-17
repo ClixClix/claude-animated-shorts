@@ -13,6 +13,7 @@ import {createKitten} from '../../animation/kitten';
 import {storyAt as kittenStoryAt} from '../../animation/timeline';
 import {TownPopulation} from '../door-at-1111-polish/population';
 import {createEpisode1CastCat} from './episode1Cast';
+import {createRuleCat} from './ruleCats';
 import {LensBlur} from '../../../videos/bridge/lensblur';
 import {CHAR} from '../../../videos/bridge/shade';
 import {CARD_K} from '../../../videos/bridge/cardshade';
@@ -134,6 +135,9 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // The *anonymous* demonstration uses Episode 01's actual kitten animation
  // rather than recoloring Essie or inventing another paper-puppet cat.
  const demoKitten=useMemo(()=>createKitten(),[]);
+ // The approved opening keeps its original kitten unchanged. The box close-ups
+ // use an original-ink curled counterpart with the same coat and eye palette.
+ const curledKitten=useMemo(()=>createRuleCat('kitten',.81),[]);
  // Exactly the existing Episode 01 supporting cats, as background guests only.
  const townspeople=useMemo(()=>new TownPopulation(),[]);
  // No detached forelimb/hand rigs. Cats interact with boxes using their
@@ -272,7 +276,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   kittenBlink:0
  };
  demoKitten.update(kittenState,s.frame);
- demoKitten.mesh.visible=s.demoCat.visible&&s.demoCat.morph<.95;
+ demoKitten.mesh.visible=s.demoCat.visible&&s.demoCat.morph<.95&&n!==2&&n!==3;
  demoKitten.mesh.position.set(...s.demoCat.position);
  // Physical paper-fold acting in shot 03: hold the actual Episode01 kitten
  // visibly above the rim first, then fold/sink into its ONE persistent box.
@@ -287,6 +291,22 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  demoKitten.mesh.rotation.x=n===3?-.42-.26*demoFold:n===2?-.42:0;
  demoKitten.mesh.rotation.y=Math.atan2(cam.position.x-s.demoCat.position[0],
   cam.position.z-s.demoCat.position[2]);
+ // Actual 21-frame proof showed a tiny upright kitten throughout Shot 02.
+ // Reuse the approved illustration technique, now with a horizontal curled
+ // torso, resting paws and a lifted recognizable face inside SAME box.
+ curledKitten.mesh.visible=n===2||n===3;
+ if(curledKitten.mesh.visible){
+  const fold=n===3?s.demoCat.morph:0;
+  curledKitten.update(s.t,{pose:'curled',expression:n===3?'scared':'neutral',
+   progress:n===2?.16+.20*ease(s.u):.35+.40*fold,
+   morph:fold,look:n===2?.10*Math.sin(s.u*Math.PI):-.18*fold,
+   headTilt:-.08,blink:n===2?Math.max(0,1-Math.abs(s.u-.68)/.15):0});
+  curledKitten.mesh.position.set(s.demoBox[0],.07-.10*fold,s.demoBox[2]);
+  curledKitten.mesh.rotation.y=Math.atan2(cam.position.x-s.demoBox[0],
+   cam.position.z-s.demoBox[2]);
+  curledKitten.mesh.rotation.x=-.22;
+  curledKitten.mesh.scale.setScalar(1-.28*fold);
+ }
  // Episode 01's background supporting-cat asset set. Do not promote their
  // simplified drawings to close-up leading actors; keep them as background.
  // Episode 01's supporting-cast art is unchanged, but Episode 02 must
@@ -380,13 +400,13 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  }
  useEffect(()=>()=>{world.dispose();for(const b of Object.values(boxes))b.dispose();
   Object.values(characters).forEach(c=>c.dispose());
-  demoKitten.dispose();
+  demoKitten.dispose();curledKitten.dispose();
   townspeople.dispose();
   for(const p of dust.arr){p.geo.dispose();p.mat.dispose();}
   props.dispose();atmosphere.sun.dispose();atmosphere.night.dispose();
   effects.ink.dispose();effects.bloom.dispose();effects.tone.dispose();
   effects.grade.dispose();effects.lens.dispose();
- },[world,boxes,characters,demoKitten,townspeople,dust,atmosphere,effects,props]);
+ },[world,boxes,characters,demoKitten,curledKitten,townspeople,dust,atmosphere,effects,props]);
  return <><primitive object={world.root} dispose={null}/>
   <primitive object={atmosphere.root} dispose={null}/>
   {Object.values(boxes).map(b=><primitive key={b.root.name} object={b.root} dispose={null}/>)}
@@ -397,6 +417,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
     <primitive object={c.shadow.mesh} dispose={null}/>
    </React.Fragment>)}
   <primitive object={demoKitten.mesh} dispose={null}/>
+  <primitive object={curledKitten.mesh} dispose={null}/>
   <primitive object={townspeople.root} dispose={null}/>
   <primitive object={props.root} dispose={null}/>
   <primitive object={dust.root} dispose={null}/>
