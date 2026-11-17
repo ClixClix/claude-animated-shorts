@@ -200,6 +200,13 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // the real shelter in establishing shot 28; exclude it from this cut.
  const shelter=world.props.get('bus-stop');
  if(shelter)shelter.visible=s.shot.sequence!==29;
+ // Episode01 streetlight-3 stands at x=0,z=6.05, physically inside the
+ // Episode02 cure board at x=.1,z=6.1. Actual full-render shot 57 showed
+ // its pole slicing through the instruction text and Essie's face; shot 56
+ // also lost a lead silhouette behind it. Mask only these announcement cuts.
+ // This does not modify the approved Episode01 lamp source or other shots.
+ const announcementLamp=world.root.getObjectByName('streetlight-3');
+ if(announcementLamp)announcementLamp.visible=!(n===56||n===57); // episode02-announcement-lamp
  // Episode01's permanent plant is retained everywhere except the close-up
  // jump/cuddle, where real 25-frame cloud QA proved its leaves block Mocha.
  // Cinematic foreground masking changes shot visibility, not original assets.
