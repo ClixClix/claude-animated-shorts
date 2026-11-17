@@ -19,6 +19,15 @@ For each shot record: stable shot ID; spoken words/timing; information revealed;
 
 Do not place images merely because a word is spoken. The image must make the story understandable without narration, and add information or emotional meaning to it. Keep secrets hidden until the reveal.
 
+## Invariant feline movement rules (all future one-prompt episodes)
+
+- A cat **sniffs and noses** flaps, furniture and other cats; holds or gently pulls light objects with its **mouth/teeth**, not invented human hands. A paw can walk, balance, step, knead, or make a brief anatomically plausible tap; it is not a prehensile arm. Avoid pointing, grabbing handles, long stretched forelimbs, and human carrying poses.
+- Use the **actual approved Episode 01** Mocha/Essie/Latte silhouettes, full drawing and walking-leg rig. Do not create a primitive oval torso, floating head or detached cylindrical stick legs.
+- Scale every prop against the established cat design and furniture, not by arbitrary camera-filling dimensions. All boxes must show the appropriate cat face and ears when the story requires them.
+- Each physical interaction needs a verifiable world-space relationship between muzzle/paw, prop and support surface. Box-entry actions require a readable whole-body path, no clipping/teleporting. A magical transformation requires a readable cat-to-cardboard change, not merely hiding a sprite.
+- Keep only story-relevant boxes visible in any shot. For the Episode 02 ending, show **one** shared box and all three recognizable faces, not Latte's old box superimposed.
+- The animation source passing TypeScript and automated checks does NOT constitute visual approval; inspect actual generated frames and movement against Episode 01 before expanding to subsequent shots.
+
 ## Production gates
 
 1. Script and new design/layout approval.
