@@ -273,9 +273,13 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   (n===4?[[.55,.03,6.45],[2.9,.03,6.2],[3.8,.03,6.75]]:
    [[-.9,.03,7.9],[.8,.03,8.3],[3.4,.03,8.6]]):
   [[walkA,.03,5.02],[walkB,.03,5.02],[-6.4,.03,12.55]];
+ // One standing café patron walks the clear right-side aisle while two
+ // others remain seated. The aisle x=3.15 clears the chair/table footprints
+ // ending at x≈2.65; its travel stays inside the x=4 café wall.
+ const cafeAisleZ=-1.25+1.20*(1+Math.sin(s.t*.29));
  const spots:V3[]=outsideBusy?
   [...streetSpots,[walkA-1.2,.03,12.55],[walkB+.7,.03,12.55]]:
-  cafeBusy?[[2.38,.51,-2.14],[.96,.51,2.13],[2.8,.03,-.15]]:[];
+  cafeBusy?[[2.38,.51,-2.14],[.96,.51,2.13],[3.15,.03,cafeAisleZ]]:[];
  townspeople.root.visible=spots.length>0;
  townspeople.actors.forEach((c,i)=>{
   const isGuest=i<spots.length;c.mesh.visible=isGuest;
