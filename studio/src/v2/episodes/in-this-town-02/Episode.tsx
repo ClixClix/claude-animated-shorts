@@ -200,6 +200,11 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   {key:'demo',obj:boxes.demo,pos:s.demoBox,visible:s.show.demo,flap:s.flap.demo},
  ] as const;
  for(const b of boxArray){b.obj.root.position.set(...b.pos);b.obj.root.visible=b.visible;b.obj.setOpenAmount(b.flap);}
+  // The shared box's left flap folds DOWN along the outside wall, rather
+  // than extending into Mocha's hesitant approach and masking his face.
+  // Keep the same physical flap and original Episode01 scene assets.
+  if(s.shot.sequence>=58&&s.shot.sequence<=60)
+   boxes.shared.flaps.left.rotation.z=1.5*Math.PI;
  // Drive the EXACT Episode 01 actor/cards from Episode 02's approved story
  // timing. Their silhouettes, whiskers, tail and separate foot drawings never
  // get replaced by the failed Episode 02 "oval body / stick legs" renderer.
