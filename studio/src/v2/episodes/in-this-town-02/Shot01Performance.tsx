@@ -123,7 +123,7 @@ const Inner:React.FC<Props>=({previewScale=1,optimize=true})=>{
   // clear the cardboard rim. Unlike an abstract frustum check, this is
   // directly tied to the physical choreography.
   const leftWall=SITE[0]-box.spec.width/2;
-  const horizontalOverlap=pose.x+.22>leftWall&&pose.x<leftWall;
+  const horizontalOverlap=pose.x+.36>leftWall&&pose.x<leftWall;
   const badRimCross=pose.stage==='flight'&&horizontalOverlap&&
    pose.y<SITE[1]+box.spec.height+.04;
   const boxFraming=rectInFrame(camera3,box.root);
