@@ -165,14 +165,14 @@ export function createCurledSourceKitten(source:T.Texture){
   g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,840,1040);
   g.save();g.scale(2,2);
   // Real original tail: curl toward the rear instead of a disembodied oval.
-  g.drawImage(src,270*2,285*2,120*2,190*2,283,282,111,132);
+  g.drawImage(src,270*2,285*2,120*2,190*2,284,273,115,140);
   // Compress the original kitten's drawn shoulders and both planted paws
   // into a horizontal sleeping torso, retained within the .88m carton.
-  g.drawImage(src,109*2,287*2,216*2,195*2,99,292,265,128);
+  g.drawImage(src,109*2,287*2,216*2,195*2,128,288,259,137);
   // Preserve the exact original kitten face/ears, with the painted chest
   // connecting the head to the horizontal body rather than hovering above.
   const headDown=16+progress*9;
-  g.drawImage(src,102*2,78*2,222*2,245*2,141,143+headDown,224,214);
+  g.drawImage(src,102*2,78*2,222*2,245*2,93,146+headDown,223,220);
   // A subtle horizontal tuck reads "curled" in a .7-second close-up.
   // Final paper-fold response is deliberately left to Shot 03.
   if(morph>.03){
