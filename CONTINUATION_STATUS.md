@@ -1,3 +1,13 @@
+# LATEST — Second Episode 02 Part 1 real render rejected, code revised again (2026-11-17)
+
+The user uploaded a second true 183-frame MP4 and 12 real PNGs (names `Part1_01-04_PREVIEW(1).mp4` and `01_20(1).png` etc.). Upon viewing, **all four shots are still visually rejected**. Streetlamp pole directly in front of centre of box throughout (not in world.blockers), shot 01 no clear entry, 02 static, 03 cat face obscured behind flap (confirmed by new QA), 04 third guest hidden and cartoonishly long probing arm. See `studio/src/v2/episodes/in-this-town-02/PART1_SECOND_RENDER_AUDIT.md`.
+
+**Code commits made after this video:** re-stage box and cameras at café sidewalk x=-2.5 to leave original lamppost x=0 out of shot; new demo-only fully outward opening flap rotation; explicit guest approach OUTSIDE box then jump over side rim; more evident napping head cues; later flap close while paper facets replace face; third witness now in near-right foreground; deleted stretched probing rig; new lamppost-mesh raycast warning `STREETLIGHT_BLOCKS_SHOT` in audit and renderer. `LOCAL_UPDATE_FILES.json` includes all revised files. Nothing claimed visually fixed yet: **no new revised MP4 has been uploaded**. We cannot run the user's Windows Remotion engine directly from chat. The next user action is to sync and run Part 1 pilot again, upload MP4 + JSON. The renderer automatically typechecks before encoding. Do not start shots 05–60 or claim successful quality.
+
+**User's eventual goal:** a one-prompt, auto-QA series pipeline. Failing test cases reveal that QA must analyze actual occluding non-solid scene dressing and physical story actions, not just lack of TypeScript/browser errors.
+
+---
+
 # LATEST — Part 1 real preview rejected; corrective source implemented, NOT visually checked
 
 The user ran `node scripts/episode02-part1.mjs`, generating `Part1_01-04_PREVIEW.mp4`, 12 real PNGs, and PART1_RENDER_STATUS.json. Inspecting the actual uploaded images showed **Part 1 is NOT visually approved**: giant box blocking cat/oversize, box on road, simplistic toy-like foreground cats, transformation was disappearance behind box, shot 04 witnesses static/cropped with an implausible reaching arm. Old checker found cropped shots 01/04, but missed box-self-occlusion in shots 02/03. Full review in `PART1_RENDER_REJECTION_2026-11-16.md`.
