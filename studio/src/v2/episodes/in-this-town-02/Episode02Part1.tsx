@@ -256,6 +256,36 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
   const boxHits=faceRay.intersectObject(demo.root,true).filter(h=>
    h.object instanceof T.Mesh).slice(0,3);
   const faceOccluded=index<3&&morph<.63&&boxHits.length>0;
+  // Episode 01 streetlights are deliberately NON-SOLID set dressing, so
+  // world.blockers excludes their poles. The prior pilot reported no
+  // architecture hits while a lamp covered the hero box in EVERY shot.
+  // Audit each actual lamp group through the centres of the visible actors
+  // and the physical box, before claiming an unobstructed composition.
+  const lampGroups:T.Object3D[]=[];
+  world.root.traverse(o=>{
+   if(o instanceof T.Group&&/^streetlight-\\d+$/.test(o.name)&&o.visible)
+    lampGroups.push(o);
+  });
+  const lampWatch=[
+   {id:'box',target:new T.Vector3(SITE.x,SITE.y+.53,SITE.z)},
+   ...(index<3?[{id:'guest',target:new T.Vector3(
+    guest.mesh.position.x,guest.mesh.position.y+(index===0?.87:.72)*guest.mesh.scale.y,
+    guest.mesh.position.z)}]:[
+    {id:'slate',target:new T.Vector3(cats.slate.mesh.position.x,
+     cats.slate.mesh.position.y+.82,cats.slate.mesh.position.z)},
+    {id:'honey',target:new T.Vector3(cats.honey.mesh.position.x,
+     cats.honey.mesh.position.y+.82,cats.honey.mesh.position.z)},
+    {id:'sage',target:new T.Vector3(cats.sage.mesh.position.x,
+     cats.sage.mesh.position.y+.82,cats.sage.mesh.position.z)}
+   ])
+  ];
+  const streetlightOcclusions=lampWatch.flatMap(({id,target})=>{
+   const to=target.clone().sub(cam.position),length=to.length();
+   const r=new T.Raycaster(cam.position,to.normalize(),.01,Math.max(.01,length-.05));
+   return r.intersectObjects(lampGroups,true).filter(h=>h.object instanceof T.Mesh)
+    .slice(0,2).map(h=>({subject:id,lampPart:h.object.name,
+     distance:Number(h.distance.toFixed(3))}));
+  });
   const cropped=samples.some(p=>p.behind||p.minX<-.90||p.maxX>.90||
    p.minY<-.88||p.maxY>.88);
   console.log('PART1_AUDIT '+JSON.stringify({
@@ -263,6 +293,7 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
    sampledSubjects:samples,occludingWorldObjects:hits,
    cropWarning:cropped,occlusionWarning:hits.length>0,
    faceOccluded,faceBlocker:boxHits[0]?.object.name??null,
+   streetlightOcclusions,lampAuditedGroups:lampGroups.map(o=>o.name),
    sameBoxIdentity:demo.root.name,magicProgress:morph,
    noDuplicateBox:true
   }));
