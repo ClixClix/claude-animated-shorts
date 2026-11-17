@@ -32,7 +32,7 @@ export const BOX_SPECS:Readonly<Record<BoxIdentity,Readonly<BoxSpec>>> = Object.
   }),
   shared:Object.freeze({
     id:'SHARED_BOX',width:2.48,depth:1.22,height:.55,color:'#cca174',
-    tape:'none',home:[-1.45,0,2.5] as [number,number,number],
+    tape:'none',home:[-1.45,0,2.1] as [number,number,number],
     role:'Separate oversized end-scene box for all three cats',
   }),
 });
