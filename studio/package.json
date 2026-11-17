@@ -17,7 +17,10 @@
     "episode2:check": "node scripts/produce-box.mjs check",
     "episode2:part1": "node scripts/episode02-part1.mjs",
     "episode2:shot01": "node scripts/episode02-shot01-performance.mjs",
-    "episode2:ep1-assets": "node scripts/episode02-episode1-assets-preview.mjs"
+    "episode2:ep1-assets": "node scripts/episode02-episode1-assets-preview.mjs",
+    "episode2:style-check": "node scripts/episode02-style-preflight.mjs",
+    "episode2:style-preview": "node scripts/episode02-episode1-assets-preview.mjs",
+    "episode2:review-sheet": "node scripts/episode02-review-sheet.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "9.1.2",
