@@ -59,6 +59,16 @@ jobs:
             "$CHROME_PATH" --version
           fi
 
+      - name: Install FFmpeg required by scratch manifest and review
+        shell: bash
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1 || ! command -v ffprobe >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ffmpeg
+          fi
+          ffmpeg -version | head -n 1
+          ffprobe -version | head -n 1
+
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
 
@@ -110,6 +120,16 @@ jobs:
           node-version: "24"
           cache: npm
           cache-dependency-path: studio/package-lock.json
+
+      - name: Install FFmpeg required by assembly and full-movie decode
+        shell: bash
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1 || ! command -v ffprobe >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ffmpeg
+          fi
+          ffmpeg -version | head -n 1
+          ffprobe -version | head -n 1
 
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
