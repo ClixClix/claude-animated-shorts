@@ -1,7 +1,21 @@
 # Episode 02 — visual QA error ledger
 
-Last updated: 2026-11-17 08:07 ET (13:07 UTC)
+Last updated: 2026-11-17 09:00 ET (14:00 UTC)
 Branch: `v2-local-render`
+
+## 09:00 ET — completed older full movie 44079888557 reviewed; latest source rerender still in progress
+
+- **Full real footage inspected:** [run 44079888557](https://github.com/ClixClix/claude-animated-shorts/actions/runs/44079888557) completed successfully, all four 15-shot shards and assembly. Downloaded GitHub artifact `14334890901`, extracted actual `EP02_540p_Visual.mp4`, independently verified with ffprobe: **540×960, 30 fps, 129.2 seconds, exactly 3876 frames**; SHA-256 `2aa0c381e58504dfc43411b90d8eca75158bd8b902bc073a6510ece66941980d`. Reviewed actual midframes for **all 60 shots** and five temporal frames each for shots 01, 02, 04, 10, 12, 29, 35, 40, 46–50, 53, 56, 58–60. This is temporal sample inspection, **not uninterrupted normal-speed artistic approval**.
+- **E02-016 / E02-001 (58–59, frames 3645–3800):** the previously blocking plant and left flap no longer obscure Mocha in the sampled older full movie; the shot 58 approach is visible. **Visually verified improvement of the flap occlusion** on run 44079888557 (commit `bcc34dd`), although the leap's feline physicality still needs work. Preserve separate E02-002.
+- **E02-002 (59, frames 3720–3800):** in real 5-point motion strip, Mocha moves from left foreground to a conspicuous suspended position over the shared box at frame ~3760 before landing. **Still artistically unresolved**, despite improved visibility. Suspected source cause: `timeline.ts` high 1.02m sine jump arc and card-foot projection, plus framing. The later `a8338fa` source rerender must be inspected before editing again.
+- **E02-014 (49–50, frames 3030–3170):** Mocha appears suspended above box rim (frames ~3062 and ~3133) rather than showing a readable paw-led feline landing and exit. **Unresolved**, physically implausible hop staging; exact mechanism not confirmed without newer full movie. Numerical rim clearance alone is not artistic approval.
+- **E02-020 (02, frames 27–62):** huge diagonal kitten leg strokes still clearly visible in the older run's 5-point strip. This is **expected pre-fix evidence**, because `723f3d4` and `a8338fa` were committed after `bcc34dd`; **do not mislabel the later patch as failed**.
+- **E02-018 (12, frames 657–719):** flap motion without visible paw/nose contact remains evident in the pre-`c24ffbf` run. **Not a verdict on the later source patch**.
+- **E02-017 (29, frames 1764–1817):** pole still crosses Mocha's face at ~1790, before later source route correction. **Rerender pending**.
+- **E02-003/006 (46–48, frames 2817–3029):** three essentially unchanged alley views in the older movie, preceding the later memory flashback patch; still **unverified in newest source**.
+- **E02-005 (56, frames 3483–3557):** full 9:16 street view keeps cats tiny. Later framing patch still unverified.
+- **Latest workflow status:** [full run 44089242525](https://github.com/ClixClix/claude-animated-shorts/actions/runs/44089242525) at `a8338fa`: **4/4 shards actively rendering**, no assembly artifact yet; [QA run 44089242640](https://github.com/ClixClix/claude-animated-shorts/actions/runs/44089242640) **COMPLETED SUCCESS**, including corrected deterministic geometry gate. Earlier [44088969327](https://github.com/ClixClix/claude-animated-shorts/actions/runs/44088969327) failed a false-positive cafe-memory alley check, corrected in `a8338fa`. 15-minute recurring heartbeat not independently verified; only two earlier push-triggered checks known.
+- **Error totals:** 21 tracked: **10 open visual/editorial, 10 visually verified fixes (including shot 02 visibility, not kitten legs), 1 CI-verified fixed**. The shot 58 flap occlusion improvement is additional evidence for existing E02-016, not a newly numbered error; overall counts may be reconciled after the newest complete rerender. No new distinct defect was found in this older-source review. Audio intentionally absent, not assessed. Native 1080×1920 and approved Episode01 side-by-side remain blocked on artistic acceptance/reference availability.
 
 ## 08:07 ET — full movie 44079839705 inspected, root-cause patch and audit failure diagnosed
 
