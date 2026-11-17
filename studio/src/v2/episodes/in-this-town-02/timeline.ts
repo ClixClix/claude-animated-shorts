@@ -191,11 +191,15 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   latte.position=[-.95,.12,2.17];latte.scale=.67;
   const settle=ease(n===59?(u-.72)/.28:1);
   if(n===59){
-   const entry=ease((u-.24)/.48);
    const hop=clamp((u-.24)/.50);
+   // The full-width Episode01 card must stay to the left of the sidewall
+   // until its feet rise ABOVE the .59m box lip. The previous linear entry
+   // crossed cardboard for ten sampled frames before takeoff.
+   const clearance=ease((hop-.25)/.55);
    mocha.position=[
-    u<.24?lerp(-3.32,-3.17,ease(u/.24)):lerp(-3.17,-1.95,entry),
-    .10+(hop>0&&hop<1?.96*Math.sin(Math.PI*hop):0)+.02*settle,
+    u<.24?lerp(-3.32,-3.19,ease(u/.24)):lerp(-3.19,-1.95,clearance),
+    (hop>0&&hop<1?.96*Math.sin(Math.PI*hop):0)
+       +.12*ease((hop-.86)/.14),
     2.17
    ];
    mocha.scale=lerp(.72,.67,entry);
