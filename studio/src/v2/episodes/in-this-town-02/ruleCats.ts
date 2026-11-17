@@ -67,7 +67,7 @@ export function createRuleCat(variant:RuleCatVariant,height=1.22){
   walking?:boolean;
  }={})=>{
   const progress=clamp(options.progress??0);
-  g.setTransform(1,0,0,1);g.clearRect(0,0,canvas.width,canvas.height);
+  g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,canvas.width,canvas.height);
   g.setTransform(2,0,0,2,0,0);
   const pose:Partial<CatPose>={
    ...catMotion(seconds,options.walking?'walk':'idle',variant.length*.16),
