@@ -1,3 +1,17 @@
+# LATEST — Episode 02 Part 1 isolated visual pilot implemented (2026-11-16)
+
+**Current user instruction:** rebuild Episode 02 **part by part**, while aiming eventually to create an entire episode with a single natural-language prompt. The rejected 60-shot Episode 02 draft must not be rendered or called on-brand/release-ready.
+
+**What was actually committed:** a separate Remotion composition `InThisTownEpisode02Part1` implementing shots 01–04 (0–182 frames, 6.1s); it reuses Episode 01's `EpisodeWorld`, `TownPopulation` supporting-cat artwork (not lead lookalikes), paw rig, line/lighting style, and one smaller physically grounded demo box (1.05×.91×.47). The transformation is a staged paper-fold/cat-silhouette effect inside the *same* cardboard prop, not a second box. The camera positions and timings are now loaded from `PART1_SHOT_BLUEPRINT.json`.
+
+**Local test path:** sync `v2-local-render`; double-click `Build-Episode02-Part1.cmd`, or from `C:\V2\studio` run `node scripts/episode02-part1.mjs`. Outputs in `out/v2-episodes/in-this-town-02/part1-pilot/`: 6.1-second 540×960 MP4, twelve 540×960 actual rendered scene PNGs, and JSON sampled camera-occlusion warnings. The new launcher and all source are in `LOCAL_UPDATE_FILES.json`.
+
+**UNVERIFIED:** This new composition has **not** been run on Windows, typechecked in a full repo, or visually inspected. Source-committed does not prove no clipping, no occlusion, or Episode 01 quality. Request the 6.1s MP4 plus four middle frames for review. Do not continue with 05–10 until the real 01–04 pilot is visually approved.
+
+**One-prompt goal:** read `PART1_AND_ONE_PROMPT_ROADMAP.md`. Data-driven blueprint and one-command pilot are a first step; the actual automated code/shot generator, local rendering runner, image-inspection/correction loop, rights/audio finalizer and publish gate are **not yet unified or autonomous**. Keep this distinction clear. No paid narration or full-episode render requested.
+
+---
+
 # LATEST — Episode 02 rendered prototype rejected after actual MP4 inspection
 
 User uploaded 11 rendered Episode 02 preview clips (shots 03,07,09,20,32,39,50,51,54,59,60), and the assistant inspected their frames plus the Episode 01 full movie. **Every sampled Episode 02 shot shows major unacceptable visual defects. Stop calling this composition production-ready or recommending a full 60-shot render.** The previous portrait camera patch DID NOT solve the fundamental issues.
