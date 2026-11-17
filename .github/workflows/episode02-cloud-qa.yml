@@ -63,6 +63,9 @@ jobs:
       - name: Actual Remotion frame previews and review board
         run: npm run episode2:style-preview
 
+      - name: Render actual 58-60 moving H264 preview
+        run: npm run episode2:motion-preview
+
       - name: List evidence and report output
         if: always()
         shell: bash
