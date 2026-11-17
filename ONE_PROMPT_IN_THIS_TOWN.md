@@ -39,6 +39,16 @@ It is **not enough** to generate a storyline or prompt. The future controller sh
 
 No sample screenshot is marked creatively approved. A better-looking costume or reused Episode 01 shader does not mean the overall scene matches the final Episode 01 MP4.
 
+## Repeatable source audit after EACH correction
+
+The source now has a deterministic quality-cycle command:
+
+- `npm.cmd run episode2:code-audit`: locks the **exact Episode 01** source, runs TypeScript, checks original café geometry, box dimensions and feline behavior, then directly bundles the **real Episode 02** camera/timeline source with esbuild and inspects the 3,876 actual timeline states. Detailed ending tests look for shot 58–60 teleports, frame cropping, box-wall intersection, one final box and original character preservation. Saves `EP2_REPEATABLE_CODE_AUDIT.json`.
+- `npm.cmd run episode2:visual-cycle`: performs those checks, then renders the 14 representative real Episode02 PNGs plus **11 extra frames sampled across the Mocha box-entry and cuddle**; updates the local HTML/JSON review packet. Does **not** auto-approve the actual animation.
+- The exact approved Episode01 final MP4's SHA-256 was verified separately against the local copy on 2026-11-17, matching the established SHA lock. This proves the baseline identity, not visual parity of a different movie.
+
+**No 99% artistic-confidence claim is possible from code review alone.** The cycle deliberately records `artisticReviewComplete=false` and no visual parity score. The full animation, especially the magical cat-to-cardboard transformation, remains unapproved until real moving footage is rendered and inspected side by side.
+
 ## Local verification (Windows)
 
 Sync with `C:\V2\Update-Local-Code.ps1`, then run from `C:\V2\studio`:
