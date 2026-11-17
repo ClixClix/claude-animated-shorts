@@ -1,5 +1,6 @@
 import {BoxEpisodeComposition} from './v2/episodes/in-this-town-02/Episode';
 import {Episode02Part1Composition} from './v2/episodes/in-this-town-02/Episode02Part1';
+import {Shot01PerformanceComposition} from './v2/episodes/in-this-town-02/Shot01Performance';
 import {DoorPolishComposition} from './v2/episodes/door-at-1111-polish/Episode';
 import React from "react";
 import { Composition } from "remotion";
@@ -35,5 +36,6 @@ export const Root: React.FC = () => (
     <DoorPolishComposition />
     <BoxEpisodeComposition />
     <Episode02Part1Composition />
+    <Shot01PerformanceComposition />
   </>
 );
