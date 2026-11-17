@@ -1,3 +1,19 @@
+# LATEST — New articulated Episode 2 shot-01 performance proof source committed (2026-11-17)
+
+User responded **"go"** to the reset plan after rejecting the third 4-shot Episode2 pilot. Source work has been committed to branch `v2-local-render`; it is **NOT** visually approved or locally rendered by ChatGPT.
+
+**New isolated proof:** `studio/src/v2/episodes/in-this-town-02/articulatedGuest.ts` implements a separate Episode01 `drawCat` painted head, torso, four grounded paw cards, independently wagging tail, contact shadow, and deterministic pure 78-frame choreography (grounded walk -> crouch -> elevated rim-clear jump -> land -> settle). Old single-card `Episode02Part1.tsx` is not modified or approved. `Shot01Performance.tsx` is an independent Remotion composition `InThisTownEpisode02Shot01Performance` with original Episode01 town and original 3D cardboard box. `SHOT01_PERFORMANCE_BLUEPRINT.json` defines the 2.6-second beat sheet, camera and **provisional** clear space at [1.8,.04,5.35]. No paid narration.
+
+**New render command:** after syncing with `C:\V2\Update-Local-Code.ps1`, double-click `C:\V2\Build-Episode02-Shot01.cmd` or from `C:\V2\studio` run `node scripts/episode02-shot01-performance.mjs`. It typechecks; renders 10 actual 540x960 frames; audits physical bus-stop/streetlight set collisions, four subject sightlines, premature rim crossing, and clipping. If blockers are found, deliberately **skips MP4** and saves stills plus `SHOT01_PERFORMANCE_QA.json`; else encodes only a 2.6-second `SHOT01_PERFORMANCE_PREVIEW.mp4`. All outputs: `out/v2-episodes/in-this-town-02/shot01-performance\`. New source and launchers included in `LOCAL_UPDATE_FILES.json`.
+
+**Verification performed this turn:** fetched all new paths from GitHub, checked composition ID registration, per-part pivots, deterministic jump, set/QA gates, README/launchers/manifest, and calculated the jump curve independently for 78 frames: no early wall crossing at the body halfwidth used by QA. **NOT DONE:** local TypeScript compile, actual Remotion render and visual inspection. DO NOT claim Episode1-quality output or proof success until user sends rendered video and QA.
+
+**Editorial trajectory:** If this one shot looks good, extend reusable performer to shot02 curling, shot03 genuine material/shape change, shot04 coordinated reaction cast. Then build story-driven one-prompt generation and automatic frame review. A single-prompt autonomous full episode pipeline DOES NOT exist yet; current system is a prompt-like JSON beat sheet plus a one-command local render and error gate.
+
+Prior failure and grounds for this pivot: `THIRD_RENDER_REJECTION_AND_RESTART.md`, originals remain rejected.
+
+---
+
 # LATEST — Third real Part 1 preview REJECTED; stop four-shot render churn (2026-11-17)
 
 The user uploaded third Episode 2 opening pilot `Part1_01-04_PREVIEW(2).mp4`, `PART1_RENDER_STATUS(2).json`, and 12 real PNGs; explicitly said **"this isnt it"**. Video shows bus-stop shelter glass+roof+bench directly over the brown demo cat and box (shot01), flat floating illustration head/oval curled body (shot02), face sinking into box rather than magic metamorphosis (shot03), and blue witness obscured behind bus-stop bench+glass with the other two bunched in front (shot04). Report has NINE SUBJECT_CROP warnings and no static world occlusion warnings; check does not yet cover bus shelter. **All four shots rejected, do not claim on-brand.**
