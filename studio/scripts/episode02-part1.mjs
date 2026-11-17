@@ -89,10 +89,15 @@ try{
 }finally{
  if(browser)await browser.close({silent:true});
 }
-const issues=audits.flatMap(a=>[
+// Media and stills log the same frames. Count distinct timeline samples once.
+const uniqueAudits=[...new Map(audits.map(a=>[a.frame,a])).values()]
+ .sort((a,b)=>a.frame-b.frame);
+const issues=uniqueAudits.flatMap(a=>[
  ...(a.cropWarning?[{frame:a.frame,shot:a.shot,kind:'SUBJECT_CROP'}]:[]),
  ...(a.occlusionWarning?[{frame:a.frame,shot:a.shot,kind:'REAL_WORLD_OCCLUSION',
   objects:a.occludingWorldObjects}]:[]),
+ ...(a.faceOccluded?[{frame:a.frame,shot:a.shot,kind:'BOX_HIDES_CAT_FACE',
+  blockingMesh:a.faceBlocker}]:[]),
 ]);
 const status={
  id:'in-this-town-ep02-part1',stage:'RENDERED_PROTOTYPE_NOT_APPROVED',
@@ -100,10 +105,10 @@ const status={
  shots,frames:183,durationSeconds:6.1,
  fullFilmRendered:false,publishingAllowed:false,paidNarrationRequests:0,
  movie:stillsOnly?null:video,stillsDirectory:stills,
- visualAudit:{sampledFrames:audits.length,issues,raw:audits,browserErrors:errors},
+ visualAudit:{sampledFrames:uniqueAudits.length,issues,raw:uniqueAudits,browserErrors:errors},
  next:'Review the 12 real frames and the 6.1-second MP4 against Episode 01. Rework any blocked, clipped, incorrect-scale or confusing shot before continuing.'
 };
 await fs.writeFile(sidecar,JSON.stringify(status,null,2)+'\n');
 console.log(JSON.stringify({stage:status.stage,video:status.movie,framesFolder:stills,
- actualVisualSampleFrames:audits.length,issues:issues.length,browserErrors:errors.length},null,2));
+ actualVisualSampleFrames:uniqueAudits.length,issues:issues.length,browserErrors:errors.length},null,2));
 if(errors.length||issues.length)process.exitCode=2;
