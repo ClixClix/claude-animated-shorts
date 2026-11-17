@@ -13,8 +13,13 @@ import {NOINK} from '../../../videos/bridge/ink';
  * This module uses the original illustrated linework with three DISTINCT
  * palettes. It never changes the three lead designs.
  */
-export type RuleCatVariant='hazel'|'slate'|'honey'|'sage';
+export type RuleCatVariant='hazel'|'slate'|'honey'|'sage'|'kitten';
 const designs:Record<RuleCatVariant,CatDesign>={
+ kitten:{name:'Original cream-taupe town kitten (curled)',coat:'#c6ad87',
+  light:'#d9c09a',shadow:'#a18b73',marking:'#85725f',bib:'#fff0d1',
+  muzzle:'#fff0d1',ear:'#d4a1a0',iris:'#a8bda4',nose:'#b9827e',
+  headWidth:94,cheek:19,bodyWidth:85,tailWidth:33,
+  description:'Shot 2 curled companion matching the original rule kitten color, eyes and ruff'},
  hazel:{name:'Hazel (town guest)',coat:'#af7e58',light:'#d6a47d',
   shadow:'#8c5d48',marking:'#6d4e43',bib:'#e7c7a4',
   muzzle:'#f1dbc2',ear:'#c38b8c',iris:'#b1c67a',nose:'#ad7973',
