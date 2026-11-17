@@ -76,6 +76,15 @@ const fallback:Record<string,V3>={
  town:[3.5,2.0,11.6],
 };
 type Region='outside'|'demo'|'latte'|'essie'|'group'|'shared'|'bus'|'market'|'alley'|'town';
+// A fixed axis per location avoids unmotivated orbital camera rotation while
+// a character walks during a continuous shot.
+const regionAnchor:Record<Region,V3>={
+ demo:[3.45,0,7.6],outside:[2.4,0,6.65],latte:[-1.9,0,2.1],
+ essie:[.25,0,.3],group:[.25,0,.3],shared:[-1.45,0,2.5],
+ bus:[-4.4,0,6.1],market:[-7.3,0,6.5],alley:[-9.15,0,1.4],
+ town:[1.1,0,6.4]
+};
+
 function region(s:State):Region{
  const n=s.shot.sequence;
  if(n<=4)return 'demo';
@@ -139,7 +148,7 @@ function preferredFov(s:State){
 function fit(s:State){
  const focus=focusSet(s),center=boundsCenter(focus),r=region(s);
  const origin=fallback[r];
- let dir=norm(sub(origin,center));
+ let dir=norm(sub(origin,regionAnchor[r]));
  // Alley cinematography must come from the WEST side of the -6.9m shop.
  // Previous cameras at X≈-7 entered a solid building and obscured the actors.
  if(r==='alley'&&dir[0]>-.22)dir=norm([-1.2,.45,2.4]);
