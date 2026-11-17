@@ -59,16 +59,16 @@ function focusSet(s:State):Extents[]{
  if(n===54)return [C('mocha'),C('essie'),B('latte')];
  if(n===55)return [C('mocha'),C('essie'),C('latte'),B('latte')];
  if(n===56)return [C('mocha'),C('essie'),C('latte')];
- if(n===57)return [C('mocha'),C('essie'),C('latte')];
+ if(n===57)return [C('mocha'),{id:'town-cure-sign',center:[.1,2.0,6.1],half:[1.60,1.0,.1]}];
  if(n>=58)return [C('mocha'),C('essie'),C('latte'),B('shared')];
  return [C('mocha')];
 }
 const fallback:Record<string,V3>={
  demo:[5.8,1.75,11.3],
  outside:[5.6,2.0,10.0],
- latte:[1.2,1.8,3.45],
+ latte:[2.8,1.8,-.30],
  essie:[.70,1.75,3.35],
- group:[1.1,1.75,3.4],
+ group:[2.8,1.8,-.30],
  shared:[1.0,1.8,-.45],
  bus:[-1.8,1.95,10.9],
  market:[-5.5,1.85,11.0],
