@@ -14,7 +14,8 @@
     "episode:audio": "node scripts/produce-episode.mjs audio",
     "episode2:status": "node scripts/produce-box.mjs status",
     "episode2:build": "node scripts/produce-box.mjs build",
-    "episode2:check": "node scripts/produce-box.mjs check"
+    "episode2:check": "node scripts/produce-box.mjs check",
+    "episode2:part1": "node scripts/episode02-part1.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "9.1.2",
