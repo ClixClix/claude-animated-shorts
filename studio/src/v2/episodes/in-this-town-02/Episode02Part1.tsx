@@ -41,26 +41,6 @@ const findShot=(frame:number)=>{
  const shot=PART1_SHOTS[i];
  return {index:i,shot,u:smooth((frame-shot.start)/Math.max(1,shot.end-shot.start-1))};
 };
-function makePaperFold(){
- // This is a single folding surface that replaces the cat silhouette; it is
- // NOT a replacement box. The real hero box never gets duplicated.
- const shape=new T.Shape();
- shape.moveTo(-.32,0);
- shape.lineTo(-.32,.33);shape.lineTo(-.22,.60);
- shape.lineTo(-.06,.43);shape.lineTo(.08,.43);
- shape.lineTo(.22,.60);shape.lineTo(.32,.33);
- shape.lineTo(.32,0);shape.closePath();
- const geometry=new T.ShapeGeometry(shape);
- const material=new T.MeshBasicMaterial({color:'#c5a07a',transparent:true,
-  opacity:0,side:T.DoubleSide,depthWrite:false});
- const mesh=new T.Mesh(geometry,material);
- mesh.name='single-guest-cardboard-fold';
- mesh.layers.set(NOINK);
- mesh.renderOrder=3;
- return {mesh,material,geometry,dispose:()=>{
-  geometry.dispose();material.dispose();mesh.removeFromParent();
- }};
-}
 function makePaperGlints(){
  const root=new T.Group(),items=Array.from({length:12},(_,i)=>{
   const geometry=new T.SphereGeometry(.016+i%3*.004,6,6);
@@ -283,7 +263,7 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
   shadow.dispose();spark.dispose();Object.values(reach).forEach(p=>p.dispose());
   fx.ink.dispose();fx.bloom.dispose();fx.tone.dispose();fx.grade.dispose();
   light.key.dispose();light.ambient.dispose();
- },[world,people,demo,shadow,paper,spark,reach,fx,light]);
+ },[world,cats,demo,shadow,spark,reach,fx,light]);
  return <><primitive object={world.root} dispose={null}/>
   {Object.entries(cats).map(([id,cat])=><primitive key={id} object={cat.mesh} dispose={null}/>)}
   <primitive object={demo.root} dispose={null}/>
