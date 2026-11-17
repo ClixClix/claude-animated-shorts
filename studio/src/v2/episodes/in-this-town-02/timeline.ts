@@ -191,6 +191,9 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   latte.position=[-.95,.12,2.17];latte.scale=.67;
   const settle=ease(n===59?(u-.72)/.28:1);
   if(n===59){
+   // Keep the hesitant expression continuous from the previous shot; the
+   // first genuinely happy look arrives only as he clears the box lip.
+   mocha.emotion=u<.66?'sad':'happy';
    const hop=clamp((u-.24)/.50);
    // The full-width Episode01 card must stay to the left of the sidewall
    // until its feet rise ABOVE the .59m box lip. The previous linear entry
