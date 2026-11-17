@@ -179,16 +179,16 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   // Continuity setup for the following shot: Essie and Latte have already
   // settled inside, while Mocha hesitates on the left and approaches.
   mocha.position=walk([-3.60,0,2.17],[-3.32,0,2.17],u);
-  mocha.scale=.72;mocha.walking=true;mocha.emotion='sad';
-  essie.position=[-1.45,.12,2.01];essie.scale=.67;
-  latte.position=[-.95,.12,2.17];latte.scale=.67;
+  mocha.scale=.76;mocha.walking=true;mocha.emotion='sad';
+  essie.position=[-1.45,.12,2.01];essie.scale=.76;
+  latte.position=[-.95,.12,2.17];latte.scale=.76;
  }
  if(n>=59){
   // SHOT 59: Essie and Latte wait in the one shared box; Mocha enters LAST.
   // The sidewall has to be cleared before feet land. Never teleport through
   // cardboard, never rebuild the original Episode 01 cat as a primitive.
-  essie.position=[-1.45,.12,2.01];essie.scale=.67;
-  latte.position=[-.95,.12,2.17];latte.scale=.67;
+  essie.position=[-1.45,.12,2.01];essie.scale=.76;
+  latte.position=[-.95,.12,2.17];latte.scale=.76;
   const settle=ease(n===59?(u-.72)/.28:1);
   if(n===59){
    // Keep the hesitant expression continuous from the previous shot; the
@@ -205,13 +205,13 @@ export function stateAt(frame:number,shots:EditShot[]):State{
        +.12*ease((hop-.86)/.14),
     2.17
    ];
-   mocha.scale=lerp(.72,.67,ease((u-.24)/.48));
+   mocha.scale=.76; // Preserve the Episode01 silhouette size throughout the jump.
    mocha.walking=u<.22;
   }else{
    const warm=ease(u);
    mocha.position=[lerp(-1.95,-1.85,warm),.12,2.17];
    latte.position=[lerp(-.95,-1.04,warm),.12,2.17];
-   mocha.scale=.67;
+   mocha.scale=.76;
   }
   mocha.headTurn=.08+.16*settle;
   essie.headTurn=.025*Math.sin(t*1.1);

@@ -149,20 +149,20 @@ function preferredFov(s:State){
 }
 function fit(s:State){
  const focus=focusSet(s),center=boundsCenter(focus),r=region(s);
- // Do not fit the entire 2.48m box from above at the expense of faces.
- // This is an intentional FRONT 3/4 café shot, using existing Episode 01 art.
- if(s.shot.sequence===59||s.shot.sequence===60){
+ // The finale uses a low, front 3/4 camera rather than an overhead
+ // box-first composition. Start 58 and 59 on exactly the same lens so Mocha
+ // is visible APPROACHING, then follow his jump and gently reveal the trio.
+ // 60 begins at the end of 59's pose/lens; no hard reframing cut.
+ if(s.shot.sequence>=58){
   const n=s.shot.sequence,u=clamp(s.u,0,1);
-  const push=n===60?.08*u:0;
-  // Follow Mocha while his body is OUTSIDE the shared box in 59; otherwise
-  // the fixed close-up saw only empty left edge while the jump occurred.
-  // Once he clears the rim the camera recenters on all three faces.
-  const seekX=clamp(s.mocha.position[0]+.45,-2.85,-1.45);
-  const c=clamp((u-.68)/.32,0,1),recenter=c*c*(3-2*c);
-  const trackX=n===59?seekX+(-1.45-seekX)*recenter:-1.45;
-  const camera:V3=[trackX,1.85,3.90-push];
-  const target:V3=[trackX,.66,2.11];
-  const fov=n===59?93:84;
+  const seekX=clamp(s.mocha.position[0]+.36,-2.95,-1.45);
+  const c=n===59?clamp((u-.58)/.42,0,1):n===60?1:0;
+  const recenter=c*c*(3-2*c);
+  const trackX=n===58?-2.95:n===59?
+   seekX+(-1.45-seekX)*recenter:-1.45;
+  const camera:V3=[trackX,1.55,3.90-(n===60?.08*u:0)];
+  const target:V3=[trackX,.68,2.11];
+  const fov=98-14*recenter;
   return {camera,target,fov,region:r,
    framing:projections(corners(focus),target,camera,fov),
    shot:n,selectedIds:focus.map(x=>x.id)};

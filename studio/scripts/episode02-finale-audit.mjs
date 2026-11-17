@@ -74,6 +74,26 @@ record('shot58-to59-scale-no-pop',Math.abs(first.mocha.scale-start.mocha.scale)<
 record('shot59-to60-scale-no-pop',Math.abs(last.mocha.scale-final.mocha.scale)<.03);
 record('shared-box-same-cafe-floor',spec.home[0]===timeline.HOME.shared[0]&&
  spec.home[2]===timeline.HOME.shared[2],{boxHome:spec.home,sceneHome:timeline.HOME.shared});
+const finalCatScale=(final.mocha.scale+final.essie.scale+final.latte.scale)/3;
+const nativeEpisode01CatHeight=1.52; // The original createEpisodeCat artwork height.
+const widthPerVisibleCatHeight=spec.width/(nativeEpisode01CatHeight*finalCatScale);
+record('finale-cat-not-miniature-relative-to-box',
+ widthPerVisibleCatHeight>=1.8&&widthPerVisibleCatHeight<=2.2,
+ {boxWidth:spec.width,boxDepth:spec.depth,finalCatScale,
+  nativeEpisode01CatHeight,widthPerVisibleCatHeight});
+const cam58=cameraDirector.directEpisodeCamera(first);
+const cam59=cameraDirector.directEpisodeCamera(start);
+const cam60=cameraDirector.directEpisodeCamera(final);
+const cam59End=cameraDirector.directEpisodeCamera(last);
+const pitch=Math.atan2(cam58.camera[1]-cam58.target[1],
+ Math.hypot(cam58.camera[0]-cam58.target[0],cam58.camera[2]-cam58.target[2]))*180/Math.PI;
+record('shot58-front-three-quarter-not-overhead',pitch>=15&&pitch<=30,{pitchDegrees:pitch,camera:cam58.camera});
+const lensDelta=(a,b)=>change(a.camera,b.camera)+change(a.target,b.target)+Math.abs(a.fov-b.fov);
+record('shot58-to59-camera-continuity',lensDelta(cam58,cam59)<.05,
+ {from:cam58,to:cam59});
+record('shot59-to60-camera-continuity',lensDelta(cam59End,cam60)<.05,
+ {from:cam59End,to:cam60});
+
 const left=timeline.HOME.shared[0]-spec.width/2,right=left+spec.width;
 const front=timeline.HOME.shared[2]+spec.depth/2,back=front-spec.depth;
 const rim=spec.height+.04;
