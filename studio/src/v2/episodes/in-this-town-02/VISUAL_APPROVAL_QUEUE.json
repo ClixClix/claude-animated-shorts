@@ -1,0 +1,128 @@
+{
+  "version": 1,
+  "episode": "in-this-town-02",
+  "visualBaseline": "In This Town — The Door at 11:11; locked source in src/v2/series/IN_THIS_TOWN_STYLE_LOCK.json",
+  "status": "CREATIVE_REVIEW_REQUIRED_NOT_AUTOMATED_APPROVAL",
+  "sampleEvidence": "Actual screenshot proof from user EP2_EP1_ASSET_PROOF(1).json, 14 540x960 scenes",
+  "reviewCriteria": [
+    "Same exact Mocha/Essie/Latte markings, shapes, outlines, shading, scale and eye design as Episode 01",
+    "Shot communicates physical action/feeling even with sound off; not just two static assets",
+    "Cats use noses, mouths, and natural paws; never human fingers or extended artificial arms",
+    "No important face half out of the frame or trapped behind giant cardboard or a café prop",
+    "Camera has an intentional cinematic angle without passing through furniture, walls or set dressing",
+    "Four paws contact the correct support surface; cat-to-box shape change is shown rather than teleported",
+    "Continuity follows approved Essie-restored-first, Latte-restored-second story",
+    "Final shared-box scene visually reads as a cozy three-cat embrace, not miniature separated cutouts"
+  ],
+  "keyShotChecks": [
+    {
+      "shot": 5,
+      "priority": "medium",
+      "assessment": "pending",
+      "notes": "Mocha is on-model but road/lamppost dominate the visual; needs a motivated story-bearing close/wide beat."
+    },
+    {
+      "shot": 6,
+      "priority": "high",
+      "assessment": "pending",
+      "notes": "Latte face is clear with new shorter sidewalls; ensure his full curl and cardboard contact are physically grounded, not static."
+    },
+    {
+      "shot": 7,
+      "priority": "medium",
+      "assessment": "pending",
+      "notes": "Mocha and Essie belong to consistent art system; camera needs to frame their relationship rather than just place them apart."
+    },
+    {
+      "shot": 12,
+      "priority": "high",
+      "assessment": "pending",
+      "notes": "Mocha is cropped at the left while inspecting Essie's/LATTE box; must retain readable muzzle-to-box contact and box identity."
+    },
+    {
+      "shot": 19,
+      "priority": "high",
+      "assessment": "pending",
+      "notes": "Essie is in café box but Mocha is cropped on right; avoid half-character composition."
+    },
+    {
+      "shot": 20,
+      "priority": "high",
+      "assessment": "pending",
+      "notes": "Mocha overlaps Essie's box foreground; needs clear rescue interaction and visible facial reaction."
+    },
+    {
+      "shot": 32,
+      "priority": "high",
+      "assessment": "pending",
+      "notes": "Essie drags her box with mouth, not by floating/hand-grip; verify actual connected mouth contact and motion."
+    },
+    {
+      "shot": 37,
+      "priority": "high",
+      "assessment": "pending",
+      "notes": "Alley geometry improved but Mocha cropped; show Essie and box relationship, no clipping."
+    },
+    {
+      "shot": 49,
+      "priority": "high",
+      "assessment": "pending",
+      "notes": "First rescue: Mocha visibly climbs into Essie's box; one clean character/box silhouette, no sudden scale shrink."
+    },
+    {
+      "shot": 50,
+      "priority": "high",
+      "assessment": "pending",
+      "notes": "Essie reappears before Latte; faces must be distinguishable, physically plausible, no box-wall collision."
+    },
+    {
+      "shot": 54,
+      "priority": "high",
+      "assessment": "pending",
+      "notes": "Essie/Mocha use cat muzzle or body to restore Latte; avoid box edge hiding emotional reaction."
+    },
+    {
+      "shot": 55,
+      "priority": "high",
+      "assessment": "pending",
+      "notes": "Latte springs out of the same striped box, with natural landing and reaction."
+    },
+    {
+      "shot": 59,
+      "priority": "high",
+      "assessment": "pending",
+      "notes": "Current top-down view makes cats tiny and isolated. Need medium close three-quarter group and clustered silhouettes."
+    },
+    {
+      "shot": 60,
+      "priority": "high",
+      "assessment": "pending",
+      "notes": "Ending must convey affection, face expressions, warmth and closeness, with one shared box and a satisfying hold."
+    }
+  ],
+  "requiredProofs": [
+    {
+      "range": "05-07",
+      "needs": "character and first box introductions"
+    },
+    {
+      "range": "12-20",
+      "needs": "nose and mouth box exploration, Essie protection"
+    },
+    {
+      "range": "32-39",
+      "needs": "Essie's mouth drag, alley transformation"
+    },
+    {
+      "range": "49-55",
+      "needs": "Essie first, Latte second rescue continuity"
+    },
+    {
+      "range": "59-60",
+      "needs": "cozy three-cat payoff, 3/4 camera and expressions"
+    }
+  ],
+  "reviewBy": "Compare stills AND motion with the exact episode1 final.mp4. A human/visual agent must mark each scene pass/redo and record specific evidence.",
+  "autoApprove": false,
+  "finalCreativeApproval": false
+}
