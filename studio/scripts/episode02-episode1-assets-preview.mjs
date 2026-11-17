@@ -78,6 +78,9 @@ console.log('TypeScript preflight before any render...');
 execFileSync(process.execPath,
  [path.join(studioRoot,'node_modules/typescript/bin/tsc'),'--noEmit'],
  {cwd:studioRoot,stdio:'inherit'});
+console.log('Checking actual Episode2 shot 58–60 continuity, contacts and framing...');
+execFileSync(process.execPath,[path.join(studioRoot,'scripts/episode02-finale-audit.mjs')],
+ {cwd:studioRoot,stdio:'inherit'});
 const out=path.join(studioRoot,'out/v2-episodes/in-this-town-02/ep1-asset-reuse-proof');
 await fs.mkdir(out,{recursive:true});
 const sourceHash=createHash('sha256').update(
@@ -108,6 +111,27 @@ try{
    onBrowserLog,timeoutInMilliseconds:240000
   });
   frames.push({shot:n,frame:middle,file:filename});
+ }
+ // Additional staged frames are indispensable: the middle of shot59
+ // alone cannot tell us if the actor really hops over the sidewall.
+ // Same actual Episode2 Remotion composition; separate numbered PNGs.
+ const finaleSamples=[
+  [58,.55],[58,.93],
+  [59,.06],[59,.24],[59,.37],[59,.50],[59,.68],[59,.90],
+  [60,.08],[60,.50],[60,.90]
+ ];
+ for(const [n,pct] of finaleSamples){
+  const shot=shots.find(s=>s.sequence===n);
+  const frame=shot.start+Math.floor((shot.end-shot.start-1)*pct);
+  const filename=path.join(out,'EP2_FINALE_motion_'+String(n).padStart(2,'0')+
+   '_'+String(Math.round(pct*100)).padStart(2,'0')+'.png');
+  console.log('Episode2 finale motion: shot '+n+' at '+Math.round(pct*100)+'%, frame '+frame);
+  await renderStill({
+   serveUrl,composition,inputProps:props,frame,output:filename,
+   imageFormat:'png',scale:.5,puppeteerInstance:browser,
+   logLevel:'error',onBrowserLog,timeoutInMilliseconds:240000
+  });
+  frames.push({shot:n,pct,frame,file:filename,kind:'finale-motion-proof'});
  }
 }finally{if(browser)await browser.close({silent:true});}
 const status={
