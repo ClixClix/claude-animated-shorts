@@ -184,6 +184,18 @@ function fit(s:State){
    framing:projections(corners(focus),target,camera,49),
    shot:2,selectedIds:focus.map(x=>x.id)};
  }
+ // Shot 13 must be the view FROM Latte's box toward Mocha's worried face.
+ // The generic box-centred director showed only his detached tail for every
+ // frame of the complete 21d74b7 cloud render (720–791). Place the lens
+ // just above the real 0.48m rim and aim at Mocha, not at the empty carton.
+ if(s.shot.sequence===13){
+  const camera:V3=[s.latteBox[0]+.03,.83,s.latteBox[2]+.07];
+  const target:V3=[s.mocha.position[0],.82,s.mocha.position[2]];
+  const fov=69;
+  return {camera,target,fov,region:r,
+   framing:projections(corners(focus),target,camera,fov),
+   shot:13,selectedIds:['mocha','latte-box-rim']};
+ }
  // Full 60-shot a845eb6 review: give closing, missing-cat, market and
  // doorway transitions their own camera axes. The previous 29 sign crossed
  // Mocha's face; the previous 53 open door leaf bisected both rescuers.
@@ -194,7 +206,7 @@ function fit(s:State){
    // Mocha's planted forepaws (verified in 44146167639 shots 11 and 14).
    11:{camera:[-1.95,1.80,4.00],target:[-.80,.82,2.78],fov:75},
    14:{camera:[-2.20,1.74,3.96],target:[-.82,.84,2.75],fov:75},
-   24:{camera:[2.80,1.75,2.15],target:[2.20,1.20,4.05],fov:72},
+   24:{camera:[2.50,1.80,1.75],target:[2.25,1.43,3.65],fov:72},
    25:{camera:[1.85,1.80,2.95],target:[.22,.65,.45],fov:70},
    // From the near side of the shelter: its tall sign stays BEHIND the
    // cat rather than projecting over his eyes during the market walk.
