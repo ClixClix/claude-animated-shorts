@@ -25,7 +25,7 @@ export const HOME={
   market:[-7.3,0,6.5] as V3,
   alleyMouth:[-8.9,0,4.7] as V3,
   alleyBox:[-9.15,0,1.4] as V3,
-  demo:[3.45,0,7.6] as V3
+  demo:[1.8,0,5.35] as V3
 };
 const hidden=():ActorPose=>({position:[0,0,0],visible:false,walking:false,emotion:'neutral',headTurn:0,scale:1,morph:0,gazeY:0});
 const actor=(position:V3,visible=true,emotion:ActorPose['emotion']='neutral',walking=false,morph=0):ActorPose=>({
