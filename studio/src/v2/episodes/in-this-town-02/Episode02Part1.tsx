@@ -92,8 +92,7 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
  const shadow=useMemo(()=>contactShadow(.72,.47),[]);
  const spark=useMemo(()=>makePaperGlints(),[]);
  const reach=useMemo(()=>({
-  gesture:pawRig('#af7e58','#e7c7a4',.047),
-  examine:pawRig('#77889b','#c8d2d4',.034)
+  gesture:pawRig('#af7e58','#e7c7a4',.047)
  }),[]);
  const light=useMemo(()=>{
   const root=new T.Group();
@@ -136,27 +135,33 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
  const morph=index===2?smooth((u-.08)/.89):index>2?1:0;
  const settle=index===1?smooth(u):index>=2?1:0;
  const standing=index===0;
+ const hop=standing?smooth((u-.54)/.46):0;
  guest.update(frame/30,{pose:standing?'standing':'curled',
-  expression:standing?'happy':index===2?'surprised':'neutral',
-  walking:standing&&u<.55,
+  expression:standing?'happy':index===2?'surprised':index===1?'happy':'neutral',
+  walking:standing&&u<.58,
   progress:settle*.30+morph*.65,
   morph,
   look:standing?.20:0,
-  blink:index===2&&morph>.55?.12:undefined,
-  headTilt:standing?-.06:lerp(-.10,.12,morph)
+  blink:index===1?Math.max(0,1-Math.abs(u-.60)/.12):index===2&&morph>.55?.12:undefined,
+  headTilt:standing?-.06+.12*hop:index===1?-.08+.10*settle:lerp(-.10,.12,morph)
  });
  guest.mesh.visible=index<3&&morph<.985;
  if(standing){
   // Guest remains BESIDE the box. Only the near forepaw reaches the rim.
   // The original build placed the entire card inside the box from frame 0.
-  guest.mesh.position.set(SITE.x-1.04+.19*u,SITE.y+.01,SITE.z-.04);
-  guest.mesh.scale.set(1,1,1);
-  guest.mesh.rotation.z=-.075*u;
+  const walk=smooth(u/.63);
+  // Start outside the box and complete a continuous visible short jump.
+  // A hard shot cut occurs only AFTER the front paws reach the inside.
+  const x=SITE.x-1.07+.99*walk;
+  const jump=.32*Math.sin(Math.PI*hop);
+  guest.mesh.position.set(x,SITE.y+.01+jump,SITE.z-.07);
+  guest.mesh.scale.set(1-.10*hop,1-.10*hop,1);
+  guest.mesh.rotation.z=-.075*walk+.16*Math.sin(Math.PI*hop);
  }else{
   // This *same guest* appears curled after the deliberate camera cut to shot 02.
   // The sculpted curled sprite includes tail, torso, paws, detailed Episode 01
   // head and whiskers. Ears/eyes are visible above the front rim.
-  guest.mesh.position.set(SITE.x,SITE.y+.115-.20*morph,SITE.z-.10);
+  guest.mesh.position.set(SITE.x,SITE.y+.115-.055*settle-.18*morph,SITE.z-.10);
   const shrink=.95-.26*morph;
   guest.mesh.scale.set(.89*shrink,.88*shrink,1);
   guest.mesh.rotation.z=-.05*morph;
@@ -168,9 +173,11 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
  guest.material.color.copy(fur).lerp(card,smooth((morph-.14)/.61));
  guest.material.opacity=1-smooth((morph-.68)/.30);
  const companions=[
-  {cat:cats.slate,x:SITE.x-1.32,z:SITE.z+.07,look:.38,tilt:-.10},
-  {cat:cats.honey,x:SITE.x+1.30,z:SITE.z+.06,look:-.42,tilt:.11},
-  {cat:cats.sage,x:SITE.x+.08,z:SITE.z-.78,look:-.20,tilt:-.16}
+  {cat:cats.slate,x:SITE.x-1.08,z:SITE.z+.08,look:.40,tilt:-.12},
+  {cat:cats.honey,x:SITE.x+1.06,z:SITE.z+.10,look:-.38,tilt:.14},
+  // The third guest stands NEAR the camera at the box's right front corner.
+  // Do not hide an entire witness behind the taller cardboard back flap.
+  {cat:cats.sage,x:SITE.x+.62,z:SITE.z+.78,look:-.22,tilt:-.08}
  ];
  companions.forEach(({cat,x,z,look,tilt},i)=>{
   cat.update(frame/30+i*.17,{
@@ -181,8 +188,9 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
   cat.mesh.visible=index===3;
   // Motion begins during the first third of shot 04, then settles.
   const entrance=index===3?1-smooth(u/.43):0;
-  cat.mesh.position.set(x+(i===0?-.19:i===1?.19:0)*entrance,
-   SITE.y+.005,z+(i===2?-.14:.10)*entrance);
+  cat.mesh.position.set(x+(i===0?-.14:i===1?.14:.04)*entrance,
+   SITE.y+.005+.022*Math.sin(Math.PI*entrance),
+   z+(i===2?+.15:.07)*entrance);
   cat.mesh.scale.set(.96,.96,1);
   cat.mesh.rotation.z=tilt*.25*Math.sin(u*Math.PI);
   cat.mesh.rotation.y=Math.atan2(cam.position.x-cat.mesh.position.x,
@@ -194,17 +202,14 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
  demo.root.visible=true;
  // Flaps are not the magic themselves: they are reaction/contact choreography.
  // The original version hid the guest by closing the front board over the face.
- demo.setOpenAmount(index===0?.64:index===1?.93:
-  index===2?lerp(.93,.28,smooth((morph-.55)/.45)):.28);
- const handOn=index===0&&u>.18;
+ demo.setOpenAmount(index===0?.86:index===1?.98:
+  index===2?lerp(.98,.30,smooth((morph-.68)/.32)):.30);
+ // Only a short touch between the guest's forepaw and the rim. The old
+ // 3D witness arm looked like an elastic blue bar crossing the cardboard.
+ const handOn=index===0&&u>.34&&u<.75;
  reach.gesture.update(
-  [guest.mesh.position.x+.30,SITE.y+.62,SITE.z+.12],
-  [SITE.x-.51,SITE.y+.52,SITE.z+.29],handOn);
- // The witness taps only the NEAR SIDE of the box, not an impossible arm
- // stretching horizontally through the entire cardboard body.
- reach.examine.update([SITE.x-1.15,SITE.y+.54,SITE.z+.20],
-  [SITE.x-.49,SITE.y+.49,SITE.z+.25],
-  index===3&&u>.46&&u<.84);
+  [guest.mesh.position.x+.32,SITE.y+.49,SITE.z+.14],
+  [SITE.x-.53,SITE.y+.54,SITE.z+.34],handOn);
  shadow.mesh.visible=index<3&&morph<.91;
  shadow.mesh.position.set(standing?guest.mesh.position.x:SITE.x,
   SITE.y+.018,standing?SITE.z-.04:SITE.z-.08);
