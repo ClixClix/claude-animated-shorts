@@ -105,6 +105,8 @@ const issues=uniqueAudits.flatMap(a=>[
   objects:a.occludingWorldObjects}]:[]),
  ...(a.faceOccluded?[{frame:a.frame,shot:a.shot,kind:'BOX_HIDES_CAT_FACE',
   blockingMesh:a.faceBlocker}]:[]),
+ ...((a.streetlightOcclusions??[]).length?[{frame:a.frame,shot:a.shot,
+  kind:'STREETLIGHT_BLOCKS_SHOT',lampHits:a.streetlightOcclusions}]:[]),
 ]);
 const status={
  id:'in-this-town-ep02-part1',stage:'RENDERED_PROTOTYPE_NOT_APPROVED',
