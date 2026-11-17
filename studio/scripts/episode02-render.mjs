@@ -61,7 +61,7 @@ try{
    sourceHash,propsHash,sha256:sha,preview,seconds:(Date.now()-start)/1000},null,2)+'\n');
   completed++;console.log('Rendered '+shot.id+' ('+completed+' new, '+skipped+' cached)');
  }
-}finally{await browser.close();}
+}finally{await browser.close({silent:true});}
 await fs.writeFile(path.join(out,preview?'PREVIEW_RENDER_STATUS.json':'FINAL_RENDER_STATUS.json'),
  JSON.stringify({sourceHash,propsHash,completed,skipped,requestedShots:selected?[...selected]:null,
   allSegmentsRequested:!selected,stage:'RENDERED_NOT_QA_VERIFIED',
