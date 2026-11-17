@@ -23,7 +23,7 @@ await build({
    "export {SCRATCH_EDIT,stateAt,HOME} from './src/v2/episodes/in-this-town-02/timeline.ts';",
    "export {directEpisodeCamera} from './src/v2/episodes/in-this-town-02/cameraDirector.ts';",
    "export {BOX_SPECS} from './src/v2/episodes/in-this-town-02/boxProps.ts';"
-  ].join('\\n')
+  ].join('\n')
  },
  outfile:bundlePath,bundle:true,platform:'node',format:'esm',target:'node24',
  external:['three']
