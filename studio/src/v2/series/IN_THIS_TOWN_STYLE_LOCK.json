@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "series": "In This Town",
+  "referenceEpisode": "The Door at 11:11",
+  "referenceMp4Sha256": "78f621b454e84214f1d0b3e244e7cb9e44ae49b5c9f571c649560eb680179374",
+  "status": "LOCKED_EPISODE01_REFERENCE_NOT_AUTOMATIC_ARTISTIC_APPROVAL",
+  "expectedFormat": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "container": "MP4",
+    "videoCodec": "h264",
+    "audioCodec": "aac",
+    "audioSampleRate": 48000
+  },
+  "lockedSources": {
+    "src/v2/episodes/door-at-1111-polish/Episode.tsx": "760824c09744a9fb0c52b6990063898f889f2a91",
+    "src/v2/episodes/door-at-1111-polish/actors.ts": "fccee18d1ba7761031f1a97fcd5dfbc091720dd1",
+    "src/v2/episodes/door-at-1111-polish/walkingLegs.ts": "6670d1fff6b760f98664d7acfd7abc0caefa819c",
+    "src/v2/episodes/door-at-1111-polish/world.ts": "8cfff144f61f964d1fd15fbe5d7efe5660a8f6ea",
+    "src/v2/episodes/door-at-1111-polish/population.ts": "b5e444362ca7b47cee4f1cc1a4a15b2f5651f404",
+    "src/v2/cats/designs.ts": "9364e9ddb27fe8674aea4efbba060bf804973dc3",
+    "src/v2/cats/drawCat.ts": "e536de3b5e2838f37b6a11b78a30717a88220862",
+    "src/v2/cafe/config.ts": "757cafa5619478200646c49abca97525cadeb728",
+    "src/v2/animation/kitten.ts": "9b5478688dd0cea01906a877aac8006ab0c15f23",
+    "src/videos/bridge/ink.ts": "a169e9cc052aaab8f4e96f6cf6ebf6495746d355",
+    "src/videos/bridge/lensblur.ts": "277acf65187be0f2be2e7cb0af349fd4a3f52196",
+    "src/videos/bridge/grade.ts": "9d7386dccc65a6844cda07bdac48141560ba0f2a",
+    "src/videos/bridge/shade.ts": "2866d9abda2334cac511807219a67979f7ad7d7a",
+    "src/videos/bridge/cardshade.ts": "5b861648c8da53e88a8fdbc5759ca082260e2dfd"
+  },
+  "renderStyleModule": "src/v2/series/episode1Style.ts",
+  "policies": {
+    "characterDesigns": "Use exact original Mocha, Essie, Latte art and Episode01 createEpisodeCat/walkingLegs; forbid substitute paper-puppet rigs",
+    "speciesPerformance": "Cats investigate via nose/muzzle, move small objects with mouth, and use paws to walk, balance or tap; no human reaching arms",
+    "staging": "No cats cropped without intended close-up; all important faces visible; preserve fixed cafe geography and floor contacts; camera never intersects furniture, shop walls, shelter or lampposts",
+    "motion": "Cause-and-effect actions with grounded stepping, entry, bounce, rest and reactions; no teleportation, static tableau, or head fading behind cardboard sold as a transformation",
+    "mystery": "Immediate rule, escalating clues, clear reveal and emotionally warm payoff; preserve Essie-first then Latte rescue order",
+    "audienceReview": "Rendered real frames and contiguous videos compared visually to Episode01. Code checks alone never pass artistic review",
+    "musicRights": "Reference MP4/music is never copied into new episodes; user approval for paid voice/media and publication"
+  },
+  "episode02VisualReview": {
+    "evidence": "14 actual 540x960 stills in user-supplied EP2_EP1_ASSET_PROOF(1).json and sample frames",
+    "stage": "REVIEW_REQUIRED",
+    "approvedShots": [],
+    "highPriority": [
+      {
+        "shots": [
+          5
+        ],
+        "problem": "Mocha is recognizable but opening framing is dominated by road, lacks intentional rule beat"
+      },
+      {
+        "shots": [
+          12,
+          19,
+          20,
+          32
+        ],
+        "problem": "Box/cat actor overlaps, partial cats at image edges, unclear mouth/box interaction"
+      },
+      {
+        "shots": [
+          37,
+          49,
+          50
+        ],
+        "problem": "Alley continuity is improved but needs unobstructed, purposeful actor blocking and readable rescue"
+      },
+      {
+        "shots": [
+          54,
+          55
+        ],
+        "problem": "Box/cat layering and muzzle contact need consecutive-frame review"
+      },
+      {
+        "shots": [
+          59,
+          60
+        ],
+        "problem": "Final three cats are legible but too small in overhead box view for emotional ending"
+      }
+    ]
+  }
+}
