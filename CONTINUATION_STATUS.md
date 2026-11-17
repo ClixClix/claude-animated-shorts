@@ -1,3 +1,15 @@
+# LATEST — Part 1 real preview rejected; corrective source implemented, NOT visually checked
+
+The user ran `node scripts/episode02-part1.mjs`, generating `Part1_01-04_PREVIEW.mp4`, 12 real PNGs, and PART1_RENDER_STATUS.json. Inspecting the actual uploaded images showed **Part 1 is NOT visually approved**: giant box blocking cat/oversize, box on road, simplistic toy-like foreground cats, transformation was disappearance behind box, shot 04 witnesses static/cropped with an implausible reaching arm. Old checker found cropped shots 01/04, but missed box-self-occlusion in shots 02/03. Full review in `PART1_RENDER_REJECTION_2026-11-16.md`.
+
+**Implemented after review (GitHub source only):** moved demo staging onto actual café sidewalk near left window at [0,.04,5.35]; reframed four shots; replaced toy `TownPopulation` foreground cards with new `ruleCats.ts` using Episode 01 detailed `drawCat` rig and custom supporting-guest palettes; introduced illustrated curled torso/face, progressive paper facet morph, scene sunlight travel cue, three distinct reacting witnesses, explicit shorter paw contact. Expanded audit to 12 unique sampled frames plus raycasts to detect **the box blocking the guest face**. Added new files to `LOCAL_UPDATE_FILES.json`, with original Mocha/Essie/Latte art unchanged. This source **has not been typechecked locally or rendered**; do not claim it looks good.
+
+**Next user step:** from C:\V2 run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Update-Local-Code.ps1`; then from C:\V2\studio run `node scripts/episode02-part1.mjs`, upload new `part1-pilot\Part1_01-04_PREVIEW.mp4` and JSON. The code should re-render because source hash includes the new rig. Review and fix again if needed. Do NOT start shots 05–60 until the actual four-shot preview is visually approved. No paid narration.
+
+**Long-term user goal:** one-prompt episode production. The JSON shot blueprint and one-command preview are only the foundation, not a finished autonomous quality-correction system.
+
+---
+
 # LATEST — Episode 02 Part 1 isolated visual pilot implemented (2026-11-16)
 
 **Current user instruction:** rebuild Episode 02 **part by part**, while aiming eventually to create an entire episode with a single natural-language prompt. The rejected 60-shot Episode 02 draft must not be rendered or called on-brand/release-ready.
