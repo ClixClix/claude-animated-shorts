@@ -75,7 +75,15 @@ export function stateAt(frame:number,shots:EditShot[]):State{
    demoCat.position=[HOME.demo[0],.14,HOME.demo[2]];
    demoCat.headTurn=.10*Math.sin(u*Math.PI*2);
   }
-  if(n===3){demoCat.visible=true;demoCat.morph=ease(u);demoCat.position=[HOME.demo[0],0,HOME.demo[2]];morph.demo=ease(u);flap.demo=lerp(.8,.25,ease(u));}
+  if(n===3){
+    // Let the audience see the living kitten BEFORE the cardboard fold.
+    // Earlier full movie showed only ears behind a flap from frame 63.
+    const fold=ease((u-.28)/.62);
+    demoCat.visible=true;demoCat.morph=fold;
+    demoCat.position=[HOME.demo[0],.13-.16*fold,HOME.demo[2]];
+    morph.demo=fold;
+    flap.demo=lerp(1,.25,ease((u-.36)/.56));
+   }
   if(n===4){demoCat.visible=false;flap.demo=.33;}
  }
  if(n===5){mocha.position=walk(HOME.entrance,[1.15,0,6],u);mocha.walking=true;mocha.emotion='sad';heroBox='demo';cam=cameraPreset([5.15,1.7,9.0],[2,.7,5.1],55);}
@@ -114,7 +122,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   mocha.position=n===27?walk(HOME.door,HOME.entrance,u):
     n===26?[-1.05,0,1.35]:n===24?[2.00,0,3.50]:[.8,0,1.5];
   mocha.emotion='scared';essie.visible=false;show.essie=false;
-  cam=n===24?cameraPreset([2.2,2.0,3.8],[-1,1,.8],65):n===26?focus(HOME.essie,2.1,41,.85):
+  cam=n===24?cameraPreset([4.6,1.8,6.2],[2.3,1.35,4.55],57):n===26?focus(HOME.essie,2.1,41,.85):
     n===27?cameraPreset([5,2.3,9.2],[2.4,.8,5.2],56):focus(mocha.position,2.6,45,1);
   if(n===27){room='street';mocha.walking=true;}
  }
@@ -131,7 +139,10 @@ export function stateAt(frame:number,shots:EditShot[]):State{
    // Mocha remains nearby in story space but offscreen until the next shot.
    mocha.visible=false;
   }
-  cam=n===28?focus(HOME.busStop,3.0,61,2.4):n===29?focus(HOME.market,3.0,62,2.5):
+  cam=n===28?focus(HOME.busStop,3.0,61,2.4):
+     n===29?cameraPreset(
+      [mocha.position[0]-1.6,1.75,mocha.position[2]+2.6],
+      [mocha.position[0],.75,mocha.position[2]],54):
     n===30?cameraPreset([-7.2,1.4,8.5],[-9.3,.7,3.0],58):
     n===31?cameraPreset([-7.2,5.5,8.1],[-9.15,.5,2.0],48):
     n===32?cameraPreset([-7.25,1.4,3.5],[-9.15,.62,2.0],44):
@@ -229,7 +240,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  if(n===14)mocha.headTurn=lerp(-.22,.26,ease(u));
  // Essie-only box-lip insert: Mocha's idle card was just disembodied ears
  // above the rear flap in every inspected frame of shot 35.
- if(n===35)mocha.visible=false;
+ if(n===35||n===37||n===38)mocha.visible=false;
  if(n>=31&&n<=48){
   mocha.headTurn=.16*Math.sin(u*Math.PI*1.25);
   mocha.gazeY=-.10+.12*Math.sin(u*Math.PI);
