@@ -5,8 +5,9 @@ import * as T from 'three';
  * Only the small mutable GROUP moves during shots. No room/floor/counter mesh
  * is rebuilt and no Episode 01 source or render cache is touched.
  *
- * Dimensions are provisional scene units (metres, Y-up), not final creative
- * approval of a camera or the characters' in-box poses.
+ * Dimensions are measured relative to Episode 01's original 1.52m tall
+ * stylized cat artwork. Low sidewalls keep ears/faces readable in the boxes;
+ * values remain subject to actual frame review.
  */
 export type BoxIdentity='latte'|'essie'|'shared'|'demo';
 export type BoxSpec={
@@ -15,22 +16,22 @@ export type BoxSpec={
 };
 export const BOX_SPECS:Readonly<Record<BoxIdentity,Readonly<BoxSpec>>> = Object.freeze({
   demo:Object.freeze({
-    id:'RULE_DEMO_BOX',width:1.05,depth:.91,height:.47,color:'#bb926c',
+    id:'RULE_DEMO_BOX',width:.88,depth:.77,height:.40,color:'#bb926c',
     tape:'none',home:[1.8,.04,5.35] as [number,number,number],
     role:'One small physical cardboard box for the town-rule demonstration; same mesh persists after transformation',
   }),
   latte:Object.freeze({
-    id:'LATTE_BOX',width:1.18,depth:1.06,height:.78,color:'#b98d60',
+    id:'LATTE_BOX',width:1.10,depth:.94,height:.48,color:'#b98d60',
     tape:'striped',home:[-1.9,0,2.1] as [number,number,number],
     role:'Latte original box beneath the front cafe window',
   }),
   essie:Object.freeze({
-    id:'ESSIE_BOX',width:1.42,depth:1.20,height:.92,color:'#a8794e',
+    id:'ESSIE_BOX',width:1.30,depth:1.08,height:.56,color:'#a8794e',
     tape:'none',home:[.25,0,.3] as [number,number,number],
     role:'Essie original box in the cafe sleeping corner; moves to alley',
   }),
   shared:Object.freeze({
-    id:'SHARED_BOX',width:2.80,depth:1.55,height:.95,color:'#cca174',
+    id:'SHARED_BOX',width:2.48,depth:1.22,height:.55,color:'#cca174',
     tape:'none',home:[-1.45,0,2.5] as [number,number,number],
     role:'Separate oversized end-scene box for all three cats',
   }),
@@ -101,9 +102,9 @@ export function createEpisodeBox(identity:BoxIdentity) {
     if(!Number.isFinite(input))throw Error('Box opening must be a finite number');
     const amount=Math.max(0,Math.min(1,input));
     // The rule-demo box is an open, playable prop: at amount=1 its flaps
-    // must lie almost horizontal OUTSIDE the rim, not stand vertically across
-    // the guest's face. Other Episode 02 box identities retain legacy angles.
-    const angle=amount*Math.PI*(identity==='demo'?1:.72);
+    // must lie OUTSIDE the rim, never upright across the cat's face. This
+    // now applies to ALL boxes; previous .72 turns covered the lead cats.
+    const angle=amount*Math.PI*(identity==='demo'?1:.92);
     flaps.front.rotation.x=angle;
     flaps.back.rotation.x=-angle;
     flaps.left.rotation.z=angle;
