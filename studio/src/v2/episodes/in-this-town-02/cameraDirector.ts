@@ -24,7 +24,7 @@ const cat=(id:string,p:V3,scale=1):Extents=>({
  id,center:V(p[0],p[1]+.66*scale,p[2]),
  half:V(.67*scale,.72*scale,.10*scale)
 });
-const box=(id:string,p:V3,kind:'latte'|'essie'|'shared'):Extents=>{
+const box=(id:string,p:V3,kind:'latte'|'essie'|'shared'|'demo'):Extents=>{
  const spec=BOX_SPECS[kind];
  return {id,center:V(p[0],p[1]+(spec.height+.04)*.5,p[2]),
   half:V(spec.width*.5,.5*(spec.height+.04),spec.depth*.5)};
@@ -36,7 +36,7 @@ function focusSet(s:State):Extents[]{
  };
  const B=(id:'latte'|'essie'|'shared'|'demo')=>{
   const p=id==='latte'?s.latteBox:id==='essie'?s.essieBox:id==='shared'?s.sharedBox:s.demoBox;
-  return box(id,p,id==='demo'?'essie':id);
+  return box(id,p,id);
  };
  if(n<=4)return n<=2?[B('demo'),C('demoCat')]:[B('demo'),...(n===3?[C('demoCat')]:[])];
  if(n===5||n===8||n===11||n===14||n===17||n===23||n===24||n===25||n===27||n===28||n===29||n===30||n===33||n===36||n===43||n===48)return [C('mocha')];
@@ -64,7 +64,7 @@ function focusSet(s:State):Extents[]{
  return [C('mocha')];
 }
 const fallback:Record<string,V3>={
- demo:[5.8,1.75,11.3],
+ demo:[3.45,1.85,9.0],
  outside:[5.6,2.0,10.0],
  latte:[2.8,1.8,-.30],
  essie:[.70,1.75,3.35],
@@ -79,7 +79,7 @@ type Region='outside'|'demo'|'latte'|'essie'|'group'|'shared'|'bus'|'market'|'al
 // A fixed axis per location avoids unmotivated orbital camera rotation while
 // a character walks during a continuous shot.
 const regionAnchor:Record<Region,V3>={
- demo:[3.45,0,7.6],outside:[2.4,0,6.65],latte:[-1.9,0,2.1],
+ demo:[1.8,0,5.35],outside:[2.4,0,6.65],latte:[-1.9,0,2.1],
  essie:[.25,0,.3],group:[.25,0,.3],shared:[-1.45,0,2.5],
  bus:[-4.4,0,6.1],market:[-7.3,0,6.5],alley:[-9.15,0,1.4],
  town:[1.1,0,6.4]
