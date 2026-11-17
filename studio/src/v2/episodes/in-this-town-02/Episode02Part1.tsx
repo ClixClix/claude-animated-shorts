@@ -286,6 +286,48 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
     .slice(0,2).map(h=>({subject:id,lampPart:h.object.name,
      distance:Number(h.distance.toFixed(3))}));
   });
+  // Set occupancy is a separate problem from camera rays: the last render
+  // put both the cardboard prop and the standing guest inside the existing
+  // café bus shelter. The bus stop is not a solid world.blocker.
+  const place=blueprint.stage;
+  const excludeNames=place.avoidSetGroups;
+  const exclusionGroups=excludeNames.flatMap(name=>{
+   const obj=world.root.getObjectByName(name);
+   return obj&&obj.visible?[{name,obj}]:[];
+  });
+  const boxBounds=new T.Box3().setFromObject(demo.root);
+  const guestBounds=new T.Box3().setFromObject(guest.mesh);
+  const clearance=place.requiredClearanceWorldUnits;
+  const widen=(bounds:T.Box3)=>bounds.clone().expandByScalar(clearance);
+  const setCollisions=exclusionGroups.flatMap(({name,obj})=>{
+   const bounds=new T.Box3().setFromObject(obj);
+   return [
+    ...(widen(boxBounds).intersectsBox(bounds)?[{set:name,subject:'box'}]:[]),
+    ...(index===0&&widen(guestBounds).intersectsBox(bounds)?[{set:name,subject:'guest'}]:[])
+   ];
+  });
+  const subjectSamples=[
+   {id:'box',pos:[SITE.x,SITE.y+.24,SITE.z] as const},
+   {id:'box-left',pos:[SITE.x-.37,SITE.y+.50,SITE.z] as const},
+   {id:'box-right',pos:[SITE.x+.37,SITE.y+.50,SITE.z] as const},
+   ...(index<3?[
+    {id:'guest-face',pos:[guest.mesh.position.x,
+      guest.mesh.position.y+.79*guest.mesh.scale.y,guest.mesh.position.z] as const},
+    {id:'guest-body',pos:[guest.mesh.position.x,
+      guest.mesh.position.y+.37*guest.mesh.scale.y,guest.mesh.position.z] as const}
+   ]:[])
+  ];
+  const setOcclusions=subjectSamples.flatMap(({id,pos})=>{
+   const target=new T.Vector3(...pos);
+   const to=target.clone().sub(cam.position),distance=to.length();
+   const probe=new T.Raycaster(cam.position,to.normalize(),.02,Math.max(.02,distance-.08));
+   return exclusionGroups.flatMap(({name,obj})=>
+    probe.intersectObject(obj,true)
+     .filter(hit=>hit.object instanceof T.Mesh)
+     .slice(0,2).map(hit=>({set:name,subject:id,
+       mesh:hit.object.name||'unnamed-mesh',distance:Number(hit.distance.toFixed(3))}))
+   );
+  });
   const cropped=samples.some(p=>p.behind||p.minX<-.90||p.maxX>.90||
    p.minY<-.88||p.maxY>.88);
   console.log('PART1_AUDIT '+JSON.stringify({
@@ -294,6 +336,7 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
    cropWarning:cropped,occlusionWarning:hits.length>0,
    faceOccluded,faceBlocker:boxHits[0]?.object.name??null,
    streetlightOcclusions,lampAuditedGroups:lampGroups.map(o=>o.name),
+   setCollisions,setOcclusions,excludedSetGroups:exclusionGroups.map(v=>v.name),
    sameBoxIdentity:demo.root.name,magicProgress:morph,
    noDuplicateBox:true
   }));
