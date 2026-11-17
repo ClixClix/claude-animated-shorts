@@ -1,3 +1,22 @@
+# LATEST — Episode2 box scale, all-feline nose/mouth actions, alley camera and final scene fix (2026-11-17)
+
+User uploaded 12 REAL `EP2_EP1_assets_shot_XX.png` frames (05,06,07,12,19,37,49,50,54,55,59,60) and `EP2_EP1_ASSET_PROOF.json` and said **"remember cats do stuff with their noses and mouths no hands. but this looks slightly better"**. Their uploaded visuals confirm actual Episode1 cat designs are more recognizable, but still fail staging and action: giant tall cardboard boxes hide Latte/Essie, an ugly human-like extended forearm appears, alley camera shoots through a shop wall, and final 59–60 includes giant overlapping boxes without the 3-cat visible cuddle.
+
+Source fixes committed on `v2-local-render` (NOT rendered or visually approved yet):
+- `boxProps.ts`: lower and re-proportion **demo .88×.77×.40m; Latte 1.10×.94×.48; Essie 1.30×1.08×.56; shared 2.48×1.22×.55**, wider outward flap angle for face visibility. Identity-striped tape on Latte preserved.
+- `timeline.ts`: Latte's original box only exists through shot 55; new shared box alone appears in 58–60; Mocha/Essie/Latte final group foot origin Y changed from .60m floating to .11m in cardboard. Story order unchanged (Mocha restores Essie before Latte).
+- `cameraDirector.ts`: alley cinematography along real corridor x≈-9.15, never sideways through building; shared scene camera moves inside café toward cat faces.
+- **`catBehaviors.ts` new**: pure shot-action mapping to sniff, nose-nudge, mouth-carry, muzzle-comfort. Essie grabs/dragging light box by mouth during shot32, noses Latte flap in54. Mocha investigates cardboard and gently nudges Essie with nose, never a human hand.
+- `Episode.tsx`: REMOVE ALL detached `pawRig` human-reaching props/gesture targets, use `catBehaviorFor` on the actual Episode1 `createEpisodeCat` actors. Original walking paw cards retained.
+- `episode1Cast.ts`: original art now makes a subtle full-body/nose/head lean toward mouth/nose contact targets, with gaze/head tilt and paws left grounded; no new "hand" art.
+- `episode02-box-tests.mjs`, `episode02-episode1-assets-preview.mjs`: assert real feline behavior, scaled boxes and absence of human limb rig before images. Preview now renders fourteen 540×960 frames at shots 05,06,07,12,19,20,32,37,49,50,54,55,59,60. `episode02-render.mjs` cache source hash includes feline action code. Sync manifest updated.
+- `EPISODE_BRIEF_TEMPLATE.md` was updated so **all future episodes** retain realistic feline movements and use original Episode1 rigs, in line with user's eventual one-prompt generator goal.
+- Confirmed 18 static source checks passed and three new box footprints avoid 11 protected café fixtures, by reading authoritative `studio/src/v2/cafe/config.ts`. **NOT DONE**: Windows TS preflight, real Remotion render, final media approval; do NOT claim final quality.
+
+Next user action once source sync: from `C:\V2\studio`, run `node scripts/episode02-box-tests.mjs` then `node scripts/episode02-episode1-assets-preview.mjs`. The second command typechecks and exports 14 stills (NOT a movie). Open `out\v2-episodes\in-this-town-02\ep1-asset-reuse-proof` and send 06,07,32,37,54,59,60 + JSON, or console error. Continue visual iterations. Full Episode2's magic transformation, physical curl, and story animation quality not complete.
+
+---
+
 # LATEST — Episode 02 main source reuses real Episode 01 assets, not puppet redrawing (2026-11-17)
 
 User explicitly asked **"please use the items in ep1 to make ep 2"**. Source edits committed to `v2-local-render`. These are SOURCE-ONLY; **no local TypeScript compile or new visual render has occurred yet**. No publishable episode and no paid voice generated.
