@@ -36,6 +36,7 @@ const designs:Record<RuleCatVariant,CatDesign>={
   headWidth:95,cheek:22,bodyWidth:90,tailWidth:36,
   description:'Sage-green-gray supporting character'},
 };
+export const getRuleGuestDesign=(variant:RuleCatVariant):CatDesign=>designs[variant];
 const INK='#292737';
 const clamp=(n:number)=>Math.max(0,Math.min(1,n));
 const shade=(g:CanvasRenderingContext2D,
