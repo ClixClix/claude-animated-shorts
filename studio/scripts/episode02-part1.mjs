@@ -12,20 +12,23 @@ execFileSync(process.execPath,
  [path.join(studioRoot,'node_modules/typescript/bin/tsc'),'--noEmit'],
  {cwd:studioRoot,stdio:'inherit'});
 console.log('PART1 preflight: TypeScript passed.');
+const shot01=process.argv.includes('--shot01');
 const native=process.argv.includes('--native');
 const stillsOnly=process.argv.includes('--stills-only');
 const videoOnly=process.argv.includes('--video-only');
 const force=process.argv.includes('--force');
 if(stillsOnly&&videoOnly)throw Error('Choose one of --stills-only or --video-only.');
-const out=path.join(studioRoot,'out/v2-episodes/in-this-town-02/part1-pilot');
+const out=path.join(studioRoot,'out/v2-episodes/in-this-town-02',
+ shot01?'shot01-blocking-test':'part1-pilot');
 const stills=path.join(out,'frames');
 await fs.mkdir(stills,{recursive:true});
 const blueprint=JSON.parse(await fs.readFile(path.join(studioRoot,
  'src/v2/episodes/in-this-town-02/PART1_SHOT_BLUEPRINT.json'),'utf8'));
-const shots=blueprint.shots.map(({id,start,end})=>({id,start,end}));
-if(shots.length!==4||shots[0].start!==0||
- shots[shots.length-1].end!==183||
- shots.some((q,i)=>q.end<=q.start||(i&&q.start!==shots[i-1].end)))
+const allShots=blueprint.shots.map(({id,start,end})=>({id,start,end}));
+const shots=shot01?allShots.filter(s=>s.id==='01'):allShots;
+if(allShots.length!==4||allShots[0].start!==0||
+ allShots[allShots.length-1].end!==183||
+ allShots.some((q,i)=>q.end<=q.start||(i&&q.start!==allShots[i-1].end)))
  throw Error('Part 1 blueprint shot timing violates the approved 183-frame opening.');
 const scale=native?1:.5;
 const hash=x=>createHash('sha256').update(x).digest('hex');
@@ -56,8 +59,9 @@ const log=l=>{
   try{audits.push(JSON.parse(l.text.slice('PART1_AUDIT '.length)));}catch(e){errors.push('Invalid pilot audit: '+String(e));}
  }else if(l.type==='error'){errors.push(l.text);console.error(l.text.slice(0,600));}
 };
-const sidecar=path.join(out,'PART1_RENDER_STATUS.json');
-const video=path.join(out,native?'Part1_01-04_NATIVE.mp4':'Part1_01-04_PREVIEW.mp4');
+const sidecar=path.join(out,shot01?'SHOT01_QA.json':'PART1_RENDER_STATUS.json');
+const video=path.join(out,shot01?'SHOT01_BLOCKING.mp4':
+ native?'Part1_01-04_NATIVE.mp4':'Part1_01-04_PREVIEW.mp4');
 let browser;
 try{
  const serveUrl=await bundle({entryPoint:path.join(studioRoot,'src/index.ts')});
@@ -67,7 +71,7 @@ try{
  if(!videoOnly){
   for(const shot of shots){
    // Multiple actual timeline frames, not drawn storyboard guesses.
-   for(const pct of [.2,.5,.8]){
+   for(const pct of (shot01?[0,.20,.40,.60,.80,1]:[.2,.5,.8])){
     const frame=shot.start+Math.floor((shot.end-shot.start-1)*pct);
     const file=path.join(stills,shot.id+'_'+Math.round(pct*100)+'.png');
     console.log('PART1 '+shot.id+' frame '+frame);
@@ -85,7 +89,7 @@ try{
   }else{
    const partial=video+'.partial.mp4';
    await renderMedia({overwrite:true,serveUrl,composition,inputProps:props,
-    frameRange:[0,182],outputLocation:partial,codec:'h264',crf:18,
+    frameRange:shot01?[0,26]:[0,182],outputLocation:partial,codec:'h264',crf:18,
     pixelFormat:'yuv420p',imageFormat:'jpeg',jpegQuality:95,scale,
     concurrency:renderConcurrency(),puppeteerInstance:browser,chromiumOptions,
     logLevel:'error',timeoutInMilliseconds:240000,onBrowserLog:log});
@@ -107,15 +111,21 @@ const issues=uniqueAudits.flatMap(a=>[
   blockingMesh:a.faceBlocker}]:[]),
  ...((a.streetlightOcclusions??[]).length?[{frame:a.frame,shot:a.shot,
   kind:'STREETLIGHT_BLOCKS_SHOT',lampHits:a.streetlightOcclusions}]:[]),
+ ...((a.setCollisions??[]).length?[{frame:a.frame,shot:a.shot,
+  kind:'SET_OBJECT_INTERSECTION',collisions:a.setCollisions}]:[]),
+ ...((a.setOcclusions??[]).length?[{frame:a.frame,shot:a.shot,
+  kind:'SET_DRESSING_BLOCKS_ACTION',hits:a.setOcclusions}]:[]),
 ]);
 const status={
- id:'in-this-town-ep02-part1',stage:'RENDERED_PROTOTYPE_NOT_APPROVED',
+ id:shot01?'in-this-town-ep02-shot01-test':'in-this-town-ep02-part1',
+ stage:'RENDERED_PROTOTYPE_NOT_APPROVED',
  sourceHash,scale,width:native?1080:540,height:native?1920:960,
- shots,frames:183,durationSeconds:6.1,
+ shots,frames:shot01?27:183,durationSeconds:shot01?.9:6.1,
  fullFilmRendered:false,publishingAllowed:false,paidNarrationRequests:0,
  movie:stillsOnly?null:video,stillsDirectory:stills,
  visualAudit:{sampledFrames:uniqueAudits.length,issues,raw:uniqueAudits,browserErrors:errors},
- next:'Review the 12 real frames and the 6.1-second MP4 against Episode 01. Rework any blocked, clipped, incorrect-scale or confusing shot before continuing.'
+ next:shot01?'Inspect six actual frames plus 0.9-second shot01 clip. Do not render shots 02-04 until shot01 composition and physics are visibly approved.':
+ 'Review all 12 real frames and the 6.1-second MP4 against Episode 01. Rework any blocked, clipped, incorrect-scale or confusing shot before continuing.'
 };
 await fs.writeFile(sidecar,JSON.stringify(status,null,2)+'\n');
 console.log(JSON.stringify({stage:status.stage,video:status.movie,framesFolder:stills,
