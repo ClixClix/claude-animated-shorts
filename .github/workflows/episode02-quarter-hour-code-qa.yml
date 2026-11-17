@@ -1,0 +1,78 @@
+name: Episode 02 - 15 Minute Code QA (Temporary)
+
+# Scheduled workflows execute from the DEFAULT branch only.
+# This workflow lives on main, but tests the user's actual v2-local-render branch.
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/episode02-quarter-hour-code-qa.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write # Used only to disable this temporary schedule after the cutoff.
+
+concurrency:
+  group: episode02-quarter-hour-audit
+  cancel-in-progress: false
+
+jobs:
+  code-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Enforce 4 PM Eastern November 18 stop
+        id: window
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          now="$(date -u +%s)"
+          # November 18, 2026 4:00 PM America/New_York = 21:00 UTC.
+          cutoff="$(date -u -d '2026-11-18T21:00:00Z' +%s)"
+          if (( now > cutoff )); then
+            echo "active=false" >> "$GITHUB_OUTPUT"
+            echo "Requested QA window ended; disabling this temporary workflow."
+            gh api --method PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/episode02-quarter-hour-code-qa.yml/disable"
+          else
+            echo "active=true" >> "$GITHUB_OUTPUT"
+            echo "Within the requested temporary 15-minute QA window."
+          fi
+
+      - name: Checkout Episode 2 development branch
+        if: steps.window.outputs.active == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: v2-local-render
+          persist-credentials: false
+
+      - name: Use Node 24
+        if: steps.window.outputs.active == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+
+      - name: Install locked studio dependencies
+        if: steps.window.outputs.active == 'true'
+        working-directory: studio
+        run: npm ci --no-audit --no-fund
+
+      - name: Run Episode 1 style, TypeScript, box and timeline audits
+        if: steps.window.outputs.active == 'true'
+        working-directory: studio
+        run: npm run episode2:code-audit
+
+      - name: Save QA JSON evidence even if checks fail
+        if: always() && steps.window.outputs.active == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: episode02-15min-audit-${{ github.run_number }}
+          path: studio/out/v2-episodes/in-this-town-02/series-style-qa/*.json
+          if-no-files-found: warn
+          retention-days: 3
