@@ -16,7 +16,8 @@
     "episode2:build": "node scripts/produce-box.mjs build",
     "episode2:check": "node scripts/produce-box.mjs check",
     "episode2:part1": "node scripts/episode02-part1.mjs",
-    "episode2:shot01": "node scripts/episode02-shot01-performance.mjs"
+    "episode2:shot01": "node scripts/episode02-shot01-performance.mjs",
+    "episode2:ep1-assets": "node scripts/episode02-episode1-assets-preview.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "9.1.2",
