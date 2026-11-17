@@ -102,7 +102,10 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   const w=new EpisodeWorld(optimize);
   const stable=previousEpisodeState(0,DRAFT_SHOTS);
   w.update(stable);
-  // Preserve the established buildings/café/floor and its fixed furniture.
+  // Preserve Episode 01's established café geometry AND original alley
+  // dumpster, service details and storage for the Episode 02 search scenes.
+  // Reuse existing streetlights and shelter, but shot cameras must avoid them.
+  // We only suppress assets tied to Episode 01's unrelated story scenes.
   // Disable ONLY props belonging to Episode 01's clock/shelter/kitten plot.
   // Leaving them alive inside Episode 02 causes unrelated giant landmarks and
   // physical clutter to block already-narrow portrait compositions.
@@ -110,9 +113,9 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
     'last-bus','latte-hiding-box','welcome-sign','alley-motion',
     'opening-setting-sun','rain-outside-only','door-open-plaque',
     'episode-clock','city-clock-tower','backup-lantern','latte-home',
-    'home-interior-finish','home-low-bookcase','alley-storage',
-    'alley-dumpster','home-cat-tower','latte-cat-bed',
-    'alley-service-details','home-food','home-water','home-moonlight'])
+    'home-interior-finish','home-low-bookcase',
+    'home-cat-tower','latte-cat-bed',
+    'home-food','home-water','home-moonlight'])
       w.root.getObjectByName(n)?.traverse(o=>{o.visible=false;});
   // No attempt to modify the original source files or cache.
   return w;
