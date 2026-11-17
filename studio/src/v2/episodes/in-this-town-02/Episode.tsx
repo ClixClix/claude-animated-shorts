@@ -245,21 +245,62 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // Episode 01's background supporting-cat asset set. Do not promote their
  // simplified drawings to close-up leading actors; keep them as background.
  const n=s.shot.sequence;
- townspeople.update(previousEpisodeState(0,DRAFT_SHOTS));
+ // Episode 01's supporting-cast art is unchanged, but Episode 02 must
+ // advance its clock. Previously every guest was drawn at frame zero and
+ // the entire city appeared abandoned except for three announcement shots.
+ const ep1CrowdState={...previousEpisodeState(0,DRAFT_SHOTS),
+  frame:s.frame,t:s.t,camera:directed.camera,target:directed.target};
+ townspeople.update(ep1CrowdState);
+ const outsideBusy=n<=5||n===8||n===28||n===29||n===30||n===56||n===57;
+ const cafeBusy=n>=6&&n<=23;
  const audienceOn=n===4||n===56||n===57;
- townspeople.root.visible=audienceOn;
- if(audienceOn){
-  const spots:V3[]=n===4?
-   [[.55,.03,6.45],[2.9,.03,6.2],[3.8,.03,6.75]]:
-   [[-.9,.03,7.9],[.8,.03,8.3],[3.4,.03,8.6]];
-  townspeople.actors.forEach((c,i)=>{
-   const isGuest=i<3;c.mesh.visible=isGuest;
-   if(isGuest){
-    c.mesh.position.set(...spots[i]);
-    c.mesh.rotation.y=Math.atan2(cam.position.x-spots[i][0],
-     cam.position.z-spots[i][2]);
-   }
-  });
+ // Deterministic sidewalk motion, not random positions on each render frame.
+ // Keep everyone off the road and away from the hero's box contact.
+ const wrap=(x:number,span:number)=>((x%span)+span)%span;
+ const walkA=-6+wrap(s.t*.43,11);
+ const walkB=6-wrap(s.t*.31,10);
+ const streetSpots:V3[]=audienceOn?
+  (n===4?[[.55,.03,6.45],[2.9,.03,6.2],[3.8,.03,6.75]]:
+   [[-.9,.03,7.9],[.8,.03,8.3],[3.4,.03,8.6]]):
+  [[walkA,.03,5.02],[walkB,.03,5.02],[-6.4,.03,12.55]];
+ const spots:V3[]=outsideBusy?
+  [...streetSpots,[walkA-1.2,.03,12.55],[walkB+.7,.03,12.55]]:
+  cafeBusy?[[2.38,.51,-2.14],[.96,.51,2.13],[2.8,.03,-.15]]:[];
+ townspeople.root.visible=spots.length>0;
+ townspeople.actors.forEach((c,i)=>{
+  const isGuest=i<spots.length;c.mesh.visible=isGuest;
+  // Each Episode 01 extra is paired with its own shadow directly after
+  // its mesh in TownPopulation.root. Keep contacts with their actor.
+  const actorIndex=townspeople.root.children.indexOf(c.mesh);
+  const shadow=townspeople.root.children[actorIndex+1];
+  if(shadow)shadow.visible=isGuest;
+  if(isGuest){
+   const p=spots[i];c.mesh.position.set(...p);
+   if(shadow)shadow.position.set(p[0],p[1]+.006,p[2]);
+   c.mesh.rotation.y=Math.atan2(cam.position.x-p[0],
+    cam.position.z-p[2]);
+  }
+ });
+ // Reuse ORIGINAL Episode 01 car meshes throughout the connected district.
+ // Their prior fixed t=0 update froze them in place in Episode 02.
+ // Main-road lanes are at z=7.45 and z=9.45, clear of cat sidewalks.
+ const roadLife=n<=5||n===8||n===28||n===29||n===30||n===56||n===57;
+ for(let i=0;i<2;i++){
+  const car=world.root.getObjectByName('passing-car-'+i);
+  if(!car)continue;
+  car.visible=roadLife;
+  const x=i===0?-18+wrap(s.t*1.9,36):18-wrap(s.t*1.65+9,36);
+  car.position.set(x,.03,i===0?9.45:7.45);
+  car.rotation.y=i===0?Math.PI:0;
+ }
+ for(let i=0;i<6;i++){
+  const car=world.root.getObjectByName('district-moving-car-'+i);
+  if(!car)continue;
+  car.visible=roadLife;
+  const lane=[18,30,42,-18,-30,-42][i];
+  const z=-68+wrap(s.t*(1.65+i*.12)+i*19,136);
+  car.position.set(lane,.03,z);
+  car.rotation.y=Math.PI/2;
  }
  props.board.visible=n===57;
  props.sign.visible=n===24;
