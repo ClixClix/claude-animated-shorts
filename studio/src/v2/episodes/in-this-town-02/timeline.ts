@@ -178,7 +178,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  if(n===58){
   // Continuity setup for the following shot: Essie and Latte have already
   // settled inside, while Mocha hesitates on the left and approaches.
-  mocha.position=walk([-3.34,0,2.17],[-3.04,0,2.17],u);
+  mocha.position=walk([-3.60,0,2.17],[-3.32,0,2.17],u);
   mocha.scale=.72;mocha.walking=true;mocha.emotion='sad';
   essie.position=[-1.45,.12,2.01];essie.scale=.67;
   latte.position=[-.95,.12,2.17];latte.scale=.67;
@@ -192,9 +192,9 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   const settle=ease(n===59?(u-.72)/.28:1);
   if(n===59){
    const entry=ease((u-.24)/.48);
-   const hop=clamp((u-.23)/.53);
+   const hop=clamp((u-.24)/.50);
    mocha.position=[
-    u<.24?lerp(-3.34,-3.04,ease(u/.24)):lerp(-3.04,-1.95,entry),
+    u<.24?lerp(-3.32,-3.17,ease(u/.24)):lerp(-3.17,-1.95,entry),
     .10+(hop>0&&hop<1?.96*Math.sin(Math.PI*hop):0)+.02*settle,
     2.17
    ];
