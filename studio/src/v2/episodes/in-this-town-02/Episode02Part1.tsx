@@ -263,7 +263,7 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
   // and the physical box, before claiming an unobstructed composition.
   const lampGroups:T.Object3D[]=[];
   world.root.traverse(o=>{
-   if(o instanceof T.Group&&/^streetlight-\\d+$/.test(o.name)&&o.visible)
+   if(o instanceof T.Group&&o.name.startsWith('streetlight-')&&o.visible)
     lampGroups.push(o);
   });
   const lampWatch=[
