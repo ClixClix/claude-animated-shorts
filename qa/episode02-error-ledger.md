@@ -1,7 +1,14 @@
 # Episode 02 — visual QA error ledger
 
-Last updated: 2026-11-17 09:20 ET (14:20 UTC)
+Last updated: 2026-11-17 09:30 ET (14:30 UTC)
 Branch: `v2-local-render`
+
+## 09:30 ET — inspected new real footage from latest source-era full render, rebuilt seven alley angles
+
+- **Actual motion evidence, not final assembly:** [full-run 44089242525](https://github.com/ClixClix/claude-animated-shorts/actions/runs/44089242525), source `a8338fa`, has already completed **15 individual clips, shots 31–45** (artifact `14337410644`, shard 2), each with its SHA/source-matching JSON. Downloaded that artifact and inspected actual 540p MP4 midframes across all 15 shots. The full 60-shot assembly remains **IN PROGRESS** and 45 other shots have not been reviewed in this version. User-approved Episode01 side-by-side still not available.
+- **E02-003 / E02-006 — HIGH — REPETITIVE ALLEY AND WEAK ACTION:** Real images from 31–45 confirm nearly identical straight-on corridor staging. In shot 35, Mocha occupies the dominant foreground position, obscuring the emotional beat of Essie curling up inside the box; shots 37–39 and 41–45 repeat that view with weak shot hierarchy. This is a **VISUALLY CONFIRMED FAILURE** of pre-fix footage. Source commit `a845eb6` changes camera positions only for shots **32,35,37,38,41,42,45**, using actual Essie box location and open alley dimensions, with cameras from the correct side of the wall. **RERENDER PENDING / NOT VISUALLY VERIFIED**; inspect box flap/face clearance, Mocha foreground blocking, and actor continuity. New complete full run [44103824042](https://github.com/ClixClix/claude-animated-shorts/actions/runs/44103824042) queued.
+- **Full-timeline TypeScript/style/geometry checks:** [QA 44102871212](https://github.com/ClixClix/claude-animated-shorts/actions/runs/44102871212) at `3c7d913` has completed its original-source/style, TypeScript and geometry stages and successfully executed the new 60-shot blocker diagnostic script; image previews still rendering. The detailed diagnostic count/results cannot yet be inspected until the run artifact is available. This check does **not** certify clipping-free footage.
+- **Open/fixed counts:** At least **13 unresolved or rerender-pending findings**, **10 visually confirmed prior fixes**, **1 CI-only fix** as last reconciled. Full native 1080p and approved Episode01 side-by-side not yet performed, audio silent scratch intentionally untested, 15-minute scheduled-heartbeat counts unavailable. Continue full 60-shot iterations rather than approving clips in isolation.
 
 ## 09:20 ET — user expanded required QA: living city, blocked camera checks, overhead cats
 
