@@ -1,5 +1,5 @@
 import {INK, mix, Pen} from '../../videos/bridge/toon';
-import {CatId, DESIGNS} from './designs';
+import {CatId, DESIGNS, type CatDesign} from './designs';
 import {CatPose, resolvePose, clamp} from './pose';
 
 export const CAT_WIDTH=500, CAT_HEIGHT=550;
@@ -24,8 +24,8 @@ function shaded(g:Ctx,d:string,base:string,shadow:string){
  *  Design units: 500x550, ground at y=480. Stateless: safe for Remotion random-access rendering.
  *  Yaw changes feature placement and occlusion, not just the width of a front-facing drawing.
  */
-export function drawCat(g:Ctx,id:CatId,partial:Partial<CatPose>={},headOnly=false){
-  const p=resolvePose(partial), c=DESIGNS[id];
+export function drawCat(g:Ctx,id:CatId,partial:Partial<CatPose>={},headOnly=false,designOverride?:CatDesign){
+  const p=resolvePose(partial), c=designOverride??DESIGNS[id];
   const sign=p.yaw<0?-1:1, yaw=Math.abs(p.yaw), walk=p.walking;
   g.save();g.translate(250,0);g.scale(sign,1);g.lineJoin='round';g.lineCap='round';
   const bob=walk?Math.cos(p.gait*2)*2:p.breath*1.5;
