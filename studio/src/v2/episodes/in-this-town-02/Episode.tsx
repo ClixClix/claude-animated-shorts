@@ -18,6 +18,7 @@ import {EpisodeWorld} from '../door-at-1111-polish/world';
 import {pawRig} from '../door-at-1111-polish/actors';
 import {stateAt as previousEpisodeState,DRAFT_SHOTS} from '../door-at-1111-polish/timeline';
 import {createEpisodeBox} from './boxProps';
+import {directEpisodeCamera} from './cameraDirector';
 import {SCRATCH_EDIT,stateAt,clamp,ease,type EpisodeEdit,type ActorPose,type State} from './timeline';
 
 const GRADE:GradeParams={ky:[.015,.09,.26,.52,.77,.92,1],sat:[.92,.98,.90],tintS:[.008,.002],tintM:[0,.002],tintH:[-.003,.002],vig:[.10,.4]};
@@ -198,14 +199,13 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  }),[scene,camera,previewScale]);
  atmosphere.root.add(atmosphere.sun,atmosphere.night);
  const cam=camera as T.PerspectiveCamera;
- const camPosition=new T.Vector3(...s.camera);
- // Only subtle motivated pushes on stable cuts; the magic shots are camera-locked.
- if(![3,38,39,49,50,51,54,55].includes(s.shot.sequence)){
-  const dir=new T.Vector3(...s.target).sub(camPosition).normalize();
-  camPosition.addScaledVector(dir,ease(s.u)*.22);
- }
- cam.position.copy(camPosition);cam.fov=s.fov;cam.near=.08;cam.far=320;
- cam.lookAt(...s.target);cam.updateProjectionMatrix();cam.updateMatrixWorld();
+ // Central 9:16-safe director. Per-shot arbitrary coordinates were originally
+ // framed for a much wider field and placed several alley cameras inside the
+ // west-side shop, producing extreme crop and solid-wall occlusion.
+ const directed=directEpisodeCamera(s);
+ cam.position.set(...directed.camera);
+ cam.fov=directed.fov;cam.near=.08;cam.far=320;
+ cam.lookAt(...directed.target);cam.updateProjectionMatrix();cam.updateMatrixWorld();
  cam.layers.enable(NOINK);
  scene.background=new T.Color(s.daylight?'#9dbec7':'#172b46');
  scene.fog=new T.Fog(scene.background.clone(),44,245);
