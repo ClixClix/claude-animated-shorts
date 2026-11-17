@@ -177,10 +177,31 @@ function fit(s:State){
   const target:V3=[s.demoBox[0],.35,s.demoBox[2]];
   // True vertical sees the original Episode01 illustrated cat edge-on.
   // Keep the elevated rule view but tilt enough to show its actual face.
-  const camera:V3=[target[0]+.12,2.85,target[2]+2.15];
-  return {camera,target,fov:52,region:r,
-   framing:projections(corners(focus),target,camera,52),
+  const camera:V3=[target[0]+.12,2.10,target[2]+1.55];
+  // A closer elevated three-quarter, not a steep overhead that flattens
+  // the original 0.79m Episode01 kitten into a miniature paper edge.
+  return {camera,target,fov:49,region:r,
+   framing:projections(corners(focus),target,camera,49),
    shot:2,selectedIds:focus.map(x=>x.id)};
+ }
+ // Full 60-shot a845eb6 review: give closing, missing-cat, market and
+ // doorway transitions their own camera axes. The previous 29 sign crossed
+ // Mocha's face; the previous 53 open door leaf bisected both rescuers.
+ if([24,25,29,53].includes(s.shot.sequence)){
+  const n=s.shot.sequence;
+  const profile:Record<number,{camera:V3;target:V3;fov:number}>={
+   24:{camera:[2.80,1.75,2.15],target:[2.20,1.20,4.05],fov:72},
+   25:{camera:[1.85,1.80,2.95],target:[.22,.65,.45],fov:70},
+   // From the near side of the shelter: its tall sign stays BEHIND the
+   // cat rather than projecting over his eyes during the market walk.
+   29:{camera:[-6.55,1.75,4.55],target:[-6.25,.70,6.45],fov:77},
+   // View the open door from its left rather than straight through its leaf.
+   53:{camera:[.25,1.75,8.10],target:[1.65,.75,5.30],fov:76}
+  };
+  const q=profile[n];
+  return {camera:q.camera,target:q.target,fov:q.fov,region:r,
+   framing:projections(corners(focus),q.target,q.camera,q.fov),
+   shot:n,selectedIds:focus.map(x=>x.id)};
  }
  // Actual 60-shot cloud footage showed 31–45 repeating one straight-on
  // alley composition. Cover the distinct story actions from opposite ends
@@ -191,8 +212,8 @@ function fit(s:State){
   const n=s.shot.sequence,p=s.essieBox;
   const profile:Record<number,{camera:V3;target:V3;fov:number}>={
    // Follow Essie's DRAGGING action instead of hiding it in a huge long shot.
-   32:{camera:[p[0]-.56,1.50,p[2]+2.70],
-       target:[p[0],.57,p[2]+.50],fov:63},
+   32:{camera:[p[0]-.30,2.45,p[2]-2.65],
+       target:[p[0],.60,p[2]+.50],fov:70},
    // Stay behind the cardboard when Essie settles; Mocha is further up
    // the alley and must not stand between our camera and her face.
    35:{camera:[p[0]-.46,1.66,p[2]-1.66],
@@ -204,16 +225,16 @@ function fit(s:State){
    38:{camera:[p[0]-.53,1.43,p[2]-1.19],
        target:[p[0],.56,p[2]],fov:60},
    // The box and Mocha occupy opposite depth layers: readable tapping.
-   41:{camera:[p[0]-.50,1.65,p[2]-.98],
-       target:[p[0],.52,p[2]+.19],fov:62},
+   41:{camera:[p[0]-.48,1.80,p[2]+3.15],
+       target:[p[0],.68,p[2]+.65],fov:72},
    // Reverse for the hug, honoring the same axis and keeping the actor
    // on the open-lane side of the shop wall.
-   42:{camera:[p[0]-.48,1.42,p[2]+2.26],
-       target:[p[0],.64,p[2]+.35],fov:60},
+   42:{camera:[p[0]-.36,1.58,p[2]+3.55],
+       target:[p[0],.74,p[2]+1.00],fov:73},
    // Raised three-quarter "looking inside" avoids a literal camera
    // embedded in cardboard (which rendered an obstructed black cavity).
-   45:{camera:[p[0]-.27,2.00,p[2]-1.05],
-       target:[p[0],.18,p[2]],fov:64}
+   45:{camera:[p[0]-.27,1.72,p[2]-1.10],
+       target:[p[0],.09,p[2]],fov:53}
   };
   const q=profile[n];
   return {camera:q.camera,target:q.target,fov:q.fov,region:r,
