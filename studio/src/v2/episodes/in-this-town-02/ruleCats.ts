@@ -79,16 +79,16 @@ export function createRuleCat(variant:RuleCatVariant,height=1.22){
    // Curled torso is deliberately separate from the head. No upright,
    // full-length card behind the box pretending to be a seated cat.
    g.save();
-   const bodyY=400+progress*19;
-   shade(g,253,bodyY,141,66,design.light,design.shadow);
+   const bodyY=350+progress*15;
+   shade(g,253,bodyY,141,68,design.light,design.shadow);
    g.strokeStyle=design.shadow;g.lineWidth=23;g.lineCap='round';
-   g.beginPath();g.moveTo(320,390);g.bezierCurveTo(400,365,408,426,344,437);g.stroke();
-   for(const x of [183,307])shade(g,x,440,37,17,design.coat,design.shadow);
+   g.beginPath();g.moveTo(315,350);g.bezierCurveTo(398,315,399,407,340,405);g.stroke();
+   for(const x of [183,307])shade(g,x,405,37,17,design.coat,design.shadow);
    g.restore();
    // This is Episode 01's original illustrated face with its real
    // eyes/whiskers/ears; placing it on the curled body keeps identity.
    g.save();
-   g.translate(0,120+progress*18);
+   g.translate(0,-5+progress*24);
    drawCat(g,'essie',{...pose,walking:false},true,design);
    g.restore();
   }else{
@@ -101,7 +101,6 @@ export function createRuleCat(variant:RuleCatVariant,height=1.22){
   card.mesh.removeFromParent();
   // card.dispose() disposes its original material. Also dispose the
   // Episode 01 shader wrapper if it is a separate material.
-  if(mat!==card.mesh.material)mat.dispose();
   card.dispose();
  };
  return {mesh:card.mesh,update,material:mat,design,dispose};
