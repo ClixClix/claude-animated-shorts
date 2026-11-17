@@ -80,7 +80,7 @@ type Region='outside'|'demo'|'latte'|'essie'|'group'|'shared'|'bus'|'market'|'al
 // a character walks during a continuous shot.
 const regionAnchor:Record<Region,V3>={
  demo:[1.8,0,5.35],outside:[2.4,0,6.65],latte:[-1.9,0,2.1],
- essie:[.25,0,.3],group:[.25,0,.3],shared:[-1.45,0,2.5],
+ essie:[.25,0,.3],group:[.25,0,.3],shared:[-1.45,0,2.1],
  bus:[-4.4,0,6.1],market:[-7.3,0,6.5],alley:[-9.15,0,1.4],
  town:[1.1,0,6.4]
 };
@@ -147,6 +147,18 @@ function preferredFov(s:State){
 }
 function fit(s:State){
  const focus=focusSet(s),center=boundsCenter(focus),r=region(s);
+ // Do not fit the entire 2.48m box from above at the expense of faces.
+ // This is an intentional FRONT 3/4 café shot, using existing Episode 01 art.
+ if(s.shot.sequence===59||s.shot.sequence===60){
+  const n=s.shot.sequence,u=clamp(s.u,0,1);
+  const push=n===60?.08*u:0;
+  const camera:V3=[-1.45,1.18,3.94-push];
+  const target:V3=[-1.45,.73,2.11];
+  const fov=n===59?93:90;
+  return {camera,target,fov,region:r,
+   framing:projections(corners(focus),target,camera,fov),
+   shot:n,selectedIds:focus.map(x=>x.id)};
+ }
  const origin=fallback[r];
  let dir=norm(sub(origin,regionAnchor[r]));
  // The playable alley is a narrow corridor at x roughly -9.15.
