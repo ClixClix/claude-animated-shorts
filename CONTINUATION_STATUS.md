@@ -1,3 +1,13 @@
+# LATEST — Episode 02 rendered prototype rejected after actual MP4 inspection
+
+User uploaded 11 rendered Episode 02 preview clips (shots 03,07,09,20,32,39,50,51,54,59,60), and the assistant inspected their frames plus the Episode 01 full movie. **Every sampled Episode 02 shot shows major unacceptable visual defects. Stop calling this composition production-ready or recommending a full 60-shot render.** The previous portrait camera patch DID NOT solve the fundamental issues.
+
+Observed: giant box fills frame (03,07,32,39,50,51,60), characters hidden/cut off, cafe structural walls completely obscure scenes (54 and 59), no legible box transformation/reunion (39,50,51), captions show unrelated words in silent preview. Technical success of encoding does not mean a usable animated film. User is correct that footage is unusable.
+
+Detailed evidence and a rebuild contract are in `studio/src/v2/episodes/in-this-town-02/REJECTED_RENDER_AUDIT.md`. A real reconstruction is needed: stage actors, boxes and camera together for portrait; use raycast real geometry; animate physical rescue/contact and readable transformations, not squash a 2D billboard; target actual visible primary-cat poses. **Do not perform another blind global camera tweak or claim fixed without seeing new actual frames.** Episode 01 set/art assets and the approved script/shot list remain valuable. The unapproved scratch interpolated word-caption system has been disabled in `episode02-prepare.mjs` when alignment is absent. No paid voice or full render should be attempted.
+
+---
+
 # Latest — Episode 02 box story source assembled (2026-11-16)
 
 The user approved **Episode 02 — The Cat Who Became a Box**, including a 403-word narration and 60-shot list. They then specifically requested **all implementation/source stages first, with all checks done together afterward**. The prior shadow Episode 02 pitch is superseded. The channel remains **What If Cats**, with **In This Town** as its story format.
