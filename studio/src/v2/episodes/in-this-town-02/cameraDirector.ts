@@ -187,14 +187,18 @@ function fit(s:State){
  // Full 60-shot a845eb6 review: give closing, missing-cat, market and
  // doorway transitions their own camera axes. The previous 29 sign crossed
  // Mocha's face; the previous 53 open door leaf bisected both rescuers.
- if([24,25,29,53].includes(s.shot.sequence)){
+ if([11,14,24,25,29,53].includes(s.shot.sequence)){
   const n=s.shot.sequence;
   const profile:Record<number,{camera:V3;target:V3;fov:number}>={
+   // Look across the window box without putting a chair back in front of
+   // Mocha's planted forepaws (verified in 44146167639 shots 11 and 14).
+   11:{camera:[-1.95,1.80,4.00],target:[-.80,.82,2.78],fov:75},
+   14:{camera:[-2.20,1.74,3.96],target:[-.82,.84,2.75],fov:75},
    24:{camera:[2.80,1.75,2.15],target:[2.20,1.20,4.05],fov:72},
    25:{camera:[1.85,1.80,2.95],target:[.22,.65,.45],fov:70},
    // From the near side of the shelter: its tall sign stays BEHIND the
    // cat rather than projecting over his eyes during the market walk.
-   29:{camera:[-6.55,1.75,4.55],target:[-6.25,.70,6.45],fov:77},
+   29:{camera:[-4.50,1.85,4.85],target:[-6.35,.78,6.30],fov:75},
    // View the open door from its left rather than straight through its leaf.
    53:{camera:[.25,1.75,8.10],target:[1.65,.75,5.30],fov:76}
   };
@@ -220,10 +224,10 @@ function fit(s:State){
        target:[p[0],.58,p[2]],fov:62},
    // One close view for the first papery features, one even more intimate
    // view for the whisker/paw transformation, without entering the box.
-   37:{camera:[p[0]-.50,1.66,p[2]-1.46],
-       target:[p[0],.60,p[2]],fov:58},
-   38:{camera:[p[0]-.53,1.43,p[2]-1.19],
-       target:[p[0],.56,p[2]],fov:60},
+   37:{camera:[p[0]-.40,1.25,p[2]-1.78],
+       target:[p[0],.70,p[2]],fov:60},
+   38:{camera:[p[0]-.34,1.18,p[2]-1.55],
+       target:[p[0],.66,p[2]],fov:61},
    // The box and Mocha occupy opposite depth layers: readable tapping.
    41:{camera:[p[0]-.48,1.80,p[2]+3.15],
        target:[p[0],.68,p[2]+.65],fov:72},

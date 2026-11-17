@@ -276,7 +276,11 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  const walkB=6-wrap(s.t*.31,10);
  const streetSpots:V3[]=audienceOn?
   (n===4?[[.55,.03,6.45],[2.9,.03,6.2],[3.8,.03,6.75]]:
-   [[-.9,.03,7.9],[.8,.03,8.3],[3.4,.03,8.6]]):
+   // Daytime cure announcement: shoppers walk near shops, not through the
+   // sign or the three leads. Night alley shots retain NO crowd.
+   [[-3.5+.65*Math.sin(s.t*.42),.03,8.1],
+    [3.45+.32*Math.sin(s.t*.48),.03,8.6],
+    [4.2,.03,8.4]]):
   [[walkA,.03,5.02],[walkB,.03,5.02],[-6.4,.03,12.55]];
  // One standing café patron walks the clear right-side aisle while two
  // others remain seated. The aisle x=3.15 clears the chair/table footprints

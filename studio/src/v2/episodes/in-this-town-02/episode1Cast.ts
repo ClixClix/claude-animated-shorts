@@ -116,11 +116,11 @@ export function createEpisode1CastCat(id:CatId){
   // the SAME cardboard box, rather than remaining an inert front-facing card
   // until an abrupt hide. This deforms ONLY Episode 02's actor instance.
   // No replacement silhouette, limbs, or change to the Episode 01 asset.
-  const fold=clamp((pose.morph-.12)/.78);
+  const fold=clamp((pose.morph-.38)/.60);
   const paper=fold*fold*(3-2*fold);
   card.mesh.scale.set(
-   pose.scale*(1-.10*paper),
-   pose.scale*(1-.38*paper),
+   pose.scale*(1-.08*paper),
+   pose.scale*(1-.30*paper),
    pose.scale
   );
   // The paper edges settle toward the inside; preserve above-floor visibility
@@ -133,16 +133,32 @@ export function createEpisode1CastCat(id:CatId){
   const n=s.shot.sequence;
   const curled=(id==='latte'&&n===6)||
    (id==='essie'&&[7,19,35,37,38,39].includes(n));
-  card.mesh.rotation.x=(curled?-.38:0)-.52*paper;
-  // A progressive temporary dissolve makes the animation visibly continuous.
-  // Reset after morphing, retaining Episode 01's opaque, shaded original art.
-  card.mesh.material.transparent=paper>.01;
-  card.mesh.material.depthWrite=paper<=.01;
-  card.mesh.material.opacity=1-.48*paper;
+  card.mesh.rotation.x=(curled?-.38:0)-.18*paper;
+  // Preserve the recognisable Episode 01 face and markings until the FINAL
+  // fold. The previous aggressive pitch/alpha produced a melted pancake in
+  // actual moving shot 38 (44146167639), not a readable paper transformation.
+  const finalFade=clamp((pose.morph-.70)/.30);
+  card.mesh.material.transparent=finalFade>.01;
+  card.mesh.material.depthWrite=finalFade<=.01;
+  card.mesh.material.opacity=1-.38*finalFade;
+  // Feline crouch, nose-led airborne lean and compact body during the leap.
+  // Never add a human arm or replace the approved illustrated cat asset.
+  const hop=n===59?clamp((s.u-.24)/.50):s.u;
+  const airborne=id==='mocha'&&[49,50,59].includes(n)?
+   Math.sin(Math.PI*hop):0;
+  const crouch=id==='mocha'&&n===59?
+   Math.sin(Math.PI*clamp((s.u-.04)/.20)):0;
+  card.mesh.rotation.z=(n===50?.22:-.34)*airborne;
+  card.mesh.scale.x*=1+.10*airborne;
+  card.mesh.scale.y*=1-.12*airborne-.10*crouch;
   card.legs.visible=card.mesh.visible&&a.moving;
   shadow.mesh.visible=card.mesh.visible;
+  const supportY=supportHeight(pose.position,id==='latte'?0:id==='mocha'?1:2)+.008;
+  const insideBox=(id==='mocha'&&(n===60||(n===59&&s.u>.75)))||
+   (id==='essie'&&[7,19,35,37,38,39,50,59,60].includes(n))||
+   (id==='latte'&&[6,55,59,60].includes(n));
   shadow.mesh.position.set(
-   pose.position[0],supportHeight(pose.position,id==='latte'?0:id==='mocha'?1:2)+.008,
+   pose.position[0],insideBox?Math.max(supportY,.073):supportY,
    pose.position[2]);
   shadow.mesh.scale.setScalar(pose.scale);
  };
