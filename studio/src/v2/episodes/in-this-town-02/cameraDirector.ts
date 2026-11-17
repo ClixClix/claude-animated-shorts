@@ -164,7 +164,7 @@ function fit(s:State){
   // A fixed start lens observes Mocha's decision. Pan ONCE, gently,
   // only after take-off, instead of chasing the cat then reversing direction
   // toward the group mid-jump. Match the end of 59 to the start of 60.
-  const recenter=n===59?easeTrack((u-.62)/.38):n===60?1:0;
+  const recenter=n===59?easeTrack((u-.42)/.55):n===60?1:0;
   const trackX=-2.95+1.50*recenter;
   const camera:V3=[trackX,1.98,4.12-(n===60?.08*easeTrack(u):0)];
   const target:V3=[trackX,.83,2.11];
