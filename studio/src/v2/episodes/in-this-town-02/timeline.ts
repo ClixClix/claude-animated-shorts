@@ -23,7 +23,7 @@ export const HOME={
   entrance:[2.4,0,6.65] as V3,
   busStop:[-4.4,0,6.1] as V3,
   market:[-7.3,0,6.5] as V3,
-  alleyMouth:[-8.9,0,4.7] as V3,
+  alleyMouth:[-9.25,0,4.7] as V3,
   alleyBox:[-9.15,0,1.4] as V3,
   demo:[1.8,0,5.35] as V3
 };
@@ -56,7 +56,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  let demoCat=actor(closer(HOME.demo,.2,0),n<=3,'happy');
  const latteBox=[...HOME.latte] as V3,sharedBox=[...HOME.shared] as V3,demoBox=[...HOME.demo] as V3;
  let essieBox=[...HOME.essie] as V3;
- const show={latte:n>=6&&n<=55,essie:n===7||(n>=18&&n<=23)||(n>=32&&n<=52),shared:n>=58,demo:n<=4};
+ const show={latte:n>=6&&n<=55,essie:n===7||(n>=18&&n<=23)||(n>=32&&n<=52),shared:n>=58,demo:n<=5};
  const flap={latte:.85,essie:.85,shared:.98,demo:.85}; // Lay finale side flaps almost flat, not across Mocha's approach.
  const morph={essie:0,latte:0,demo:0};
  let heroBox:State['heroBox']=null,room='cafe';
@@ -70,7 +70,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   if(n===3){demoCat.visible=true;demoCat.morph=ease(u);demoCat.position=[HOME.demo[0],0,HOME.demo[2]];morph.demo=ease(u);flap.demo=lerp(.8,.25,ease(u));}
   if(n===4){demoCat.visible=false;flap.demo=.33;}
  }
- if(n===5){mocha.position=walk(HOME.entrance,[1.15,0,6],u);mocha.walking=true;mocha.emotion='sad';cam=cameraPreset([5.15,1.7,9.0],[2,.7,5.1],55);}
+ if(n===5){mocha.position=walk(HOME.entrance,[1.15,0,6],u);mocha.walking=true;mocha.emotion='sad';heroBox='demo';cam=cameraPreset([5.15,1.7,9.0],[2,.7,5.1],55);}
  if(n===6){latte.position=[HOME.latte[0],.02,HOME.latte[2]];latte.emotion='happy';mocha.visible=false;heroBox='latte';cam=focus(HOME.latte,2.6,46,-.25);flap.latte=.9;}
  if(n===7){essie.position=[HOME.essie[0],.02,HOME.essie[2]];mocha.position=[1.45,0,.9];mocha.emotion='sad';essie.emotion='happy';heroBox='essie';cam=focus(HOME.essie,2.7,58,1.5);}
  if(n===8){mocha.position=walk([2.6,0,7.3],HOME.door,u);mocha.walking=true;cam=cameraPreset([5.6,2.0,10.2],[2.2,1.0,4.2],55);room='street';}
@@ -93,7 +93,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
      n===23?focus(mocha.position,1.8,39,1.2):cameraPreset([3.1,2.0,3.6],[.3,.8,.8],55);
  }
  if(n>=24&&n<=27){
-  mocha.position=n===27?walk(HOME.door,HOME.entrance,u):[.8,0,1.5];
+  mocha.position=n===27?walk(HOME.door,HOME.entrance,u):n===26?[-1.05,0,1.35]:[.8,0,1.5];
   mocha.emotion='scared';essie.visible=false;show.essie=false;
   cam=n===24?cameraPreset([2.2,2.0,3.8],[-1,1,.8],65):n===26?focus(HOME.essie,2.1,41,.85):
     n===27?cameraPreset([5,2.3,9.2],[2.4,.8,5.2],56):focus(mocha.position,2.6,45,1);
@@ -101,12 +101,12 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  }
  if(n>=28&&n<=34){room='street';mocha.walking=n<=33;mocha.emotion='scared';essie.visible=n>=31;
   mocha.position=n===28?walk(HOME.entrance,HOME.busStop,u):n===29?walk(HOME.busStop,HOME.market,u):
-     n===30?walk(HOME.market,HOME.alleyMouth,u):n<=32?[-8.2,0,4.2]:n===33?[-8.55,0,4.5]:[-8.7,0,4.0];
+     n===30?walk(HOME.market,HOME.alleyMouth,u):n<=32?[-9.25,0,4.2]:n===33?[-9.25,0,4.5]:[-9.25,0,4.0];
   essie.position=n===32?walk([-9.1,0,2.7],HOME.alleyBox,u):HOME.alleyBox;
-  if(n===31)essie.position=[-9.1,0,2.8];if(n===34)essie.position=HOME.alleyBox;
+  if(n===31)essie.position=[-9.25,0,2.8];if(n===34)essie.position=HOME.alleyBox;
   essie.emotion='happy';essie.walking=n===32;
   if(n>=31){show.essie=true;essieBox=n===32?walk([-9.1,0,2.7],HOME.alleyBox,u):HOME.alleyBox;}
-  if(n===32)essie.position=[essieBox[0]+.9,0,essieBox[2]+.16];
+  if(n===32)essie.position=[essieBox[0],0,essieBox[2]+.95];
   cam=n===28?focus(HOME.busStop,3.0,61,2.4):n===29?focus(HOME.market,3.0,62,2.5):
     n===30?cameraPreset([-7.2,1.4,8.5],[-9.3,.7,3.0],58):
     n===31?cameraPreset([-7.2,5.5,8.1],[-9.15,.5,2.0],48):
@@ -115,8 +115,10 @@ export function stateAt(frame:number,shots:EditShot[]):State{
     cameraPreset([-6.5,1.55,8.0],[-9.15,.7,1.8],39);
  }
  if(n>=35&&n<=52){room='alley';essieBox=HOME.alleyBox;
-  mocha.position=n===36?walk(HOME.alleyMouth,[-8.35,0,2.65],u):n<=39?[-8.4,0,2.3]:[-8.4,0,1.8];
-  if(n===40)mocha.position=[-8.3,0,2.15];
+  // The blue shop facade begins at X=-8.35; preserve the original cat's
+  // 0.67m half-width by keeping Mocha in the open corridor near X=-9.25.
+  mocha.position=n===36?walk(HOME.alleyMouth,[-9.25,0,2.70],u):[-9.25,0,2.70];
+  if(n===40)mocha.position=[-9.25,0,2.55];
   mocha.emotion=n>=50?'happy':n>=46?'sad':'scared';
   mocha.walking=n===36;
   essie.position=[HOME.alleyBox[0],0,HOME.alleyBox[2]];
@@ -130,9 +132,17 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   if(n>=51)morph.essie=0;
   essie.morph=morph.essie;
   if(n>=40&&n<=49)essie.visible=false;
-  if(n===49){mocha.position=walk([-8.4,0,1.8],HOME.alleyBox,u);mocha.scale=lerp(1,.63,ease(u));mocha.morph=0;flap.essie=.95;}
-  if(n===50){mocha.position=walk(HOME.alleyBox,[-8.4,0,1.8],u);mocha.scale=lerp(.63,1,ease(u));flap.essie=.95;}
-  if(n>=51)mocha.position=[-8.40,0,1.8];
+  if(n===49){
+   mocha.position=walk([-9.25,0,2.70],HOME.alleyBox,u);
+   mocha.position[1]=.84*Math.sin(Math.PI*ease(u)); // Clear the physical box rim.
+   mocha.scale=lerp(1,.63,ease(u));mocha.morph=0;flap.essie=.95;
+  }
+  if(n===50){
+   mocha.position=walk(HOME.alleyBox,[-9.25,0,2.70],u);
+   mocha.position[1]=.84*Math.sin(Math.PI*ease(u));
+   mocha.scale=lerp(.63,1,ease(u));flap.essie=.95;
+  }
+  if(n>=51)mocha.position=[-9.25,0,2.70];
   cam=(n===35||n===37||n===38)?focus(HOME.alleyBox,2.25,42,1.05):
     (n===39||n===50||n===51)?cameraPreset([-7.0,1.75,3.7],[-9,.65,1.6],44):
     n===41||n===45?cameraPreset([-8.2,2.9,2.1],[-9.15,.3,1.4],42):
@@ -143,8 +153,10 @@ export function stateAt(frame:number,shots:EditShot[]):State{
     cameraPreset([-6.8,1.8,4.1],[-8.95,.7,1.8],55);
  }
  if(n>=53&&n<=55){
-  mocha.position=n===53?walk(HOME.alleyMouth,HOME.door,u):[HOME.latte[0]+.3,0,HOME.latte[2]+.6];
-  essie.position=n===53?walk(HOME.alleyMouth,HOME.door,u):[HOME.latte[0]+1,0,HOME.latte[2]+.3];
+  // Cut to the cafe approach rather than sprinting 12m through the bus shelter.
+  mocha.position=n===53?walk([1.15,0,6.25],HOME.door,u):[HOME.latte[0]+.3,0,HOME.latte[2]+.6];
+  essie.position=n===53?walk([.25,0,6.10],[1.65,0,4.85],u):[HOME.latte[0]+1,0,HOME.latte[2]+.3];
+  essie.visible=true; // Essie visibly helps with Latte's rescue in shots 53–55.
   mocha.emotion=essie.emotion='happy';mocha.walking=essie.walking=n===53;
   latte.visible=n===55;latte.position=n===55?mix(HOME.latte,[HOME.latte[0],.25,HOME.latte[2]+.7],ease(u)):[...HOME.latte];latte.emotion='surprised';
   flap.latte=.93;heroBox='latte';
@@ -164,6 +176,12 @@ export function stateAt(frame:number,shots:EditShot[]):State{
     cameraPreset([.9,1.45,4.5-(n===60?u*.55:0)],[-1.45,.6,2.5],n===60?49:55);
  }
  if(n===52){essie.visible=true;essie.position=[-9.2,0,1.4];}
+ if(n===25)mocha.headTurn=lerp(-.18,.30,ease(u));
+ if(n>=31&&n<=48){
+  mocha.headTurn=.16*Math.sin(u*Math.PI*1.25);
+  mocha.gazeY=-.10+.12*Math.sin(u*Math.PI);
+  if(n>=35&&n<=39)essie.headTurn=.10*Math.sin(u*Math.PI);
+ }
  // Keep standing cat models near their established Episode 01 scale. A cat
  // curled inside a box uses a separate compact pose and grounded placement,
  // not a magically enlarged box or an oversized upright cat sticking through it.
@@ -201,7 +219,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
    const clearance=ease((hop-.25)/.55);
    mocha.position=[
     u<.24?lerp(-3.32,-3.19,ease(u/.24)):lerp(-3.19,-1.95,clearance),
-    (hop>0&&hop<1?.96*Math.sin(Math.PI*hop):0)
+    (hop>0&&hop<1?.84*Math.sin(Math.PI*hop):0)
        +.12*ease((hop-.86)/.14),
     2.17
    ];

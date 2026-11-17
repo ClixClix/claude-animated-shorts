@@ -145,12 +145,29 @@ record('all-three-end-characters-visible',["mocha","essie","latte"].every(id=>fi
 // Every real Episode02 timeline frame should have finite actor/camera state.
  // A single numeric invalidity can produce a black render or a camera jump.
 const timelineFailures=[],shotIds=new Set();
+const alleyFacadeCollisions=[],alleyBoxWallCrossings=[],missingEssieDuringLatteRescue=[];
 for(const shot of shots){
  shotIds.add(shot.sequence);
  if(shot.end<=shot.start||shot.start<0||!Number.isInteger(shot.start)||
     !Number.isInteger(shot.end))timelineFailures.push({shot:shot.sequence,reason:'invalid frame interval'});
  for(let frame=shot.start;frame<shot.end;frame++){
   const state=timeline.stateAt(frame,shots);
+  if(shot.sequence>=31&&shot.sequence<=52){
+   // Physical west shop facade X=-8.35; original Episode01 cat half-width .67m.
+   for(const id of ['mocha','essie']){
+    const cat=state[id],right=cat.position[0]+.67*cat.scale;
+    if(cat.visible&&right> -8.40)
+     alleyFacadeCollisions.push({frame,shot:shot.sequence,id,x:cat.position[0],right});
+   }
+   if(shot.sequence===49||shot.sequence===50){
+    const front=timeline.HOME.alleyBox[2]+boxes.essie.depth/2;
+    if(Math.abs(state.mocha.position[2]-front)<.10&&
+       state.mocha.position[1]<boxes.essie.height+.04)
+     alleyBoxWallCrossings.push({frame,shot:shot.sequence,position:state.mocha.position,front});
+   }
+  }
+  if([53,54,55].includes(shot.sequence)&&!state.essie.visible)
+   missingEssieDuringLatteRescue.push({frame,shot:shot.sequence});
   if(state.shot.sequence!==shot.sequence){
    timelineFailures.push({frame,reason:'wrong shot lookup'});continue;
   }
@@ -169,6 +186,12 @@ for(const shot of shots){
    timelineFailures.push({frame,reason:'final boxes overlap'});
  }
 }
+record('alley-cats-clear-permanent-shop-facade',alleyFacadeCollisions.length===0,
+ alleyFacadeCollisions.slice(0,12));
+record('alley-rescue-clears-physical-box-rim',alleyBoxWallCrossings.length===0,
+ alleyBoxWallCrossings.slice(0,12));
+record('essie-present-during-latte-rescue',missingEssieDuringLatteRescue.length===0,
+ missingEssieDuringLatteRescue.slice(0,12));
 record('all-60-shot-ids-present',shots.length===60&&shotIds.size===60&&
  Math.min(...shotIds)===1&&Math.max(...shotIds)===60);
 record('all-frames-timing-and-poses-finite',timelineFailures.length===0,

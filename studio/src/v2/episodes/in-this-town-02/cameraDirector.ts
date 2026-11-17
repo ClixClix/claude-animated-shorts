@@ -38,7 +38,10 @@ function focusSet(s:State):Extents[]{
   const p=id==='latte'?s.latteBox:id==='essie'?s.essieBox:id==='shared'?s.sharedBox:s.demoBox;
   return box(id,p,id);
  };
- if(n<=4)return n<=2?[B('demo'),C('demoCat')]:[B('demo'),...(n===3?[C('demoCat')]:[])];
+ if(n===4)return [B('demo'),cat('guest-1',[.55,.03,6.45],.6),
+  cat('guest-2',[2.9,.03,6.2],.6),cat('guest-3',[3.8,.03,6.75],.6)];
+ if(n<=3)return n<=2?[B('demo'),C('demoCat')]:[B('demo'),C('demoCat')];
+ if(n===5)return [C('mocha'),B('demo')];
  if(n===5||n===8||n===11||n===14||n===17||n===23||n===24||n===25||n===27||n===28||n===29||n===30||n===33||n===36||n===43||n===48)return [C('mocha')];
  if(n===6)return [B('latte'),C('latte')];
  if(n===7)return [B('essie'),C('essie'),C('mocha')];
@@ -48,7 +51,7 @@ function focusSet(s:State):Extents[]{
  if(n===18||n===20||n===22)return [C('mocha'),C('essie'),B('essie')];
  if(n===19)return [C('mocha'),C('essie'),B('essie')];
  if(n===21)return [C('essie')];
- if(n===26)return [B('essie')]; // shows the vacant spot, box is invisible
+ if(n===26)return [C('mocha'),B('essie')]; // Mocha plus the empty sleeping spot
  if(n===31||n===34)return [C('mocha'),C('essie'),B('essie')];
  if(n===32)return [C('mocha'),C('essie'),B('essie')];
  if(n===35)return [C('essie'),B('essie')];
@@ -167,6 +170,21 @@ function fit(s:State){
    framing:projections(corners(focus),target,camera,fov),
    shot:n,selectedIds:focus.map(x=>x.id)};
  }
+ // Only the rule demonstration uses a true overhead, with measured box size.
+ if(s.shot.sequence===2){
+  const target:V3=[s.demoBox[0],.18,s.demoBox[2]];
+  const camera:V3=[target[0],3.40,target[2]+.06];
+  return {camera,target,fov:52,region:r,
+   framing:projections(corners(focus),target,camera,52),
+   shot:2,selectedIds:focus.map(x=>x.id)};
+ }
+ // Close enough to read the cure diagram; the prior exterior framing was tiny.
+ if(s.shot.sequence===57){
+  const target:V3=[.1,2.0,6.1],camera:V3=[.1,2.40,10.70];
+  return {camera,target,fov:68,region:r,
+   framing:projections(corners(focus),target,camera,68),
+   shot:57,selectedIds:focus.map(x=>x.id)};
+ }
  const origin=fallback[r];
  let dir=norm(sub(origin,regionAnchor[r]));
  // The playable alley is a narrow corridor at x roughly -9.15.
@@ -201,6 +219,10 @@ function fit(s:State){
  const wide=[4,8,18,24,27,28,29,30,31,34,40,44,53,56,57,60].includes(s.shot.sequence);
  const distance=Math.min(maxDistance,selected.d*(wide?1.21:1));
  const camera=add(center,mul(dir,distance));
+ // Motivated, gentle push on held beats; feline acting remains essential.
+ if((s.shot.sequence>=31&&s.shot.sequence<=48)||
+    [7,18,19,21,22,23,24,25].includes(s.shot.sequence))
+  camera[2]-=.12*clamp(s.u,0,1);
  return {camera,target:center,fov:selected.fov,region:r,
   framing:projections(points,center,camera,selected.fov),
   shot:s.shot.sequence,selectedIds:focus.map(f=>f.id)};

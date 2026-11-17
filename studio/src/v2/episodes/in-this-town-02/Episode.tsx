@@ -232,7 +232,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  townspeople.root.visible=audienceOn;
  if(audienceOn){
   const spots:V3[]=n===4?
-   [[2.6,.03,8.2],[4.2,.03,8.5],[5.1,.03,7.7]]:
+   [[.55,.03,6.45],[2.9,.03,6.2],[3.8,.03,6.75]]:
    [[-.9,.03,7.9],[.8,.03,8.3],[3.4,.03,8.6]];
   townspeople.actors.forEach((c,i)=>{
    const isGuest=i<3;c.mesh.visible=isGuest;
@@ -302,14 +302,20 @@ const Captions:React.FC<{captions:NonNullable<BoxEpisodeProps['captions']>}>=({c
   color:'#fff9ed',WebkitTextStroke:'3px #18202a',paintOrder:'stroke fill',
   textShadow:'0 3px 8px #101820',pointerEvents:'none'}}>{cue.text}</div>:null;
 };
-export const BoxEpisode:React.FC<BoxEpisodeProps>=props=><AbsoluteFill style={{background:'#172b46'}}>
+export const BoxEpisode:React.FC<BoxEpisodeProps>=props=>{
+ const frame=useCurrentFrame();
+ // The entrance plant is baked into static batches. Preserve the exact
+ // Episode01 geometry, but render it unbatched for the three finale shots.
+ const useBatch=(props.optimize??true)&&stateAt(frame,props.shots).shot.sequence<58;
+ return <AbsoluteFill style={{background:'#172b46'}}>
  <ThreeCanvas width={1080} height={1920} dpr={props.previewScale??1}
   shadows gl={{antialias:false,stencil:false,powerPreference:'high-performance',toneMappingExposure:1}}
   camera={{near:.08,far:320,fov:48}}>
-  <Inner {...props}/>
+  <Inner {...props} optimize={useBatch}/>
  </ThreeCanvas>
  <Captions captions={props.captions??[]}/>
 </AbsoluteFill>;
+};
 export const BoxEpisodeComposition:React.FC=()=>{
  const props:BoxEpisodeProps={...SCRATCH_EDIT,previewScale:1,optimize:true,audioApproved:false};
  return <Composition id="InThisTownEpisode02Box" component={BoxEpisode} defaultProps={props}
