@@ -111,6 +111,8 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
   tone:new ToneMappingEffect({mode:ToneMappingMode.NEUTRAL}),
   grade:new GradeEffect(GRADE,.7)
  }),[scene,camera,previewScale]);
+ // A brief directional-light shift supports the passage of time in shot 02.
+ light.key.position.set(index===1?-7+12*u:-7,15,index===1?8-3*u:8);
  const cam=camera as T.PerspectiveCamera;
  const chosen=CAMERAS[index];
  const push=index===0?.12*u:index===2?.08*u:0;
@@ -138,6 +140,7 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
   expression:standing?'happy':index===2?'surprised':'neutral',
   walking:standing&&u<.55,
   progress:settle*.30+morph*.65,
+  morph,
   look:standing?.20:0,
   blink:index===2&&morph>.55?.12:undefined,
   headTilt:standing?-.06:lerp(-.10,.12,morph)
