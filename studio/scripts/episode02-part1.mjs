@@ -13,14 +13,18 @@ if(stillsOnly&&videoOnly)throw Error('Choose one of --stills-only or --video-onl
 const out=path.join(studioRoot,'out/v2-episodes/in-this-town-02/part1-pilot');
 const stills=path.join(out,'frames');
 await fs.mkdir(stills,{recursive:true});
-const shots=[
- {id:'01',start:0,end:27},{id:'02',start:27,end:63},
- {id:'03',start:63,end:108},{id:'04',start:108,end:183}
-];
+const blueprint=JSON.parse(await fs.readFile(path.join(studioRoot,
+ 'src/v2/episodes/in-this-town-02/PART1_SHOT_BLUEPRINT.json'),'utf8'));
+const shots=blueprint.shots.map(({id,start,end})=>({id,start,end}));
+if(shots.length!==4||shots[0].start!==0||
+ shots[shots.length-1].end!==183||
+ shots.some((q,i)=>q.end<=q.start||(i&&q.start!==shots[i-1].end)))
+ throw Error('Part 1 blueprint shot timing violates the approved 183-frame opening.');
 const scale=native?1:.5;
 const hash=x=>createHash('sha256').update(x).digest('hex');
 const sourceFiles=[
  'src/v2/episodes/in-this-town-02/Episode02Part1.tsx',
+ 'src/v2/episodes/in-this-town-02/PART1_SHOT_BLUEPRINT.json',
  'src/v2/episodes/in-this-town-02/boxProps.ts',
  'src/v2/episodes/door-at-1111-polish/world.ts',
  'src/v2/episodes/door-at-1111-polish/actors.ts',
