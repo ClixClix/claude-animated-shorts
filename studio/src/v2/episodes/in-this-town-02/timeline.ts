@@ -56,7 +56,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  let demoCat=actor(closer(HOME.demo,.2,0),n<=3,'happy');
  const latteBox=[...HOME.latte] as V3,sharedBox=[...HOME.shared] as V3,demoBox=[...HOME.demo] as V3;
  let essieBox=[...HOME.essie] as V3;
- const show={latte:n>=6,essie:n===7||(n>=18&&n<=23)||(n>=32&&n<=52),shared:n>=58,demo:n<=4};
+ const show={latte:n>=6&&n<=55,essie:n===7||(n>=18&&n<=23)||(n>=32&&n<=52),shared:n>=58,demo:n<=4};
  const flap={latte:.85,essie:.85,shared:.85,demo:.85};
  const morph={essie:0,latte:0,demo:0};
  let heroBox:State['heroBox']=null,room='cafe';
@@ -176,9 +176,11 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  if(n===51){essie.position=[HOME.alleyBox[0],.10,HOME.alleyBox[2]+.28];essie.scale=lerp(.82,1,ease(u));}
  if(n===55){latte.position=[HOME.latte[0],.12,HOME.latte[2]+.18];latte.scale=lerp(.75,1,ease(u));}
  if(n>=59){
-  mocha.position=[-2.18,.60,2.5];mocha.scale=.56;
-  essie.position=[-1.45,.60,2.5];essie.scale=.56;
-  latte.position=[-.72,.60,2.5];latte.scale=.56;
+  // Shared cardboard sits on the café floor: actual curled cats stay
+  // grounded IN it, not hovering 60 cm above the base.
+  mocha.position=[-2.18,.11,2.5];mocha.scale=.56;
+  essie.position=[-1.45,.11,2.5];essie.scale=.56;
+  latte.position=[-.72,.11,2.5];latte.scale=.56;
  }
  const openShared=n>=58;
  const inTown=n>=56&&n<=57;
