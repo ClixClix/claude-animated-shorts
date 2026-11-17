@@ -58,7 +58,7 @@ function bridgeActor(
    yaw:moving?.55:.06,
    expression:expr,headTurn:pose.headTurn,gazeX:pose.headTurn,
    gazeY:pose.gazeY,
-   headTilt:expr==='sad'?-.12:expr==='scared'?.09:expr==='happy'?-.035:0,
+   headTilt:expr==='sad'?-.12:expr==='scared'?.09:expr==='concerned'?.13:expr==='happy'?-.035:0,
    breath:Math.sin(s.t*1.8+seed)*.25,
    tail:Math.sin(s.t*1.35+seed)*.26,
    blink:Math.max(0,1-Math.abs(((s.t+seed*.41)%3.1)-2.78)/.11)
@@ -92,6 +92,8 @@ export function createEpisode1CastCat(id:CatId){
    gazeY:pose.gazeY-.28*behavior.intensity
   }:pose;
   const a=bridgeActor(id,actingPose,next,s);
+  if(id==='essie'&&s.shot.sequence===35)
+   a.pose.blink=Math.max(a.pose.blink??0,clamp((s.u-.49)/.38));
   if(behavior){
    a.pose.headTilt=(a.pose.headTilt??0)-.16*behavior.intensity;
    a.pose.blink=Math.max(a.pose.blink??0,
@@ -110,7 +112,20 @@ export function createEpisode1CastCat(id:CatId){
   // Explicit limit: 02 still needs a purpose-built transformation. We do
   // NOT scale/stretch the approved Episode 01 artwork into a fake box.
   card.mesh.visible=pose.visible&&alpha>.08;
-  card.mesh.scale.setScalar(pose.scale);
+  // Transformation must VISIBLY advance from original living feline art into
+  // the SAME cardboard box, rather than remaining an inert front-facing card
+  // until an abrupt hide. This deforms ONLY Episode 02's actor instance.
+  // No replacement silhouette, limbs, or change to the Episode 01 asset.
+  const fold=clamp((pose.morph-.12)/.78);
+  const paper=fold*fold*(3-2*fold);
+  card.mesh.scale.set(
+   pose.scale*(1-.10*paper),
+   pose.scale*(1-.38*paper),
+   pose.scale
+  );
+  // The paper edges settle toward the inside; preserve above-floor visibility
+  // while it shrinks. Clipping and perceived fold quality still need real frames.
+  card.mesh.position.y+=.045*paper;
   // The approved Episode 01 figures are upright illustrated cards. From
   // high box angles they collapse to narrow, upright faces instead of reading
   // as a cat curled on its side. Recline ONLY the resting box poses, retaining
@@ -118,8 +133,12 @@ export function createEpisode1CastCat(id:CatId){
   const n=s.shot.sequence;
   const curled=(id==='latte'&&n===6)||
    (id==='essie'&&[7,19,35,37,38,39].includes(n));
-  card.mesh.rotation.x=curled?-.38:0;
-  card.mesh.material.opacity=1; // retain Episode 01 opaque, correct shaded face
+  card.mesh.rotation.x=(curled?-.38:0)-.52*paper;
+  // A progressive temporary dissolve makes the animation visibly continuous.
+  // Reset after morphing, retaining Episode 01's opaque, shaded original art.
+  card.mesh.material.transparent=paper>.01;
+  card.mesh.material.depthWrite=paper<=.01;
+  card.mesh.material.opacity=1-.48*paper;
   card.legs.visible=card.mesh.visible&&a.moving;
   shadow.mesh.visible=card.mesh.visible;
   shadow.mesh.position.set(
