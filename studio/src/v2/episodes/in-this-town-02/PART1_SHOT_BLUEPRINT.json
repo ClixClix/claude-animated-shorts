@@ -10,15 +10,15 @@
   "width": 1080,
   "height": 1920,
   "stage": {
-    "location": "Episode 01 exterior café sidewalk / fixed town geometry",
+    "location": "Episode 01 café front SIDEWALK, directly in front of the left window; no asphalt-road staging",
     "boxWorldPosition": [
-      3.45,
-      0.045,
-      7.6
+      0,
+      0.04,
+      5.35
     ],
     "boxSpecId": "RULE_DEMO_BOX",
-    "guestSource": "Episode 01 TownPopulation supporting-cat-0, NOT Mocha, Essie, or Latte",
-    "audienceSource": "Episode 01 TownPopulation supporting-cat-1 to 3",
+    "guestSource": "Dedicated distinct town guest using Episode 01 detailed drawCat illustrated head/body rig",
+    "audienceSource": "Three Episode 01 detailed drawCat palette variants (slate, honey, sage), not simplified TownPopulation background sprites",
     "fixedSet": true
   },
   "controls": {
@@ -27,7 +27,7 @@
     "aspect": "9:16",
     "captionOverlay": "none until approved word alignments exist",
     "paidVoiceRequests": 0,
-    "performance": "true 3D cardboard flaps, Episode 01 2.5D illustrated cat cards and paw rigs",
+    "performance": "Episode 01 detailed canvas illustrations + curled cat body/head layered behind one physically-sized 3D cardboard box",
     "disallow": [
       "camera through walls",
       "cat duplicate",
@@ -42,19 +42,19 @@
       "id": "01",
       "start": 0,
       "end": 27,
-      "action": "Guest paws climb over the rim of one SMALL box; low-angle establishing box shot",
+      "action": "Medium-wide café sidewalk: chestnut guest approaches one SMALL cardboard box, reaches toward rim with near paw; face and full box visible",
       "camera": {
         "position": [
-          3.3,
-          1.38,
-          10
+          1,
+          1.62,
+          8.75
         ],
         "target": [
-          3.45,
-          0.65,
-          7.6
+          -0.12,
+          0.76,
+          5.3
         ],
-        "fov": 61
+        "fov": 72
       },
       "subject": [
         "guest paws",
@@ -66,19 +66,19 @@
       "id": "02",
       "start": 27,
       "end": 63,
-      "action": "High three-quarter view of guest curling inside same box; passing sunshine indicates elapsed time",
+      "action": "Three-quarter overhead: curled guest body and recognizable head are inside same box; head settles while afternoon light moves",
       "camera": {
         "position": [
-          3.9,
-          2.65,
-          10.12
+          1.15,
+          2.47,
+          8.15
         ],
         "target": [
-          3.45,
-          0.5,
-          7.6
+          0,
+          0.55,
+          5.35
         ],
-        "fov": 63
+        "fov": 74
       },
       "subject": [
         "cat visible over rim",
@@ -90,19 +90,19 @@
       "id": "03",
       "start": 63,
       "end": 108,
-      "action": "Guest silhouette progressively becomes cardboard as it folds inside same real box; no duplicate box",
+      "action": "Single uninterrupted cat-to-cardboard transition: guest head and ears turn papery before box flaps close, not just disappear behind box",
       "camera": {
         "position": [
-          3.57,
-          1.82,
-          10.75
+          0.95,
+          1.67,
+          8.8
         ],
         "target": [
-          3.45,
-          0.65,
-          7.6
+          0,
+          0.7,
+          5.35
         ],
-        "fov": 63
+        "fov": 73
       },
       "subject": [
         "guest face",
@@ -114,19 +114,19 @@
       "id": "04",
       "start": 108,
       "end": 183,
-      "action": "Three distinct Episode 01 town guests gather and listen by the transformed box without discovering cure",
+      "action": "Medium-wide: three distinct detailed supporting cats converge from either side, visibly baffled, one taps box edge; no limb extending across the box",
       "camera": {
         "position": [
-          3.55,
-          2.15,
-          11.35
+          0,
+          2,
+          10.1
         ],
         "target": [
-          3.45,
-          0.73,
-          7.6
+          0,
+          0.78,
+          5.35
         ],
-        "fov": 71
+        "fov": 80
       },
       "subject": [
         "one transformed box",
@@ -150,7 +150,10 @@
       "no floating paws",
       "no cat duplicate",
       "clear single-box transformation",
-      "Episode 01 matching linework and lighting"
+      "Episode 01 matching linework and lighting",
+      "Box sits on actual cafe SIDEWALK rather than dark asphalt roadway",
+      "No simplistic smiley-face supporting-cat sprites in hero shots",
+      "Box does not hide guest head/eyes before transformation begins"
     ]
   },
   "approval": "All four shots must pass actual rendered visual review before shots 05–60 are rebuilt."
