@@ -38,7 +38,8 @@ export function shot01Pose(frame:number,box:[number,number,number]):GuestRigPose
  const flight=t>=.96&&t<1.89;
  const land=ease((t-1.89)/.30);
  const settle=ease((t-2.18)/.36);
- const progressed=flight?jump:t>=1.89?1:0;
+ // Delay lateral motion until the feet are ABOVE the near cardboard rim.
+ const progressed=flight?ease((jump-.18)/.76):t>=1.89?1:0;
  const jumpHeight=flight?.83*Math.sin(Math.PI*jump):0;
  const sx=flight?mix(x-.88,x,progressed):t>=1.89?x:mix(x-1.21,x-.88,approach);
  const footHeight=t>=1.89?mix(.10,.085,land):.04+jumpHeight;
@@ -77,7 +78,7 @@ function createCard(w:number,h:number,worldW:number,worldH:number,
 }
 const ink='#292737';
 function ell(g:CanvasRenderingContext2D,x:number,y:number,rx:number,ry:number,
- fill:string,stroke=3.6){
+ fill:string|CanvasGradient,stroke=3.6){
  g.beginPath();g.ellipse(x,y,rx,ry,0,0,Math.PI*2);
  g.fillStyle=fill;g.fill();if(stroke){g.lineWidth=stroke;g.strokeStyle=ink;g.stroke();}
 }
@@ -86,7 +87,7 @@ function paintBody(g:CanvasRenderingContext2D,c:CatDesign){
  const shade=g.createLinearGradient(45,55,220,236);
  shade.addColorStop(0,c.light);shade.addColorStop(.68,c.coat);
  shade.addColorStop(1,c.shadow);
- ell(g,128,133,101,106,shade as unknown as string,4.2);
+ ell(g,128,133,101,106,shade,4.2);
  // Curved painted belly and chest ruff from Episode 01's palette/ink idiom.
  g.beginPath();g.moveTo(105,52);g.bezierCurveTo(76,86,61,158,101,215);
  g.bezierCurveTo(144,232,173,173,160,92);
