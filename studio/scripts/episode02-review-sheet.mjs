@@ -21,6 +21,24 @@ const cards=frames.map(f=>[
  '<p>'+safe(f.notes)+'</p>',
  '<small>Creative approval: <strong>NOT APPROVED</strong></small></article>'
 ].join('\n')).join('\n');
+const endingSamples=[
+ [58,55],[58,93],[59,6],[59,24],[59,37],[59,50],[59,68],[59,90],
+ [60,8],[60,50],[60,90]
+];
+const endingFrames=[];
+for(const [shot,percent] of endingSamples){
+ const image='EP2_FINALE_motion_'+String(shot).padStart(2,'0')+
+  '_'+String(percent).padStart(2,'0')+'.png';
+ const found=await fs.access(path.join(out,image)).then(()=>true,()=>false);
+ endingFrames.push({shot,percent,image:found?image:null,artisticApproval:false});
+}
+const endingCards=endingFrames.map(item=>[
+ '<article><header><b>Shot '+item.shot+'</b> · '+item.percent+'% of action</header>',
+ item.image?'<img src="'+safe(item.image)+'" alt="Real cinematic motion sample">':
+  '<div class="missing">No render yet</div>',
+ '<p>Check the foot-to-rim relationship, visible ears, face direction and motivated move into one shared box.</p>',
+ '<small>Motion and acting approval: <strong>NOT APPROVED</strong></small></article>'
+].join('\n')).join('\n');
 const criteria=queue.reviewCriteria.map(x=>'<li>'+safe(x)+'</li>').join('\n');
 const html=[
  '<!doctype html><html lang="en"><head><meta charset="utf-8">',
@@ -42,6 +60,9 @@ const html=[
  '<p>Original film fingerprint: '+safe(lock.referenceMp4Sha256.slice(0,16))+'… · Final format 1080×1920, 30fps · <b>Creative approval pending</b></p>',
  '<h2>Required visual checks</h2><ul>'+criteria+'</ul>',
  '<h2>Shot review — latest renders</h2><section class="grid">'+cards+'</section>',
+ '<h2>Ending motion continuity — shots 58–60</h2>',
+ '<p class="lead">Eleven actual progressive motion samples reveal whether Mocha clears the cardboard rim and joins Essie and Latte. A middle frame alone cannot show an entry path.</p>',
+ '<section class="grid">'+endingCards+'</section>',
  '<p class="lead">Matching Episode 01 source assets and color settings cannot prove matching acting, staging, geography, emotional storytelling or music rights. Those require actual movie review.</p>',
  '</body></html>'
 ].join('\n');
@@ -50,7 +71,8 @@ const packet={
  series:lock.series,episode:queue.episode,
  referenceMp4Sha256:lock.referenceMp4Sha256,
  stage:'REAL_RENDERED_FRAMES_REQUIRE_VISUAL_SIGNOFF',
- shots:frames,framesPresent:frames.filter(f=>f.image).length,
+ shots:frames,endingMotion:endingFrames,
+ framesPresent:frames.filter(f=>f.image).length,
  framesMissing:frames.filter(f=>!f.image).map(f=>f.shot),
  creativeApproval:false,publishingAllowed:false
 };
