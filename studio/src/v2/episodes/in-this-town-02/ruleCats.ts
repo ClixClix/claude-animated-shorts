@@ -61,6 +61,7 @@ export function createRuleCat(variant:RuleCatVariant,height=1.22){
   pose?:'standing'|'curled';
   expression?:CatPose['expression'];
   progress?:number;
+  morph?:number;
   look?:number;
   headTilt?:number;
   blink?:number;
@@ -90,6 +91,26 @@ export function createRuleCat(variant:RuleCatVariant,height=1.22){
    g.save();
    g.translate(0,-5+progress*24);
    drawCat(g,'essie',{...pose,walking:false},true,design);
+   const paper=clamp(options.morph??0);
+   if(paper>.16){
+    // Cardboard *develops on the same face* rather than adding a beige
+    // rectangle on the front wall of the box. Split paper facets follow
+    // the cheek/ear silhouette while the facial features are still visible.
+    g.save();
+    g.globalAlpha=Math.min(.91,(paper-.16)/.58);
+    g.lineJoin='round';g.lineWidth=3.5;g.strokeStyle='#51403c';
+    const fold=(points:[number,number][],tone:string)=>{
+     g.fillStyle=tone;g.beginPath();
+     points.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));
+     g.closePath();g.fill();g.stroke();
+    };
+    fold([[147,171],[230,157],[244,227],[171,264],[150,224]],'#bd936e');
+    fold([[253,165],[348,177],[348,222],[325,268],[248,233]],'#d3aa81');
+    g.strokeStyle='#82674f';g.lineWidth=2;
+    g.beginPath();g.moveTo(173,186);g.lineTo(225,217);
+    g.moveTo(333,191);g.lineTo(272,226);g.stroke();
+    g.restore();
+   }
    g.restore();
   }else{
    drawCat(g,'essie',pose,false,design);
