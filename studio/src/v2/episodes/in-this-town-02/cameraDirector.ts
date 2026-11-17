@@ -55,7 +55,7 @@ function focusSet(s:State):Extents[]{
  if(n===21)return [C('essie')];
  if(n===26)return [C('mocha'),B('essie')]; // Mocha plus the empty sleeping spot
  if(n===31||n===34)return [C('mocha'),C('essie'),B('essie')];
- if(n===32)return [C('mocha'),C('essie'),B('essie')];
+ if(n===32)return [C('essie'),B('essie')];
  if(n===35)return [C('essie'),B('essie')];
  if(n===37||n===38)return [C('mocha'),C('essie'),B('essie')];
  if(n===39||n===40||n===41||n===42||n===44||n===47||n===49||n===50||n===51)return [C('mocha'),B('essie'),...(n===39||n===50||n===51?[C('essie')]:[])];
@@ -211,9 +211,9 @@ function fit(s:State){
  if([32,35,37,38,41,42,45].includes(s.shot.sequence)){
   const n=s.shot.sequence,p=s.essieBox;
   const profile:Record<number,{camera:V3;target:V3;fov:number}>={
-   // Follow Essie's DRAGGING action instead of hiding it in a huge long shot.
-   32:{camera:[p[0]-.30,2.45,p[2]-2.65],
-       target:[p[0],.60,p[2]+.50],fov:70},
+   // From Essie's side, follow the box DRAG without putting a cardboard\n   // wall between the camera and her face. Mocha is offscreen in this shot.
+   32:{camera:[p[0]-.20,1.95,p[2]+2.70],
+       target:[p[0],.70,p[2]+.43],fov:72},
    // Stay behind the cardboard when Essie settles; Mocha is further up
    // the alley and must not stand between our camera and her face.
    35:{camera:[p[0]-.46,1.66,p[2]-1.66],
@@ -231,10 +231,9 @@ function fit(s:State){
    // on the open-lane side of the shop wall.
    42:{camera:[p[0]-.36,1.58,p[2]+3.55],
        target:[p[0],.74,p[2]+1.00],fov:73},
-   // Raised three-quarter "looking inside" avoids a literal camera
-   // embedded in cardboard (which rendered an obstructed black cavity).
-   45:{camera:[p[0]-.27,1.72,p[2]-1.10],
-       target:[p[0],.09,p[2]],fov:53}
+   // Real Mocha-eye POV from the OPEN entrance side: elevated enough to\n   // reveal the empty floor, never a lens staring into the exterior back wall.
+   45:{camera:[p[0]-.18,2.25,p[2]+1.85],
+       target:[p[0],.22,p[2]],fov:63}
   };
   const q=profile[n];
   return {camera:q.camera,target:q.target,fov:q.fov,region:r,
