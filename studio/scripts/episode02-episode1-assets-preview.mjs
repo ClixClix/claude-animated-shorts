@@ -43,7 +43,9 @@ const assetPaths=[
 ];
 const read=async p=>fs.readFile(path.join(studioRoot,p),'utf8');
 const [ep2,adapter,ep1]=await Promise.all([
- read(assetPaths[0]),read(assetPaths[1]),read('src/v2/episodes/door-at-1111-polish/Episode.tsx')
+ read('src/v2/episodes/in-this-town-02/Episode.tsx'),
+ read('src/v2/episodes/in-this-town-02/episode1Cast.ts'),
+ read('src/v2/episodes/door-at-1111-polish/Episode.tsx')
 ]);
 check(ep1.includes('createEpisodeCat(id)'),'Episode 01 expected lead rig not found.');
 check(adapter.includes("createEpisodeCat(id)"),'Episode 02 not reusing exact Episode 01 lead rig.');
