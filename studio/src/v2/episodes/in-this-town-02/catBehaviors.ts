@@ -18,6 +18,8 @@ const lip=(pos:V3,kind:'latte'|'essie'|'shared'):V3=>{
 };
 const ease=(v:number)=>{const x=Math.max(0,Math.min(1,v));return x*x*(3-2*x);};
 const pulse=(u:number)=>ease(u/.23)*(1-ease((u-.75)/.22));
+// Two discrete, supported feline muzzle taps, not an invented reaching arm.
+const tap=(u:number,at:number)=>ease((u-at+.10)/.07)*(1-ease((u-at-.02)/.08));
 export function catBehaviorFor(
  s:State,id:'mocha'|'essie'|'latte'
 ):CatBehavior|null{
@@ -30,8 +32,8 @@ export function catBehaviorFor(
    target:[s.essie.position[0],s.essie.position[1]+.47,s.essie.position[2]],
    intensity:.68*pulse(s.u)};
   if([41,42,43,48].includes(n))return{
-   mode:n===41?'sniff':'nose-nudge',target:lip(s.essieBox,'essie'),
-   intensity:.55*pulse(s.u)};
+   mode:'nose-nudge',target:lip(s.essieBox,'essie'),
+   intensity:n===41?1.15*(tap(s.u,.29)+tap(s.u,.70)):.55*pulse(s.u)};
   // During rescue, Mocha places his WHOLE BODY into the boxes using his
   // paws, not a foreleg reaching toward something like a human hand.
   if(n===49||n===54||n===59)return null;
