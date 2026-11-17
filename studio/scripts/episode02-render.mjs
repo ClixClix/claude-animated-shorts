@@ -16,6 +16,7 @@ props.optimize=true;
 const sourceFiles=[
  'src/v2/episodes/in-this-town-02/Episode.tsx',
  'src/v2/episodes/in-this-town-02/episode1Cast.ts',
+ 'src/v2/episodes/in-this-town-02/catBehaviors.ts',
  'src/v2/episodes/door-at-1111-polish/walkingLegs.ts',
  'src/v2/episodes/door-at-1111-polish/population.ts',
  'src/v2/animation/kitten.ts',
