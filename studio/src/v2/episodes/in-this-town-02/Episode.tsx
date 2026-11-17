@@ -191,6 +191,9 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // Open the existing hinged door fully against the wall for the return
  // sprint, rather than letting its leaf cut through Mocha and Essie.
  world.door.rotation.y=s.shot.sequence===24?-.3:s.shot.sequence===27?-1.18:s.shot.sequence>=53?-Math.PI/2:0;
+ // The return shot tracks through the already-open entrance. Mask only
+ // its swung-open leaf, which still cut across both cats in real 540p footage.
+ world.door.visible=s.shot.sequence!==53;
  // Episode01's permanent plant is retained everywhere except the close-up
  // jump/cuddle, where real 25-frame cloud QA proved its leaves block Mocha.
  // Cinematic foreground masking changes shot visibility, not original assets.
@@ -262,7 +265,9 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   frame:s.frame,t:s.t,camera:directed.camera,target:directed.target};
  townspeople.update(ep1CrowdState);
  const outsideBusy=n<=5||n===8||n===56||n===57;
- const cafeBusy=n>=6&&n<=23;
+ // Preserve daytime patrons in wide shots; the foreground guest in 11/14
+ // otherwise covers half of Mocha's face in the real tight reaction frames.
+ const cafeBusy=n>=6&&n<=23&&n!==11&&n!==14;
  const audienceOn=n===4||n===56||n===57;
  // Deterministic sidewalk motion, not random positions on each render frame.
  // Keep everyone off the road and away from the hero's box contact.

@@ -1,7 +1,20 @@
 # Episode 02 — visual QA error ledger
 
-Last updated: 2026-11-17 12:25 ET (17:25 UTC)
+Last updated: 2026-11-17 13:00 ET (18:00 UTC)
 Branch: `v2-local-render`
+
+## 13:00 ET — actual 3e1fbee complete-film review; latest 78c9a0f render in progress
+
+- **Real full movie:** [run 44121079074](https://github.com/ClixClix/claude-animated-shorts/actions/runs/44121079074) SUCCESS at `3e1fbee`, artifact **14353681754** downloaded and decoded; verified 60/60 shots, 3,876 frames, 129.2 seconds, 540×960, 30fps. Inspected all 60 actual midframes and 25 five-frame temporal strips (02,06,07,11,12,14,19,24,29,32,35,37–39,41,45,49,50,53,57–60 plus others). **Not** an uninterrupted normal-speed creative approval or Episode01 parity comparison.
+- **NEW E02-032 — HIGH — SHOTS 11 (frames 609–656; 20.3–21.9s), 14 (792–854; 26.4–28.5s):** Large blue supporting cat masks half of Mocha's face in two nearly identical close-ups. **Verified cause:** café extras enabled during hero close-ups. **FIXED IN SOURCE / RERENDER PENDING:** exclude café extras only in these two tight shots, animate Mocha's reaction head turn in shot14. Keep café life in wide shots.
+- **E02-030 — MEDIUM — SHOT 35 (2139–2198; 71.3–73.3s):** Mocha appears as only disembodied ears behind Essie's back flap throughout actual five-frame strip. **Verified cause:** background actor obscured by real flap. **FIXED IN SOURCE / RERENDER PENDING:** hide Mocha only for the Essie-focused box-lip insert.
+- **E02-024 — HIGH — SHOT 53 (3291–3356; 109.7–111.9s):** Swung-open café door leaf still slices through returning Mocha/Essie in frames ~3323–3349. **Verified cause:** door group remains visible across tracking path. **FIXED IN SOURCE / RERENDER PENDING:** mask only the open door leaf in shot53; original frame and all other shots remain.
+- **E02-018 / E02-002 — HIGH — SHOTS 49–50 (3030–3167) AND 59 (3720–3800):** Mocha floats visibly above box rim then drops abruptly. **Verified symptom; suspected cause:** exaggerated Y arc. **FIXED IN SOURCE / RERENDER PENDING:** lower 49/50 hop peak .84→.70m and 59 peak 1.02→.76m; static clearance sampling predicts the shared left rim remains clear, but paw support and cinematic quality are not verified until new full moving render.
+- **E02-017 — HIGH — SHOT 29 (1764–1817):** Foreground bus-stop pole still crosses Mocha at frames 1769–1780. **UNRESOLVED:** requires camera reblocking without removing street fixture.
+- **E02-021 — HIGH — OVERHEAD/BOX:** Actual shot02 kitten still upright/static; shot06 Latte still reads as a flat reclining card; additional top-looking shots 07,19,35,37–39,49–50,58–60 remain unapproved. **UNRESOLVED**, preserve original Episode01 character source.
+- **E02-022 — HIGH — TOWN LIFE:** Moving road car visually confirmed in shot04; café and district still too static in inspected 3e1fbee footage. New walking café guest from `960b930` still awaits newer 78c9a0f full render. Nighttime alley stays quiet. **PARTIALLY IMPROVED / OPEN**.
+- **Latest workflows:** [full 44133856893](https://github.com/ClixClix/claude-animated-shorts/actions/runs/44133856893) at `78c9a0f` four shards IN PROGRESS, no failing steps or artifacts yet; [QA 44133856860](https://github.com/ClixClix/claude-animated-shorts/actions/runs/44133856860) SUCCESS, 25/25 style, 21/21 finale numerical, repeatable source checks. Blocker diagnostic sampled 512 frames with 234 possible warnings across 29 shots, not 234 confirmed defects. **0 independently verified 15-minute scheduled checks**. Do not cancel active full render; next source commit should queue a new complete 60-shot render.
+- **Counts:** **22 open or source-patched awaiting moving visual verification**, **10 previously visually verified fixed**, **1 CI-only fixed**. The latest 78c9a0f film is not yet reviewed. Approved Episode01 final reference and native 1080p unavailable. Audio deliberately absent and unreviewed; no publishing or paid media APIs.
 
 ## 12:03–12:25 ET — actual full c100a97 film and latest 3e1fbee cloud QA; 60-shot rerender queued
 

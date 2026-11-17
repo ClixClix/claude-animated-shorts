@@ -161,12 +161,12 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   if(n===45)mocha.visible=false;
   if(n===49){
    mocha.position=walk([-9.25,0,2.70],HOME.alleyBox,u);
-   mocha.position[1]=.84*Math.sin(Math.PI*ease(u)); // Clear the physical box rim.
+   mocha.position[1]=.70*Math.sin(Math.PI*ease(u)); // Clear the physical box rim.
    mocha.scale=lerp(1,.63,ease(u));mocha.morph=0;flap.essie=.95;
   }
   if(n===50){
    mocha.position=walk(HOME.alleyBox,[-9.25,0,2.70],u);
-   mocha.position[1]=.84*Math.sin(Math.PI*ease(u));
+   mocha.position[1]=.70*Math.sin(Math.PI*ease(u));
    mocha.scale=lerp(.63,1,ease(u));flap.essie=.95;
   }
   if(n>=51)mocha.position=[-9.25,0,2.70];
@@ -226,6 +226,10 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   flap.demo=.84+.10*Math.sin(Math.PI*u);
  }
  if(n===25)mocha.headTurn=lerp(-.18,.30,ease(u));
+ if(n===14)mocha.headTurn=lerp(-.22,.26,ease(u));
+ // Essie-only box-lip insert: Mocha's idle card was just disembodied ears
+ // above the rear flap in every inspected frame of shot 35.
+ if(n===35)mocha.visible=false;
  if(n>=31&&n<=48){
   mocha.headTurn=.16*Math.sin(u*Math.PI*1.25);
   mocha.gazeY=-.10+.12*Math.sin(u*Math.PI);
@@ -268,7 +272,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
    const clearance=ease((hop-.25)/.55);
    mocha.position=[
     u<.24?lerp(-3.32,-3.19,ease(u/.24)):lerp(-3.19,-1.95,clearance),
-    (hop>0&&hop<1?1.02*Math.sin(Math.PI*hop):0)
+    (hop>0&&hop<1?.76*Math.sin(Math.PI*hop):0)
        +.12*ease((hop-.86)/.14),
     2.17
    ];
