@@ -97,6 +97,7 @@ function createStoryProps(){
 
 const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  const frame=useCurrentFrame(),s=stateAt(frame,shots),{scene,camera,gl}=useThree();
+ const n=s.shot.sequence;
  const world=useMemo(()=>{
   // Reuse the actual complete Episode 01 city/café geometry. No second café instance.
   const w=new EpisodeWorld(optimize);
@@ -226,7 +227,11 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  characters.essie.update(s.essie,next.essie,s,cam,catBehaviorFor(s,'essie'));
  characters.latte.update(s.latte,next.latte,s,cam,catBehaviorFor(s,'latte'));
  const kittenState={
-  ...kittenStoryAt(0),frame:s.frame,// Never use Episode01 shot-1 world-space foot targets in the box demo:\n  // they projected as two giant diagonal legs across the kitten's face.\n  shot:2 as const,
+  ...kittenStoryAt(0),
+  frame:s.frame,
+  // Do not inherit Episode01 shot-1 world-space foot targets in the box demo;
+  // they projected as giant diagonal legs over the kitten's face.
+  shot:2 as const,
   camera:directed.camera,target:directed.target,
   kitten:[...s.demoCat.position] as V3,
   kittenFear:s.demoCat.emotion==='scared'?1:0,
@@ -248,14 +253,13 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   cam.position.z-s.demoCat.position[2]);
  // Episode 01's background supporting-cat asset set. Do not promote their
  // simplified drawings to close-up leading actors; keep them as background.
- const n=s.shot.sequence;
  // Episode 01's supporting-cast art is unchanged, but Episode 02 must
  // advance its clock. Previously every guest was drawn at frame zero and
  // the entire city appeared abandoned except for three announcement shots.
  const ep1CrowdState={...previousEpisodeState(0,DRAFT_SHOTS),
   frame:s.frame,t:s.t,camera:directed.camera,target:directed.target};
  townspeople.update(ep1CrowdState);
- const outsideBusy=n<=5||n===8||n===28||n===29||n===30||n===56||n===57;
+ const outsideBusy=n<=5||n===8||n===56||n===57;
  const cafeBusy=n>=6&&n<=23;
  const audienceOn=n===4||n===56||n===57;
  // Deterministic sidewalk motion, not random positions on each render frame.
@@ -288,7 +292,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // Reuse ORIGINAL Episode 01 car meshes throughout the connected district.
  // Their prior fixed t=0 update froze them in place in Episode 02.
  // Main-road lanes are at z=7.45 and z=9.45, clear of cat sidewalks.
- const roadLife=n<=5||n===8||n===28||n===29||n===30||n===56||n===57;
+ const roadLife=n<=5||n===8||n===28||n===56||n===57;
  for(let i=0;i<2;i++){
   const car=world.root.getObjectByName('passing-car-'+i);
   if(!car)continue;
