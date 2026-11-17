@@ -1,51 +1,38 @@
 /**
  * Real-source Episode 02 shot 58/59/60 geometry, continuity and 9:16 checks.
  * IMPORTANT: uses the ACTUAL TypeScript stateAt() + directEpisodeCamera(),
- * transpiled into an isolated Node CJS context; no hand-maintained duplicate
+ * bundled with the same esbuild TS bundler as our other verified tests; no duplicate
  * pose formulas. No browser, paid voice, rendered video, mutations, or uploads.
  * This proves numerical staging only. Visual/acting quality is NOT certified.
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {createRequire} from 'node:module';
+import {pathToFileURL} from 'node:url';
+import {build} from 'esbuild';
 import {studioRoot} from './lib/runtime.mjs';
-const require=createRequire(import.meta.url);
-const ts=require('typescript');
-const src=path.join(studioRoot,'src/v2/episodes/in-this-town-02');
-const modules=new Map();
-async function loadTs(p){
- const absolute=path.resolve(p);
- if(modules.has(absolute))return modules.get(absolute);
- const source=await fs.readFile(absolute,'utf8');
- const {outputText,diagnostics}=ts.transpileModule(source,{
-  fileName:absolute,
-  reportDiagnostics:true,
-  compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS,
-   esModuleInterop:true,resolveJsonModule:true}
- });
- if(diagnostics?.some(x=>x.category===ts.DiagnosticCategory.Error))
-  throw Error('Transpile errors in '+absolute+': '+diagnostics.map(x=>x.messageText).join('; '));
- const mod={exports:{}};modules.set(absolute,mod.exports);
- const dependencyPaths=[...outputText.matchAll(/require\(["']([^"']+)["']\)/g)].map(x=>x[1]);
- const dependencies=new Map();
- for(const dep of dependencyPaths){
-  if(dep==='three'){dependencies.set(dep,{});continue;}
-  const fp=path.resolve(path.dirname(absolute),dep);
-  if(dep.endsWith('.json'))dependencies.set(dep,JSON.parse(await fs.readFile(fp,'utf8')));
-  else if(dep.startsWith('.'))dependencies.set(dep,await loadTs(fp.endsWith('.ts')?fp:fp+'.ts'));
-  else throw Error('Unexpected dependency: '+dep);
- }
- const localRequire=id=>{
-  if(!dependencies.has(id))throw Error('Missing dependency: '+id);
-  return dependencies.get(id);
- };
- new Function('require','module','exports',outputText)(localRequire,mod,mod.exports);
- modules.set(absolute,mod.exports);
- return mod.exports;
-}
-const timeline=await loadTs(path.join(src,'timeline.ts'));
-const cameraDirector=await loadTs(path.join(src,'cameraDirector.ts'));
-const boxes=(await loadTs(path.join(src,'boxProps.ts'))).BOX_SPECS;
+// Use the same tested esbuild TypeScript pipeline as episode02-box-tests,
+// rather than a hand-written CommonJS import/eval shim. The generated file
+// contains the REAL timeline/camera/box modules, not duplicate pose formulas.
+const outputDir=path.join(studioRoot,'out/v2-episodes/in-this-town-02/series-style-qa');
+await fs.mkdir(outputDir,{recursive:true});
+const bundlePath=path.join(outputDir,'episode02-finale-audit-bundle.mjs');
+await build({
+ stdin:{
+  resolveDir:studioRoot,loader:'ts',
+  contents:[
+   "export {SCRATCH_EDIT,stateAt,HOME} from './src/v2/episodes/in-this-town-02/timeline.ts';",
+   "export {directEpisodeCamera} from './src/v2/episodes/in-this-town-02/cameraDirector.ts';",
+   "export {BOX_SPECS} from './src/v2/episodes/in-this-town-02/boxProps.ts';"
+  ].join('\\n')
+ },
+ outfile:bundlePath,bundle:true,platform:'node',format:'esm',target:'node24',
+ external:['three']
+});
+const {SCRATCH_EDIT,stateAt:actualStateAt,HOME,directEpisodeCamera,BOX_SPECS}=
+ await import(pathToFileURL(bundlePath).href);
+const timeline={SCRATCH_EDIT,stateAt:actualStateAt,HOME};
+const cameraDirector={directEpisodeCamera};
+const boxes=BOX_SPECS;
 const shots=timeline.SCRATCH_EDIT.shots;
 const begin=n=>shots.find(x=>x.sequence===n);
 const state=(n,u)=>{const s=begin(n);if(!s)throw Error('Missing shot '+n);
