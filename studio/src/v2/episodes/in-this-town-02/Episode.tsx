@@ -72,7 +72,7 @@ function createStoryProps(){
  root.add(board);
 
  const sign=new T.Group();sign.name='episode02-closed-sign';
- sign.position.set(2.35,2.45,4.60);
+ sign.position.set(2.25,2.15,3.65);sign.rotation.y=Math.PI;
  const signCanvas=document.createElement('canvas');signCanvas.width=560;signCanvas.height=240;
  const sc=signCanvas.getContext('2d')!;
  sc.fillStyle='#355961';sc.fillRect(0,0,560,240);sc.strokeStyle='#e0c38d';sc.lineWidth=22;sc.strokeRect(12,12,536,216);
@@ -200,6 +200,16 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // the real shelter in establishing shot 28; exclude it from this cut.
  const shelter=world.props.get('bus-stop');
  if(shelter)shelter.visible=s.shot.sequence!==29;
+ // The remaining dark pole in real shot29 (frames 1764–1817) is NOT the
+ // shelter: it is Episode01's original lamp at x=-6,z=6.05. Those lamp
+ // pieces are direct night-town children, not a named streetlight group.
+ // Mask only this one foreground lamp during the walking cut; retain the
+ // approved fixture everywhere else, including the shot28 establishing view.
+ const nightTown=world.cafe.root.getObjectByName('night-town');
+ for(const part of nightTown?.children??[]){
+  if(Math.abs(part.position.x+6)<.01&&Math.abs(part.position.z-6.05)<.01)
+   part.visible=n!==29;
+ }
  // Episode01 streetlight-3 stands at x=0,z=6.05, physically inside the
  // Episode02 cure board at x=.1,z=6.1. Actual full-render shot 57 showed
  // its pole slicing through the instruction text and Essie's face; shot 56
@@ -293,13 +303,14 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  const wrap=(x:number,span:number)=>((x%span)+span)%span;
  const walkA=-6+wrap(s.t*.43,11);
  const walkB=6-wrap(s.t*.31,10);
+ const announcementTime=Math.max(0,(s.frame-3483)/30);
  const streetSpots:V3[]=audienceOn?
   (n===4?[[.55,.03,6.45],[2.9,.03,6.2],[3.8,.03,6.75]]:
    // Daytime cure announcement: shoppers walk near shops, not through the
    // sign or the three leads. Night alley shots retain NO crowd.
-   [[-1.05+.38*Math.sin(s.t*.42),.03,5.48],
-    [3.25+.28*Math.sin(s.t*.48),.03,5.62],
-    [3.95-.25*Math.sin(s.t*.36),.03,5.55]]):
+   [[-2.15+.11*announcementTime,.03,5.55],
+    [3.95-.10*announcementTime,.03,5.60],
+    [-3.30+.08*announcementTime,.03,5.55]]):
   [[walkA,.03,5.02],[walkB,.03,5.02],[-6.4,.03,12.55]];
  // One standing café patron walks the clear right-side aisle while two
  // others remain seated. The aisle x=3.15 clears the chair/table footprints
