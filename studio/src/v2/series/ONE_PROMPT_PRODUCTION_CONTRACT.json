@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "id": "in-this-town-one-prompt-production",
+  "series": "In This Town",
+  "requiredInput": {
+    "story_prompt": "Natural-language episode story or approved script",
+    "episode_id": "Stable episode identifier"
+  },
+  "inheritedSettings": {
+    "visual_style": "src/v2/series/IN_THIS_TOWN_STYLE_LOCK.json",
+    "render_constants": "src/v2/series/episode1Style.ts",
+    "asset_canon": "Episode01 original lead rigs, kitten, TownPopulation, EpisodeWorld, café/alleys and permanent props",
+    "final_export": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "video": "H.264",
+      "audio": "AAC stereo 48kHz"
+    },
+    "animal_behavior": "Nose, mouth and realistic paws only; no human hands",
+    "rights": "No automatic external paid voice generation or publication"
+  },
+  "steps": [
+    {
+      "id": "01_story",
+      "action": "Parse one user prompt into premise, exact scene beats, narration, characters, emotional payoff, story constraints",
+      "require": "Approved creative intent",
+      "output": "STORY_PLAN.json"
+    },
+    {
+      "id": "02_shots",
+      "action": "Emit stable shot IDs, locations, actor positions/poses, physical contacts, visual info, camera, transitions, narration/sfx cues",
+      "output": "SHOT_BLUEPRINT.json"
+    },
+    {
+      "id": "03_stage",
+      "action": "Validate physical prop sizes, fixed café/town geometry, support heights and unobstructed 9:16 camera paths",
+      "output": "STAGING_QA.json"
+    },
+    {
+      "id": "04_source",
+      "action": "Compile scenes only from the Episode01 reference asset registry with story-specific props/poses",
+      "output": "Episode.tsx + props"
+    },
+    {
+      "id": "05_preflight",
+      "action": "Verify Episode01 source SHA, exact grade/ink/lens, TypeScript, continuity, animal behavior and original character identity",
+      "output": "STYLE_QA_REPORT.json"
+    },
+    {
+      "id": "06_preview",
+      "action": "Render real selected frames and low-cost video segments for every action/contact/reveal",
+      "output": "ACTUAL_FRAMES + PREVIEW.mp4"
+    },
+    {
+      "id": "07_visual_correction",
+      "action": "Vision-capable local agent watches footage, compares to exact Episode01 video, fixes failed shots and rerenders them until accepted",
+      "require": "Locally connected renderer + true video-inspection loop (NOT currently present)",
+      "output": "CREATIVE_VISUAL_QA.json"
+    },
+    {
+      "id": "08_audio",
+      "action": "Use approved voice/cleared original or licensed music and SFX, synchronize to narration",
+      "require": "Explicit approval before any paid API or unlicensed media",
+      "output": "AUDIO_MIX_STEMS"
+    },
+    {
+      "id": "09_final",
+      "action": "Render full 1080x1920 H264/AAC master and run encoded-file release_quality_gate.py with expected frame count",
+      "output": "FINAL.mp4 + RELEASE_QA.json"
+    },
+    {
+      "id": "10_signoff",
+      "action": "Human verifies actual final MP4, rights and emotional quality; no autopublish",
+      "require": "Explicit final signoff",
+      "output": "DELIVERY_READY"
+    }
+  ],
+  "currentCapability": {
+    "assetLock": "IMPLEMENTED",
+    "sharedEpisode1RenderStyle": "IMPLEMENTED",
+    "storySpecificBoxAssets": "PARTIAL",
+    "shotBlueprint": "PARTIAL",
+    "staticStylePreflight": "IMPLEMENTED",
+    "actualFramePreview": "IMPLEMENTED",
+    "humanReviewSheet": "IMPLEMENTED",
+    "autonomousComputerRender": "NOT_CONNECTED",
+    "automaticVideoUnderstandingAndSelfCorrection": "NOT_IMPLEMENTED",
+    "paidAudio": "REQUIRES_APPROVAL",
+    "publishing": "REQUIRES_APPROVAL"
+  },
+  "completionRule": "Do not call an episode on-brand or finished unless the actual encoded movie is creatively and technically reviewed against the approved Episode 01 reference.",
+  "neverClaim": "That copying Episode 1 asset code alone certifies Episode 1 visual quality."
+}
