@@ -157,7 +157,7 @@ function fit(s:State){
   // Follow Mocha while his body is OUTSIDE the shared box in 59; otherwise
   // the fixed close-up saw only empty left edge while the jump occurred.
   // Once he clears the rim the camera recenters on all three faces.
-  const trackX=n===59?clamp(s.mocha.position[0]+.75,-2.50,-1.45):-1.45;
+  const trackX=n===59?clamp(s.mocha.position[0]+.55,-2.85,-1.45):-1.45;
   const camera:V3=[trackX,1.18,3.94-push];
   const target:V3=[trackX,.73,2.11];
   const fov=n===59?93:90;
