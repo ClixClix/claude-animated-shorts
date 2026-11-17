@@ -60,6 +60,9 @@ jobs:
       - name: Full deterministic episode source and geometry audit
         run: npm run episode2:code-audit
 
+      - name: All 60 shots camera/clipping/blocked-view diagnostics
+        run: node scripts/episode02-camera-blocker-audit.mjs
+
       - name: Actual Remotion frame previews and review board
         run: npm run episode2:style-preview
 
