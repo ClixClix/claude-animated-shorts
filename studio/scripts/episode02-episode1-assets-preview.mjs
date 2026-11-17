@@ -16,6 +16,7 @@ const check=(ok,message)=>{if(!ok)throw Error('EP01 ASSET CONTRACT: '+message);}
 const assetPaths=[
  'src/v2/episodes/in-this-town-02/Episode.tsx',
  'src/v2/episodes/in-this-town-02/episode1Cast.ts',
+ 'src/v2/episodes/in-this-town-02/catBehaviors.ts',
  'src/v2/episodes/in-this-town-02/timeline.ts',
  'src/v2/episodes/in-this-town-02/cameraDirector.ts',
  'src/v2/episodes/in-this-town-02/boxProps.ts',
@@ -47,7 +48,17 @@ check(ep2.includes('createKitten()'),'Episode 01 kitten asset missing in demo.')
 check(ep2.includes('new TownPopulation()'),'Episode 01 town extra asset missing.');
 check(!ep2.includes('makeCharacter(')&&
  !ep2.includes('createArticulatedGuest('),'Failed paper-puppet renderer is still active.');
-const selected=[5,6,7,12,19,37,49,50,54,55,59,60];
+check(!ep2.includes('pawRig(')&&!ep2.includes('gesture('),
+ 'Episode2 still contains forbidden human-like reaching/hand rig.');
+check(ep2.includes('catBehaviorFor(s,\'mocha\')')&&ep2.includes('catBehaviorFor(s,\'essie\')'),
+ 'Animal nose and mouth behaviors are not connected to actual lead cats.');
+const bsrc=await read('src/v2/episodes/in-this-town-02/boxProps.ts');
+check(bsrc.includes('width:2.48,depth:1.22,height:.55'),
+ 'Final shared box is not the revised lower-sidewall version.');
+const tSrc=await read('src/v2/episodes/in-this-town-02/timeline.ts');
+check(tSrc.includes('latte:n>=6&&n<=55'),
+ 'Old Latte box must disappear before the final shared-box scene.');
+const selected=[5,6,7,12,19,20,32,37,49,50,54,55,59,60];
 const scratch=JSON.parse(await read('src/v2/episodes/in-this-town-02/EDITORIAL_SCRATCH_PLAN.json'));
 const shots=scratch.shots.map(s=>({
  id:s.id,sequence:s.sequence,act:s.act,start:s.estimateStartFrame,
@@ -111,6 +122,8 @@ const status={
  paidVoiceRequests:0,audioApproved:false,creativeScriptLocked:true,
  notes:[
   'The three leads are the actual Episode 01 complete drawings and separate planted walking-leg system.',
+  'Cats sniff and push with noses and mouth; no extra human-like grasping arm rig is rendered.',
+  'Cardboard sizes, occlusion and animal physical contact require visual approval after rendering.',
   'This asset proof does not certify episode 02 camera staging, box contacts or cat-to-cardboard transformation.',
   'No new 60-shot video was rendered; this is a quick comparison sheet.'
  ]
