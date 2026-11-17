@@ -163,8 +163,8 @@ function fit(s:State){
   const recenter=c*c*(3-2*c);
   const trackX=n===58?-2.95:n===59?
    seekX+(-1.45-seekX)*recenter:-1.45;
-  const camera:V3=[trackX,1.55,3.90-(n===60?.08*u:0)];
-  const target:V3=[trackX,.68,2.11];
+  const camera:V3=[trackX,1.98,4.12-(n===60?.08*u:0)];
+  const target:V3=[trackX,.83,2.11];
   const fov=98-10*recenter; // Keep enlarged Episode01 cats fully inside 9:16 through the final push.
   return {camera,target,fov,region:r,
    framing:projections(corners(focus),target,camera,fov),
@@ -172,8 +172,10 @@ function fit(s:State){
  }
  // Only the rule demonstration uses a true overhead, with measured box size.
  if(s.shot.sequence===2){
-  const target:V3=[s.demoBox[0],.18,s.demoBox[2]];
-  const camera:V3=[target[0],3.40,target[2]+.06];
+  const target:V3=[s.demoBox[0],.35,s.demoBox[2]];
+  // True vertical sees the original Episode01 illustrated cat edge-on.
+  // Keep the elevated rule view but tilt enough to show its actual face.
+  const camera:V3=[target[0]+.12,2.85,target[2]+2.15];
   return {camera,target,fov:52,region:r,
    framing:projections(corners(focus),target,camera,52),
    shot:2,selectedIds:focus.map(x=>x.id)};
