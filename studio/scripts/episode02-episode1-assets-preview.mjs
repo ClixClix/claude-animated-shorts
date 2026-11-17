@@ -20,6 +20,7 @@ const assetPaths=[
  'src/v2/episodes/in-this-town-02/Episode.tsx',
  'src/v2/series/episode1Style.ts',
  'src/v2/series/IN_THIS_TOWN_STYLE_LOCK.json',
+ 'src/v2/episodes/in-this-town-02/VISUAL_APPROVAL_QUEUE.json',
  'src/v2/episodes/in-this-town-02/episode1Cast.ts',
  'src/v2/episodes/in-this-town-02/catBehaviors.ts',
  'src/v2/episodes/in-this-town-02/timeline.ts',
@@ -135,6 +136,9 @@ const status={
 };
 await fs.writeFile(path.join(out,'EP2_EP1_ASSET_PROOF.json'),
  JSON.stringify(status,null,2)+'\n');
+// Assemble the persistent Episode 01 visual review queue from real PNGs.
+execFileSync(process.execPath,[path.join(studioRoot,'scripts/episode02-review-sheet.mjs')],
+ {cwd:studioRoot,stdio:'inherit'});
 console.log(JSON.stringify({
  stage:status.stage,output:out,frameCount:frames.length,
  browserErrors:browserErrors.length
