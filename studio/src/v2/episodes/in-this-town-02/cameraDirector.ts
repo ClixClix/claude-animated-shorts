@@ -344,6 +344,23 @@ const blend3=(a:V3,b:V3,u:number):V3=>[
 ];
 export function directEpisodeCamera(s:State){
  const n=s.shot.sequence;
+ if(n===1){
+  // The VERY FIRST frame must clearly establish a LIVING CITY, not a wall
+  // or the old close-up. Move along an elevated, open corridor above the
+  // district roofs and gently settle on the original demo cat/box.
+  // Do not enter the cafe's vertical facade or the giant shop panels.
+  const u=easeTrack(s.u);
+  const startCamera:V3=[4.6,31.5,52.0];
+  const endCamera:V3=[4.6,4.20,13.4];
+  const startTarget:V3=[1.80,3.8,8.3];
+  const endTarget:V3=[s.demoBox[0],.57,s.demoBox[2]];
+  const camera=blend3(startCamera,endCamera,u);
+  const target=blend3(startTarget,endTarget,u);
+  const fov=80-25*u;
+  return {camera,target,fov,region:'town' as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:1,selectedIds:['city-establishing','demo','demoCat']};
+ }
  // 46 deliberately cuts inside the shot to two brief café memories.
  // 58–60 have a single explicitly choreographed, cut-continuous finale.
  if(n===46||n>=58)return fit(s);
