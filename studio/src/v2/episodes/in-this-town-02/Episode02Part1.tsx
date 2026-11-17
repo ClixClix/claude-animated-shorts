@@ -149,14 +149,14 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
  if(standing){
   // Guest remains BESIDE the box. Only the near forepaw reaches the rim.
   // The original build placed the entire card inside the box from frame 0.
-  const walk=smooth(u/.63);
-  // Start outside the box and complete a continuous visible short jump.
-  // A hard shot cut occurs only AFTER the front paws reach the inside.
-  const x=SITE.x-1.07+.99*walk;
-  const jump=.32*Math.sin(Math.PI*hop);
+  const approach=smooth(u/.53);
+  // Stay entirely OUTSIDE the box until the upward leap begins; otherwise
+  // the card would slide through the solid left cardboard wall.
+  const x=SITE.x-1.10+.20*approach+.90*hop;
+  const jump=.61*Math.sin(Math.PI*hop);
   guest.mesh.position.set(x,SITE.y+.01+jump,SITE.z-.07);
   guest.mesh.scale.set(1-.10*hop,1-.10*hop,1);
-  guest.mesh.rotation.z=-.075*walk+.16*Math.sin(Math.PI*hop);
+  guest.mesh.rotation.z=-.07*approach+.16*Math.sin(Math.PI*hop);
  }else{
   // This *same guest* appears curled after the deliberate camera cut to shot 02.
   // The sculpted curled sprite includes tail, torso, paws, detailed Episode 01
@@ -206,7 +206,7 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
   index===2?lerp(.98,.30,smooth((morph-.68)/.32)):.30);
  // Only a short touch between the guest's forepaw and the rim. The old
  // 3D witness arm looked like an elastic blue bar crossing the cardboard.
- const handOn=index===0&&u>.34&&u<.75;
+ const handOn=index===0&&u>.32&&u<.55;
  reach.gesture.update(
   [guest.mesh.position.x+.32,SITE.y+.49,SITE.z+.14],
   [SITE.x-.53,SITE.y+.54,SITE.z+.34],handOn);
