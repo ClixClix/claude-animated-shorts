@@ -6,7 +6,8 @@ import {useThree} from '@react-three/fiber';
 import {EffectComposer} from '@react-three/postprocessing';
 import {BlendFunction,BloomEffect,ToneMappingEffect,ToneMappingMode} from 'postprocessing';
 import {InkPass,NOINK} from '../../../videos/bridge/ink';
-import {GradeEffect,GradeParams} from '../../../videos/bridge/grade';
+import {GradeEffect} from '../../../videos/bridge/grade';
+import {EPISODE1_STYLE} from '../../series/episode1Style';
 import type {V3} from '../../cafe/config';
 import {createKitten} from '../../animation/kitten';
 import {storyAt as kittenStoryAt} from '../../animation/timeline';
@@ -22,7 +23,6 @@ import {createEpisodeBox} from './boxProps';
 import {directEpisodeCamera} from './cameraDirector';
 import {SCRATCH_EDIT,stateAt,clamp,ease,type EpisodeEdit,type ActorPose,type State} from './timeline';
 
-const GRADE:GradeParams={ky:[.015,.09,.26,.52,.77,.92,1],sat:[.92,.98,.90],tintS:[.008,.002],tintM:[0,.002],tintH:[-.003,.002],vig:[.10,.4]};
 export type BoxEpisodeProps=EpisodeEdit&{previewScale?:number;optimize?:boolean;audioApproved?:boolean};
 
 /** All three principal cats now come directly from the APPROVED Episode 01 createEpisodeCat rig.
@@ -155,12 +155,12 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  },[]);
  const effects=useMemo(()=>({
   ink:new InkPass(scene,camera as T.PerspectiveCamera,
-    {color:'#262737',widthNear:2.5*previewScale,widthFar:1.7*previewScale,creaseScale:.55,strength:.8}),
-  bloom:new BloomEffect({blendFunction:BlendFunction.ADD,intensity:.18,luminanceThreshold:1.08,
-    luminanceSmoothing:.25,mipmapBlur:true,levels:5,radius:.5}),
+    {...EPISODE1_STYLE.ink,widthNear:EPISODE1_STYLE.ink.widthNear*previewScale,
+     widthFar:EPISODE1_STYLE.ink.widthFar*previewScale}),
+  bloom:new BloomEffect({blendFunction:BlendFunction.ADD,...EPISODE1_STYLE.bloom}),
   tone:new ToneMappingEffect({mode:ToneMappingMode.NEUTRAL}),
-  grade:new GradeEffect(GRADE,.7),
-  lens:new LensBlur({maxCoC:8,nearScale:.5})
+  grade:new GradeEffect(EPISODE1_STYLE.grade,.7),
+  lens:new LensBlur({...EPISODE1_STYLE.lens})
  }),[scene,camera,previewScale]);
  atmosphere.root.add(atmosphere.sun,atmosphere.night);
  const cam=camera as T.PerspectiveCamera;
@@ -174,14 +174,18 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  cam.layers.enable(NOINK);
  effects.lens.focus=new T.Vector3(...directed.target).sub(cam.position).dot(cam.getWorldDirection(new T.Vector3()));
  effects.lens.cInf=s.blur;
- scene.background=new T.Color(s.daylight?'#9dbec7':'#172b46');
+ // New daytime palette is story-specific; night reuses Episode 01's exact base.
+ scene.background=new T.Color(s.daylight?'#9dbec7':EPISODE1_STYLE.nightBackground);
  scene.fog=new T.Fog(scene.background.clone(),44,245);
  gl.shadowMap.type=T.PCFSoftShadowMap;
  gl.localClippingEnabled=true;
  atmosphere.sun.intensity=s.daylight?2.9:.3;
  atmosphere.night.intensity=s.room==='alley'?26:s.daylight?0:9;
- CHAR.uCharTint.value.set(1,.96,.92);CHAR.uCharShade.value=.88;
- CHAR.uGrad.value=.055;CHAR.uBodyGrad.value=.15;CHAR.uSideTint.value.set(.83,.89,1);
+ CHAR.uCharTint.value.set(...EPISODE1_STYLE.character.tint);
+ CHAR.uCharShade.value=EPISODE1_STYLE.character.shade;
+ CHAR.uGrad.value=EPISODE1_STYLE.character.gradient;
+ CHAR.uBodyGrad.value=EPISODE1_STYLE.character.bodyGradient;
+ CHAR.uSideTint.value.set(...EPISODE1_STYLE.character.sideTint);
  CARD_K.uPx.value=previewScale;
  world.door.rotation.y=s.shot.sequence===24?-.3:s.shot.sequence===27?-1.18:s.shot.sequence>=53?-1.18:0;
  const boxArray=[
