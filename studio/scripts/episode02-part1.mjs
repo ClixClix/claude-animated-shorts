@@ -24,6 +24,11 @@ const scale=native?1:.5;
 const hash=x=>createHash('sha256').update(x).digest('hex');
 const sourceFiles=[
  'src/v2/episodes/in-this-town-02/Episode02Part1.tsx',
+ 'src/v2/episodes/in-this-town-02/ruleCats.ts',
+ 'src/v2/cats/drawCat.ts',
+ 'src/v2/cats/Cat.tsx',
+ 'src/v2/cats/pose.ts',
+ 'src/v2/cats/designs.ts',
  'src/v2/episodes/in-this-town-02/PART1_SHOT_BLUEPRINT.json',
  'src/v2/episodes/in-this-town-02/boxProps.ts',
  'src/v2/episodes/door-at-1111-polish/world.ts',
