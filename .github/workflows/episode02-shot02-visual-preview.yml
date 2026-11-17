@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   render-shot02:
-    name: Render 21 actual wide-city frames (not storyboard)
+    name: Render 21 actual curled-cat frames (not storyboard)
     runs-on: ubuntu-24.04
     timeout-minutes: 50
     defaults:
@@ -72,17 +72,17 @@ jobs:
       - name: Render only the newly designed 21-frame Shot 02
         run: node scripts/episode02-render.mjs preview --shots 02 --force
 
-      - name: Verify exact 2.8 second H264 video and make actual review frames
+      - name: Verify exact 0.7 second H264 video and make actual review frames
         shell: bash
         run: |
           set -euo pipefail
           SOURCE=out/v2-episodes/in-this-town-02/preview-segments/02.mp4
-          TARGET=out/v2-episodes/in-this-town-02/shot02-city-review
+          TARGET=out/v2-episodes/in-this-town-02/shot02-box-review
           mkdir -p "$TARGET"
-          cp "$SOURCE" "$TARGET/SHOT02_City_Three_Quarter_Box_540p.mp4"
+          cp "$SOURCE" "$TARGET/SHOT02_Cat_Three_Quarter_Box_540p.mp4"
           cp "${SOURCE%.mp4}.json" "$TARGET/SHOT02_Source_Metadata.json"
           ffprobe -v error -count_frames -select_streams v:0 -show_entries stream=width,height,nb_read_frames,r_frame_rate -of json "$SOURCE" > "$TARGET/SHOT02_FFprobe.json"
-          node -e "const s=require('./out/v2-episodes/in-this-town-02/shot02-city-review/SHOT02_FFprobe.json').streams[0]; if(s.width!==540||s.height!==960||Number(s.nb_read_frames)!==84||s.r_frame_rate!=='30/1') process.exit(2)"
+          node -e "const s=require('./out/v2-episodes/in-this-town-02/shot02-box-review/SHOT02_FFprobe.json').streams[0]; if(s.width!==540||s.height!==960||Number(s.nb_read_frames)!==21||s.r_frame_rate!=='30/1') process.exit(2)"
           for t in 0.00 0.16 0.32 0.48 0.65; do
             ffmpeg -nostdin -hide_banner -loglevel error -y -ss "$t" -i "$SOURCE" -frames:v 1 "$TARGET/SHOT02_frame_${t}.jpg"
           done
@@ -92,7 +92,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Episode02_SHOT02_CurledCat_MovingPreview
-          path: studio/out/v2-episodes/in-this-town-02/shot02-city-review/
+          path: studio/out/v2-episodes/in-this-town-02/shot02-box-review/
           if-no-files-found: warn
           retention-days: 14
           compression-level: 0
