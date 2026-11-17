@@ -175,6 +175,14 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  if(n===50){essie.position=[HOME.alleyBox[0],.16,HOME.alleyBox[2]];essie.scale=lerp(.60,.82,ease(u));}
  if(n===51){essie.position=[HOME.alleyBox[0],.10,HOME.alleyBox[2]+.28];essie.scale=lerp(.82,1,ease(u));}
  if(n===55){latte.position=[HOME.latte[0],.12,HOME.latte[2]+.18];latte.scale=lerp(.75,1,ease(u));}
+ if(n===58){
+  // Continuity setup for the following shot: Essie and Latte have already
+  // settled inside, while Mocha hesitates on the left and approaches.
+  mocha.position=walk([-3.34,0,2.17],[-3.04,0,2.17],u);
+  mocha.scale=.72;mocha.walking=true;mocha.emotion='sad';
+  essie.position=[-1.45,.12,2.01];essie.scale=.67;
+  latte.position=[-.95,.12,2.17];latte.scale=.67;
+ }
  if(n>=59){
   // SHOT 59: Essie and Latte wait in the one shared box; Mocha enters LAST.
   // The sidewall has to be cleared before feet land. Never teleport through
@@ -186,7 +194,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
    const entry=ease((u-.24)/.48);
    const hop=clamp((u-.23)/.53);
    mocha.position=[
-    lerp(-3.04,-1.95,entry),
+    u<.24?lerp(-3.34,-3.04,ease(u/.24)):lerp(-3.04,-1.95,entry),
     .10+(hop>0&&hop<1?.96*Math.sin(Math.PI*hop):0)+.02*settle,
     2.17
    ];
