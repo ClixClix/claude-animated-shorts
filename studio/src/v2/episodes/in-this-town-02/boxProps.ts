@@ -31,9 +31,9 @@ export const BOX_SPECS:Readonly<Record<BoxIdentity,Readonly<BoxSpec>>> = Object.
     role:'Essie original box in the cafe sleeping corner; moves to alley',
   }),
   shared:Object.freeze({
-    id:'SHARED_BOX',width:2.48,depth:1.22,height:.55,color:'#cca174',
+    id:'SHARED_BOX',width:2.36,depth:1.12,height:.55,color:'#cca174',
     tape:'none',home:[-1.45,0,2.1] as [number,number,number],
-    role:'Separate oversized end-scene box for all three cats',
+    role:'One proportionate end-scene cardboard box for all three Episode01 cats',
   }),
 });
 export const BOX_IDENTITY_ORDER=['latte','essie','shared'] as const;
