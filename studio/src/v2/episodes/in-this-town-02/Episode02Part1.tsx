@@ -10,7 +10,7 @@ import {GradeEffect,type GradeParams} from '../../../videos/bridge/grade';
 import {CHAR} from '../../../videos/bridge/shade';
 import {CARD_K} from '../../../videos/bridge/cardshade';
 import {EpisodeWorld} from '../door-at-1111-polish/world';
-import {TownPopulation} from '../door-at-1111-polish/population';
+import {createRuleCat} from './ruleCats';
 import {contactShadow,pawRig} from '../door-at-1111-polish/actors';
 import {stateAt as ep1State,DRAFT_SHOTS} from '../door-at-1111-polish/timeline';
 import {createEpisodeBox} from './boxProps';
@@ -102,15 +102,18 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
   }
   return w;
  },[optimize]);
- const people=useMemo(()=>new TownPopulation(),[]);
+ const cats=useMemo(()=>({
+  guest:createRuleCat('hazel',1.23),
+  slate:createRuleCat('slate',1.23),
+  honey:createRuleCat('honey',1.20),
+  sage:createRuleCat('sage',1.19),
+ }),[]);
  const demo=useMemo(()=>createEpisodeBox('demo'),[]);
- const shadow=useMemo(()=>contactShadow(.64,.40),[]);
- const paper=useMemo(()=>makePaperFold(),[]);
+ const shadow=useMemo(()=>contactShadow(.72,.47),[]);
  const spark=useMemo(()=>makePaperGlints(),[]);
  const reach=useMemo(()=>({
-  left:pawRig('#aa8061','#dec9aa',.043),
-  right:pawRig('#aa8061','#dec9aa',.043),
-  examine:pawRig('#7e8b93','#ded7c7',.037)
+  gesture:pawRig('#af7e58','#e7c7a4',.047),
+  examine:pawRig('#77889b','#c8d2d4',.034)
  }),[]);
  const light=useMemo(()=>{
   const root=new T.Group();
@@ -142,76 +145,108 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
  CHAR.uCharTint.value.set(1,.96,.92);CHAR.uCharShade.value=.88;
  CHAR.uGrad.value=.055;CHAR.uBodyGrad.value=.15;
  CHAR.uSideTint.value.set(.83,.89,1);CARD_K.uPx.value=previewScale;
- // Population is reused directly from Episode 01, including its illustrated
- // supporting-cat bodies and palette. Not a recolored Mocha/Essie/Latte lead.
- people.update(ep1State(frame,DRAFT_SHOTS));
- people.root.children.forEach(obj=>{obj.visible=false;});
- const actors=people.actors;
- const guest=actors[0].mesh as T.Mesh<T.PlaneGeometry,T.MeshLambertMaterial>;
- const curious=actors[1].mesh as T.Mesh<T.PlaneGeometry,T.MeshLambertMaterial>;
- const listener=actors[2].mesh as T.Mesh<T.PlaneGeometry,T.MeshLambertMaterial>;
- const sideGuest=actors[3].mesh as T.Mesh<T.PlaneGeometry,T.MeshLambertMaterial>;
- const morph=index===2?smooth((u-.12)/.78):index>2?1:0;
- const curl=index===1?smooth(u):index>=2?1:0;
- const guestScaleY=lerp(1,.72,curl)*(1-.86*morph);
- guest.visible=index<3&&morph<.995;
- guest.scale.set(.91,guestScaleY,.91);
- guest.position.set(SITE.x,lerp(.08,-.035,morph),SITE.z-.08);
- guest.rotation.y=Math.atan2(cam.position.x-guest.position.x,cam.position.z-guest.position.z);
- guest.rotation.z=index===2?-.10*Math.sin(morph*Math.PI):0;
- guest.material.opacity=1-smooth((morph-.45)/.55);
- guest.material.transparent=true;guest.material.depthWrite=false;
- const fresh=new T.Color('#ffffff'),card=new T.Color('#b89473');
- guest.material.color.copy(fresh).lerp(card,morph*.92);
- // Other guests do not materialize until after the demonstration completes.
- const other=[curious,listener,sideGuest];
- const positions:[[number,number,number],[number,number,number],[number,number,number]]=[
-  [2.25,0,7.55],[4.62,0,7.55],[3.9,0,6.78]];
- other.forEach((sprite,i)=>{
-  sprite.visible=index===3;
-  sprite.position.set(...positions[i]);
-  sprite.scale.set(.92,.92,.92);
-  sprite.rotation.y=Math.atan2(cam.position.x-positions[i][0],
-    cam.position.z-positions[i][2]);
-  sprite.material.transparent=true;sprite.material.opacity=1;
+ // Production reblock, based on visual review of the original 12 PNGs:
+ // 1) fully visible close-acting guest on SIDEWALK, never just ears;
+ // 2) an illustrated *curled* cat instead of an upright figure hidden by a flap;
+ // 3) progressive color-to-paper metamorphosis using one uninterrupted box;
+ // 4) 3 detailed witnesses, each facing/interacting with the box.
+ const guest=cats.guest;
+ const morph=index===2?smooth((u-.08)/.89):index>2?1:0;
+ const settle=index===1?smooth(u):index>=2?1:0;
+ const standing=index===0;
+ guest.update(frame/30,{pose:standing?'standing':'curled',
+  expression:standing?'happy':index===2?'surprised':'neutral',
+  walking:standing&&u<.55,
+  progress:settle*.30+morph*.65,
+  look:standing?.20:0,
+  blink:index===2&&morph>.55?.12:undefined,
+  headTilt:standing?-.06:lerp(-.10,.12,morph)
+ });
+ guest.mesh.visible=index<3&&morph<.985;
+ if(standing){
+  // Guest remains BESIDE the box. Only the near forepaw reaches the rim.
+  // The original build placed the entire card inside the box from frame 0.
+  guest.mesh.position.set(SITE.x-1.04+.19*u,SITE.y+.01,SITE.z-.04);
+  guest.mesh.scale.set(1,1,1);
+  guest.mesh.rotation.z=-.075*u;
+ }else{
+  // This *same guest* appears curled after the deliberate camera cut to shot 02.
+  // The sculpted curled sprite includes tail, torso, paws, detailed Episode 01
+  // head and whiskers. Ears/eyes are visible above the front rim.
+  guest.mesh.position.set(SITE.x,SITE.y-.018-.15*morph,SITE.z-.10);
+  const shrink=.95-.26*morph;
+  guest.mesh.scale.set(.89*shrink,.88*shrink,1);
+  guest.mesh.rotation.z=-.05*morph;
+ }
+ guest.mesh.rotation.y=Math.atan2(cam.position.x-guest.mesh.position.x,
+  cam.position.z-guest.mesh.position.z);
+ // Fur physically appears to turn to cardboard *before* the face collapses.
+ const fur=new T.Color('#ffffff'),card=new T.Color('#b28a68');
+ guest.material.color.copy(fur).lerp(card,smooth((morph-.14)/.61));
+ guest.material.opacity=1-smooth((morph-.68)/.30);
+ const companions=[
+  {cat:cats.slate,x:SITE.x-1.32,z:SITE.z+.07,look:.38,tilt:-.10},
+  {cat:cats.honey,x:SITE.x+1.30,z:SITE.z+.06,look:-.42,tilt:.11},
+  {cat:cats.sage,x:SITE.x+.08,z:SITE.z-.78,look:-.20,tilt:-.16}
+ ];
+ companions.forEach(({cat,x,z,look,tilt},i)=>{
+  cat.update(frame/30+i*.17,{
+   pose:'standing',expression:'surprised',look,
+   headTilt:tilt+.07*Math.sin(u*Math.PI+i),
+   walking:index===3&&u<.48
+  });
+  cat.mesh.visible=index===3;
+  // Motion begins during the first third of shot 04, then settles.
+  const entrance=index===3?1-smooth(u/.43):0;
+  cat.mesh.position.set(x+(i===0?-.19:i===1?.19:0)*entrance,
+   SITE.y+.005,z+(i===2?-.14:.10)*entrance);
+  cat.mesh.scale.set(.96,.96,1);
+  cat.mesh.rotation.z=tilt*.25*Math.sin(u*Math.PI);
+  cat.mesh.rotation.y=Math.atan2(cam.position.x-cat.mesh.position.x,
+   cam.position.z-cat.mesh.position.z);
+  cat.material.opacity=1;
+  cat.material.color.set('#f8f4ed');
  });
  demo.root.position.copy(SITE);
  demo.root.visible=true;
- // Same cardboard panels every frame. The four flaps settle as the cat folds,
- // rather than a second intact box spawning from nowhere.
- demo.setOpenAmount(index===0?lerp(.72,.86,u):
-  index===1?.86:index===2?lerp(.86,.36,morph):.38);
- // Arms have explicit targets on the physically sized box rim.
- const pawOn=index===0||index===1;
- reach.left.update([SITE.x-.23,.65,SITE.z-.02],
-  [SITE.x-.27,.52,SITE.z+.36],pawOn);
- reach.right.update([SITE.x+.23,.65,SITE.z-.02],
-  [SITE.x+.27,.52,SITE.z+.36],pawOn);
- reach.examine.update([4.43,.56,7.60],[SITE.x+.42,.53,7.84],index===3);
- shadow.mesh.visible=index<3&&morph<.92;
- shadow.mesh.position.set(SITE.x,SITE.y+.028,SITE.z-.08);
- paper.mesh.visible=index===2&&morph>.15&&morph<1;
- paper.mesh.position.set(SITE.x,.52-lerp(0,.39,morph),SITE.z+.48);
- paper.mesh.scale.set(lerp(.85,1.0,morph),lerp(.94,.05,morph),1);
- paper.mesh.rotation.x=morph*Math.PI*.39;
- paper.material.opacity=smooth((morph-.12)/.35)*(1-smooth((morph-.72)/.27))*.88;
- spark.root.visible=index===2&&morph>.05&&morph<.99;
+ // Flaps are not the magic themselves: they are reaction/contact choreography.
+ // The original version hid the guest by closing the front board over the face.
+ demo.setOpenAmount(index===0?.64:index===1?.93:
+  index===2?lerp(.93,.28,smooth((morph-.55)/.45)):.28);
+ const handOn=index===0&&u>.18;
+ reach.gesture.update(
+  [guest.mesh.position.x+.30,SITE.y+.62,SITE.z+.12],
+  [SITE.x-.51,SITE.y+.52,SITE.z+.29],handOn);
+ // The witness taps only the NEAR SIDE of the box, not an impossible arm
+ // stretching horizontally through the entire cardboard body.
+ reach.examine.update([SITE.x-1.15,SITE.y+.54,SITE.z+.20],
+  [SITE.x-.49,SITE.y+.49,SITE.z+.25],
+  index===3&&u>.46&&u<.84);
+ shadow.mesh.visible=index<3&&morph<.91;
+ shadow.mesh.position.set(standing?guest.mesh.position.x:SITE.x,
+  SITE.y+.018,standing?SITE.z-.04:SITE.z-.08);
+ // A translucent magic ripple now rises *within* the box footprint instead
+ // of appearing as a large beige sticker pasted across its front face.
+ spark.root.visible=index===2&&morph>.03&&morph<.99;
  spark.items.forEach((item,i)=>{
-  const a=i*Math.PI*2/spark.items.length+u*4.1;
-  const r=.25+(i%3)*.075;
+  const a=i*Math.PI*2/spark.items.length+u*5.2;
+  const r=.23+(i%3)*.061;
   item.mesh.position.set(SITE.x+Math.cos(a)*r,
-   .35+Math.sin(a*1.3)*.17+i*.019,SITE.z+.10+Math.sin(a)*r);
-  item.material.opacity=Math.sin(Math.PI*morph)*.82;
+   SITE.y+.45+Math.sin(a*1.3)*.14+i*.017,
+   SITE.z-.03+Math.sin(a)*r);
+  item.material.opacity=Math.sin(Math.PI*morph)*.86;
  });
  // Record real-scene ray hits, not just a subject-centred FOV estimate.
  // This is intentionally sample-based and independent of publish QA.
  useEffect(()=>{
   if(![13,44,85,145].includes(frame))return;
   world.root.updateMatrixWorld(true);demo.root.updateMatrixWorld(true);
-  people.root.updateMatrixWorld(true);cam.updateMatrixWorld(true);
+  Object.values(cats).forEach(c=>c.mesh.updateMatrixWorld(true));cam.updateMatrixWorld(true);
   const watch=[{name:'box',mesh:demo.root},
-   ...(index<3?[{name:'guest',mesh:guest}]:[
-    {name:'curious',mesh:curious},{name:'listener',mesh:listener}])];
+  ...(index<3?[{name:'guest',mesh:guest.mesh}]:[
+   {name:'left-witness',mesh:cats.slate.mesh},
+   {name:'right-witness',mesh:cats.honey.mesh},
+   {name:'back-witness',mesh:cats.sage.mesh}])];
   const samples=watch.map(v=>({id:v.name,...projectedBox(v.mesh,cam)}));
   const at=new T.Vector3(SITE.x,.58,SITE.z);
   const direction=at.clone().sub(cam.position),distance=direction.length();
@@ -229,17 +264,16 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
    sameBoxIdentity:demo.root.name,magicProgress:morph,
    noDuplicateBox:true
   }));
- },[frame,world,cam,demo,people,guest,curious,listener,index,morph,shot.id]);
- useEffect(()=>()=>{world.dispose();people.dispose();demo.dispose();
-  shadow.dispose();paper.dispose();spark.dispose();Object.values(reach).forEach(p=>p.dispose());
+ },[frame,world,cam,demo,cats,index,morph,shot.id]);
+ useEffect(()=>()=>{world.dispose();Object.values(cats).forEach(c=>c.dispose());demo.dispose();
+  shadow.dispose();spark.dispose();Object.values(reach).forEach(p=>p.dispose());
   fx.ink.dispose();fx.bloom.dispose();fx.tone.dispose();fx.grade.dispose();
   light.key.dispose();light.ambient.dispose();
  },[world,people,demo,shadow,paper,spark,reach,fx,light]);
  return <><primitive object={world.root} dispose={null}/>
-  <primitive object={people.root} dispose={null}/>
+  {Object.entries(cats).map(([id,cat])=><primitive key={id} object={cat.mesh} dispose={null}/>)}
   <primitive object={demo.root} dispose={null}/>
   <primitive object={shadow.mesh} dispose={null}/>
-  <primitive object={paper.mesh} dispose={null}/>
   <primitive object={spark.root} dispose={null}/>
   {Object.entries(reach).map(([id,p])=><primitive key={id} object={p.group} dispose={null}/>)}
   <primitive object={light.root} dispose={null}/>
