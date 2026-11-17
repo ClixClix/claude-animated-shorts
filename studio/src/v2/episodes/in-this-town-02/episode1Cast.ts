@@ -5,6 +5,7 @@ import {DRAFT_SHOTS,stateAt as episode1State,supportHeight,
 import type {CatId} from '../../cats/designs';
 import type {V3} from '../../cafe/config';
 import type {ActorPose,State} from './timeline';
+import type {CatBehavior} from './catBehaviors';
 
 /**
  * Actual Episode 01 character implementation — not a re-illustration.
@@ -68,15 +69,43 @@ export function createEpisode1CastCat(id:CatId){
  const card:Episode1Cat=createEpisodeCat(id);
  const shadow=contactShadow();
  shadow.mesh.name='episode02-'+id+'-episode01-ground-shadow';
- const update=(pose:ActorPose,next:ActorPose,s:State,camera:T.PerspectiveCamera)=>{
+ const update=(pose:ActorPose,next:ActorPose,s:State,camera:T.PerspectiveCamera,behavior:CatBehavior|null=null)=>{
   // Using a neutral Episode 01 state avoids executing its *story-specific*
   // 'door at 11:11' expressions, nose pushes, timed scares or head drops
   // while retaining every Episode 01 asset/rig, shade and toe/contact system.
   const ep1:EpisodeState={...BASE,shot:DRAFT_SHOTS[0],frame:0,t:0,u:0,
    camera:camera.position.toArray() as V3,
    target:[...s.target] as V3};
-  const a=bridgeActor(id,pose,next,s);
+  // Head and body are the actual Episode 01 artwork. Express contact
+  // through a subtle feline nose/muzzle lean — NEVER an extended arm.
+  const toward=behavior?new T.Vector3(
+   behavior.target[0]-pose.position[0],0,
+   behavior.target[2]-pose.position[2]):new T.Vector3();
+  const dist=toward.length();
+  const cameraForward=new T.Vector3(
+   camera.position.x-pose.position[0],0,camera.position.z-pose.position[2]).normalize();
+  const cameraRight=new T.Vector3(cameraForward.z,0,-cameraForward.x);
+  const faceTurn=behavior&&dist>.01?
+   Math.max(-.55,Math.min(.55,toward.dot(cameraRight)/dist*.42))*behavior.intensity:0;
+  const actingPose:ActorPose=behavior?{
+   ...pose,headTurn:pose.headTurn+faceTurn,
+   gazeY:pose.gazeY-.28*behavior.intensity
+  }:pose;
+  const a=bridgeActor(id,actingPose,next,s);
+  if(behavior){
+   a.pose.headTilt=(a.pose.headTilt??0)-.16*behavior.intensity;
+   a.pose.blink=Math.max(a.pose.blink??0,
+    behavior.mode==='muzzle-comfort'?.46*behavior.intensity:0);
+  }
   card.updateActor(a,ep1);
+  if(behavior&&dist>.01){
+   // Forepaws remain planted via the Episode01 walking rig; only the
+   // chest/head image makes a tiny approach and lower-to-sniff gesture.
+   const push=Math.min(.10,dist*.12)*behavior.intensity;
+   toward.multiplyScalar(push/dist);
+   card.mesh.position.add(toward);
+   card.mesh.position.y-=.045*behavior.intensity;
+  }
   const alpha=clamp(1-pose.morph);
   // Explicit limit: 02 still needs a purpose-built transformation. We do
   // NOT scale/stretch the approved Episode 01 artwork into a fake box.
