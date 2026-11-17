@@ -3,7 +3,7 @@ import type {V3} from '../../cafe/config';
 export const FPS=30;
 export const FIRST_DRAFT_FRAMES=3876;
 export type BoxStage='normal'|'resting'|'morphing'|'boxed'|'rescuing'|'restored';
-export type ActorPose={position:V3;visible:boolean;walking:boolean;emotion:'neutral'|'happy'|'sad'|'scared'|'surprised';headTurn:number;scale:number;morph:number;gazeY:number};
+export type ActorPose={position:V3;visible:boolean;walking:boolean;emotion:'neutral'|'happy'|'sad'|'scared'|'surprised'|'concerned';headTurn:number;scale:number;morph:number;gazeY:number};
 export type EditShot={id:string;sequence:number;act:string;start:number;end:number;cameraAndAction:string;narrationAnchor:string;soundCue:string};
 export type EpisodeEdit={shots:EditShot[];captions?:{start:number;end:number;text:string}[]};
 export const SCRATCH_EDIT:EpisodeEdit={shots:scratch.shots.map(s=>({
@@ -290,6 +290,96 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   latte.headTurn=-.08-.16*settle;
   mocha.gazeY=essie.gazeY=latte.gazeY=-.06;
  }
+ // Directed story-specific performance. Source-only geometry correctness
+ // previously produced long inert poses; each beat must actually communicate
+ // the narration through the approved Episode 01 expression rig.
+ if(n===5){
+  // Reluctant approach, disgusted glance at carton, distinct sidestep away.
+  const recoil=ease((u-.35)/.24);
+  mocha.position=[lerp(2.40,1.20,ease(u))-.22*Math.sin(Math.PI*recoil),
+   0,lerp(6.65,6.00,ease(u))+.22*Math.sin(Math.PI*recoil)];
+  mocha.walking=true;
+  mocha.headTurn=-.24*ease((u-.12)/.25)+.37*recoil;
+  mocha.gazeY=-.18*ease((u-.16)/.24);
+  mocha.emotion=u>.20&&u<.75?'scared':'sad';
+ }
+ if(n===7){
+  // Essie invites him with a hopeful glance; Mocha consciously refuses.
+  essie.headTurn=lerp(-.16,.24,ease((u-.10)/.46));
+  essie.gazeY=lerp(-.12,.10,ease((u-.20)/.50));
+  mocha.position=walk([1.45,0,.90],[1.70,0,1.24],u);
+  mocha.headTurn=lerp(-.24,.26,ease((u-.38)/.50));
+  mocha.walking=u>.25&&u<.86;
+ }
+ if(n===9){
+  // Distinct left-right search, instead of one static startled sprite.
+  mocha.headTurn=lerp(-.38,.38,ease((u-.17)/.65));
+  mocha.gazeY=.12-.22*ease((u-.35)/.43);
+  mocha.emotion='concerned';
+ }
+ if(n===11){
+  mocha.headTurn=-.12+.17*Math.sin(Math.PI*u);
+  mocha.gazeY=-.15*ease((u-.20)/.44);
+  mocha.emotion='concerned';
+ }
+ if(n===14){
+  // Recognition: look into the box and then at its striped exterior.
+  mocha.headTurn=lerp(-.30,.28,ease((u-.28)/.53));
+  mocha.gazeY=lerp(-.30,.06,ease((u-.42)/.36));
+  mocha.emotion='surprised';
+ }
+ if(n===17){
+  // Pleading gives way to a lowered, defeated gaze.
+  mocha.headTurn=.17*Math.sin(Math.PI*u);
+  mocha.gazeY=-.36*ease((u-.53)/.34);
+  mocha.emotion='sad';
+ }
+ if(n===21){
+  // Essie reacts to being removed, then glances back toward her box.
+  essie.headTurn=lerp(-.30,.31,ease((u-.25)/.50));
+  essie.gazeY=lerp(.06,-.18,ease((u-.28)/.45));
+  essie.emotion='concerned';
+ }
+ if(n===23){
+  mocha.headTurn=lerp(-.28,.10,ease((u-.42)/.46));
+  mocha.gazeY=-.24*ease((u-.48)/.40);
+  mocha.emotion='sad';
+ }
+ if(n===24){
+  // Follow the actual closing sign rather than stare at an empty corner.
+  mocha.headTurn=lerp(.18,-.20,ease((u-.38)/.40));
+  mocha.gazeY=.13*ease((u-.25)/.35);
+  mocha.emotion='neutral';
+ }
+ if(n===25){
+  mocha.headTurn=lerp(-.35,.35,ease((u-.10)/.64));
+  mocha.gazeY=-.20*ease((u-.38)/.35);
+  mocha.emotion='scared';
+ }
+ if(n===35){
+  // A slow, comfortable settle before the horror starts.
+  essie.headTurn=-.10*ease((u-.20)/.48);
+  essie.gazeY=-.23*ease((u-.32)/.52);
+ }
+ if(n===37||n===38||n===39){
+  // A progressive loss of control; preserve exact Episode 01 head and coat.
+  const fold=clamp(morph.essie);
+  essie.headTurn=.13*Math.sin(u*Math.PI*1.2)*(1-fold);
+  essie.gazeY=-.20*fold;
+  essie.emotion=fold>.52?'scared':'concerned';
+ }
+ if(n===43){
+  mocha.headTurn=-.12*ease((u-.18)/.55);
+  mocha.gazeY=-.37*ease((u-.33)/.50);
+  mocha.emotion='sad';
+ }
+ if(n===56){
+  // Readable group responses when the cure appears in a populated street.
+  mocha.headTurn=-.16+.26*ease((u-.20)/.50);
+  essie.headTurn=.18-.26*ease((u-.35)/.48);
+  latte.headTurn=.21*Math.sin(u*Math.PI);
+ }
+
  const openShared=n>=58;
  const inTown=n>=56&&n<=57;
  if(inTown){latte.position=[2.5,0,6.3];}
