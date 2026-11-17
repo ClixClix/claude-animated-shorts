@@ -19,6 +19,15 @@ For each shot record: stable shot ID; spoken words/timing; information revealed;
 
 Do not place images merely because a word is spoken. The image must make the story understandable without narration, and add information or emotional meaning to it. Keep secrets hidden until the reveal.
 
+## In This Town style source (mandatory before new production)
+
+- One-prompt input inherits `studio/src/v2/series/IN_THIS_TOWN_STYLE_LOCK.json` and the `ONE_PROMPT_PRODUCTION_CONTRACT.json` production stages automatically. See `ONE_PROMPT_IN_THIS_TOWN.md`.
+- Render with the locked `episode1Style.ts` values and **the exact original Episode 01** Mocha, Essie, Latte, kitten, town/café, walking legs and shading. Avoid ad-hoc replacement character art.
+- Source check: `npm run episode2:style-check` (or the matching style-lock check for a future episode). Source lock success means *asset identity only*.
+- Preview review: `EP2_STYLE_REVIEW.html` and `EP2_STYLE_REVIEW_PACKET.json` contain per-shot actual-frame decisions. **No automatic creative pass** from matching source SHA values.
+- All new *In This Town* mystery episodes should match the quiet suspense, reveal rhythm, coherent location geography and emotional payoff of Episode 01. Do not copy the faster What If Cats comedy pacing.
+- Never use/copy the exact reference video or its music as a new episode asset, or declare music rights from a passed source hash.
+
 ## Invariant feline movement rules (all future one-prompt episodes)
 
 - A cat **sniffs and noses** flaps, furniture and other cats; holds or gently pulls light objects with its **mouth/teeth**, not invented human hands. A paw can walk, balance, step, knead, or make a brief anatomically plausible tap; it is not a prehensile arm. Avoid pointing, grabbing handles, long stretched forelimbs, and human carrying poses.
