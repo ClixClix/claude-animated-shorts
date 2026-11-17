@@ -194,6 +194,12 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // The return shot tracks through the already-open entrance. Mask only
  // its swung-open leaf, which still cut across both cats in real 540p footage.
  world.door.visible=s.shot.sequence!==53;
+ // Shot 29 is already past the shelter, looking back toward the market.
+ // The Episode01 bus-stop glass and poles otherwise occupy almost the
+ // entire frame and erase Mocha for 30+ actual decoded frames. Preserve
+ // the real shelter in establishing shot 28; exclude it from this cut.
+ const shelter=world.props.get('bus-stop');
+ if(shelter)shelter.visible=s.shot.sequence!==29;
  // Episode01's permanent plant is retained everywhere except the close-up
  // jump/cuddle, where real 25-frame cloud QA proved its leaves block Mocha.
  // Cinematic foreground masking changes shot visibility, not original assets.
@@ -249,11 +255,17 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  demoKitten.update(kittenState,s.frame);
  demoKitten.mesh.visible=s.demoCat.visible&&s.demoCat.morph<.95;
  demoKitten.mesh.position.set(...s.demoCat.position);
- demoKitten.mesh.scale.setScalar(.95);
+ // Physical paper-fold acting in shot 03: hold the actual Episode01 kitten
+ // visibly above the rim first, then fold/sink into its ONE persistent box.
+ // Earlier movie showed only ears disappearing with no readable cause.
+ const demoFold=n===3?s.demoCat.morph:0;
+ demoKitten.mesh.scale.set(.95*(1-.12*demoFold),
+  .95*(1-.50*demoFold),.95);
+ if(n===3)demoKitten.mesh.position.y-=.12*demoFold;
  // The rule-cat remains the approved illustrated kitten, not a substitute
  // 3-D toy. Gently recline its real card inside the physical box so the
  // raised shot-02 angle sees a supported body/face rather than an edge-on slab.
- demoKitten.mesh.rotation.x=n>=2&&n<=3?-.42:0;
+ demoKitten.mesh.rotation.x=n===3?-.42-.26*demoFold:n===2?-.42:0;
  demoKitten.mesh.rotation.y=Math.atan2(cam.position.x-s.demoCat.position[0],
   cam.position.z-s.demoCat.position[2]);
  // Episode 01's background supporting-cat asset set. Do not promote their
