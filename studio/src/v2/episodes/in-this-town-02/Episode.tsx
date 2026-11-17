@@ -119,7 +119,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  },[optimize]);
  const boxes=useMemo(()=>({
   latte:createEpisodeBox('latte'),essie:createEpisodeBox('essie'),shared:createEpisodeBox('shared'),
-  demo:createEpisodeBox('essie')
+  demo:createEpisodeBox('demo')
  }),[]);
  boxes.demo.root.name='EPISODE02_RULE_DEMO_BOX';
  const characters=useMemo(()=>({
@@ -238,7 +238,6 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
    }
   });
  }
- const n=s.shot.sequence;
  props.board.visible=n===57;
  props.sign.visible=n===24;
  props.treat.visible=n===16;
