@@ -240,6 +240,10 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  demoKitten.mesh.visible=s.demoCat.visible&&s.demoCat.morph<.95;
  demoKitten.mesh.position.set(...s.demoCat.position);
  demoKitten.mesh.scale.setScalar(.95);
+ // The rule-cat remains the approved illustrated kitten, not a substitute
+ // 3-D toy. Gently recline its real card inside the physical box so the
+ // raised shot-02 angle sees a supported body/face rather than an edge-on slab.
+ demoKitten.mesh.rotation.x=n>=2&&n<=3?-.42:0;
  demoKitten.mesh.rotation.y=Math.atan2(cam.position.x-s.demoCat.position[0],
   cam.position.z-s.demoCat.position[2]);
  // Episode 01's background supporting-cat asset set. Do not promote their
