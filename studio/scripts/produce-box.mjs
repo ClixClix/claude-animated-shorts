@@ -42,6 +42,7 @@ if(mode==='status'){
  // during build. It can highlight problems but cannot certify storytelling.
  run(process.platform==='win32'?'npm.cmd':'npm',['run','typecheck']);
  node('box-tests');
+ node('camera-audit');
  const ready=JSON.parse(await fs.readFile(path.join(out,'EP02_FINISHING_STATUS.json'),'utf8'));
  const manifest=JSON.parse(await fs.readFile(path.join(out,'EP02_SHOT_MANIFEST.json'),'utf8'));
  py('boards');
