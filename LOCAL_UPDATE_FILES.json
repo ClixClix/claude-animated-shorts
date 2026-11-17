@@ -83,6 +83,7 @@
   "studio/scripts/episode02-audio.py",
   "studio/scripts/episode02-boards.py",
   "studio/scripts/episode02-box-tests.mjs",
+  "studio/scripts/episode02-camera-audit.mjs",
   "studio/scripts/episode02-finish.mjs",
   "studio/scripts/episode02-generate-voice.mjs",
   "studio/scripts/episode02-prepare.mjs",
