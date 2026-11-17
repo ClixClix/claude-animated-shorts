@@ -2,9 +2,13 @@ import {studioRoot,browserExecutable,chromiumOptions,renderConcurrency} from './
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
 import {bundle} from '@remotion/bundler';
 import {openBrowser,selectComposition,renderMedia} from '@remotion/renderer';
 
+// A final visual-asset source mismatch must stop rendering before any video work.
+execFileSync(process.execPath,[path.join(studioRoot,'scripts/episode02-style-preflight.mjs')],
+ {cwd:studioRoot,stdio:'inherit'});
 const out=path.join(studioRoot,'out/v2-episodes/in-this-town-02');
 const props=JSON.parse(await fs.readFile(path.join(out,'render-props.json'),'utf8'));
 const mode=process.argv[2]??'render',preview=mode==='preview';
@@ -15,6 +19,8 @@ props.previewScale=preview?.5:1;
 props.optimize=true;
 const sourceFiles=[
  'src/v2/episodes/in-this-town-02/Episode.tsx',
+ 'src/v2/series/episode1Style.ts',
+ 'src/v2/series/IN_THIS_TOWN_STYLE_LOCK.json',
  'src/v2/episodes/in-this-town-02/episode1Cast.ts',
  'src/v2/episodes/in-this-town-02/catBehaviors.ts',
  'src/v2/episodes/door-at-1111-polish/walkingLegs.ts',
