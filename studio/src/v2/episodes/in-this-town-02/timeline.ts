@@ -67,6 +67,12 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   cam=n===1?cameraPreset([4.2,1.0,9.2],[3.45,.6,7.6] as V3,38):
       n===2?cameraPreset([3.4,5.0,7.6],[3.45,.10,7.6],48):
       n===3?focus(HOME.demo,2.1,40,.45):cameraPreset([6,1.65,9.2],[3.45,.5,7.6],62);
+  if(n===2){
+   // Lift the Episode01 illustrated kitten's face above the carton rim
+   // so its original vertical card remains readable in the elevated view.
+   demoCat.position=[HOME.demo[0],.14,HOME.demo[2]];
+   demoCat.headTurn=.10*Math.sin(u*Math.PI*2);
+  }
   if(n===3){demoCat.visible=true;demoCat.morph=ease(u);demoCat.position=[HOME.demo[0],0,HOME.demo[2]];morph.demo=ease(u);flap.demo=lerp(.8,.25,ease(u));}
   if(n===4){demoCat.visible=false;flap.demo=.33;}
  }
@@ -219,12 +225,13 @@ export function stateAt(frame:number,shots:EditShot[]):State{
    const clearance=ease((hop-.25)/.55);
    mocha.position=[
     u<.24?lerp(-3.32,-3.19,ease(u/.24)):lerp(-3.19,-1.95,clearance),
-    (hop>0&&hop<1?.84*Math.sin(Math.PI*hop):0)
+    (hop>0&&hop<1?1.02*Math.sin(Math.PI*hop):0)
        +.12*ease((hop-.86)/.14),
     2.17
    ];
    mocha.scale=.76; // Preserve the Episode01 silhouette size throughout the jump.
    mocha.walking=u<.22;
+    mocha.headTurn=.10*Math.sin(Math.PI*hop);
   }else{
    const warm=ease(u);
    mocha.position=[lerp(-1.95,-1.85,warm),.12,2.17];
