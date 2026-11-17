@@ -1,3 +1,13 @@
+# LATEST — actual GitHub Actions cloud render reviewed; targeted camera/plant corrections pending (2026-11-17)
+
+- GitHub Actions run 44041038084 **succeeded**: source lock 25 checks, TypeScript, 802 original café/box checks, 14 original timeline/finale checks, 14 actual 540×960 story stills and 11 extra 58–60 motion samples. Proof ZIP is the cloud artifact `episode02-cloud-qa-3` (run ID 44041038084).
+- Visually inspected actual 25-frame cloud output against Episode01. **REJECTED**: shot59's foreground entrance plant blocked Mocha (especially early jump); shot60 low camera showed almost only the three cat heads behind an oversized front cardboard wall, plus flat motion. Many earlier interaction/alley shots still require real acting/camera fixes. Do not call it visually approved or 99% parity.
+- Source correction in this commit: set Episode02 shot59/60 camera height 1.85m, target y0.66, close-up FOV93/84, and hide original café entrance plant only in scene shots58–60 to keep the jump and cuddle unobstructed; all Episode01 original assets remain unchanged elsewhere. New camera projection checked analytically for Mocha across representative jump phases and all three final cats; **fresh render not yet seen**.
+- Subsequent cloud workflow on push will render 25 stills and a short actual H264 video of shots58–60 (`EP2_ENDING_SHOTS_58-60_CLOUD_PREVIEW.mp4`), saved to GitHub artifact. Track actual GitHub Actions run status/results; do not confuse it with the prior successful but artistically rejected run.
+- Eight hourly overnight automation QA runs scheduled (3:37–10:37 a.m. Eastern); these are periodic follow-ups, NOT guaranteed continuous eight-hour machine access. Keep reports grounded in run IDs, actual files and errors, and do not use paid audio or publish.
+
+---
+
 # LATEST — Repeated source audit + actual Episode01 master identity verified (2026-11-17)
 
 User requested **repeated self-audits until 99% confidence Episode02 source is correct and looks like approved Episode01**, and is going to bed. Honest contract: source/code correctness can be repeatedly checked, but **99% VISUAL parity cannot be established until fresh rendered footage is inspected**. No invisible background session is running after the response.

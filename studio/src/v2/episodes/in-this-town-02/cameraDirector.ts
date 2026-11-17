@@ -160,9 +160,9 @@ function fit(s:State){
   const seekX=clamp(s.mocha.position[0]+.45,-2.85,-1.45);
   const c=clamp((u-.68)/.32,0,1),recenter=c*c*(3-2*c);
   const trackX=n===59?seekX+(-1.45-seekX)*recenter:-1.45;
-  const camera:V3=[trackX,1.18,3.94-push];
-  const target:V3=[trackX,.73,2.11];
-  const fov=n===59?93:90;
+  const camera:V3=[trackX,1.85,3.90-push];
+  const target:V3=[trackX,.66,2.11];
+  const fov=n===59?93:84;
   return {camera,target,fov,region:r,
    framing:projections(corners(focus),target,camera,fov),
    shot:n,selectedIds:focus.map(x=>x.id)};

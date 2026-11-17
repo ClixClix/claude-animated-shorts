@@ -90,14 +90,14 @@
     {
       "shot": 59,
       "priority": "high",
-      "assessment": "awaiting_new_moving_render",
-      "notes": "Previous overhead render rejected. Revised code uses Episode01 cats, Mocha's rim-clearing hop, side-tracking camera, and a close return to the group. Numerical path/projection check completed; actual footage not yet reviewed."
+      "assessment": "cloud_render_failed_visual_review_remediation_committed",
+      "notes": "Cloud run 44041038084 showed original foreground plant obscuring Mocha through his approach and jump; revised plan suppresses entrance plant ONLY for shots58–60 and raises close camera to y1.85. Await fresh cloud frames and motion MP4."
     },
     {
       "shot": 60,
       "priority": "high",
-      "assessment": "awaiting_new_moving_render",
-      "notes": "Previous top-down small-cats ending rejected. Revised closer eye-height composition groups all three in one box with inward feline nuzzles and source-locked Episode01 artwork; actual render approval remains pending."
+      "assessment": "cloud_render_failed_visual_review_remediation_committed",
+      "notes": "Cloud run 44041038084 showed only tiny heads above giant front box wall. Revised camera y1.85, target y0.66, final FOV84 to look into cardboard and reveal original Episode01 cat bodies. Await new render."
     }
   ],
   "requiredProofs": [

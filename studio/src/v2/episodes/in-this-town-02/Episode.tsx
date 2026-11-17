@@ -188,6 +188,11 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  CHAR.uSideTint.value.set(...EPISODE1_STYLE.character.sideTint);
  CARD_K.uPx.value=previewScale;
  world.door.rotation.y=s.shot.sequence===24?-.3:s.shot.sequence===27?-1.18:s.shot.sequence>=53?-1.18:0;
+ // Episode01's permanent plant is retained everywhere except the close-up
+ // jump/cuddle, where real 25-frame cloud QA proved its leaves block Mocha.
+ // Cinematic foreground masking changes shot visibility, not original assets.
+ const foregroundPlant=world.cafe.fixtures.get('entrance-plant');
+ if(foregroundPlant)foregroundPlant.visible=!(s.shot.sequence>=58&&s.shot.sequence<=60);
  const boxArray=[
   {key:'latte',obj:boxes.latte,pos:s.latteBox,visible:s.show.latte,flap:s.flap.latte},
   {key:'essie',obj:boxes.essie,pos:s.essieBox,visible:s.show.essie,flap:s.flap.essie},
