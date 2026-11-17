@@ -27,6 +27,28 @@ check(BOX_SPECS.latte.tape==='striped'&&BOX_SPECS.essie.tape==='none'&&BOX_SPECS
 check(BOX_SPECS.shared.width>BOX_SPECS.essie.width&&BOX_SPECS.essie.width>BOX_SPECS.latte.width,'Distinct widths and shared capacity');
 check(ROOM.width===8&&ROOM.depth===8.4,'Known fixed cafe dimensions were preserved');
 
+check(BOX_SPECS.latte.height<=.52&&BOX_SPECS.essie.height<=.60&&
+ BOX_SPECS.shared.height<=.60,'Low box sidewalls leave Episode 01 cat faces visible');
+check(BOX_SPECS.shared.width>=2.3&&BOX_SPECS.shared.width<=2.6,
+ 'Final one-box trio has plausible width without swallowing cafe room');
+const timelineSource=await fs.readFile(
+ path.resolve('src/v2/episodes/in-this-town-02/timeline.ts'),'utf8');
+const sceneSource=await fs.readFile(
+ path.resolve('src/v2/episodes/in-this-town-02/Episode.tsx'),'utf8');
+const felineSource=await fs.readFile(
+ path.resolve('src/v2/episodes/in-this-town-02/catBehaviors.ts'),'utf8');
+check(timelineSource.includes('latte:n>=6&&n<=55'),
+ 'Latte original box vanishes when the shared box appears');
+check(!sceneSource.includes('pawRig(')&&!sceneSource.includes('gesture('),
+ 'No disembodied human-like forearm in Episode 02 main render');
+check(sceneSource.includes("catBehaviorFor(s,'mocha')")&&
+ sceneSource.includes("catBehaviorFor(s,'essie')"),
+ 'Nose and mouth action director controls the actual Episode 01 cat assets');
+check(felineSource.includes("mode:'mouth-carry'")&&
+ felineSource.includes("mode:'nose-nudge'"),
+ 'Light cardboard is carried by mouth or nudged by nose, never hand-grabbed');
+
+
 // Default stationary room placements must not intersect existing permanent
 // solid fixtures. This does not certify animation or cinematographic framing.
 const solids=FIXTURES.filter(f=>['serving-counter','preparation-counter','customer-table','chair','bench','riser','plant'].includes(f.role));
