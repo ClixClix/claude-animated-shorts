@@ -176,20 +176,32 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  if(n===51){essie.position=[HOME.alleyBox[0],.10,HOME.alleyBox[2]+.28];essie.scale=lerp(.82,1,ease(u));}
  if(n===55){latte.position=[HOME.latte[0],.12,HOME.latte[2]+.18];latte.scale=lerp(.75,1,ease(u));}
  if(n>=59){
-  // Shared cardboard sits on the café floor: actual curled cats stay
-  // grounded IN it, not hovering 60 cm above the base.
-  // Final Episode 01 character art: group them close enough to read as a
-  // cuddle rather than three tiny separated decorations. Their heads remain
-  // individually visible, inside ONE original-geometry floor box.
-  mocha.position=[-2.02,.12,2.18];mocha.scale=.64;
-  essie.position=[-1.45,.12,2.06];essie.scale=.64;
-  latte.position=[-.88,.12,2.18];latte.scale=.64;
-  // Quiet feline nuzzle: heads/gazes turn INWARD. No hands or reaching arms.
-  const settle=ease(n===59?u:1);
-  mocha.headTurn=.10+.12*settle;
-  essie.headTurn=0;
-  latte.headTurn=-.10-.12*settle;
-  mocha.gazeY=essie.gazeY=latte.gazeY=-.08;
+  // SHOT 59: Essie and Latte wait in the one shared box; Mocha enters LAST.
+  // The sidewall has to be cleared before feet land. Never teleport through
+  // cardboard, never rebuild the original Episode 01 cat as a primitive.
+  essie.position=[-1.45,.12,2.01];essie.scale=.67;
+  latte.position=[-.95,.12,2.17];latte.scale=.67;
+  const settle=ease(n===59?(u-.72)/.28:1);
+  if(n===59){
+   const entry=ease((u-.24)/.48);
+   const hop=clamp((u-.23)/.53);
+   mocha.position=[
+    lerp(-3.04,-1.95,entry),
+    .10+(hop>0&&hop<1?.96*Math.sin(Math.PI*hop):0)+.02*settle,
+    2.17
+   ];
+   mocha.scale=lerp(.72,.67,entry);
+   mocha.walking=u<.22;
+  }else{
+   const warm=ease(u);
+   mocha.position=[lerp(-1.95,-1.85,warm),.12,2.17];
+   latte.position=[lerp(-.95,-1.04,warm),.12,2.17];
+   mocha.scale=.67;
+  }
+  mocha.headTurn=.08+.16*settle;
+  essie.headTurn=.025*Math.sin(t*1.1);
+  latte.headTurn=-.08-.16*settle;
+  mocha.gazeY=essie.gazeY=latte.gazeY=-.06;
  }
  const openShared=n>=58;
  const inTown=n>=56&&n<=57;
