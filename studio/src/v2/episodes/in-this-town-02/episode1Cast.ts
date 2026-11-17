@@ -1,0 +1,95 @@
+import * as T from 'three';
+import {createEpisodeCat,contactShadow} from '../door-at-1111-polish/actors';
+import {DRAFT_SHOTS,stateAt as episode1State,supportHeight,
+ type Actor,type EpisodeState} from '../door-at-1111-polish/timeline';
+import type {CatId} from '../../cats/designs';
+import type {V3} from '../../cafe/config';
+import type {ActorPose,State} from './timeline';
+
+/**
+ * Actual Episode 01 character implementation — not a re-illustration.
+ *
+ * The same createEpisodeCat draws each approved full-head/full-body canvas,
+ * card shader, planted four-leg cards, whiskers and cat-identity markings.
+ * Episode 02 supplies a new STORY trajectory while Episode 01 continues
+ * owning all designs, geometry and physical walking leg artwork.
+ */
+type Episode1Cat=ReturnType<typeof createEpisodeCat>;
+const BASE=episode1State(0,DRAFT_SHOTS);
+const HALF_WIDTH=.145;
+const clamp=(n:number)=>Math.max(0,Math.min(1,n));
+const vec=(x:number,y:number,z:number):V3=>[x,y,z];
+
+function bridgeActor(
+ id:CatId,pose:ActorPose,next:ActorPose,s:State
+):Actor{
+ const p=pose.position;
+ const delta=vec(next.position[0]-p[0],0,next.position[2]-p[2]);
+ const length=Math.hypot(delta[0],delta[2]);
+ const moving=pose.walking&&length>.00005;
+ const dir:V3=length>.00005?vec(delta[0]/length,0,delta[2]/length):[1,0,0];
+ const side:V3=[-dir[2],0,dir[0]];
+ const seed=id==='latte'?0:id==='mocha'?1:2;
+ const cycle=s.t*2.6*Math.PI*2;
+ const feet:V3[]=[];
+ const footKeys:string[]=[];
+ for(let i=0;i<4;i++){
+  const fore=i<2?-.17:.17;
+  const lat=i%2===0?-HALF_WIDTH:HALF_WIDTH;
+  const phase=cycle+(i===0||i===3?0:Math.PI);
+  const move=moving?.10*Math.sin(phase):0;
+  const lift=moving?.055*Math.max(0,Math.cos(phase)):0;
+  const x=p[0]+dir[0]*(fore+move)+side[0]*lat;
+  const z=p[2]+dir[2]*(fore+move)+side[2]*lat;
+  const surface=Math.max(
+   supportHeight([x,p[1],z],seed),
+   p[1]-(moving?.03:0)
+  );
+  feet.push([x,surface+lift,z]);
+  footKeys.push('ep02-'+i+((moving&&lift>.007)?':swing':':stance'));
+ }
+ const expr=pose.emotion;
+ return {
+  feet,footKeys,heading:dir,position:[...p] as V3,
+  moving,travel:s.t*.82,emotion:expr==='scared'?1:expr==='sad'?.5:0,
+  pose:{
+   walking:moving,gait:cycle,
+   yaw:moving?.55:.06,
+   expression:expr,headTurn:pose.headTurn,gazeX:pose.headTurn,
+   gazeY:pose.gazeY,
+   headTilt:expr==='sad'?-.12:expr==='scared'?.09:expr==='happy'?-.035:0,
+   breath:Math.sin(s.t*1.8+seed)*.25,
+   tail:Math.sin(s.t*1.35+seed)*.26,
+   blink:Math.max(0,1-Math.abs(((s.t+seed*.41)%3.1)-2.78)/.11)
+  }
+ };
+}
+export function createEpisode1CastCat(id:CatId){
+ const card:Episode1Cat=createEpisodeCat(id);
+ const shadow=contactShadow();
+ shadow.mesh.name='episode02-'+id+'-episode01-ground-shadow';
+ const update=(pose:ActorPose,next:ActorPose,s:State,camera:T.PerspectiveCamera)=>{
+  // Using a neutral Episode 01 state avoids executing its *story-specific*
+  // 'door at 11:11' expressions, nose pushes, timed scares or head drops
+  // while retaining every Episode 01 asset/rig, shade and toe/contact system.
+  const ep1:EpisodeState={...BASE,shot:DRAFT_SHOTS[0],frame:0,t:0,u:0,
+   camera:camera.position.toArray() as V3,
+   target:[...s.target] as V3};
+  const a=bridgeActor(id,pose,next,s);
+  card.updateActor(a,ep1);
+  const alpha=clamp(1-pose.morph);
+  // Explicit limit: 02 still needs a purpose-built transformation. We do
+  // NOT scale/stretch the approved Episode 01 artwork into a fake box.
+  card.mesh.visible=pose.visible&&alpha>.08;
+  card.mesh.scale.setScalar(pose.scale);
+  card.mesh.material.opacity=1; // retain Episode 01 opaque, correct shaded face
+  card.legs.visible=card.mesh.visible&&a.moving;
+  shadow.mesh.visible=card.mesh.visible;
+  shadow.mesh.position.set(
+   pose.position[0],supportHeight(pose.position,id==='latte'?0:id==='mocha'?1:2)+.008,
+   pose.position[2]);
+  shadow.mesh.scale.setScalar(pose.scale);
+ };
+ const dispose=()=>{card.dispose();shadow.dispose();};
+ return {id,card,shadow,update,dispose};
+}
