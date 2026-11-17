@@ -226,7 +226,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  characters.essie.update(s.essie,next.essie,s,cam,catBehaviorFor(s,'essie'));
  characters.latte.update(s.latte,next.latte,s,cam,catBehaviorFor(s,'latte'));
  const kittenState={
-  ...kittenStoryAt(0),frame:s.frame,shot:1 as const,
+  ...kittenStoryAt(0),frame:s.frame,// Never use Episode01 shot-1 world-space foot targets in the box demo:\n  // they projected as two giant diagonal legs across the kitten's face.\n  shot:2 as const,
   camera:directed.camera,target:directed.target,
   kitten:[...s.demoCat.position] as V3,
   kittenFear:s.demoCat.emotion==='scared'?1:0,
