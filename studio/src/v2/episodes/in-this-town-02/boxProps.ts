@@ -8,12 +8,17 @@ import * as T from 'three';
  * Dimensions are provisional scene units (metres, Y-up), not final creative
  * approval of a camera or the characters' in-box poses.
  */
-export type BoxIdentity='latte'|'essie'|'shared';
+export type BoxIdentity='latte'|'essie'|'shared'|'demo';
 export type BoxSpec={
   id:string; width:number; depth:number; height:number; color:string;
   tape:'striped'|'none'; home:[number,number,number]; role:string;
 };
 export const BOX_SPECS:Readonly<Record<BoxIdentity,Readonly<BoxSpec>>> = Object.freeze({
+  demo:Object.freeze({
+    id:'RULE_DEMO_BOX',width:1.05,depth:.91,height:.47,color:'#bb926c',
+    tape:'none',home:[3.45,.04,7.6] as [number,number,number],
+    role:'One small physical cardboard box for the town-rule demonstration; same mesh persists after transformation',
+  }),
   latte:Object.freeze({
     id:'LATTE_BOX',width:1.18,depth:1.06,height:.78,color:'#b98d60',
     tape:'striped',home:[-1.9,0,2.1] as [number,number,number],
