@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "episode": "in-this-town-02",
+  "productionStage": "ARTICULATED_SHOT01_VISUAL_PROOF",
+  "publishable": false,
+  "durationFrames": 78,
+  "fps": 30,
+  "frameWidth": 1080,
+  "frameHeight": 1920,
+  "referenceStyle": "In This Town Episode 01 — same foreground illustrated character-head artist, shaders, palettes, café/town set",
+  "set": {
+    "location": "Original Episode 01 café outside entrance, right-side sidewalk, clear of bus-stop at x=-4.4 and central streetlight at x=0",
+    "boxWorldPosition": [
+      1.8,
+      0.04,
+      5.35
+    ],
+    "camera": {
+      "position": [
+        1.48,
+        1.67,
+        9.85
+      ],
+      "target": [
+        1.42,
+        0.81,
+        5.35
+      ],
+      "fov": 72
+    },
+    "prohibitedProximityGroups": [
+      "bus-stop",
+      "streetlight-3",
+      "streetlight-4",
+      "streetlight-5"
+    ],
+    "keepOriginalTownGeometry": true,
+    "clearance": 0.07
+  },
+  "actor": {
+    "id": "anonymous-town-guest-hazel",
+    "asset": "Episode01 detailed drawCat head + independent 2.5D painted body/paws/tail",
+    "noLeadLookalike": true
+  },
+  "action": {
+    "phases": [
+      {
+        "name": "walk_toward_box",
+        "fromSeconds": 0,
+        "toSeconds": 0.66,
+        "contact": "grounded alternate paws"
+      },
+      {
+        "name": "anticipate_jump",
+        "fromSeconds": 0.66,
+        "toSeconds": 0.96,
+        "contact": "all four paws on sidewalk"
+      },
+      {
+        "name": "hop_over_rim",
+        "fromSeconds": 0.96,
+        "toSeconds": 1.89,
+        "contact": "feet lift before body crosses box side; body clears .51-meter rim"
+      },
+      {
+        "name": "land_inside",
+        "fromSeconds": 1.89,
+        "toSeconds": 2.18,
+        "contact": "all paws descend into the SAME hollow box"
+      },
+      {
+        "name": "settle",
+        "fromSeconds": 2.18,
+        "toSeconds": 2.6,
+        "contact": "head remains visible over box lip"
+      }
+    ],
+    "cameraMovements": "one stable, intentional 2.5D cinematic three-quarter view; no random pushes or cuts"
+  },
+  "visualGate": {
+    "framesToCheck": [
+      0,
+      8,
+      16,
+      24,
+      32,
+      40,
+      48,
+      56,
+      65,
+      77
+    ],
+    "reject": [
+      "any bus-stop glass, bench, pole, canopy or other street dressing between camera and hero",
+      "any overlap of hero rig with permanent stage objects before physical box entry",
+      "entire sprite translated as one pancake-like cutout without independent paw/head/tail movement",
+      "jump crosses side wall before feet clear rim",
+      "cat head obscured by cardboard while settling",
+      "oversized cardboard box or clipped guest or box",
+      "dramatic motion discontinuities at land"
+    ]
+  },
+  "next": "Only after the first shot is visually accepted, design a physically readable cat-to-cardboard performance for shot 03 and a reusable witness reaction rig for shot 04."
+}
