@@ -173,7 +173,7 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
   // This *same guest* appears curled after the deliberate camera cut to shot 02.
   // The sculpted curled sprite includes tail, torso, paws, detailed Episode 01
   // head and whiskers. Ears/eyes are visible above the front rim.
-  guest.mesh.position.set(SITE.x,SITE.y-.018-.15*morph,SITE.z-.10);
+  guest.mesh.position.set(SITE.x,SITE.y+.115-.20*morph,SITE.z-.10);
   const shrink=.95-.26*morph;
   guest.mesh.scale.set(.89*shrink,.88*shrink,1);
   guest.mesh.rotation.z=-.05*morph;
@@ -239,7 +239,7 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
  // Record real-scene ray hits, not just a subject-centred FOV estimate.
  // This is intentionally sample-based and independent of publish QA.
  useEffect(()=>{
-  if(![13,44,85,145].includes(frame))return;
+  if(![5,13,20,34,44,55,71,85,98,122,145,167].includes(frame))return;
   world.root.updateMatrixWorld(true);demo.root.updateMatrixWorld(true);
   Object.values(cats).forEach(c=>c.mesh.updateMatrixWorld(true));cam.updateMatrixWorld(true);
   const watch=[{name:'box',mesh:demo.root},
@@ -255,12 +255,26 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
   const hits=ray.intersectObjects(occluders,false).filter(h=>
    !['floor','city-sidewalk-network','city-road-network'].includes(h.object.name)
   ).slice(0,5).map(h=>({name:h.object.name,distance:Number(h.distance.toFixed(2))}));
+  // Production lesson: a mathematically safe subject projection can still
+  // be entirely hidden behind the *hero prop itself*. Trace the important
+  // face point through the physical cardboard walls/flaps as well.
+  const facePoint=new T.Vector3(guest.mesh.position.x,
+   guest.mesh.position.y+(index===0?.86:.62)*guest.mesh.scale.y,
+   guest.mesh.position.z);
+  const toFace=facePoint.clone().sub(cam.position);
+  const faceDistance=toFace.length();
+  const faceRay=new T.Raycaster(cam.position,toFace.normalize(),.01,
+   Math.max(.01,faceDistance-.055));
+  const boxHits=faceRay.intersectObject(demo.root,true).filter(h=>
+   h.object instanceof T.Mesh).slice(0,3);
+  const faceOccluded=index<3&&morph<.63&&boxHits.length>0;
   const cropped=samples.some(p=>p.behind||p.minX<-.90||p.maxX>.90||
    p.minY<-.88||p.maxY>.88);
   console.log('PART1_AUDIT '+JSON.stringify({
    frame,shot:shot.id,camera:cam.position.toArray(),fov:cam.fov,
    sampledSubjects:samples,occludingWorldObjects:hits,
    cropWarning:cropped,occlusionWarning:hits.length>0,
+   faceOccluded,faceBlocker:boxHits[0]?.object.name??null,
    sameBoxIdentity:demo.root.name,magicProgress:morph,
    noDuplicateBox:true
   }));
