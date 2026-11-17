@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "in-this-town-ep02",
+  "part": "01",
+  "storyTitle": "The Cat Who Became a Box",
+  "proofType": "VISUAL_PILOT_NOT_PUBLISHABLE",
+  "referenceEpisode": "In This Town — The Door at 11:11 (Episode 01)",
+  "compositionId": "InThisTownEpisode02Part1",
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "stage": {
+    "location": "Episode 01 exterior café sidewalk / fixed town geometry",
+    "boxWorldPosition": [
+      3.45,
+      0,
+      7.6
+    ],
+    "boxSpecId": "RULE_DEMO_BOX",
+    "guestSource": "Episode 01 TownPopulation supporting-cat-0, NOT Mocha, Essie, or Latte",
+    "audienceSource": "Episode 01 TownPopulation supporting-cat-1 to 3",
+    "fixedSet": true
+  },
+  "controls": {
+    "boxCount": 1,
+    "transformation": "one guest morphs into the EXISTING physical box; no second prop",
+    "aspect": "9:16",
+    "captionOverlay": "none until approved word alignments exist",
+    "paidVoiceRequests": 0,
+    "performance": "true 3D cardboard flaps, Episode 01 2.5D illustrated cat cards and paw rigs",
+    "disallow": [
+      "camera through walls",
+      "cat duplicate",
+      "oversized box",
+      "teleportation",
+      "recolored lead cats as guest",
+      "filler zooms"
+    ]
+  },
+  "shots": [
+    {
+      "id": "01",
+      "start": 0,
+      "end": 27,
+      "action": "Guest paws climb over the rim of one SMALL box; low-angle establishing box shot",
+      "camera": {
+        "position": [
+          3.3,
+          1.38,
+          10
+        ],
+        "target": [
+          3.45,
+          0.65,
+          7.6
+        ],
+        "fov": 61
+      },
+      "subject": [
+        "guest paws",
+        "top of box",
+        "recognizable Episode 01 town"
+      ]
+    },
+    {
+      "id": "02",
+      "start": 27,
+      "end": 63,
+      "action": "High three-quarter view of guest curling inside same box; passing sunshine indicates elapsed time",
+      "camera": {
+        "position": [
+          3.9,
+          2.65,
+          10.12
+        ],
+        "target": [
+          3.45,
+          0.5,
+          7.6
+        ],
+        "fov": 63
+      },
+      "subject": [
+        "cat visible over rim",
+        "interior of box",
+        "moving shadow"
+      ]
+    },
+    {
+      "id": "03",
+      "start": 63,
+      "end": 108,
+      "action": "Guest silhouette progressively becomes cardboard as it folds inside same real box; no duplicate box",
+      "camera": {
+        "position": [
+          3.57,
+          1.82,
+          10.75
+        ],
+        "target": [
+          3.45,
+          0.65,
+          7.6
+        ],
+        "fov": 63
+      },
+      "subject": [
+        "guest face",
+        "cardboard fold",
+        "existing box"
+      ]
+    },
+    {
+      "id": "04",
+      "start": 108,
+      "end": 183,
+      "action": "Three distinct Episode 01 town guests gather and listen by the transformed box without discovering cure",
+      "camera": {
+        "position": [
+          3.55,
+          2.15,
+          11.35
+        ],
+        "target": [
+          3.45,
+          0.73,
+          7.6
+        ],
+        "fov": 71
+      },
+      "subject": [
+        "one transformed box",
+        "three curious townspeople",
+        "unobstructed sidewalk"
+      ]
+    }
+  ],
+  "visualGate": {
+    "sampleEachShotAt": [
+      0.2,
+      0.5,
+      0.8
+    ],
+    "maxNdcX": 0.9,
+    "maxNdcY": 0.88,
+    "inspect": [
+      "cat and box fit simultaneously",
+      "no camera through storefront",
+      "guest is not a lead cat",
+      "no floating paws",
+      "no cat duplicate",
+      "clear single-box transformation",
+      "Episode 01 matching linework and lighting"
+    ]
+  },
+  "approval": "All four shots must pass actual rendered visual review before shots 05–60 are rebuilt."
+}
