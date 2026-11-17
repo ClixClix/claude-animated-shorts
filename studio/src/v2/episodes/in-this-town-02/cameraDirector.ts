@@ -162,7 +162,7 @@ function fit(s:State){
    seekX+(-1.45-seekX)*recenter:-1.45;
   const camera:V3=[trackX,1.55,3.90-(n===60?.08*u:0)];
   const target:V3=[trackX,.68,2.11];
-  const fov=98-14*recenter;
+  const fov=98-10*recenter; // Keep enlarged Episode01 cats fully inside 9:16 through the final push.
   return {camera,target,fov,region:r,
    framing:projections(corners(focus),target,camera,fov),
    shot:n,selectedIds:focus.map(x=>x.id)};
