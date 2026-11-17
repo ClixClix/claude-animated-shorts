@@ -176,9 +176,9 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  if(n===51){essie.position=[HOME.alleyBox[0],.10,HOME.alleyBox[2]+.28];essie.scale=lerp(.82,1,ease(u));}
  if(n===55){latte.position=[HOME.latte[0],.12,HOME.latte[2]+.18];latte.scale=lerp(.75,1,ease(u));}
  if(n>=59){
-  mocha.position=[-2.18,.15,2.5];mocha.scale=.56;
-  essie.position=[-1.45,.15,2.5];essie.scale=.56;
-  latte.position=[-.72,.15,2.5];latte.scale=.56;
+  mocha.position=[-2.18,.60,2.5];mocha.scale=.56;
+  essie.position=[-1.45,.60,2.5];essie.scale=.56;
+  latte.position=[-.72,.60,2.5];latte.scale=.56;
  }
  const openShared=n>=58;
  const inTown=n>=56&&n<=57;
