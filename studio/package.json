@@ -21,7 +21,9 @@
     "episode2:style-check": "node scripts/episode02-style-preflight.mjs",
     "episode2:style-preview": "node scripts/episode02-episode1-assets-preview.mjs",
     "episode2:review-sheet": "node scripts/episode02-review-sheet.mjs",
-    "episode2:finale-audit": "node scripts/episode02-finale-audit.mjs"
+    "episode2:finale-audit": "node scripts/episode02-finale-audit.mjs",
+    "episode2:code-audit": "node scripts/episode02-quality-cycle.mjs",
+    "episode2:visual-cycle": "node scripts/episode02-quality-cycle.mjs --preview"
   },
   "dependencies": {
     "@react-three/fiber": "9.1.2",
