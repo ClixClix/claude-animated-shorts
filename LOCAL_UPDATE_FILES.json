@@ -94,6 +94,7 @@
   "studio/scripts/episode02-generate-voice.mjs",
   "studio/scripts/episode02-part1.mjs",
   "studio/scripts/episode02-prepare.mjs",
+  "studio/scripts/episode02-quality-cycle.mjs",
   "studio/scripts/episode02-render.mjs",
   "studio/scripts/episode02-review-sheet.mjs",
   "studio/scripts/episode02-shot01-performance.mjs",
