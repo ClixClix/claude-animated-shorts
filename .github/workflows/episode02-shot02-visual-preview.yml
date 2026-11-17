@@ -50,16 +50,11 @@ jobs:
           CHROME_PATH="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
           if [ -n "$CHROME_PATH" ]; then echo "CHROME=$CHROME_PATH" >> "$GITHUB_ENV"; fi
 
-      - name: Install FFmpeg required by silent scratch manifest
+      - name: Inspect media tools (render does not require external FFmpeg)
         shell: bash
         run: |
-          set -euo pipefail
-          if ! command -v ffmpeg >/dev/null 2>&1 || ! command -v ffprobe >/dev/null 2>&1; then
-            sudo apt-get update -qq
-            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ffmpeg
-          fi
-          ffmpeg -version | head -n 1
-          ffprobe -version | head -n 1
+          command -v ffmpeg || true
+          command -v ffprobe || true
 
       - name: Install
         run: npm ci --no-audit --no-fund
