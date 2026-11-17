@@ -14,6 +14,7 @@ import {TownPopulation} from '../door-at-1111-polish/population';
 import {contactShadow,pawRig} from '../door-at-1111-polish/actors';
 import {stateAt as ep1State,DRAFT_SHOTS} from '../door-at-1111-polish/timeline';
 import {createEpisodeBox} from './boxProps';
+import blueprint from './PART1_SHOT_BLUEPRINT.json';
 
 /**
  * Episode 02 PART 1: four-shot isolated production pilot (183 frames).
@@ -24,25 +25,16 @@ import {createEpisodeBox} from './boxProps';
  * cast artwork and paw rig. The pilot is an independently testable reusable
  * pattern for later sections of the approved story.
  */
-export const PART1_SHOTS=[
- {id:'01',start:0,end:27,action:'A guest cat climbs inside a small box on the town sidewalk'},
- {id:'02',start:27,end:63,action:'The same guest settles; sunlight and a shadow indicate time passing'},
- {id:'03',start:63,end:108,action:'The guest visibly folds into the SAME cardboard box; the original box remains'},
- {id:'04',start:108,end:183,action:'Other townspeople study the transformed box, baffled'}
-] as const;
-export const PART1_DURATION=183;
-const SITE=new T.Vector3(3.45,0,7.60);
+export const PART1_SHOTS=blueprint.shots;
+export const PART1_DURATION=blueprint.shots[blueprint.shots.length-1].end;
+const SITE=new T.Vector3(blueprint.stage.boxWorldPosition[0],
+ blueprint.stage.boxWorldPosition[1],blueprint.stage.boxWorldPosition[2]);
 const GRADE:GradeParams={ky:[.015,.09,.26,.52,.77,.92,1],sat:[.92,.98,.90],
  tintS:[.008,.002],tintM:[0,.002],tintH:[-.003,.002],vig:[.10,.4]};
 const smooth=(v:number)=>{const t=Math.max(0,Math.min(1,v));return t*t*(3-2*t);};
 const lerp=(a:number,b:number,t:number)=>a+(b-a)*t;
 type PilotProps={previewScale?:number;optimize?:boolean};
-const CAMERAS=[
- {position:[3.30,1.38,10.00] as const,target:[3.45,.65,7.6] as const,fov:61},
- {position:[3.90,2.65,10.12] as const,target:[3.45,.50,7.6] as const,fov:63},
- {position:[3.57,1.82,10.75] as const,target:[3.45,.65,7.6] as const,fov:63},
- {position:[3.55,2.15,11.35] as const,target:[3.45,.73,7.6] as const,fov:71},
-] as const;
+const CAMERAS=blueprint.shots.map(s=>s.camera);
 const findShot=(frame:number)=>{
  const index=PART1_SHOTS.findIndex(s=>frame>=s.start&&frame<s.end);
  const i=index<0?PART1_SHOTS.length-1:index;
@@ -141,7 +133,7 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
  const push=index===0?.12*u:index===2?.08*u:0;
  cam.position.set(chosen.position[0],chosen.position[1],chosen.position[2]-push);
  cam.fov=chosen.fov;cam.near=.08;cam.far=320;
- cam.lookAt(...chosen.target);cam.layers.enable(NOINK);
+ cam.lookAt(chosen.target[0],chosen.target[1],chosen.target[2]);cam.layers.enable(NOINK);
  cam.updateProjectionMatrix();cam.updateMatrixWorld(true);
  scene.background=new T.Color('#253b4c');
  scene.fog=new T.Fog('#253b4c',44,245);
@@ -214,7 +206,7 @@ const Inner:React.FC<PilotProps>=({previewScale=1,optimize=true})=>{
  // Record real-scene ray hits, not just a subject-centred FOV estimate.
  // This is intentionally sample-based and independent of publish QA.
  useEffect(()=>{
-  if(![12,43,84,142].includes(frame))return;
+  if(![13,44,85,145].includes(frame))return;
   world.root.updateMatrixWorld(true);demo.root.updateMatrixWorld(true);
   people.root.updateMatrixWorld(true);cam.updateMatrixWorld(true);
   const watch=[{name:'box',mesh:demo.root},
