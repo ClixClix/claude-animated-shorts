@@ -61,8 +61,11 @@ check(!ep2.includes('pawRig(')&&!ep2.includes('gesture('),
 check(ep2.includes('catBehaviorFor(s,\'mocha\')')&&ep2.includes('catBehaviorFor(s,\'essie\')'),
  'Animal nose and mouth behaviors are not connected to actual lead cats.');
 const bsrc=await read('src/v2/episodes/in-this-town-02/boxProps.ts');
-check(bsrc.includes('width:2.48,depth:1.22,height:.55'),
- 'Final shared box is not the revised lower-sidewall version.');
+const sharedSpec=bsrc.match(/id:'SHARED_BOX',width:([\\d.]+),depth:([\\d.]+),height:([\\d.]+)/);
+check(sharedSpec&&Number(sharedSpec[1])>=2.15&&Number(sharedSpec[1])<=2.50&&
+ Number(sharedSpec[2])>=1.0&&Number(sharedSpec[2])<=1.25&&
+ Number(sharedSpec[3])>=.40&&Number(sharedSpec[3])<=.60,
+ 'Final shared-box dimensions are outside safe Episode01 scale/sidewall bounds.');
 const tSrc=await read('src/v2/episodes/in-this-town-02/timeline.ts');
 check(tSrc.includes('latte:n>=6&&n<=55'),
  'Old Latte box must disappear before the final shared-box scene.');

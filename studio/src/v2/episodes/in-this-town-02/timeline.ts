@@ -57,7 +57,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  const latteBox=[...HOME.latte] as V3,sharedBox=[...HOME.shared] as V3,demoBox=[...HOME.demo] as V3;
  let essieBox=[...HOME.essie] as V3;
  const show={latte:n>=6&&n<=55,essie:n===7||(n>=18&&n<=23)||(n>=32&&n<=52),shared:n>=58,demo:n<=4};
- const flap={latte:.85,essie:.85,shared:.85,demo:.85};
+ const flap={latte:.85,essie:.85,shared:.98,demo:.85}; // Lay finale side flaps almost flat, not across Mocha's approach.
  const morph={essie:0,latte:0,demo:0};
  let heroBox:State['heroBox']=null,room='cafe';
  let cam=cameraPreset([3.1,1.8,9.7],[2.1,.8,6.7],59);
