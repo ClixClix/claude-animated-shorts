@@ -14,6 +14,7 @@ import {studioRoot} from './lib/runtime.mjs';
 // rather than a hand-written CommonJS import/eval shim. The generated file
 // contains the REAL timeline/camera/box modules, not duplicate pose formulas.
 const outputDir=path.join(studioRoot,'out/v2-episodes/in-this-town-02/series-style-qa');
+const src=path.join(studioRoot,'src/v2/episodes/in-this-town-02');
 await fs.mkdir(outputDir,{recursive:true});
 const bundlePath=path.join(outputDir,'episode02-finale-audit-bundle.mjs');
 await build({
@@ -121,6 +122,37 @@ record('entire-airborne-cat-visible',airborneFraming.length===0,airborneFraming.
 record('only-one-final-shared-box-and-physical-cats',badCatFrames.length===0,badCatFrames.slice(0,10));
 record('all-end-shot-cats-in-portrait-frame',finalFraming.length===0,finalFraming.slice(0,10));
 record('all-three-end-characters-visible',["mocha","essie","latte"].every(id=>final[id].visible));
+// Every real Episode02 timeline frame should have finite actor/camera state.
+ // A single numeric invalidity can produce a black render or a camera jump.
+const timelineFailures=[],shotIds=new Set();
+for(const shot of shots){
+ shotIds.add(shot.sequence);
+ if(shot.end<=shot.start||shot.start<0||!Number.isInteger(shot.start)||
+    !Number.isInteger(shot.end))timelineFailures.push({shot:shot.sequence,reason:'invalid frame interval'});
+ for(let frame=shot.start;frame<shot.end;frame++){
+  const state=timeline.stateAt(frame,shots);
+  if(state.shot.sequence!==shot.sequence){
+   timelineFailures.push({frame,reason:'wrong shot lookup'});continue;
+  }
+  const cam=cameraDirector.directEpisodeCamera(state);
+  const arr=[...cam.camera,...cam.target,cam.fov,
+   ...state.mocha.position,...state.essie.position,...state.latte.position,
+   ...state.demoCat.position,...state.latteBox,...state.essieBox,
+   ...state.sharedBox,...state.demoBox,
+   state.mocha.scale,state.essie.scale,state.latte.scale,state.demoCat.scale];
+  if(arr.some(x=>!Number.isFinite(x))||cam.fov<15||cam.fov>115)
+   timelineFailures.push({frame,shot:shot.sequence,reason:'invalid numeric pose or lens'});
+  if(state.rescued.essie!== (shot.sequence>=51)||
+     state.rescued.latte!== (shot.sequence>=55))
+   timelineFailures.push({frame,reason:'rescue order invalid'});
+  if(shot.sequence>=58&&(!state.show.shared||state.show.latte||state.show.essie))
+   timelineFailures.push({frame,reason:'final boxes overlap'});
+ }
+}
+record('all-60-shot-ids-present',shots.length===60&&shotIds.size===60&&
+ Math.min(...shotIds)===1&&Math.max(...shotIds)===60);
+record('all-frames-timing-and-poses-finite',timelineFailures.length===0,
+ timelineFailures.slice(0,14));
 const source=await fs.readFile(path.join(src,'Episode.tsx'),'utf8');
 record('original-ep1-performer-active',["mocha","essie","latte"].every(id=>
  source.includes("createEpisode1CastCat('"+id+"')"))&&!source.includes('createArticulatedGuest('));
