@@ -2,9 +2,16 @@ import {studioRoot,browserExecutable,chromiumOptions,renderConcurrency} from './
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
 import {bundle} from '@remotion/bundler';
 import {openBrowser,selectComposition,renderStill,renderMedia} from '@remotion/renderer';
 
+// Typecheck the whole Remotion Studio before opening Chrome or rendering.
+console.log('PART1 preflight: TypeScript source check...');
+execFileSync(process.execPath,
+ [path.join(studioRoot,'node_modules/typescript/bin/tsc'),'--noEmit'],
+ {cwd:studioRoot,stdio:'inherit'});
+console.log('PART1 preflight: TypeScript passed.');
 const native=process.argv.includes('--native');
 const stillsOnly=process.argv.includes('--stills-only');
 const videoOnly=process.argv.includes('--video-only');
