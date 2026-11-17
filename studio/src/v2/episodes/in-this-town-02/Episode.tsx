@@ -188,7 +188,9 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  CHAR.uBodyGrad.value=EPISODE1_STYLE.character.bodyGradient;
  CHAR.uSideTint.value.set(...EPISODE1_STYLE.character.sideTint);
  CARD_K.uPx.value=previewScale;
- world.door.rotation.y=s.shot.sequence===24?-.3:s.shot.sequence===27?-1.18:s.shot.sequence>=53?-1.18:0;
+ // Open the existing hinged door fully against the wall for the return
+ // sprint, rather than letting its leaf cut through Mocha and Essie.
+ world.door.rotation.y=s.shot.sequence===24?-.3:s.shot.sequence===27?-1.18:s.shot.sequence>=53?-Math.PI/2:0;
  // Episode01's permanent plant is retained everywhere except the close-up
  // jump/cuddle, where real 25-frame cloud QA proved its leaves block Mocha.
  // Cinematic foreground masking changes shot visibility, not original assets.
