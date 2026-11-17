@@ -152,7 +152,7 @@ for(const shot of shots){
     !Number.isInteger(shot.end))timelineFailures.push({shot:shot.sequence,reason:'invalid frame interval'});
  for(let frame=shot.start;frame<shot.end;frame++){
   const state=timeline.stateAt(frame,shots);
-  if(shot.sequence>=31&&shot.sequence<=52){
+  if(shot.sequence>=31&&shot.sequence<=52&&state.room!=='cafe'){
    // Physical west shop facade X=-8.35; original Episode01 cat half-width .67m.
    for(const id of ['mocha','essie']){
     const cat=state[id],right=cat.position[0]+.67*cat.scale;

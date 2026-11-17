@@ -68,6 +68,8 @@ export function stateAt(frame:number,shots:EditShot[]):State{
       n===2?cameraPreset([3.4,5.0,7.6],[3.45,.10,7.6],48):
       n===3?focus(HOME.demo,2.1,40,.45):cameraPreset([6,1.65,9.2],[3.45,.5,7.6],62);
   if(n===2){
+   // Keep all four physical flaps outside the rim in this high-angle view.
+   flap.demo=1;
    // Lift the Episode01 illustrated kitten's face above the carton rim
    // so its original vertical card remains readable in the elevated view.
    demoCat.position=[HOME.demo[0],.14,HOME.demo[2]];
