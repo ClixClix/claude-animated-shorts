@@ -89,6 +89,7 @@
   "studio/scripts/episode02-box-tests.mjs",
   "studio/scripts/episode02-camera-audit.mjs",
   "studio/scripts/episode02-episode1-assets-preview.mjs",
+  "studio/scripts/episode02-finale-audit.mjs",
   "studio/scripts/episode02-finish.mjs",
   "studio/scripts/episode02-generate-voice.mjs",
   "studio/scripts/episode02-part1.mjs",
