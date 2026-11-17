@@ -90,14 +90,14 @@
     {
       "shot": 59,
       "priority": "high",
-      "assessment": "pending",
-      "notes": "Current top-down view makes cats tiny and isolated. Need medium close three-quarter group and clustered silhouettes."
+      "assessment": "awaiting_new_moving_render",
+      "notes": "Previous overhead render rejected. Revised code uses Episode01 cats, Mocha's rim-clearing hop, side-tracking camera, and a close return to the group. Numerical path/projection check completed; actual footage not yet reviewed."
     },
     {
       "shot": 60,
       "priority": "high",
-      "assessment": "pending",
-      "notes": "Ending must convey affection, face expressions, warmth and closeness, with one shared box and a satisfying hold."
+      "assessment": "awaiting_new_moving_render",
+      "notes": "Previous top-down small-cats ending rejected. Revised closer eye-height composition groups all three in one box with inward feline nuzzles and source-locked Episode01 artwork; actual render approval remains pending."
     }
   ],
   "requiredProofs": [
@@ -120,6 +120,10 @@
     {
       "range": "59-60",
       "needs": "cozy three-cat payoff, 3/4 camera and expressions"
+    },
+    {
+      "range": "58-60",
+      "needs": "11 actual frame samples across Mocha approach, box entry and final cuddle; approved motion, natural head pose and no limb-cardboard overlap"
     }
   ],
   "reviewBy": "Compare stills AND motion with the exact episode1 final.mp4. A human/visual agent must mark each scene pass/redo and record specific evidence.",
