@@ -100,7 +100,10 @@ export function createEpisodeBox(identity:BoxIdentity) {
   function setOpenAmount(input:number){
     if(!Number.isFinite(input))throw Error('Box opening must be a finite number');
     const amount=Math.max(0,Math.min(1,input));
-    const angle=amount*Math.PI*.72;
+    // The rule-demo box is an open, playable prop: at amount=1 its flaps
+    // must lie almost horizontal OUTSIDE the rim, not stand vertically across
+    // the guest's face. Other Episode 02 box identities retain legacy angles.
+    const angle=amount*Math.PI*(identity==='demo'?1:.72);
     flaps.front.rotation.x=angle;
     flaps.back.rotation.x=-angle;
     flaps.left.rotation.z=angle;
