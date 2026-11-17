@@ -132,3 +132,55 @@ export function createRuleCat(variant:RuleCatVariant,height=1.22){
  };
  return {mesh:card.mesh,update,material:mat,design,dispose};
 }
+
+
+/** Episode 02 close-up curl assembled from the exact ORIGINAL kitten canvas.
+ *
+ * This reuses the source artist's actual ears, V-tabby crown, eyes, white bib,
+ * paws and tail; it never substitutes a different town guest face. No changes
+ * to the Episode 01 asset or to the approved wide Shot 01.
+ * Rendering source segments at different scales is a 2.5D squash/tuck pose,
+ * not a claim of a newly sculpted three-dimensional cat.
+ */
+export function createCurledSourceKitten(source:T.Texture){
+ const canvas=document.createElement('canvas');canvas.width=840;canvas.height=1040;
+ const g=canvas.getContext('2d')!;
+ const tex=new T.CanvasTexture(canvas);
+ tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=8;
+ const mat=cardShade(new T.MeshLambertMaterial({
+  map:tex,alphaTest:.12,transparent:true,depthWrite:false,
+  side:T.DoubleSide
+ }));
+ const height=.79;
+ const geo=new T.PlaneGeometry(height*420/520,height);
+ geo.translate(0,height*(482/520-.5),0);
+ const mesh=new T.Mesh(geo,mat);
+ mesh.name='episode02-original-kitten-curled-pose';
+ mesh.castShadow=true;mesh.receiveShadow=true;
+ const update=(_seconds:number,o:{progress?:number;morph?:number;[key:string]:unknown}={})=>{
+  const src=source.image as HTMLCanvasElement|undefined;
+  if(!src)return;
+  const progress=Math.max(0,Math.min(1,o.progress??.18));
+  const morph=Math.max(0,Math.min(1,o.morph??0));
+  g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,840,1040);
+  g.save();g.scale(2,2);
+  // Real original tail: curl toward the rear instead of a disembodied oval.
+  g.drawImage(src,270*2,285*2,120*2,190*2,283,282,111,132);
+  // Compress the original kitten's drawn shoulders and both planted paws
+  // into a horizontal sleeping torso, retained within the .88m carton.
+  g.drawImage(src,109*2,287*2,216*2,195*2,99,292,265,128);
+  // Preserve the exact original kitten face/ears, with the painted chest
+  // connecting the head to the horizontal body rather than hovering above.
+  const headDown=16+progress*9;
+  g.drawImage(src,102*2,78*2,222*2,245*2,141,143+headDown,224,214);
+  // A subtle horizontal tuck reads "curled" in a .7-second close-up.
+  // Final paper-fold response is deliberately left to Shot 03.
+  if(morph>.03){
+   g.globalAlpha=.38*morph;g.fillStyle='#c6ad87';
+   g.beginPath();g.ellipse(250,345,122,65,0,0,Math.PI*2);g.fill();
+  }
+  g.restore();tex.needsUpdate=true;
+ };
+ update(0);
+ return {mesh,update,dispose:()=>{mesh.removeFromParent();geo.dispose();mat.dispose();tex.dispose();}};
+}
