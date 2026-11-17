@@ -16,7 +16,7 @@ export type BoxSpec={
 export const BOX_SPECS:Readonly<Record<BoxIdentity,Readonly<BoxSpec>>> = Object.freeze({
   demo:Object.freeze({
     id:'RULE_DEMO_BOX',width:1.05,depth:.91,height:.47,color:'#bb926c',
-    tape:'none',home:[3.45,.04,7.6] as [number,number,number],
+    tape:'none',home:[1.8,.04,5.35] as [number,number,number],
     role:'One small physical cardboard box for the town-rule demonstration; same mesh persists after transformation',
   }),
   latte:Object.freeze({
