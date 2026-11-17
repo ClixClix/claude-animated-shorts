@@ -125,7 +125,12 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   if(n===31)essie.position=[-9.25,0,2.8];if(n===34)essie.position=HOME.alleyBox;
   essie.emotion='happy';essie.walking=n===32;
   if(n>=31){show.essie=true;essieBox=n===32?walk([-9.1,0,2.7],HOME.alleyBox,u):HOME.alleyBox;}
-  if(n===32)essie.position=[essieBox[0],0,essieBox[2]+.95];
+  if(n===32){
+   essie.position=[essieBox[0],0,essieBox[2]+.95];
+   // Essie's mouth-and-box action is the subject of this moving close view.
+   // Mocha remains nearby in story space but offscreen until the next shot.
+   mocha.visible=false;
+  }
   cam=n===28?focus(HOME.busStop,3.0,61,2.4):n===29?focus(HOME.market,3.0,62,2.5):
     n===30?cameraPreset([-7.2,1.4,8.5],[-9.3,.7,3.0],58):
     n===31?cameraPreset([-7.2,5.5,8.1],[-9.15,.5,2.0],48):
@@ -151,6 +156,9 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   if(n>=51)morph.essie=0;
   essie.morph=morph.essie;
   if(n>=40&&n<=49)essie.visible=false;
+  // Shot 45 is explicitly Mocha's POV looking INSIDE the empty carton;
+  // never render his upright card directly in front of his own camera.
+  if(n===45)mocha.visible=false;
   if(n===49){
    mocha.position=walk([-9.25,0,2.70],HOME.alleyBox,u);
    mocha.position[1]=.84*Math.sin(Math.PI*ease(u)); // Clear the physical box rim.
