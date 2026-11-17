@@ -111,6 +111,14 @@ export function createEpisode1CastCat(id:CatId){
   // NOT scale/stretch the approved Episode 01 artwork into a fake box.
   card.mesh.visible=pose.visible&&alpha>.08;
   card.mesh.scale.setScalar(pose.scale);
+  // The approved Episode 01 figures are upright illustrated cards. From
+  // high box angles they collapse to narrow, upright faces instead of reading
+  // as a cat curled on its side. Recline ONLY the resting box poses, retaining
+  // the original silhouette/artwork, measured scale and ground contact.
+  const n=s.shot.sequence;
+  const curled=(id==='latte'&&n===6)||
+   (id==='essie'&&[7,19,35,37,38,39].includes(n));
+  card.mesh.rotation.x=curled?-.38:0;
   card.mesh.material.opacity=1; // retain Episode 01 opaque, correct shaded face
   card.legs.visible=card.mesh.visible&&a.moving;
   shadow.mesh.visible=card.mesh.visible;
