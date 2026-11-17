@@ -13,7 +13,7 @@ import {createKitten} from '../../animation/kitten';
 import {storyAt as kittenStoryAt} from '../../animation/timeline';
 import {TownPopulation} from '../door-at-1111-polish/population';
 import {createEpisode1CastCat} from './episode1Cast';
-import {createRuleCat} from './ruleCats';
+import {createCurledSourceKitten} from './ruleCats';
 import {LensBlur} from '../../../videos/bridge/lensblur';
 import {CHAR} from '../../../videos/bridge/shade';
 import {CARD_K} from '../../../videos/bridge/cardshade';
@@ -137,7 +137,9 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  const demoKitten=useMemo(()=>createKitten(),[]);
  // The approved opening keeps its original kitten unchanged. The box close-ups
  // use an original-ink curled counterpart with the same coat and eye palette.
- const curledKitten=useMemo(()=>createRuleCat('kitten',.81),[]);
+ const curledKitten=useMemo(()=>createCurledSourceKitten(
+  (demoKitten.mesh.material as T.MeshLambertMaterial).map!
+ ),[demoKitten]);
  // Exactly the existing Episode 01 supporting cats, as background guests only.
  const townspeople=useMemo(()=>new TownPopulation(),[]);
  // No detached forelimb/hand rigs. Cats interact with boxes using their
