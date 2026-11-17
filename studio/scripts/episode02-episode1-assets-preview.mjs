@@ -47,7 +47,7 @@ check(ep2.includes('createKitten()'),'Episode 01 kitten asset missing in demo.')
 check(ep2.includes('new TownPopulation()'),'Episode 01 town extra asset missing.');
 check(!ep2.includes('makeCharacter(')&&
  !ep2.includes('createArticulatedGuest('),'Failed paper-puppet renderer is still active.');
-const maxFramesPerShot=1,selected=[5,6,7,12,19,37,49,50,54,55,59,60];
+const selected=[5,6,7,12,19,37,49,50,54,55,59,60];
 const scratch=JSON.parse(await read('src/v2/episodes/in-this-town-02/EDITORIAL_SCRATCH_PLAN.json'));
 const shots=scratch.shots.map(s=>({
  id:s.id,sequence:s.sequence,act:s.act,start:s.estimateStartFrame,
@@ -108,7 +108,7 @@ const status={
  oldPuppetIgnored:true,leadCatsUnmodified:true,
  sampleFrames:frames,browserErrors,
  rendersWholeEpisode:false,publishingAllowed:false,
- paidVoiceRequests:0,scriptAndAudioApproved:false,
+ paidVoiceRequests:0,audioApproved:false,creativeScriptLocked:true,
  notes:[
   'The three leads are the actual Episode 01 complete drawings and separate planted walking-leg system.',
   'This asset proof does not certify episode 02 camera staging, box contacts or cat-to-cardboard transformation.',
