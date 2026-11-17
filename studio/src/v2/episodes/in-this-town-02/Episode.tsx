@@ -290,17 +290,18 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   (n===4?[[.55,.03,6.45],[2.9,.03,6.2],[3.8,.03,6.75]]:
    // Daytime cure announcement: shoppers walk near shops, not through the
    // sign or the three leads. Night alley shots retain NO crowd.
-   [[-3.5+.65*Math.sin(s.t*.42),.03,8.1],
-    [3.45+.32*Math.sin(s.t*.48),.03,8.6],
-    [4.2,.03,8.4]]):
+   [[-1.05+.38*Math.sin(s.t*.42),.03,5.48],
+    [3.25+.28*Math.sin(s.t*.48),.03,5.62],
+    [3.95-.25*Math.sin(s.t*.36),.03,5.55]]):
   [[walkA,.03,5.02],[walkB,.03,5.02],[-6.4,.03,12.55]];
  // One standing café patron walks the clear right-side aisle while two
  // others remain seated. The aisle x=3.15 clears the chair/table footprints
  // ending at x≈2.65; its travel stays inside the x=4 café wall.
  const cafeAisleZ=-1.25+1.20*(1+Math.sin(s.t*.29));
  const spots:V3[]=outsideBusy?
-  [...streetSpots,[walkA-1.2,.03,12.55],[walkB+.7,.03,12.55]]:
-  cafeBusy?[[2.38,.51,-2.14],[.96,.51,2.13],[3.15,.03,cafeAisleZ]]:[];
+   (audienceOn?streetSpots:
+    [...streetSpots,[walkA-1.2,.03,12.55],[walkB+.7,.03,12.55]]):
+   cafeBusy?[[2.38,.51,-2.14],[.96,.51,2.13],[3.15,.03,cafeAisleZ]]:[];
  townspeople.root.visible=spots.length>0;
  townspeople.actors.forEach((c,i)=>{
   const isGuest=i<spots.length;c.mesh.visible=isGuest;
