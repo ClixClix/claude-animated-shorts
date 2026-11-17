@@ -164,6 +164,22 @@ export function stateAt(frame:number,shots:EditShot[]):State{
     cameraPreset([.9,1.45,4.5-(n===60?u*.55:0)],[-1.45,.6,2.5],n===60?49:55);
  }
  if(n===52){essie.visible=true;essie.position=[-9.2,0,1.4];}
+ // Keep standing cat models near their established Episode 01 scale. A cat
+ // curled inside a box uses a separate compact pose and grounded placement,
+ // not a magically enlarged box or an oversized upright cat sticking through it.
+ if(n===6){latte.position=[HOME.latte[0],.13,HOME.latte[2]];latte.scale=.74;}
+ if(n===7){essie.position=[HOME.essie[0],.12,HOME.essie[2]];essie.scale=.78;}
+ if(n===19){essie.position=[HOME.essie[0],.12,HOME.essie[2]];essie.scale=.77;}
+ if(n===35){essie.position=[HOME.alleyBox[0],.12,HOME.alleyBox[2]];essie.scale=.77;}
+ if(n>=37&&n<=39){essie.position=[HOME.alleyBox[0],.12,HOME.alleyBox[2]];essie.scale=.78;}
+ if(n===50){essie.position=[HOME.alleyBox[0],.16,HOME.alleyBox[2]];essie.scale=lerp(.60,.82,ease(u));}
+ if(n===51){essie.position=[HOME.alleyBox[0],.10,HOME.alleyBox[2]+.28];essie.scale=lerp(.82,1,ease(u));}
+ if(n===55){latte.position=[HOME.latte[0],.12,HOME.latte[2]+.18];latte.scale=lerp(.75,1,ease(u));}
+ if(n>=59){
+  mocha.position=[-2.18,.15,2.5];mocha.scale=.56;
+  essie.position=[-1.45,.15,2.5];essie.scale=.56;
+  latte.position=[-.72,.15,2.5];latte.scale=.56;
+ }
  const openShared=n>=58;
  const inTown=n>=56&&n<=57;
  if(inTown){latte.position=[2.5,0,6.3];}
