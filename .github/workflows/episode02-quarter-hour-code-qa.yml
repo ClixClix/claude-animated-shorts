@@ -4,7 +4,7 @@ name: Episode 02 - 15 Minute Code QA (Temporary)
 # This workflow lives on main, but tests the user's actual v2-local-render branch.
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "7,22,37,52 * * * *" # Off the hour to reduce GitHub Actions schedule delays
   push:
     branches: [main]
     paths:
