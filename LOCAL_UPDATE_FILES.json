@@ -1,4 +1,5 @@
 [
+  "Build-Episode02-EP1-Assets.cmd",
   "Build-Episode02-Part1.cmd",
   "Build-Episode02-Shot01.cmd",
   "Build-Episode02.cmd",
@@ -86,6 +87,7 @@
   "studio/scripts/episode02-boards.py",
   "studio/scripts/episode02-box-tests.mjs",
   "studio/scripts/episode02-camera-audit.mjs",
+  "studio/scripts/episode02-episode1-assets-preview.mjs",
   "studio/scripts/episode02-finish.mjs",
   "studio/scripts/episode02-generate-voice.mjs",
   "studio/scripts/episode02-part1.mjs",
@@ -185,6 +187,8 @@
   "studio/src/v2/episodes/in-this-town-02/Episode.tsx",
   "studio/src/v2/episodes/in-this-town-02/EPISODE02_BRIEF.md",
   "studio/src/v2/episodes/in-this-town-02/Episode02Part1.tsx",
+  "studio/src/v2/episodes/in-this-town-02/EPISODE1_ASSET_REUSE_CONTRACT.md",
+  "studio/src/v2/episodes/in-this-town-02/episode1Cast.ts",
   "studio/src/v2/episodes/in-this-town-02/FINAL_BUILD_HANDOFF.md",
   "studio/src/v2/episodes/in-this-town-02/FRAME_CORRECTION_STATUS.md",
   "studio/src/v2/episodes/in-this-town-02/PART1_AND_ONE_PROMPT_ROADMAP.md",
