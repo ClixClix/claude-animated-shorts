@@ -109,7 +109,10 @@ export function stateAt(frame:number,shots:EditShot[]):State{
      n===23?focus(mocha.position,1.8,39,1.2):cameraPreset([3.1,2.0,3.6],[.3,.8,.8],55);
  }
  if(n>=24&&n<=27){
-  mocha.position=n===27?walk(HOME.door,HOME.entrance,u):n===26?[-1.05,0,1.35]:[.8,0,1.5];
+  // Closing is a separate doorway beat, not a duplicate of the next
+  // empty sleeping spot. Keep the existing Episode01 cat and café geometry.
+  mocha.position=n===27?walk(HOME.door,HOME.entrance,u):
+    n===26?[-1.05,0,1.35]:n===24?[2.00,0,3.50]:[.8,0,1.5];
   mocha.emotion='scared';essie.visible=false;show.essie=false;
   cam=n===24?cameraPreset([2.2,2.0,3.8],[-1,1,.8],65):n===26?focus(HOME.essie,2.1,41,.85):
     n===27?cameraPreset([5,2.3,9.2],[2.4,.8,5.2],56):focus(mocha.position,2.6,45,1);
