@@ -13,8 +13,13 @@ import {openBrowser,selectComposition,renderStill} from '@remotion/renderer';
  * into Episode 02 or this command refuses to render.
  */
 const check=(ok,message)=>{if(!ok)throw Error('EP01 ASSET CONTRACT: '+message);};
+// Refuse even a still-preview when the original EP01 sources or render grade drift.
+execFileSync(process.execPath,[path.join(studioRoot,'scripts/episode02-style-preflight.mjs')],
+ {cwd:studioRoot,stdio:'inherit'});
 const assetPaths=[
  'src/v2/episodes/in-this-town-02/Episode.tsx',
+ 'src/v2/series/episode1Style.ts',
+ 'src/v2/series/IN_THIS_TOWN_STYLE_LOCK.json',
  'src/v2/episodes/in-this-town-02/episode1Cast.ts',
  'src/v2/episodes/in-this-town-02/catBehaviors.ts',
  'src/v2/episodes/in-this-town-02/timeline.ts',
