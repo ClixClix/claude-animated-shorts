@@ -1,3 +1,21 @@
+# LATEST — Third real Part 1 preview REJECTED; stop four-shot render churn (2026-11-17)
+
+The user uploaded third Episode 2 opening pilot `Part1_01-04_PREVIEW(2).mp4`, `PART1_RENDER_STATUS(2).json`, and 12 real PNGs; explicitly said **"this isnt it"**. Video shows bus-stop shelter glass+roof+bench directly over the brown demo cat and box (shot01), flat floating illustration head/oval curled body (shot02), face sinking into box rather than magic metamorphosis (shot03), and blue witness obscured behind bus-stop bench+glass with the other two bunched in front (shot04). Report has NINE SUBJECT_CROP warnings and no static world occlusion warnings; check does not yet cover bus shelter. **All four shots rejected, do not claim on-brand.**
+
+Root-cause source inspection: the immutable Episode1 `EpisodeWorld.busStop()` constructs at `(-4.4,0,5.8)` with roof/glass/platform extending toward x≈-2.95. The previous demo `SITE=(-2.5,.04,5.35)` and cat approach x≈-3.6 were literally inside the shelter footprint. A camera tweak cannot fix that. `world.blockers` excludes that non-solid transparent geometry. Detailed audit in `studio/src/v2/episodes/in-this-town-02/THIRD_RENDER_REJECTION_AND_RESTART.md`.
+
+After analysis, GH source changes **only** (UNRENDERED):
+- Proposed safer `SITE=(1.8,.04,5.35)` and four cameras in `PART1_SHOT_BLUEPRINT.json`; must actually confirm against scene geometry.
+- New `setCollisions` (actual AABB mesh footprint) and `setOcclusions` (five subject sample rays against named bus-stop/streetlight groups) in `Episode02Part1.tsx`; not just solid blocker list. QA flags new `SET_OBJECT_INTERSECTION`, `SET_DRESSING_BLOCKS_ACTION`.
+- `node scripts/episode02-part1.mjs --shot01` now isolates **frame 0–26 only (0.9s)** plus six actual PNG frames in `out/v2-episodes/in-this-town-02/shot01-blocking-test/`; writes `SHOT01_BLOCKING.mp4`, `SHOT01_QA.json`. User should **not** re-render all four shots next.
+- Source-sync manifest includes all new files.
+
+CRITICAL: Fixing bus shelter will **not** fix the fundamental animation: guest is still a **flat card**, hop is keyframed transform only, and "morph" is global shrink+opacity+paper facet accents. To approach Episode1 artistic standard and future one-prompt pipeline, redesign as reusable articulated 2.5D guest performer with grounded head/body/paws/tail actions and an actual readable paper-to-box transformation, plus a feedback loop that inspects rendered frames. Do not call current output successful nor require endless full previews.
+
+Next step: review a *single* geometrically unobstructed opening shot, not 4-shot pilot, and design proper performance rig. The local code cannot be rendered by this chat's GitHub connector; user still needs to sync/render and upload actual footage if they want quality verification.
+
+---
+
 # LATEST — Second Episode 02 Part 1 real render rejected, code revised again (2026-11-17)
 
 The user uploaded a second true 183-frame MP4 and 12 real PNGs (names `Part1_01-04_PREVIEW(1).mp4` and `01_20(1).png` etc.). Upon viewing, **all four shots are still visually rejected**. Streetlamp pole directly in front of centre of box throughout (not in world.blockers), shot 01 no clear entry, 02 static, 03 cat face obscured behind flap (confirmed by new QA), 04 third guest hidden and cartoonishly long probing arm. See `studio/src/v2/episodes/in-this-town-02/PART1_SECOND_RENDER_AUDIT.md`.
