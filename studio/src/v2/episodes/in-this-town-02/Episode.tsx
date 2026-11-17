@@ -275,7 +275,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   kittenLook:s.demoCat.headTurn,
   kittenWalking:s.demoCat.walking?1:0,
   kittenGait:s.t*7,kittenLift:0,
-  kittenBlink:0
+  kittenBlink:n===2?Math.max(0,1-Math.abs(s.u-.64)/.20):0
  };
  demoKitten.update(kittenState,s.frame);
  demoKitten.mesh.visible=s.demoCat.visible&&s.demoCat.morph<.95&&n!==2&&n!==3;
