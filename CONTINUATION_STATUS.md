@@ -1,3 +1,23 @@
+# LATEST — Repeated source audit + actual Episode01 master identity verified (2026-11-17)
+
+User requested **repeated self-audits until 99% confidence Episode02 source is correct and looks like approved Episode01**, and is going to bed. Honest contract: source/code correctness can be repeatedly checked, but **99% VISUAL parity cannot be established until fresh rendered footage is inspected**. No invisible background session is running after the response.
+
+Source changes committed to `v2-local-render`, no actual Windows runtime QA or new Episode02 output verified by ChatGPT yet:
+- The original Episode01 video `The_Door_At_1111_Polish_Final_With_Music.mp4` was checked in the container and **SHA-256 matches exactly** `78f621b454e84214f1d0b3e244e7cb9e44ae49b5c9f571c649560eb680179374`; ffprobe confirmed 1080x1920, 30fps, H264/AAC, 111.63s. Source locked assets unchanged.
+- `timeline.ts` shots58–60 now explicitly stage Mocha approach, a sidewall-clearing jump, Essie and Latte settled inside the shared box, and close feline nuzzle. Fixed a REAL shot58→59 position teleport, an earlier **10-sample pre-takeoff box wall overlap**, and an abrupt sad→happy expression cut.
+- `cameraDirector.ts` shot59 follows Mocha at x +0.45 world meters with safe clamp [-2.85,-1.45], eases back to group by end; shot60 is a lower close café view, not the rejected overhead. Independent Python geometric projection checked **500 interpolated shot59 samples** with zero airborne full-body crop violations after camera correction; verified original café 11 solid fixtures do not overlap revised box locations. 58→59 and 59→60 endpoints agree analytically.
+- New `studio/scripts/episode02-finale-audit.mjs` bundles original TS via proven esbuild pipeline (NOT manually duplicated pose code) and checks ALL 60 shots/3876 state frames for finite actor/camera values, correct rescue order, final 58–60 one-box/position continuity, all cat faces in shot60, airborne face/silhouette framing in shot59, wall clearance, original Episode01 rig identity, no hand-like puppet rigs. It writes `EP2_FINALE_NUMERICAL_AUDIT.json`. Repeated self-review caught and repaired accidental source newline escaping, a missing `src` path and fragile old custom TS loader. No tool-executed local Node run has occurred yet.
+- `studio/scripts/episode02-episode1-assets-preview.mjs` now runs finale geometry QA before rendering; produces 14 representative PNGs plus **11 additional sequential shot58–60 action snapshots** (25 images total), reviewed in `EP2_STYLE_REVIEW.html` with pending signoff.
+- New `studio/scripts/episode02-quality-cycle.mjs`, npm commands `npm.cmd run episode2:code-audit` and `npm.cmd run episode2:visual-cycle` expose repeatable preflight: Episode01 SHA, TypeScript, fixed café/box geometry, 3876-frame numerical source audit, optional real PNG render. `LOCAL_UPDATE_FILES.json` includes all new scripts. JS syntax parser checks passed in isolated V8; 14 static source/manifest wiring assertions passed. Real Windows test remains **unexecuted**.
+- `VISUAL_APPROVAL_QUEUE.json` 59–60 remains **awaiting rerender**, 0 shots creatively approved; the 14 earlier user frames were inadequate as final quality and the current source has not yet been rendered.
+- `ONE_PROMPT_IN_THIS_TOWN.md` updated with quality commands and future vision/rendering control requirements. Single-prompt complete generation is still not built; the automation foundation is.
+
+Important creative issue still unresolved: original Episode01 `CatPose` only has head/eyes/expression/walk; **no dedicated natural cat-curl sleeping pose**, and the Episode02 magical transformations (cat turning into actual cardboard) remain unproven/unfinished. Do not invent 99% parity confidence or mark the animation as passed based on source fingerprints.
+
+Next local check when the user resumes: sync `C:\V2\Update-Local-Code.ps1`; from `C:\V2\studio` run `npm.cmd run episode2:code-audit` and inspect failure report if any; only then `npm.cmd run episode2:visual-cycle` (25 PNGs) and optionally `node scripts/episode02-render.mjs preview --shots 58,59,60` after the approved scratch prepare workflow. Compare actual MP4s side-by-side with Episode01 before creative signoff.
+
+---
+
 # LATEST — Immutable Episode01 brand lock and one-prompt agent contract now implemented (2026-11-17)
 
 User clarified: **Episode 2's style must match approved Episode 1 and we must move toward true one-prompt production**. User's last 14 native-preview PNGs and the `EP2_EP1_ASSET_PROOF(1).json` showed original cat artwork recognizably back, but scene direction (partly cropped cats, odd static box exploration, alley context and overhead tiny-cats ending) is not artistically approved.
