@@ -17,6 +17,7 @@ const sourceFiles=[
  'src/v2/episodes/in-this-town-02/Episode.tsx',
  'src/v2/episodes/in-this-town-02/timeline.ts',
  'src/v2/episodes/in-this-town-02/boxProps.ts',
+ 'src/v2/episodes/in-this-town-02/cameraDirector.ts',
  'src/v2/episodes/in-this-town-02/EDITORIAL_SCRATCH_PLAN.json',
  'src/v2/episodes/door-at-1111-polish/world.ts',
  'src/v2/episodes/door-at-1111-polish/city.ts',
