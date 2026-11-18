@@ -328,7 +328,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // Actual 21-frame proof showed a tiny upright kitten throughout Shot 02.
  // Reuse the approved illustration technique, now with a horizontal curled
  // torso, resting paws and a lifted recognizable face inside SAME box.
- curledKitten.mesh.visible=s.demoCat.visible&&((n>=1&&n<=3)||n===57);
+ curledKitten.mesh.visible=s.demoCat.visible&&((n>=1&&n<=2)||(n===3&&s.demoCat.morph<.985)||n===57);
  const tuckedMat=curledKitten.mesh.material as T.MeshLambertMaterial;
  // The kitten materializes as Mocha demonstrates the cure; no pop-cut.
  tuckedMat.transparent=n===57;
@@ -398,7 +398,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
    const p=spots[i];
    const startled=n===4?ease((s.u-.26)/.44):0;
    c.mesh.position.set(p[0]+(i===0?-.24:i===1?.22:0)*startled,p[1],p[2]);
-   if(shadow)shadow.position.set(p[0],p[1]+.006,p[2]);
+   if(shadow)shadow.position.set(c.mesh.position.x,p[1]+.006,p[2]);
    c.mesh.rotation.y=Math.atan2(cam.position.x-p[0],
     cam.position.z-p[2]);
   }
