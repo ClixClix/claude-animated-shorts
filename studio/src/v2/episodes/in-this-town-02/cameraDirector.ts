@@ -83,19 +83,21 @@ const fallback:Record<string,V3>={
  market:[-5.5,1.85,11.0],
  alley:[-9.15,1.85,5.2],
  town:[3.5,2.0,11.6],
+ house:[3.75,1.8,14.75],
 };
-type Region='outside'|'demo'|'latte'|'essie'|'group'|'shared'|'bus'|'market'|'alley'|'town';
+type Region='outside'|'demo'|'latte'|'essie'|'group'|'shared'|'bus'|'market'|'alley'|'town'|'house';
 // A fixed axis per location avoids unmotivated orbital camera rotation while
 // a character walks during a continuous shot.
 const regionAnchor:Record<Region,V3>={
  demo:[1.8,0,5.35],outside:[2.4,0,6.65],latte:[-1.9,0,2.1],
  essie:[.25,0,.3],group:[.25,0,.3],shared:[-1.45,0,2.1],
  bus:[-4.4,0,6.1],market:[-7.3,0,6.5],alley:[-9.15,0,1.4],
- town:[1.1,0,6.4]
+ town:[1.1,0,6.4],house:[1.38,.2,13.7]
 };
 
 function region(s:State):Region{
  const n=s.shot.sequence;
+ if(s.room==='house')return 'house';
  if(n<=4)return 'demo';
  if(n===5||n===8||n===27||n===53)return 'outside';
  if(n===28)return 'bus';
@@ -389,6 +391,48 @@ export function directEpisodeCamera(s:State){
   return {camera,target,fov,region:'town' as Region,
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:n===1?['city-establishing','demo','demoCat']:['demo','demoCat']};
+ }
+ // Story-locked geography: the house is the Episode 01 HOME, not café B-roll.
+ if(s.room==='house'){
+  const n=s.shot.sequence;
+  const camera:V3=n===25?[3.90,1.72,14.92]:
+   n===26?[3.78,1.73,14.83]:[3.45,1.80,14.92];
+  const target:V3=n===26?[1.38,.46,13.70]:
+    n===27?[3.15,.75,12.25]:[s.mocha.position[0],.86,s.mocha.position[2]];
+  const fov=n===26?63:72;
+  return {camera,target,fov,region:'house' as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:n,selectedIds:n===26?['essie-home-bed-empty','mocha']:['mocha','episode01-house']};
+ }
+ // Three distinct alleys within the SAME narration beat: hard editorial cuts
+ // are intentional at one-third/two-thirds. No interpolation between districts.
+ if(n===30){
+  const index=s.searchAlleyIndex??0;
+  const anchors:V3[]=[[-18.5,0,2.55],[18.5,0,2.55],[-9.15,0,3.05]];
+  const a=anchors[index],local=clamp(s.u*3-index,0,1);
+  const camera:V3=[a[0]+.06,1.75,a[2]+3.30-.20*easeTrack(local)];
+  const target:V3=[a[0],.78,a[2]+.17];
+  const fov=68;
+  return {camera,target,fov,region:'alley' as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:30,selectedIds:['mocha','search-alley-'+(index+1)]};
+ }
+ // Show the market set from the pedestrian approach rather than aiming at
+ // generic storefronts with the new stalls outside the portrait field.
+ if(n===29){
+  const camera:V3=[-5.15,1.97,8.45],target:V3=[-7.25,.86,5.30],fov=75;
+  return {camera,target,fov,region:'market' as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:29,selectedIds:['mocha','market-stalls']};
+ }
+ if(n===18||n===22){
+  const p=n===18?s.mocha.position:s.essie.position;
+  const camera:V3=[p[0]+.75,1.75,p[2]+2.5];
+  const target:V3=[p[0],.64,p[2]];
+  const fov=72;
+  return {camera,target,fov,region:(n===18?'outside':'essie') as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:n,selectedIds:n===18?['mocha','essie-outside']:['essie','essie-cafe-bed']};
  }
  // 03 continues the APPROVED kitten three-quarter orientation from
  // frame 104: no arbitrary top-down snap as the living body becomes paper.
