@@ -32,9 +32,17 @@ for(const shot of shots){
   samples.push(item);
   if(p.behind||!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.x>.84||p.y>.81)
    issues.push({...item,problem:'Unsafe portrait crop / camera behind tracked subject'});
-  if(['latte','essie','group','shared'].includes(c.region)&&
+  // Normal café inserts must remain inside the playable room. The shared
+  // finale is a special window-side view: actual older Episode02 footage
+  // proved a 4.12m camera ray sees the café, while the 5.35m ray in
+  // cloud QA #44257023170 shows ONLY the opaque storefront facade in
+  // every shot59/60 frame. Preserve this evidence-based boundary.
+  if(['latte','essie','group'].includes(c.region)&&
     (Math.abs(c.camera[0])>3.55||c.camera[2]<-3.77||c.camera[2]>3.78))
    issues.push({...item,problem:'Camera beyond cafe solid wall'});
+  if(c.region==='shared'&&
+    (Math.abs(c.camera[0])>3.55||c.camera[2]<-3.77||c.camera[2]>4.25))
+   issues.push({...item,problem:'Shared-box camera behind opaque cafe facade (visually confirmed in 59-60)'});
   if(c.region==='alley'&&c.camera[0]>-8.3&&c.camera[2]>-3.9&&c.camera[2]<4.15)
    issues.push({...item,problem:'Camera intersecting west-side shop'});
  }
