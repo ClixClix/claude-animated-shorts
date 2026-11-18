@@ -412,7 +412,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  if(n===35){
   // Show Essie clear the alley carton rim before her illustrated curl.
   const hop=ease((u-.06)/.88);
-  essie.position=[HOME.alleyBox[0]+.40*(1-hop),
+  essie.position=[HOME.alleyBox[0]-.10*(1-hop),
    .12*hop+.86*Math.sin(Math.PI*hop),
    HOME.alleyBox[2]+.83*(1-hop)];
   essie.scale=lerp(1,.77,ease((u-.68)/.28));
@@ -628,7 +628,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   latte.headTurn=.21*Math.sin(u*Math.PI);
  }
 
- const openShared=n>=58;
+ const openShared=n>=59;
  const inTown=n>=56&&n<=57;
  if(inTown){latte.position=[2.5,0,6.3];}
  const out:State={
