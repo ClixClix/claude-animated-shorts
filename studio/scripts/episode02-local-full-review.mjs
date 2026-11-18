@@ -56,12 +56,16 @@ try{
 }catch(error){failure=String(error?.stack??error);console.error(failure);}
 const movie=path.join(out,'EP02_540p_Visual.mp4');
 const review=path.join(out,'full-timeline-review');
+// A failed optional review-image extraction MUST NOT erase access to the
+// already assembled full-length video. Report the two states separately.
+const assembledExists=await fs.stat(movie).then(st=>st.size>1000,()=>false);
 const report={
- stage:failure?'LOCAL_FULL_QA_FAILED':'LOCAL_FULL_60_SHOT_RENDERED_NOT_ARTISTICALLY_APPROVED',
+ stage:failure?(assembledExists?'LOCAL_FULL_VIDEO_EXISTS_QA_EXTRACTION_FAILED':'LOCAL_FULL_QA_FAILED'):
+  'LOCAL_FULL_60_SHOT_RENDERED_NOT_ARTISTICALLY_APPROVED',
  started,finished:new Date().toISOString(),sourceCommit,
  requiredShots:60,requiredFrames:3876,fps:30,
  previewWidth:540,previewHeight:960,
- movie:failure?null:movie,
+ movie:assembledExists?movie:null,
  reviewBoard:failure?null:path.join(review,'ALL_60_SHOTS.html'),
  sampleCountExpected:180,steps,failure,
  fullMotionReviewedByHuman:false,episode1ReferenceCompared:false,
