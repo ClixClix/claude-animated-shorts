@@ -61,6 +61,9 @@ if(mode==='status'){
  if(!existsSync(seriesMusic))throw Error('EP02_SERIES_MUSIC_MISSING: Place the already-used Episode 01 intro recording at '+seriesMusic+' or set V2_MUSIC_FILE. Never substitute procedural music. No render started.');
  node('prepare',...prepareArgs);
  node('director-preflight','--strict');
+ // Show-dont-tell evidence: native masters require actual action movement;
+ // low-resolution preview remains available to diagnose source gaps.
+ node('action-evidence',...(mode==='build'?['--strict']:[]));
  // Exactly as Episode01's polish workflow: block production when code,
  // cat continuity or floor/camera geometry gates have not passed.
  // Windows Node 24 spawnSync('npm.cmd') fails with EINVAL. Invoke the
@@ -90,6 +93,7 @@ if(mode==='status'){
  // installed TypeScript CLI via Node directly (same TypeScript compiler).
  run(process.execPath,[path.join(studioRoot,'node_modules/typescript/bin/tsc'),'--noEmit']);
  node('director-preflight','--strict');
+ node('action-evidence','--strict');
  node('box-tests');
  node('camera-audit');
  const ready=JSON.parse(await fs.readFile(path.join(out,'EP02_FINISHING_STATUS.json'),'utf8'));
