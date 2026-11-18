@@ -489,32 +489,27 @@ export function directEpisodeCamera(s:State){
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:['demo','demoCat']};
  }
- // 04 is a motivated REVEAL, not a second static kitten close-up:
- // both the transformed primary carton and the nearby distressed carton
- // are composed from the sidewalk with curious townspeople behind them.
+ // Director lock: shot 04 TRACKS across TWO separate living cats
+ // leaping into their own boxes and becoming cardboard.
  if(n===4){
-  const u=easeTrack(s.u);
-  // Stay on the shop-side curb so traffic and a streetlight cannot wipe
-  // the frame. Wider reveal captures BOTH boxes and a guest reaction.
-  const camera:V3=[2.23-.12*u,1.85-.08*u,7.20-.07*u];
-  const target:V3=[1.05-.08*u,.50,5.22];
-  const fov=79-2*u;
+  const move=easeTrack(s.u);
+  const camera:V3=[3.15-1.65*move,1.85,8.00-.13*move];
+  const target:V3=[.86-1.55*move,.57,5.16];
+  const fov=82;
   return {camera,target,fov,region:'town' as Region,
    framing:projections(corners(focusSet(s)),target,camera,fov),
-   shot:n,selectedIds:['demo','second-trapped-box','town-reaction']};
+   shot:n,selectedIds:['town-cat-hazel','town-cat-slate','distinct-town-boxes']};
  }
- // 05 returns to Mocha's ACTING instead of letting the camera get
- // swallowed by the cafe facade or treating a sign as the story subject.
+ // 05 follows Mocha walking and seeing the THIRD cat enter and transform,
+ // then investigates the ordinary box, refuses it and walks away.
  if(n===5){
-  const u=easeTrack(s.u),p=s.demoBox;
-  // Keep carton and Mocha on screen while his recoil returns right:
-  // old portrait 57-degree shot cropped him completely at frame 242.
-  const camera:V3=[3.75+.03*u,1.89-.06*u,8.16-.06*u];
-  const target:V3=[2.65+.02*u,.58,p[2]];
-  const fov=73;
+  const observe=easeTrack(s.u/.56);
+  const camera:V3=[5.90-1.20*observe,1.95,8.48-.18*observe];
+  const target:V3=[3.67-1.14*observe,.64,5.46];
+  const fov=82;
   return {camera,target,fov,region:'town' as Region,
    framing:projections(corners(focusSet(s)),target,camera,fov),
-   shot:n,selectedIds:['mocha','demo']};
+   shot:n,selectedIds:['mocha','town-cat-honey','demo-box']};
  }
  // LOCK RESTING-CAT PERSPECTIVE: Episode 01 cats are illustrated,
  // not full volumetric anatomy. Automatic fit and overhead cameras showed
