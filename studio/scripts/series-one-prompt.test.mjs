@@ -45,3 +45,13 @@ test('single prompt creates an isolated, non-overwriting local project',async()=
 test('empty or truncated prompt is rejected rather than pretending to produce a film',()=>{
  assert.throws(()=>compileStory('cats'),/real story prompt/);
 });
+
+test('natural past-tense transformation, three different alleys and Espresso alias remain traceable',()=>{
+ const story='In this town, Espresso became a box beside the cafe. Mocha searched three different alleys while Latte watched from the window. At the end Espresso walks home to her cat bed.';
+ const plan=compileStory(story,{title:'Past Tense'});
+ assert.ok(plan.storyBeats.some(b=>b.actionTypes.includes('transform-to-box')),'became a box must generate a physical transformation beat');
+ assert.equal(plan.requirements.minimumDistinctAlleys,3,'three different alleys must require three distinct sets');
+ assert.ok(plan.storyBeats.some(b=>b.castMentions.includes('essie')),'Espresso is the same canonical Essie rig');
+ assert.ok(!plan.storyBeats.some(b=>b.castMentions.includes('espresso')),'avoid a duplicate Espresso actor');
+ assert.equal(plan.production.actualVideoRendered,false,'planning never certifies CGI');
+});
