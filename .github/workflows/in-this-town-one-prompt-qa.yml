@@ -51,6 +51,8 @@ jobs:
         run: npm run episode2:director-audit
       - name: Enforce locked Episode 02 physical-action source checks (not artistic approval)
         run: npm run episode2:action-audit -- --strict
+      - name: Episode 1 matching style and 60-shot numerical geometry audit
+        run: npm run episode2:code-audit
       - name: Publish source-only failure report
         if: always()
         uses: actions/upload-artifact@v4
