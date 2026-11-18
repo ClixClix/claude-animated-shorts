@@ -102,6 +102,13 @@ export function createEpisode1CastCat(id:CatId){
   const g=restContext;
   g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,1000,1100);
   g.save();g.scale(2,2);
+  // Episode 01 art must occupy the real carton, not a tiny portrait in the
+  // middle. Enlarge the ENTIRE curled illustration uniformly (not just its
+  // head) around its center, preserving its original proportions and coat.
+  // Does not alter any 3D box dimension or the standing/jumping rigs.
+  g.translate(250,320);
+  g.scale(1.22,1.22);
+  g.translate(-250,-320);
   // Rear body/haunch stretches along the *bottom* of its carton,
   // rather than standing above the flap as a flat vertical sticker.
   g.drawImage(src,276*2,284*2,125*2,180*2,286,326,111,123);
