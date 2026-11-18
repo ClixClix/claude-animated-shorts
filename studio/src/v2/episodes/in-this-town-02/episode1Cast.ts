@@ -153,7 +153,7 @@ export function createEpisode1CastCat(id:CatId){
     (id==='latte'&&s.u>=.84));
   const restingInBox=(id==='latte'&&n===6&&s.u>=.70)||
     (id==='essie'&&(n===7||[19,35].includes(n)&&s.u>=.72||[37,38,39].includes(n)))||
-    (id==='mocha'&&n===50)||finaleLanded;
+    (id==='mocha'&&((n===49&&s.u>=.84)||n===50||(n===51&&s.u<.34)))||finaleLanded;
   // In the rescue close-up he must remain tucked *inside* the same
   // physical carton. A standing 1.52m card cannot fit the 0.56m wall,
   // and jumping out before Essie reforms made the visual rule unclear.
@@ -240,7 +240,7 @@ export function createEpisode1CastCat(id:CatId){
   // Feline crouch, nose-led airborne lean and compact body during the leap.
   // Never add a human arm or replace the approved illustrated cat asset.
   const hop=n===59?clamp((s.u-.24)/.50):s.u;
-  const airborne=id==='mocha'&&[49,50,59].includes(n)?
+  const airborne=id==='mocha'&&[49,59].includes(n)?
    Math.sin(Math.PI*hop):0;
   const crouch=id==='mocha'&&n===59?
    Math.sin(Math.PI*clamp((s.u-.04)/.20)):0;
