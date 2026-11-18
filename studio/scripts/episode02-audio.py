@@ -91,6 +91,13 @@ ACT_CHORDS={
  'TRANSFORM':[42,49,54], 'AFTERMATH':[41,48,53],
  'CURE':[48,55,60], 'TOWN':[50,57,62], 'END':[53,60,65],
 }
+# Episode01-style narrated edits may split a beat into A/B/C segments.
+# Music follows every segment, but physical sound actions happen ONCE per
+# spoken story beat, not at every internal camera cut.
+by_number={}
+for item in manifest['shots']:
+    by_number.setdefault(int(item['sequence']),[]).append(item)
+seen_beats=set()
 for i,shot in enumerate(manifest['shots']):
     start=shot['start']/FPS;end=shot['end']/FPS;span=end-start
     n=int(shot['sequence']);cue=shot['soundCue'].lower()
@@ -101,6 +108,12 @@ for i,shot in enumerate(manifest['shots']):
     # Original low-level motif that changes harmony with the narrative act.
     pad(start,span+.05,ACT_CHORDS.get(act,[48,55,60]),gain=base)
     at=start+min(.25,span*.16)
+    if n in seen_beats:
+        events.append({'shot':shot['id'],'start_seconds':start,'end_seconds':end,
+          'description':'continued shot: ambience/music only; no duplicate cue',
+          'suggested_sync_seconds':at,'source':'original deterministic procedural synthesis'})
+        continue
+    seen_beats.add(n)
     if 'creak' in cue or 'cardboard' in cue or 'paper' in cue or 'flap' in cue or 'rustl' in cue:box(at,pan=math.sin(i))
     if 'foot' in cue or 'paw' in cue or 'running' in cue:footfalls(at,min(6,max(2,round(span/.24))))
     if 'meow' in cue or 'mew' in cue or 'purr' in cue:
@@ -122,8 +135,9 @@ for i,shot in enumerate(manifest['shots']):
 
 # Distinct shared motifs: small rising chord into cure, release stingers at both rescues.
 for number,reverse in [(3,False),(39,False),(50,True),(51,True),(55,True)]:
-    shot=manifest['shots'][number-1]
-    t=shot['start']/FPS+(shot['end']-shot['start'])/FPS*.6
+    pieces=by_number[number]
+    first,last=pieces[0],pieces[-1]
+    t=first['start']/FPS+(last['end']-first['start'])/FPS*.6
     magic(t-.12,.26,reverse=reverse)
 # Natural ending fade avoids abrupt tail.
 fade=min(round(3*SR),N)
