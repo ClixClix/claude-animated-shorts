@@ -12,12 +12,15 @@ await fs.mkdir(out,{recursive:true});
 const bundle=path.join(out,'EP02_CAMERA_AUDIT.bundle.mjs');
 await build({stdin:{
  contents:[
-  "export {SCRATCH_EDIT,stateAt} from './src/v2/episodes/in-this-town-02/timeline.ts';",
+  "export {stateAt} from './src/v2/episodes/in-this-town-02/timeline.ts';",
   "export {directEpisodeCamera} from './src/v2/episodes/in-this-town-02/cameraDirector.ts';"
  ].join('\n'),resolveDir:process.cwd(),loader:'ts'
  },outfile:bundle,bundle:true,platform:'node',format:'esm',target:'node24',external:['three']});
-const {SCRATCH_EDIT,stateAt,directEpisodeCamera}=await import(pathToFileURL(bundle).href);
-const shots=SCRATCH_EDIT.shots;
+const {stateAt,directEpisodeCamera}=await import(pathToFileURL(bundle).href);
+// Inspect the REAL Adam-aligned shot manifest (including A/B sub-shots),
+// never the provisional 60-shot scratch edit. Prior gate missed cut boundaries.
+const manifest=JSON.parse(await fs.readFile(path.join(out,'EP02_SHOT_MANIFEST.json'),'utf8'));
+const shots=manifest.shots;
 const issues=[],samples=[];
 for(const shot of shots){
  const frames=[shot.start,Math.floor((shot.start+shot.end)/2),shot.end-1];
