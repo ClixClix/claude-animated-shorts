@@ -92,7 +92,76 @@ function createStoryProps(){
  for(let i=0;i<5;i++){const geo=new T.SphereGeometry(.045,7,5);geometries.push(geo);
   const piece=new T.Mesh(geo,crumbMat);piece.position.set(Math.cos(i*2.4)*.10,.07,Math.sin(i*2.4)*.10);treat.add(piece);}
  root.add(treat);
- return {root,board,sign,treat,dispose:()=>{root.removeFromParent();for(const geo of geometries)geo.dispose();
+
+ // Episode 02 location kit: real landmarks, NOT empty coordinates or narration substitutes.
+ // These are added only to the Episode 01 environment, never replacing its café/house/city.
+ const propMat=(color:string)=>{const m=new T.MeshStandardMaterial({color,roughness:.91,metalness:0});materials.push(m);return m;};
+ const propBox=(parent:T.Group,name:string,size:[number,number,number],pos:[number,number,number],color:string)=>{
+   const geo=new T.BoxGeometry(...size);geometries.push(geo);
+   const mesh=new T.Mesh(geo,propMat(color));mesh.name=name;mesh.position.set(...pos);
+   mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;
+ };
+ const softBed=(name:string,pos:[number,number,number])=>{
+   const bed=new T.Group();bed.name=name;bed.position.set(...pos);
+   const cushionGeo=new T.CylinderGeometry(.55,.56,.12,32);geometries.push(cushionGeo);
+   const cushion=new T.Mesh(cushionGeo,propMat('#8f858b'));cushion.position.y=.10;bed.add(cushion);
+   const innerGeo=new T.CylinderGeometry(.43,.44,.025,32);geometries.push(innerGeo);
+   const inner=new T.Mesh(innerGeo,propMat('#c6a9a3'));inner.position.y=.172;bed.add(inner);
+   const rimGeo=new T.TorusGeometry(.46,.13,10,40);geometries.push(rimGeo);
+   const rim=new T.Mesh(rimGeo,propMat('#9d7a81'));rim.rotation.x=Math.PI/2;rim.position.y=.19;bed.add(rim);
+   root.add(bed);return bed;
+ };
+ const cafeBed=softBed('episode02-essie-cafe-bed',[2.68,.02,-1.84]);
+ const homeBed=softBed('episode02-essie-home-bed',[1.38,.20,13.70]);
+
+ // Distinct physical market: three stalls, awnings, real product crates.
+ const market=new T.Group();market.name='episode02-market-stalls';market.position.set(-7.25,0,4.85);
+ const awningColors=['#b47760','#6c8b82','#b49a6c'];
+ for(let i=0;i<3;i++){
+   const x=(i-1)*2.1;
+   propBox(market,'market-table-'+i,[1.40,.10,.72],[x,.67,0],'#91765c');
+   for(const dx of [-.60,.60])for(const dz of [-.28,.28])
+     propBox(market,'market-leg-'+i+'-'+dx+'-'+dz,[.085,.65,.09],[x+dx,.32,dz],'#705e50');
+   propBox(market,'market-awning-'+i,[1.72,.10,.95],[x,2.20,-.06],awningColors[i]);
+   for(const dx of [-.72,.72])
+     propBox(market,'market-post-'+i+'-'+dx,[.075,2.20,.08],[x+dx,1.1,-.44],'#715e50');
+   for(let j=0;j<5;j++)propBox(market,'market-produce-'+i+'-'+j,[.16,.16,.16],
+     [x-.48+j*.22,.82,(j%2)*.20-.10],j%2?'#ca9761':'#80946c');
+   propBox(market,'market-crate-'+i,[.65,.38,.53],[x+.47,.27,.68],'#987452');
+ }
+ root.add(market);
+
+ // Three genuinely different search alleys, separately photographed in beat 30.
+ const alleys=([-18.5,18.5,-9.15] as number[]).map((x,i)=>{
+   const lane=new T.Group();lane.name='episode02-search-alley-'+(i+1);
+   lane.position.set(x,0,i===2?3.05:2.55);
+   const wallColors=['#687986','#7e796f','#576d70'];
+   for(const side of [-1,1]){
+     propBox(lane,'alley-side-'+i+'-'+side,[.20,2.9,3.6],
+       [side*1.35,1.45,-.60],wallColors[i]);
+     propBox(lane,'alley-base-'+i+'-'+side,[.25,.20,3.8],
+       [side*1.34,.10,-.60],'#555960');
+   }
+   if(i===0){
+     propBox(lane,'alley-dumpster',[.80,.85,.75],[-.73,.44,-1.0],'#496877');
+     propBox(lane,'alley-dumpster-lid',[.90,.08,.82],[-.73,.92,-1.0],'#364c59');
+   }else if(i===1){
+     propBox(lane,'alley-crates-1',[.63,.53,.50],[.77,.265,-.80],'#b18b62');
+     propBox(lane,'alley-crates-2',[.63,.53,.50],[.77,.795,-.80],'#936e53');
+     propBox(lane,'alley-blue-sign',[.90,.25,.08],[-.88,1.76,-.65],'#5d889b');
+   }else{
+     propBox(lane,'alley-pipe',[.12,2.3,.12],[.88,1.15,-1.2],'#79848b');
+     propBox(lane,'alley-orange-can',[.52,.64,.52],[-.86,.32,-1.0],'#986f52');
+   }
+   root.add(lane);return lane;
+ });
+ // Mocha speaks ON a physical stool at the next-morning town gathering.
+ const stool=new T.Group();stool.name='episode02-town-stool';stool.position.set(1.1,0,6.4);
+ propBox(stool,'stool-seat',[.78,.09,.62],[0,.37,0],'#907359');
+ for(const x of [-.30,.30])for(const z of [-.22,.22])
+   propBox(stool,'stool-leg-'+x+'-'+z,[.085,.34,.09],[x,.17,z],'#70583f');
+ root.add(stool);
+ return {root,board,sign,treat,market,alleys,cafeBed,homeBed,stool,dispose:()=>{root.removeFromParent();for(const geo of geometries)geo.dispose();
   for(const mat of materials)mat.dispose();for(const tex of textures)tex.dispose();}};
 }
 
