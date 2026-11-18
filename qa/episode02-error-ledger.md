@@ -2,6 +2,9 @@
 
 ### 18 Nov 2026 — structural box styling and visual-story motion pass (SOURCE ONLY)
 
+- **HIGH / Shots 49–52 / 101.0–109.7 sec — RERENDER PENDING.** The actual full movie visually undercuts Mocha's rescue because he jumped OUT of Essie's box while she was still reforming, then Essie visibly snapped back to the earlier box position at the next cut. Source now keeps Mocha IN the carton as Essie reforms during Shot 50, gives him the original Episode01 tucked resting pose, then stages Essie exiting first and Mocha after her over the actual 0.60m rim during Shot 51; both remain outside for Shot 52. Commits `5be266c`, `e06af57`, `c5804ab`, `125a282`. New numeric QA asserts that neither cat crosses the solid rim too low and Mocha remains in the box during transformation (`ef2f6e1`). The 30fps rendered choreography remains UNVERIFIED; if actors overlap/clips, further source work is required.
+
+
 **Evidence**: User-supplied 129.2-second `EP02_540p_Visual.mp4`, 540×960, 30fps, 3876 frames, six actual 1fps contact boards. At 5Hz downscaled temporal sampling, approximately 51% of consecutive grayscale frames had mean absolute difference <1/255 (a rough near-still proxy, not an artistic grade). Clear examples of empty holds: Shots 10, 15, 17, 26, 31, 34, 40, 45, 47 and 52. Episode 01 final video is not available to do a valid A/B artistic comparison.
 
 - **HIGH / ALL RESTING BOX SCENES — RERENDER PENDING.** Boxes look like overly flat hollow tan slabs and their fronts can separate visually from the Episode01 2.5D character. Added subtle inset cardboard floor/contact bed and recessed dark side/back walls, preserving outside dimensions and original cat artwork. `97c5445`. Unknown if this stylistic correction is sufficient; deeper real box-pose rig still needed if cutout illusion persists.
