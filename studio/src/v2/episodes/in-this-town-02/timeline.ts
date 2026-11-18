@@ -86,7 +86,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
     // closing the 3-D lid at 25% covered the entire transformation.
     flap.demo=lerp(1,.90,ease((u-.77)/.23));
    }
-  if(n===4){demoCat.visible=false;flap.demo=.72;}
+  if(n===4){demoCat.visible=false;flap.demo=.90;}
  }
  if(n===5){mocha.position=walk(HOME.entrance,[1.15,0,6],u);mocha.walking=true;mocha.emotion='sad';heroBox='demo';cam=cameraPreset([5.15,1.7,9.0],[2,.7,5.1],55);}
  if(n===6){latte.position=[HOME.latte[0],.02,HOME.latte[2]];latte.emotion='happy';mocha.visible=false;heroBox='latte';cam=focus(HOME.latte,2.6,46,-.25);flap.latte=.9;}
@@ -263,7 +263,10 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  if(n===14)mocha.headTurn=lerp(-.22,.26,ease(u));
  // Essie-only box-lip insert: Mocha's idle card was just disembodied ears
  // above the rear flap in every inspected frame of shot 35.
- if(n===35||n===37||n===38)mocha.visible=false;
+ // A clipped Mocha face at the frame edge made the box-rest inserts
+ // confusing. These are Essie-only visual beats; Mocha returns in the
+ // follow-up shot and remains present in story continuity.
+ if(n===19||n===35||n===37||n===38||n===39)mocha.visible=false;
  if(n>=31&&n<=48){
   mocha.headTurn=.16*Math.sin(u*Math.PI*1.25);
   mocha.gazeY=-.10+.12*Math.sin(u*Math.PI);
