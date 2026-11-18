@@ -107,9 +107,12 @@ export function stateAt(frame:number,shots:EditShot[]):State{
     morph.demo=fold;
     // Keep the cartoon anatomy in clear view while it folds; previously
     // closing the 3-D lid at 25% covered the entire transformation.
-    flap.demo=lerp(1,.90,ease((u-.77)/.23));
+    // ONLY AFTER the visible kitten-to-cardboard fold has progressed,
+    // the four real hinged flaps close on the SAME persistent carton.
+    // Earlier complete footage ended on an unexplained empty open box.
+    flap.demo=lerp(1,.10,ease((u-.82)/.18));
    }
-  if(n===4){demoCat.visible=false;flap.demo=.90;}
+  if(n===4){demoCat.visible=false;flap.demo=.10;}
  }
  if(n===5){mocha.position=walk(HOME.entrance,[1.15,0,6],u);mocha.walking=true;mocha.emotion='sad';heroBox='demo';cam=cameraPreset([5.15,1.7,9.0],[2,.7,5.1],55);}
  if(n===6){
