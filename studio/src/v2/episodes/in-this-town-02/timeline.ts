@@ -200,9 +200,14 @@ export function stateAt(frame:number,shots:EditShot[]):State{
    // the same narrow alley lane but do not teleport at the cut.
    const essieOut=ease((u-.10)/.60);
    const mochaOut=ease((u-.34)/.58);
-   essie.position=[HOME.alleyBox[0]-.10,.10*(1-essieOut),
+   // The front rim is at Y≈.60 and Z≈1.94. Lift paws BEFORE moving
+   // across it, then plant both cats outside. The previous straight-line
+   // exit would clip through opaque cardboard even with perfect cameras.
+   essie.position=[HOME.alleyBox[0]-.10,
+    .10*(1-essieOut)+.80*Math.sin(Math.PI*essieOut),
     lerp(HOME.alleyBox[2]+.10,2.70,essieOut)];
-   mocha.position=[HOME.alleyBox[0],.08*(1-mochaOut),
+   mocha.position=[HOME.alleyBox[0],
+    .08*(1-mochaOut)+.76*Math.sin(Math.PI*mochaOut),
     lerp(HOME.alleyBox[2]+.12,2.43,mochaOut)];
    essie.scale=lerp(.82,1,essieOut);
    mocha.scale=lerp(.78,1,mochaOut);
