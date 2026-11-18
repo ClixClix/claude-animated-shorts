@@ -1,3 +1,5 @@
+> **CURRENT AGENT ENTRYPOINT (18 Nov 2026):** Read [AGENTS.md](AGENTS.md), the exact [Episode 02 director lock](studio/src/v2/episodes/in-this-town-02/PRODUCTION_DIRECTOR_LOCK.json), and the Episode 01 style lock. Do not use the old draft shot list as creative authority. The new `episode2:director-audit` blocks obvious missing scenes and `episode2:build` is prevented from wasting a full local render on them. The fully autonomous text-to-complete-film agent is STILL NOT BUILT; it requires running/inspecting/repairing actual local video. The source cleanup does not certify Episode 02.
+
 # One-prompt production target — In This Town (Episode 01 locked reference)
 
 ## Single-prompt creative interface (target)
