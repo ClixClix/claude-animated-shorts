@@ -1,5 +1,12 @@
 # Episode 02 — visual QA error ledger
 
+### 18 Nov 2026 — Windows Node 24 production wrapper failures (user PC)
+
+- **HIGH BUILD / all production stages — FIXED IN CODE, PC RECHECK PENDING.** The `episode2:check` launcher crashed at `spawnSync npm.cmd EINVAL` from `scripts/produce-box.mjs:27` before TypeScript could run. **Verified root cause from provided stack:** on Windows/Node v24.22.0, the child-process `.cmd` launcher is failing. Replaced both direct `npm.cmd` subprocess calls with `process.execPath` invoking the installed TypeScript CLI directly. Commit `bfa6d6d`. No evidence of a TypeScript error in that log.
+- **HIGH PIPELINE DEPENDENCY / `episode02-prepare.mjs` — UNRESOLVED ROOT CAUSE; CLEAR DIAGNOSTIC IN CODE.** User pasted only the outer `Episode 02 stage failed (1): scripts/episode02-prepare.mjs` message, not the first underlying exception. Actual Adam voice missing is **hypothesis, not verified**. The new wrapper checks for `Approved_Narration.wav`, `Approved_Word_Timings.json`, `EP02_VOICE_PROVENANCE.json` before production, and emits an actionable `EP02_ADAM_NARRATION_NOT_READY` message if any are absent. Added a separate `EP02_CHECK_BEFORE_BUILD` error when final QA is invoked without a finishing result. Commit `bfa6d6d`.
+- **Status:** no newly rendered/visually inspected frames, zero artistic fixes verified; all prior box, animation and camera issues remain open. No paid ElevenLabs request made. No audio provenance or completion confirmed.
+
+
 ### 17 Nov 2026, 23:00 ET — hourly QA: full render still blocked; source narration density audited
 
 - **Branch source inspected:** latest before QA edit `dacba11` (18 Nov 03:58 UTC); new QA tooling commit `852b57c` adds a NON-BLOCKING, source-only narrator timing audit to `studio/scripts/episode02-quality-cycle.mjs`. It reads the exact 60-shot spoken map and 3876-frame scratch plan, validates word-order identity, and emits `narrationTimingAudit` in the normal QA JSON. No paid API or audio generation, no visual source change, no publishing. **Local runtime recheck pending.**
