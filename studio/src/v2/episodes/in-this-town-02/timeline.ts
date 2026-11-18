@@ -115,13 +115,16 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  if(n===6){
   // From café floor to the striped box: lift over the intact rim, then
   // settle onto the carton floor. Never start this beat already inside.
-  const hop=ease((u-.08)/.80);
+  // Finish the physical jump early enough to SHOW Latte settling inside
+  // the striped carton, rather than holding an oversized airborne pose
+  // for almost the entire 2.6-second shot. The final 30% is box-rest acting.
+  const hop=ease((u-.06)/.62);
   latte.position=[
    lerp(HOME.latte[0]+.57,HOME.latte[0],hop),
    .13*hop+.83*Math.sin(Math.PI*hop),
    lerp(HOME.latte[2]+.82,HOME.latte[2],hop)
   ];
-  latte.scale=lerp(1,.74,ease((u-.72)/.25));
+  latte.scale=lerp(1,.74,ease((u-.58)/.17));
   latte.walking=u<.12;
   latte.emotion='happy';mocha.visible=false;heroBox='latte';
   cam=focus(HOME.latte,2.6,46,-.25);flap.latte=.9;
