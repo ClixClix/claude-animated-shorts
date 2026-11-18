@@ -1,5 +1,12 @@
 # Episode 02 — visual QA error ledger
 
+### 18 Nov 2026, 03:11 ET — fresh numerical QA found airborne crop; motivated finale pan correction
+
+- **NEW HIGH source-camera failure:** [cloud QA #44264341176](https://github.com/ClixClix/claude-animated-shorts/actions/runs/44264341176) at `837ec0d` passed TypeScript, 25 style checks and 1,105 box/fixture checks, but correctly FAILED new/extended finale numerical audit: `entire-airborne-cat-visible`, Mocha cropped at **frames 3827–3836** (127.57–127.87s), projected left bound approximately **-1.29 to -1.45** (must be >= -0.99). The restored z=4.12 ray passed the new opaque-facade check, so this is a different real source-framing defect, not a verified artistic fix.
+- **SOURCE FIX COMMITTED `6c308aa` — RERENDER PENDING:** shot59 holds Mocha's left-side hesitation; shot60 stages Mocha jumping first over left rim, Essie second over front, Latte third over right, with ONE motivated left-to-right camera pan beginning after takeoff. Preserves exact Episode01 rigs, box identities, 01–02 approved opening and café set. Local mathematical projection simulation suggested Mocha remains in portrait, but this is NOT fresh CI or footage verification. [New cloud QA #44264714474](https://github.com/ClixClix/claude-animated-shorts/actions/runs/44264714474) and [full rerender #44264714488](https://github.com/ClixClix/claude-animated-shorts/actions/runs/44264714488) started/pending. No visual approval.
+- **CURRENT-SOURCE TECHNICAL:** [source guard #44264341458](https://github.com/ClixClix/claude-animated-shorts/actions/runs/44264341458) passed after `837ec0d` TS fix. Source guard for `6c308aa` still pending. The prior complete source `a616b77` is technically decoded 3,876/3,876 but ARTISTICALLY REJECTED (finale opaque wall).
+- **TOTALS:** retain 26 open/pending visual categories, 14 historical verified fixes, 0 newly visually verified full fixes. New numerical airborne crop is FIXED IN SOURCE / RERENDER PENDING, not visually cleared.
+
 ### 18 Nov 2026, 03:10 ET — TypeScript regression fixed; fresh complete rerender queued
 
 - Camera fix commit [`714bed4`](https://github.com/ClixClix/claude-animated-shorts/commit/714bed496e745149d63ef2161fec241f2eb4b989) restores visually proven shared-box interior camera Z=4.12 for shots59–60 and uses adjacent shot11's unobstructed camera ray for shot12. Adds a numerical facade-ray regression assertion and changes full workflow concurrency to `cancel-in-progress: false` to avoid discarding completed shards during rapid source edits. **All visual fixes RERENDER PENDING**.
