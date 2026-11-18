@@ -18,6 +18,7 @@
     "episode2:part1": "node scripts/episode02-part1.mjs",
     "episode2:shot01": "node scripts/episode02-shot01-performance.mjs",
     "episode2:local-opening": "node scripts/episode02-local-opening.mjs",
+    "episode2:local-shots03-05": "node scripts/episode02-local-shots03-05.mjs",
     "episode2:ep1-assets": "node scripts/episode02-episode1-assets-preview.mjs",
     "episode2:style-check": "node scripts/episode02-style-preflight.mjs",
     "episode2:style-preview": "node scripts/episode02-episode1-assets-preview.mjs",
