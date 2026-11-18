@@ -143,7 +143,11 @@ export function createEpisode1CastCat(id:CatId){
   const a=bridgeActor(id,actingPose,next,s);
   const n=s.shot.sequence;
   const restingInBox=(id==='latte'&&n===6)||
-    (id==='essie'&&[7,19,35,37,38,39].includes(n));
+    (id==='essie'&&[7,19,35,37,38,39].includes(n))||
+    (id==='mocha'&&n===50);
+  // In the rescue close-up he must remain tucked *inside* the same
+  // physical carton. A standing 1.52m card cannot fit the 0.56m wall,
+  // and jumping out before Essie reforms made the visual rule unclear.
   // Resting original art is built AFTER updateActor refreshes the source
   // image, and before the next draw; no duplicated mesh/crossfade.
 
