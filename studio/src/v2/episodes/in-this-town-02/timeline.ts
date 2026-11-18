@@ -453,7 +453,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   // Keep the original Episode01 character illustrations and one box mesh.
   const approach=ease((u-.15)/.70);
   if(n===59){
-   mocha.position=[lerp(-3.36,-3.00,approach),0,2.17];
+   mocha.position=[lerp(-3.78,-3.40,approach),0,2.17];
    essie.position=[-1.45,0,3.32];
    latte.position=[.20,0,2.17];
    mocha.scale=essie.scale=latte.scale=1;
@@ -473,7 +473,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
     lerp(3.32,2.01,e)];
    latte.position=[lerp(.20,-1.04,l),
     .12*l+.95*Math.sin(Math.PI*l),2.17];
-   mocha.position=[lerp(-3.00,-1.95,m),
+   mocha.position=[lerp(-3.40,-1.95,ease((m-.18)/.55)),
     .12*m+.90*Math.sin(Math.PI*m),2.17];
    essie.scale=lerp(1,.76,ease((e-.64)/.36));
    latte.scale=lerp(1,.76,ease((l-.64)/.36));
