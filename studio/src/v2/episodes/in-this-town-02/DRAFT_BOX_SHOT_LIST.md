@@ -1,3 +1,5 @@
+> **ARCHIVED CREATIVE SHOT LIST — DO NOT DIRECT FROM THIS FILE.** The user's 18 Nov detailed cinematography and every specific verb now live in [PRODUCTION_DIRECTOR_LOCK.json](PRODUCTION_DIRECTOR_LOCK.json). The older estimates and shots below are historical only. Keep this for provenance; never reintroduce its missing-market, single-alley, missing-bed or static-box staging.
+
 # What If Cats / In This Town — Episode 02: The Cat Who Became a Box
 
 > **CREATIVE OUTLINE APPROVED — user replied “good” on 2026-11-16. NO RENDER OR PAID NARRATION AUTHORIZED.** This box episode supersedes the abandoned 'shadow' Episode 02 pitch, which is retained as historical draft only.
