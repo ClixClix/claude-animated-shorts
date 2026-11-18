@@ -240,7 +240,7 @@ export function createEpisode1CastCat(id:CatId){
   // Rest composition already curls the SAME Episode01 art in its painted
   // canvas. Do not apply a second -0.38 pitch that turns the face edge-on,
   // makes the paws hover and changes apparent size with camera height.
-  card.mesh.rotation.x=(restingInBox?-.08:0)-.18*paper;
+  card.mesh.rotation.x=(restingInBox?-.08*(1-standingMix):0)-.18*paper;
   if(restingInBox){
    // Real box floors at y=.044; leave ~1cm above the cardboard bottom.
    // Keep painted head/eyes above the front rim without scaling a full
@@ -248,7 +248,7 @@ export function createEpisode1CastCat(id:CatId){
    // Raise the tucked shot07 head just above the original cardboard rim;
    // the painted torso and paws remain inside the actual hollow carton.
    card.mesh.position.y=Math.max(card.mesh.position.y,
-    id==='essie'&&n===7?.27:.13);
+    id==='essie'&&n===7?.27:.13*(1-standingMix));
   }
   // Preserve the recognisable Episode 01 face and markings until the FINAL
   // fold. The previous aggressive pitch/alpha produced a melted pancake in
