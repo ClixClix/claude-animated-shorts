@@ -1,0 +1,59 @@
+name: In This Town one-prompt and Episode 02 source guards
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v2-local-render]
+    paths:
+      - ".github/workflows/in-this-town-one-prompt-qa.yml"
+      - "studio/scripts/series-one-prompt.mjs"
+      - "studio/scripts/series-one-prompt.test.mjs"
+      - "studio/scripts/episode02-director-preflight.mjs"
+      - "studio/scripts/episode02-series-music.mjs"
+      - "studio/scripts/episode02-prepare.mjs"
+      - "studio/scripts/episode02-finish.mjs"
+      - "studio/src/v2/episodes/in-this-town-02/**"
+      - "studio/package.json"
+      - "studio/package-lock.json"
+permissions:
+  contents: read
+concurrency:
+  group: in-this-town-one-prompt-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-and-story:
+    name: Verify one-prompt scaffold, source types and directed beats
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: studio
+    steps:
+      - name: Checkout exact branch HEAD
+        uses: actions/checkout@v4
+      - name: Install Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+      - name: Install locked modules (no paid API or media calls)
+        run: npm ci --no-audit --no-fund
+      - name: Unit test one-prompt story-to-visual-beat planner
+        run: npm run inthis:next-test
+      - name: TypeScript compilation check
+        run: npm run typecheck
+      - name: Strict source presence for user's Episode 02 beats
+        run: npm run episode2:director-audit
+      - name: Publish source-only failure report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: in-this-town-source-qa-${{ github.run_number }}
+          path: studio/out/v2-episodes/in-this-town-02/EP02_DIRECTOR_PREFLIGHT.json
+          if-no-files-found: ignore
+          retention-days: 7
+
+# This workflow intentionally does not start a render, call paid voice APIs,
+# inspect private music, or claim artistic approval from green CI.
