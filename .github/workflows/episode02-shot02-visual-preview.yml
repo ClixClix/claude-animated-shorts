@@ -1,14 +1,7 @@
 name: Episode 02 Shot 02 — Curled Cat Visual Preview
 
+# Episode 02 preview renders are manually triggered only.
 on:
-  push:
-    branches:
-      - v2-local-render
-    paths:
-      - ".github/workflows/episode02-shot02-visual-preview.yml"
-      - "studio/src/v2/episodes/in-this-town-02/EDITORIAL_SCRATCH_PLAN.json"
-      - "studio/src/v2/episodes/in-this-town-02/cameraDirector.ts"
-      - "studio/src/v2/episodes/in-this-town-02/Episode.tsx"
   workflow_dispatch:
 
 permissions:
