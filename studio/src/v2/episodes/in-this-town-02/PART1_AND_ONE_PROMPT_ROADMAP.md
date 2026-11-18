@@ -1,3 +1,5 @@
+> **HISTORICAL ROADMAP (16 Nov), NOT CURRENT PRODUCTION TRUTH.** Read [PRODUCTION_DIRECTOR_LOCK.json](PRODUCTION_DIRECTOR_LOCK.json), [AGENTS.md](../../../../../AGENTS.md), and the actual live renderer/timeline. Its old pilot scope and storyboard cannot override the user's new 60-beat direction.
+
 # Episode 02 — Part 1 source implementation and one-prompt roadmap
 
 ## Status (2026-11-16)
