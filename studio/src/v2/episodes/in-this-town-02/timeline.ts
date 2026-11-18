@@ -112,8 +112,27 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   if(n===4){demoCat.visible=false;flap.demo=.90;}
  }
  if(n===5){mocha.position=walk(HOME.entrance,[1.15,0,6],u);mocha.walking=true;mocha.emotion='sad';heroBox='demo';cam=cameraPreset([5.15,1.7,9.0],[2,.7,5.1],55);}
- if(n===6){latte.position=[HOME.latte[0],.02,HOME.latte[2]];latte.emotion='happy';mocha.visible=false;heroBox='latte';cam=focus(HOME.latte,2.6,46,-.25);flap.latte=.9;}
- if(n===7){essie.position=[HOME.essie[0],.02,HOME.essie[2]];mocha.position=[1.45,0,.9];mocha.emotion='sad';essie.emotion='happy';heroBox='essie';cam=focus(HOME.essie,2.7,58,1.5);}
+ if(n===6){
+  // From café floor to the striped box: lift over the intact rim, then
+  // settle onto the carton floor. Never start this beat already inside.
+  const hop=ease((u-.08)/.80);
+  latte.position=[
+   lerp(HOME.latte[0]+.57,HOME.latte[0],hop),
+   .13*hop+.83*Math.sin(Math.PI*hop),
+   lerp(HOME.latte[2]+.82,HOME.latte[2],hop)
+  ];
+  latte.scale=lerp(1,.74,ease((u-.72)/.25));
+  latte.walking=u<.12;
+  latte.emotion='happy';mocha.visible=false;heroBox='latte';
+  cam=focus(HOME.latte,2.6,46,-.25);flap.latte=.9;
+ }
+ if(n===7){
+  // Essie makes room for Mocha INSIDE the same intact four-wall box.
+  essie.position=[HOME.essie[0]+lerp(.16,-.11,ease((u-.12)/.70)),.12,HOME.essie[2]];
+  essie.scale=.78;mocha.position=[1.45,0,.9];
+  mocha.emotion='sad';essie.emotion='happy';heroBox='essie';
+  cam=focus(HOME.essie,2.7,58,1.5);
+ }
  if(n===8){mocha.position=walk([2.6,0,7.3],HOME.door,u);mocha.walking=true;cam=cameraPreset([5.6,2.0,10.2],[2.2,1.0,4.2],55);room='street';}
  if(n>=9&&n<=17){
   mocha.position=n<=10?[1.0,0,1.4]:n<=14?[-.8,0,2.8]:n<=16?[-1.0,0,2.25]:[-1.45,0,2.55];
@@ -306,13 +325,28 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   mocha.emotion=essie.emotion='happy';mocha.walking=essie.walking=n===53;
   latte.visible=n===55;latte.position=n===55?mix(HOME.latte,[HOME.latte[0],.25,HOME.latte[2]+.7],ease(u)):[...HOME.latte];latte.emotion='surprised';
   flap.latte=.93;heroBox='latte';
-  if(n===54){morph.latte=1;mocha.position=walk([HOME.latte[0]+.35,0,HOME.latte[2]+.75],HOME.latte,u);mocha.scale=lerp(1,.65,ease(u));}
-  if(n===55){morph.latte=1-ease(u);mocha.position=walk(HOME.latte,[HOME.latte[0]+.75,0,HOME.latte[2]+.7],u);mocha.scale=lerp(.65,1,ease(u));}
+  if(n===54){
+   morph.latte=1;
+   const hop=ease((u-.08)/.85);
+   mocha.position=[HOME.latte[0]+.40*(1-hop),
+    .12*hop+.85*Math.sin(Math.PI*hop),
+    HOME.latte[2]+.80*(1-hop)];
+   mocha.scale=lerp(1,.70,ease((u-.72)/.26));
+   mocha.walking=u<.12;
+  }
+  if(n===55){
+   morph.latte=1-ease(u);
+   const out=ease((u-.30)/.62);
+   mocha.position=[HOME.latte[0]+.68*out,
+    .12*(1-out)+.78*Math.sin(Math.PI*out),
+    HOME.latte[2]+.70*out];
+   mocha.scale=lerp(.70,1,ease((u-.62)/.34));
+  }
   latte.morph=morph.latte;
   cam=n===53?cameraPreset([6,2,9.5],[2.4,.7,4.9],64):cameraPreset([1.4,1.7,4.4],[-1.8,.8,2.1],50);
  }
  if(n>=56){mocha.emotion='happy';essie.emotion='happy';latte.emotion='happy';mocha.visible=essie.visible=latte.visible=true;
-  mocha.position=n<=57?[1.1,0,6.4]:[-1.6,0,2.8];
+  mocha.position=n<=57?[1.1,n===56?.45:0,6.4]:[-1.6,0,2.8];
   essie.position=n<=57?[.1,0,6.0]:n===58?[-1.0,0,2.9]:[-1.8,0,2.5];
   latte.position=n<=57?[2.3,0,6.0]:n===58?[-1.7,0,3.0]:[-1.1,0,2.5];
   room=n<=57?'street':'cafe';heroBox=n>=58?'shared':null;
@@ -333,7 +367,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   demoCat.emotion='happy';
   demoCat.headTurn=.08*Math.sin(Math.PI*u);
   if(n===57){
-   mocha.position=walk([1.1,0,6.4],[1.50,0,5.98],ease(u));
+   mocha.position=walk([1.1,.45,6.4],[1.50,0,5.98],ease(u));
    mocha.walking=true;
    essie.headTurn=.12*Math.sin(Math.PI*u);
    latte.headTurn=-.10*Math.sin(Math.PI*u);
@@ -362,21 +396,49 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  // Keep standing cat models near their established Episode 01 scale. A cat
  // curled inside a box uses a separate compact pose and grounded placement,
  // not a magically enlarged box or an oversized upright cat sticking through it.
- if(n===6){latte.position=[HOME.latte[0],.13,HOME.latte[2]];latte.scale=.74;}
- if(n===7){essie.position=[HOME.essie[0],.12,HOME.essie[2]];essie.scale=.78;}
- if(n===19){essie.position=[HOME.essie[0],.12,HOME.essie[2]];essie.scale=.77;}
- if(n===35){essie.position=[HOME.alleyBox[0],.12,HOME.alleyBox[2]];essie.scale=.77;}
+ // Shot 06 now has a complete floor-to-rim jump earlier in this function;
+ // do not overwrite the animated takeoff with a static resting portrait.
+ // Shot 07's horizontal shift is already authored above; preserve it.
+ if(n===19){
+  // A visible takeoff from the café floor, crest above the .6m box lip,
+  // and a supported landing on the box floor before curling.
+  const hop=ease((u-.06)/.88);
+  essie.position=[HOME.essie[0]+.48*(1-hop),
+   .12*hop+.88*Math.sin(Math.PI*hop),
+   HOME.essie[2]+.85*(1-hop)];
+  essie.scale=lerp(1,.77,ease((u-.68)/.28));
+  essie.walking=u<.10;
+ }
+ if(n===35){
+  // Show Essie clear the alley carton rim before her illustrated curl.
+  const hop=ease((u-.06)/.88);
+  essie.position=[HOME.alleyBox[0]+.40*(1-hop),
+   .12*hop+.86*Math.sin(Math.PI*hop),
+   HOME.alleyBox[2]+.83*(1-hop)];
+  essie.scale=lerp(1,.77,ease((u-.68)/.28));
+  essie.walking=u<.10;
+ }
  if(n>=37&&n<=39){essie.position=[HOME.alleyBox[0],.12,HOME.alleyBox[2]];essie.scale=.78;}
  if(n===50){essie.position=[HOME.alleyBox[0],.16,HOME.alleyBox[2]];essie.scale=lerp(.60,.82,ease(u));}
  if(n===51){essie.position=[HOME.alleyBox[0],.10,HOME.alleyBox[2]+.28];essie.scale=lerp(.82,1,ease(u));}
- if(n===55){latte.position=[HOME.latte[0],.12,HOME.latte[2]+.18];latte.scale=lerp(.75,1,ease(u));}
+ if(n===55){
+  // The rescued cat launches above the striped box rim and lands forward,
+  // rather than fading in as a static upright card.
+  const leap=ease((u-.12)/.75);
+  latte.position=[HOME.latte[0]+.30*leap,
+   .12*(1-leap)+.91*Math.sin(Math.PI*leap),
+   HOME.latte[2]+.18+.77*leap];
+  latte.scale=lerp(.75,1,ease((u-.68)/.30));
+ }
  if(n===58){
-  // Continuity setup for the following shot: Essie and Latte have already
-  // settled inside, while Mocha hesitates on the left and approaches.
-  mocha.position=walk([-3.60,0,2.17],[-3.32,0,2.17],u);
-  mocha.scale=.76;mocha.walking=true;mocha.emotion='sad';
-  essie.position=[-1.45,.12,2.01];essie.scale=.76;
-  latte.position=[-.95,.12,2.17];latte.scale=.76;
+  // Director beat 58 is OUTSIDE: Mocha walks along the living street,
+  // noticing other cats with boxes. The shared-box interior is beat 59.
+  room='street';heroBox=null;show.shared=false;
+  mocha.position=walk([1.10,0,6.10],[2.05,0,5.92],u);
+  mocha.walking=true;mocha.emotion='happy';mocha.scale=1;
+  essie.position=[.05,0,5.72];essie.scale=1;
+  latte.position=[2.80,0,5.80];latte.scale=1;
+  cam=cameraPreset([5.35,1.70,9.1],[1.40,.75,5.90],55);
  }
  if(n>=59){
   // SHOT 59: Essie and Latte wait in the one shared box; Mocha enters LAST.
@@ -459,6 +521,9 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   mocha.emotion='surprised';
  }
  if(n===17){
+  // Two small desperate hops followed by grounded resignation.
+  const beg=ease((u-.10)/.16)*(1-ease((u-.56)/.18));
+  mocha.position[1]=.14*Math.pow(Math.sin(4*Math.PI*u),2)*beg;
   // Pleading gives way to a lowered, defeated gaze.
   mocha.headTurn=.17*Math.sin(Math.PI*u);
   mocha.gazeY=-.36*ease((u-.53)/.34);
