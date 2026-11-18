@@ -403,6 +403,14 @@ export function directEpisodeCamera(s:State){
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:n===1?['city-establishing','demo','demoCat']:['demo','demoCat']};
  }
+ // Closing time is a two-subject shot: Mocha's real muzzle AND the hinged
+ // Episode 01 café door. Mocha-only framing omitted the closing action.
+ if(n===24){
+  const camera:V3=[5.35,1.75,8.0],target:V3=[2.48,.85,4.75],fov=68;
+  return {camera,target,fov,region:'outside' as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:n,selectedIds:['mocha','episode01-cafe-door']};
+ }
  // Story-locked geography: the house is the Episode 01 HOME, not café B-roll.
  if(s.room==='house'){
   const n=s.shot.sequence;
