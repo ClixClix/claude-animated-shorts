@@ -326,14 +326,19 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  // previously produced long inert poses; each beat must actually communicate
  // the narration through the approved Episode 01 expression rig.
  if(n===5){
-  // Reluctant approach, disgusted glance at carton, distinct sidestep away.
-  const recoil=ease((u-.35)/.24);
-  mocha.position=[lerp(2.40,1.20,ease(u))-.22*Math.sin(Math.PI*recoil),
-   0,lerp(6.65,6.00,ease(u))+.22*Math.sin(Math.PI*recoil)];
-  mocha.walking=true;
-  mocha.headTurn=-.24*ease((u-.12)/.25)+.37*recoil;
-  mocha.gazeY=-.18*ease((u-.16)/.24);
-  mocha.emotion=u>.20&&u<.75?'scared':'sad';
+  // Walk toward the same box from the safe RIGHT sidewalk, sniff,
+  // visibly recoil, then step around. Keep the original cat body wholly
+  // outside the .88m carton (x=1.36..2.24), storefront and vehicle lanes.
+  const approach=ease(u/.40),recoil=ease((u-.48)/.40);
+  mocha.position=[
+   3.74-.65*approach+.56*recoil,
+   0,
+   5.03+.08*approach+.10*recoil
+  ];
+  mocha.walking=u<.42||(u>.52&&u<.89);
+  mocha.headTurn=-.43*approach+.66*recoil;
+  mocha.gazeY=-.23*approach+.16*recoil;
+  mocha.emotion=u>.20&&u<.77?'scared':'sad';
  }
  if(n===7){
   // Essie invites him with a hopeful glance; Mocha consciously refuses.
