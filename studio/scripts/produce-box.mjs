@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {existsSync} from 'node:fs';
+import os from 'node:os';
 const mode=(process.argv[2]??'status').toLowerCase();
 const out=path.join(studioRoot,'out/v2-episodes/in-this-town-02');
 // Episode01 accepted V2_PYTHON; the user's new Windows clone is now
@@ -34,9 +35,9 @@ const prepareArgs=[];
 if(flag('--allow-scratch'))prepareArgs.push('--allow-scratch');
 if(arg('--voice'))prepareArgs.push('--voice',arg('--voice'));
 if(arg('--words'))prepareArgs.push('--words',arg('--words'));
-const audioArgs=[];
-if(arg('--licensed-music'))audioArgs.push('--licensed-music',arg('--licensed-music'));
-if(flag('--music-rights-confirmed'))audioArgs.push('--music-rights-confirmed');
+// The actual Episode 01 series music is the ONLY permitted music source.
+// Fail BEFORE the costly local video render if the private recording is missing.
+const seriesMusic=process.env.V2_MUSIC_FILE||path.join(process.env.V2_PRIVATE_ASSETS||path.join(os.homedir(),'WhatIfCatsPrivate'),'audio','temporex-numbers-intro.mp3');
 if(mode==='status'){
  for(const file of ['EP02_SHOT_MANIFEST.json','PRODUCTION_READINESS.json',
   'FINAL_RENDER_STATUS.json','VISUAL_ASSEMBLY.json','EP02_FINISHING_STATUS.json']){
@@ -57,7 +58,9 @@ if(mode==='status'){
   if(missing.length)throw Error('EP02_ADAM_NARRATION_NOT_READY: missing '+missing.join(', ')+
    '. Generate ONE approved ElevenLabs Adam recording first. Run npm.cmd run episode2:voice-count to inspect character count / required provider approval. Do not run preview/build/check until real Adam audio and timestamps exist. No paid request was made.');
  }
+ if(!existsSync(seriesMusic))throw Error('EP02_SERIES_MUSIC_MISSING: Place the already-used Episode 01 intro recording at '+seriesMusic+' or set V2_MUSIC_FILE. Never substitute procedural music. No render started.');
  node('prepare',...prepareArgs);
+ node('director-preflight','--strict');
  // Exactly as Episode01's polish workflow: block production when code,
  // cat continuity or floor/camera geometry gates have not passed.
  // Windows Node 24 spawnSync('npm.cmd') fails with EINVAL. Invoke the
@@ -71,10 +74,11 @@ if(mode==='status'){
  // Keep the strict camera audit in the explicit final `check` stage.
  // Do not present this preview as a quality-approved release.
  py('audio');
+ node('series-music');
  node('render',mode==='build'?'render':'preview');
  node('assemble',mode==='build'?'render':'preview');
- node('finish',...(mode==='build-preview'?['--preview']:[]),...audioArgs);
- console.log('All Episode 02 stages assembled. NO QA has been executed. Run: node scripts/produce-box.mjs check');
+ node('finish',...(mode==='build-preview'?['--preview']:[]));
+ console.log('Episode 02 render and Episode 01 music remix assembled. Full rendered creative QA is still required. Run: node scripts/produce-box.mjs check');
 }else if(mode==='check'){
  // The final gate only checks a completed production master. Do not hide
  // a missing Adam build behind unrelated TypeScript or Windows errors.
@@ -85,6 +89,7 @@ if(mode==='status'){
  // Windows Node 24 spawnSync('npm.cmd') fails with EINVAL. Invoke the
  // installed TypeScript CLI via Node directly (same TypeScript compiler).
  run(process.execPath,[path.join(studioRoot,'node_modules/typescript/bin/tsc'),'--noEmit']);
+ node('director-preflight','--strict');
  node('box-tests');
  node('camera-audit');
  const ready=JSON.parse(await fs.readFile(path.join(out,'EP02_FINISHING_STATUS.json'),'utf8'));
