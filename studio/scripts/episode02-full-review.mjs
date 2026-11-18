@@ -53,7 +53,7 @@ if(indices.length!==180)throw Error('Expected 180 independent actual-frame sampl
 const batchSize=20;
 for(let start=0;start<indices.length;start+=batchSize){
  const batch=indices.slice(start,start+batchSize);
- const filter='select='+batch.map(n=>'eq(n\\\\,'+n+')').join('+');
+ const filter='select='+batch.map(n=>'eq(n\\,'+n+')').join('+');
  run('ffmpeg',['-nostdin','-hide_banner','-v','error','-y','-i',movie,
   '-vf',filter,'-fps_mode','vfr','-q:v','4',
   '-start_number',String(start+1),
