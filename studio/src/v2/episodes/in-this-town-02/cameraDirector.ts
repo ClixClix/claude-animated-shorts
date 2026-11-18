@@ -493,12 +493,17 @@ export function directEpisodeCamera(s:State){
   // Quiet, visible push toward the resting face. The original source
   // held every frame on an identical billboard for 2–3 seconds.
   const advance=.15*easeTrack(s.u);
-  const camera:V3=n===6?[p[0]+.92,1.35,p[2]+1.72-advance]:
-    n===7?[p[0]+.50,1.77,p[2]+3.05-advance]:
+  // Actual full 60-shot render 44264714488: shot06 cropped the airborne
+  // original Episode01 cat at the top and left its striped box below.
+  // Widen the whole jump axis and keep the lens INSIDE the cafe facade.
+  // Shot07 needs a moderately raised 3/4 view into all four box walls,
+  // rather than the previous low view that concealed Essie's face.
+  const camera:V3=n===6?[p[0]+1.05,1.65,Math.min(3.40,p[2]+1.48)-.08*easeTrack(s.u)]:
+    n===7?[p[0]+.58,2.05,p[2]+2.65-advance]:
     [p[0]+.48,1.60,p[2]+2.80-advance];
-  const target:V3=n===6?[p[0],.57,p[2]]:
+  const target:V3=n===6?[p[0]+.10,.75,p[2]+.20]:
     [p[0]+.20,.68,p[2]+.10];
-  const fov=n===6?56:n===7?70:65;
+  const fov=n===6?72:n===7?72:65;
   return {camera,target,fov,region:(n===6?'latte':'essie') as Region,
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:[n===6?'latte':'essie','box']};
