@@ -68,7 +68,13 @@ for(const identity of BOX_IDENTITY_ORDER){
   });
   check(box.root.name===spec.id,identity+' name is stable');
   check(box.root.userData.identity===identity,identity+' identity metadata');
-  check(names.length===(identity==='latte'?11:9),identity+' exact expected panel count');
+  // Four extra recessed cardboard lining panels (floor, back, left,
+  // right) are physical depth cues, not duplicate exterior box shells.
+  check(names.length===(identity==='latte'?15:13),
+   identity+' exact expected panel count including four inset liners');
+  check(names.filter(n=>n.endsWith('-inner')||
+   n.endsWith('-floor-liner')).length===4,
+   identity+' has exactly one floor liner and three inside wall liners');
   check(names.filter(n=>n.includes('-flap')&&!n.includes('pivot')).length===4,identity+' four real flaps');
   check(names.filter(n=>n.includes('-tape-')).length===(identity==='latte'?2:0),identity+' tape identity');
   box.setOpenAmount(0);
