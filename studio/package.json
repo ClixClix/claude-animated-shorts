@@ -39,7 +39,9 @@
     "episode2:remix-preview": "node scripts/episode02-series-music.mjs && node scripts/episode02-finish.mjs --preview",
     "episode2:remix-master": "node scripts/episode02-series-music.mjs && node scripts/episode02-finish.mjs",
     "inthis:next": "node scripts/series-one-prompt.mjs",
-    "inthis:next-test": "node --test scripts/series-one-prompt.test.mjs"
+    "inthis:next-test": "node --test scripts/series-one-prompt.test.mjs",
+    "episode2:action-audit": "node scripts/episode02-action-evidence.mjs",
+    "episode2:action-audit-strict": "node scripts/episode02-action-evidence.mjs --strict"
   },
   "dependencies": {
     "@react-three/fiber": "9.1.2",
