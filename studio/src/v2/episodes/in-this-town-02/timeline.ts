@@ -448,40 +448,44 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   cam=cameraPreset([5.35,1.70,9.1],[1.40,.75,5.90],55);
  }
  if(n>=59){
-  // SHOT 59: Essie and Latte wait in the one shared box; Mocha enters LAST.
-  // The sidewall has to be cleared before feet land. Never teleport through
-  // cardboard, never rebuild the original Episode 01 cat as a primitive.
-  essie.position=[-1.45,.12,2.01];essie.scale=.76;
-  latte.position=[-.95,.12,2.17];latte.scale=.76;
-  const settle=ease(n===59?(u-.72)/.28:1);
+  // Director lock: 59 is the HESITANT APPROACH beside the café window.
+  // In 60 all THREE cats visibly jump, with separate supported arcs.
+  // Keep the original Episode01 character illustrations and one box mesh.
+  const approach=ease((u-.15)/.70);
   if(n===59){
-   // Keep the hesitant expression continuous from the previous shot; the
-   // first genuinely happy look arrives only as he clears the box lip.
-   mocha.emotion=u<.66?'sad':'happy';
-   const hop=clamp((u-.24)/.50);
-   // The full-width Episode01 card must stay to the left of the sidewall
-   // until its feet rise ABOVE the .59m box lip. The previous linear entry
-   // crossed cardboard for ten sampled frames before takeoff.
-   const clearance=ease((hop-.25)/.55);
-   mocha.position=[
-    u<.24?lerp(-3.32,-3.19,ease(u/.24)):lerp(-3.19,-1.95,clearance),
-    (hop>0&&hop<1?.76*Math.sin(Math.PI*hop):0)
-       +.12*ease((hop-.86)/.14),
-    2.17
-   ];
-   mocha.scale=.76; // Preserve the Episode01 silhouette size throughout the jump.
-   mocha.walking=u<.22;
-    mocha.headTurn=.10*Math.sin(Math.PI*hop);
+   mocha.position=[lerp(-3.36,-3.00,approach),0,2.17];
+   essie.position=[-1.45,0,3.32];
+   latte.position=[.20,0,2.17];
+   mocha.scale=essie.scale=latte.scale=1;
+   mocha.walking=u>.15&&u<.84;
+   mocha.emotion='concerned';
+   mocha.headTurn=lerp(-.15,.14,approach);
+   essie.headTurn=-.12;
+   latte.headTurn=.12;
   }else{
-   const warm=ease(u);
-   mocha.position=[lerp(-1.95,-1.85,warm),.12,2.17];
-   latte.position=[lerp(-.95,-1.04,warm),.12,2.17];
-   mocha.scale=.76;
+   // Essie comes over the FRONT rim; Latte over the RIGHT rim; Mocha
+   // over the LEFT rim. Stagger takeoffs so three cards do not merge.
+   const e=ease((u-.04)/.50);
+   const l=ease((u-.18)/.50);
+   const m=ease((u-.32)/.50);
+   essie.position=[-1.45,
+    .12*e+.92*Math.sin(Math.PI*e),
+    lerp(3.32,2.01,e)];
+   latte.position=[lerp(.20,-1.04,l),
+    .12*l+.95*Math.sin(Math.PI*l),2.17];
+   mocha.position=[lerp(-3.00,-1.95,m),
+    .12*m+.90*Math.sin(Math.PI*m),2.17];
+   essie.scale=lerp(1,.76,ease((e-.64)/.36));
+   latte.scale=lerp(1,.76,ease((l-.64)/.36));
+   mocha.scale=lerp(1,.76,ease((m-.64)/.36));
+   mocha.walking=essie.walking=latte.walking=false;
+   mocha.emotion=essie.emotion=latte.emotion='happy';
+   const cuddle=ease((u-.82)/.17);
+   mocha.headTurn=.08+.16*cuddle;
+   essie.headTurn=.03*Math.sin(t*1.1);
+   latte.headTurn=-.08-.16*cuddle;
+   mocha.gazeY=essie.gazeY=latte.gazeY=-.06;
   }
-  mocha.headTurn=.08+.16*settle;
-  essie.headTurn=.025*Math.sin(t*1.1);
-  latte.headTurn=-.08-.16*settle;
-  mocha.gazeY=essie.gazeY=latte.gazeY=-.06;
  }
  // Directed story-specific performance. Source-only geometry correctness
  // previously produced long inert poses; each beat must actually communicate
