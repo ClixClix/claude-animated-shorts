@@ -492,13 +492,15 @@ export function directEpisodeCamera(s:State){
  // Director lock: shot 04 TRACKS across TWO separate living cats
  // leaping into their own boxes and becoming cardboard.
  if(n===4){
+  // Wider motivated street track allows Mocha to remain visible at x=5.15
+  // while the two different cats visibly jump/fold in their cartons.
   const move=easeTrack(s.u);
-  const camera:V3=[3.15-1.65*move,1.85,8.00-.13*move];
-  const target:V3=[.86-1.55*move,.57,5.16];
-  const fov=82;
+  const camera:V3=[3.00-.18*move,2.35,11.10-.25*move];
+  const target:V3=[2.34-.28*move,.72,5.58];
+  const fov=87;
   return {camera,target,fov,region:'town' as Region,
    framing:projections(corners(focusSet(s)),target,camera,fov),
-   shot:n,selectedIds:['town-cat-hazel','town-cat-slate','distinct-town-boxes']};
+   shot:n,selectedIds:['mocha','town-cat-hazel','town-cat-slate','distinct-town-boxes']};
  }
  // 05 follows Mocha walking and seeing the THIRD cat enter and transform,
  // then investigates the ordinary box, refuses it and walks away.
