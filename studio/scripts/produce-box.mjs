@@ -67,7 +67,9 @@ if(mode==='status'){
  node('style-preflight');
  node('box-tests');
  node('finale-audit');
- node('camera-audit');
+ // Render a reviewable cut even if the advisory spatial audit finds issues.
+ // Keep the strict camera audit in the explicit final `check` stage.
+ // Do not present this preview as a quality-approved release.
  py('audio');
  node('render',mode==='build'?'render':'preview');
  node('assemble',mode==='build'?'render':'preview');
