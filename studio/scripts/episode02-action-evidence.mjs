@@ -55,6 +55,30 @@ const check=(n,id,predicate,expectation,severity='high')=>{
 };
 check(1,'OPENING_CRANE_MOVES',t=>t.cameraMeters>3,'Episode01-style city crane visibly travels into demo box.');
 check(3,'CAT_TO_BOX_ANIMATED',t=>t.morph.demo>.65,'Cat-to-box transformation changes morph through a substantial range.','critical');
+check(4,'MOCHA_WITNESSES_FIRST_TWO_BOXES',
+ t=>t.motions.mocha.visibility&&t.motions.mocha.meters>.55,
+ 'Mocha must physically walk in the same street shot as the first two cats transforming.','critical');
+check(5,'MOCHA_WITNESSES_THIRD_BOX',
+ t=>t.motions.mocha.visibility&&t.motions.mocha.meters>.80,
+ 'Mocha continues walking past a third cat transformation, then refuses a box.','critical');
+const boundary=(from,to,id)=>{
+ const f=SCRATCH_EDIT.shots[from-1],t=SCRATCH_EDIT.shots[to-1];
+ const a=stateAt(f.end-1,SCRATCH_EDIT.shots);
+ const b=stateAt(t.start,SCRATCH_EDIT.shots);
+ return {
+  distance:len(a[id].position,b[id].position),
+  scale:Math.abs(a[id].scale-b[id].scale),
+  sameVisibility:a[id].visible===b[id].visible
+ };
+};
+check(49,'MOCHA_ENTRY_NO_POSITION_POP',()=>{
+ const p=boundary(49,50,'mocha');
+ return p.distance<.12&&p.scale<.06&&p.sameVisibility;
+},'Mocha landing inside Essie box must be continuous across shots 49 and 50.','critical');
+check(4,'MOCHA_WALK_NO_STREET_TELEPORT',()=>{
+ const p=boundary(4,5,'mocha');
+ return p.distance<.12&&p.scale<.06&&p.sameVisibility;
+},'Mocha must walk across the 04-to-05 edit without teleporting.','critical');
 check(6,'LATTE_ACTUALLY_JUMPS',t=>t.motions.latte.vertical>.25,'Latte must visibly lift off ground and land inside striped box.','critical');
 check(7,'ESSIE_MOVES_TO_LEAVE_SPACE',t=>t.motions.essie.meters>.14,
  'Essie physically shifts aside inside the intact box, not only glances.');
