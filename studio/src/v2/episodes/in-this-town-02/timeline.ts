@@ -1,4 +1,5 @@
 import scratch from './EDITORIAL_SCRATCH_PLAN.json';
+import director from './PRODUCTION_DIRECTOR_LOCK.json';
 import type {V3} from '../../cafe/config';
 export const FPS=30;
 export const FIRST_DRAFT_FRAMES=3876;
@@ -8,7 +9,7 @@ export type EditShot={id:string;sequence:number;act:string;start:number;end:numb
 export type EpisodeEdit={shots:EditShot[];captions?:{start:number;end:number;text:string}[]};
 export const SCRATCH_EDIT:EpisodeEdit={shots:scratch.shots.map(s=>({
  id:s.id,sequence:s.sequence,act:s.act,start:s.estimateStartFrame,end:s.estimateEndFrame,
- cameraAndAction:s.cameraAndAction,narrationAnchor:s.narrationAnchor,soundCue:s.soundCue,
+ cameraAndAction:director.shots[s.sequence-1].visibleAction+' | CAMERA: '+director.shots[s.sequence-1].camera,narrationAnchor:s.narrationAnchor,soundCue:s.soundCue,
 }))};
 export const clamp=(v:number)=>Math.max(0,Math.min(1,v));
 export const ease=(v:number)=>{const t=clamp(v);return t*t*(3-2*t);};
