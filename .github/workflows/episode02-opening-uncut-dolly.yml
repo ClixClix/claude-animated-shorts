@@ -1,17 +1,7 @@
 name: Episode 02 Opening 01+02 — One Continuous Dolly
 
+# Episode 02 preview renders are manually triggered only.
 on:
-  push:
-    branches:
-      - v2-local-render
-    paths:
-      - ".github/workflows/episode02-opening-uncut-dolly.yml"
-      - "studio/scripts/episode02-render-opening-uncut.mjs"
-      - "studio/src/v2/episodes/in-this-town-02/cameraDirector.ts"
-      - "studio/src/v2/episodes/in-this-town-02/timeline.ts"
-      - "studio/src/v2/episodes/in-this-town-02/Episode.tsx"
-      - "studio/src/v2/episodes/in-this-town-02/ruleCats.ts"
-      - "studio/src/v2/episodes/in-this-town-02/EDITORIAL_SCRATCH_PLAN.json"
   workflow_dispatch:
 
 permissions:
