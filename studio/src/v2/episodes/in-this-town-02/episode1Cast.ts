@@ -87,6 +87,34 @@ export function createEpisode1CastCat(id:CatId){
  const card:Episode1Cat=createEpisodeCat(id);
  const shadow=contactShadow();
  shadow.mesh.name='episode02-'+id+'-episode01-ground-shadow';
+ // BOX-REST ART: Composite only existing Episode 01 illustrated anatomy
+ // (source tail, horizontal torso, head, forepaws) into one tucked silhouette.
+ // A pitched full-height 1.52m upright billboard never becomes a curled cat;
+ // it protrudes through the .48–.56m carton rim from raised cameras.
+ // Episode 01 original rig/texture and walking animation remain unchanged.
+ const restCanvas=document.createElement('canvas');
+ restCanvas.width=1000;restCanvas.height=1100;
+ const restContext=restCanvas.getContext('2d')!;
+ const restTexture=new T.CanvasTexture(restCanvas);
+ restTexture.colorSpace=T.SRGBColorSpace;restTexture.anisotropy=8;
+ const renderRest=(time:number)=>{
+  const src=card.texture.image as HTMLCanvasElement;
+  const g=restContext;
+  g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,1000,1100);
+  g.save();g.scale(2,2);
+  // Rear body/haunch stretches along the *bottom* of its carton,
+  // rather than standing above the flap as a flat vertical sticker.
+  g.drawImage(src,276*2,284*2,125*2,180*2,286,326,111,123);
+  g.drawImage(src,145*2,270*2,243*2,205*2,131,329,272,116);
+  // Original Episode 01 eyes, ear shapes, markings, muzzle and whiskers.
+  // The face is lifted only enough to remain legible above the front rim.
+  const breath=1.1*Math.sin(time*1.8);
+  g.drawImage(src,125*2,63*2,260*2,251*2,115,130+breath,267,211);
+  // Both actual painted forepaws tuck below the chin, touching the bed
+  // of the carton instead of extending out through its side walls.
+  g.drawImage(src,172*2,383*2,166*2,103*2,178,402,155,65);
+  g.restore();restTexture.needsUpdate=true;
+ };
  const update=(pose:ActorPose,next:ActorPose,s:State,camera:T.PerspectiveCamera,behavior:CatBehavior|null=null)=>{
   // Using a neutral Episode 01 state avoids executing its *story-specific*
   // 'door at 11:11' expressions, nose pushes, timed scares or head drops
@@ -110,6 +138,12 @@ export function createEpisode1CastCat(id:CatId){
    gazeY:pose.gazeY-.28*behavior.intensity
   }:pose;
   const a=bridgeActor(id,actingPose,next,s);
+  const n=s.shot.sequence;
+  const restingInBox=(id==='latte'&&n===6)||
+    (id==='essie'&&[7,19,35,37,38,39].includes(n));
+  // Resting original art is built AFTER updateActor refreshes the source
+  // image, and before the next draw; no duplicated mesh/crossfade.
+
   if(id==='essie'&&s.shot.sequence===35)
    a.pose.blink=Math.max(a.pose.blink??0,clamp((s.u-.49)/.38));
   if(behavior){
@@ -118,6 +152,12 @@ export function createEpisode1CastCat(id:CatId){
     behavior.mode==='muzzle-comfort'?.46*behavior.intensity:0);
   }
   card.updateActor(a,ep1);
+  if(restingInBox)renderRest(s.t);
+  const activeTexture=restingInBox?restTexture:card.texture;
+  if(card.mesh.material.map!==activeTexture){
+   card.mesh.material.map=activeTexture;
+   card.mesh.material.needsUpdate=true;
+  }
   if(behavior&&dist>.01){
    // Forepaws remain planted via the Episode01 walking rig; only the
    // chest/head image makes a tiny approach and lower-to-sniff gesture.
@@ -148,10 +188,16 @@ export function createEpisode1CastCat(id:CatId){
   // high box angles they collapse to narrow, upright faces instead of reading
   // as a cat curled on its side. Recline ONLY the resting box poses, retaining
   // the original silhouette/artwork, measured scale and ground contact.
-  const n=s.shot.sequence;
-  const curled=(id==='latte'&&n===6)||
-   (id==='essie'&&[7,19,35,37,38,39].includes(n));
-  card.mesh.rotation.x=(curled?-.38:0)-.18*paper;
+  // Rest composition already curls the SAME Episode01 art in its painted
+  // canvas. Do not apply a second -0.38 pitch that turns the face edge-on,
+  // makes the paws hover and changes apparent size with camera height.
+  card.mesh.rotation.x=(restingInBox?-.08:0)-.18*paper;
+  if(restingInBox){
+   // Real box floors at y=.044; leave ~1cm above the cardboard bottom.
+   // Keep painted head/eyes above the front rim without scaling a full
+   // 1.52m cat down into a miniature.
+   card.mesh.position.y=Math.max(card.mesh.position.y,.055);
+  }
   // Preserve the recognisable Episode 01 face and markings until the FINAL
   // fold. The previous aggressive pitch/alpha produced a melted pancake in
   // actual moving shot 38 (44146167639), not a readable paper transformation.
@@ -176,10 +222,10 @@ export function createEpisode1CastCat(id:CatId){
    (id==='essie'&&[7,19,35,37,38,39,50,59,60].includes(n))||
    (id==='latte'&&[6,55,59,60].includes(n));
   shadow.mesh.position.set(
-   pose.position[0],insideBox?Math.max(supportY,.073):supportY,
+   pose.position[0],insideBox?Math.max(supportY,.055):supportY,
    pose.position[2]);
   shadow.mesh.scale.setScalar(pose.scale);
  };
- const dispose=()=>{card.dispose();shadow.dispose();};
+ const dispose=()=>{card.dispose();shadow.dispose();restTexture.dispose();};
  return {id,card,shadow,update,dispose};
 }
