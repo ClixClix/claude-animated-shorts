@@ -72,7 +72,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
    // Carry the approved Shot 01 peek and flap position through the
    // exact frame-84 boundary; the camera will dolly in instead of cutting.
    flap.demo=lerp(.84,1,ease(u/.62));
-   demoCat.position=[HOME.demo[0],lerp(.04,.14,ease(u/.68)),HOME.demo[2]];
+   demoCat.position=[HOME.demo[0],.04-.018*ease(u/.78),HOME.demo[2]];
    demoCat.headTurn=.10*Math.sin(u*Math.PI*2);
   }
   if(n===3){
