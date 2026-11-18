@@ -69,10 +69,10 @@ export function stateAt(frame:number,shots:EditShot[]):State{
       n===3?focus(HOME.demo,2.1,40,.45):cameraPreset([6,1.65,9.2],[3.45,.5,7.6],62);
   if(n===2){
    // Keep all four physical flaps outside the rim in this high-angle view.
-   flap.demo=1;
-   // Lift the Episode01 illustrated kitten's face above the carton rim
-   // so its original vertical card remains readable in the elevated view.
-   demoCat.position=[HOME.demo[0],.14,HOME.demo[2]];
+   // Carry the approved Shot 01 peek and flap position through the
+   // exact frame-84 boundary; the camera will dolly in instead of cutting.
+   flap.demo=lerp(.84,1,ease(u/.62));
+   demoCat.position=[HOME.demo[0],lerp(.04,.14,ease(u/.68)),HOME.demo[2]];
    demoCat.headTurn=.10*Math.sin(u*Math.PI*2);
   }
   if(n===3){
