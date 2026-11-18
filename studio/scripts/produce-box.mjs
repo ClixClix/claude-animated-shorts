@@ -19,7 +19,7 @@ const python=pythonCandidates.find(p=>{
  const probe=spawnSync(p,['-c','import numpy; print("ok")'],{encoding:'utf8'});
  return probe.status===0;
 });
-if(!python)throw Error('Episode02 cannot find Python with numpy. Set V2_PYTHON to your Episode01 virtual environment; no render started.');
+if(!python&&mode!=='status')throw Error('Episode02 cannot find Python with numpy. Set V2_PYTHON to your Episode01 virtual environment; no render started.');
 const arg=(key)=>{const i=process.argv.indexOf(key);return i>=0?process.argv[i+1]:undefined;};
 const flag=(key)=>process.argv.includes(key);
 const run=(program,args)=>{
