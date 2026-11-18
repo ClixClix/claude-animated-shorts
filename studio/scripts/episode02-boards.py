@@ -49,13 +49,15 @@ f'- Frames in intended edit: {manifest["durationInFrames"]}',
 '| --- | --- | --- | --- |',
 ]
 for number in critical:
-    s=shots[number-1]
+    matching=[s for s in shots if int(s['sequence'])==number]
+    if not matching:raise ValueError(f'Missing story beat {number}')
     note=(
         'Continuous cat-to-box / box-to-cat silhouette, box position, safe contact' if number in [3,38,39,50,51,55] else
         'Mocha's paws inside the correct box; realistic contact and camera clearance' if number in [49,54] else
         'No clipping, repeated frames, missing character, drifting camera or inaccurate sound beat'
     )
-    lines.append(f'| {s["id"]} | {s["narrationAnchor"]} | {note} | [ ] |')
+    for s in matching:
+        lines.append(f'| {s["id"]} | {s["narrationAnchor"]} | {note} | [ ] |')
 lines+=['',
 '## Whole-film watch-through','',
 '- [ ] Hook comprehensible by 0:04 and synchronized with actual narration',
@@ -64,7 +66,7 @@ lines+=['',
 '- [ ] Three distinctive box identities and fixed location continuity',
 '- [ ] No unnecessary dead frames or unmotivated camera motions',
 '- [ ] Accurate, readable one-word subtitles timed to spoken sounds',
-'- [ ] 60 distinct shots all shown; ending has room for three supported cats',
+'- [ ] All 60 story beats shown (including narration-led A/B inserts); ending has room for three supported cats',
 '- [ ] Timed original comedic SFX hits and balanced music under narration',
 '- [ ] No unlicensed third-party music or assets; verify voice rights',
 '- [ ] Exact final encoded MP4 passes the technical release gate',
