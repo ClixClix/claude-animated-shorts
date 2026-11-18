@@ -8,8 +8,8 @@ import {openBrowser,selectComposition,renderMedia} from '@remotion/renderer';
 /**
  * Renders ACTUAL frames 0..104 as one uninterrupted 105-frame movie,
  * not separate Shot 01/02 files stitched at frame 84.
- * Shot 01's previously approved camera curve stays unchanged.
- * Shot 02 picks up the exact previous camera/target/FOV at frame 84.
+ * The approved city-opening concept is retained, while its camera curve
+ * is now a single continuous spline across both editorial shot numbers.
  *
  * Silent scratch only. No publishing, paid media generation, or narration.
  */
@@ -44,12 +44,12 @@ const hash=createHash('sha256').update(bytes).digest('hex');
 const manifest={
  stage:'105_ACTUAL_CONSECUTIVE_RENDERED_FRAMES_REVIEW_PENDING',
  sourceCommit:process.env.GITHUB_SHA??'unknown',
- approvedShot01Preserved:true,
+ approvedCityOpeningConceptPreserved:true,
+ cameraCurveRetimedForContinuousMove:true,
  frames:105,shots:[1,2],boundaryFrame:84,fps:30,
  durationSeconds:3.5,width:540,height:960,
  uncut:true,captions:false,audioApproved:false,
- sourceShot01End:[4.6,4.20,13.4],
- sourceShot02Start:[4.6,4.20,13.4],
+ transition:'Shared C1-continuous crane/dolly/zoom through frame 83/84',
  file:path.basename(outputLocation),sha256:hash,bytes:bytes.length
 };
 await fs.writeFile(path.join(outputDir,'EP02_Shots01-02_RenderManifest.json'),
