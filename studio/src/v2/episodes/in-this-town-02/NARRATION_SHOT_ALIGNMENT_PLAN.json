@@ -1,0 +1,313 @@
+{
+  "episode": "The Cat Who Became a Box",
+  "narrator": {
+    "provider": "ElevenLabs",
+    "voiceName": "Sawyer",
+    "voiceId": "8dEUmyPMdDdK91vboYih",
+    "modelId": "eleven_multilingual_v2"
+  },
+  "status": "SOURCE_TEXT_VERIFIED_UNTIMED",
+  "source": "DRAFT_BOX_NARRATION.txt",
+  "shots": [
+    {
+      "sequence": 1,
+      "id": "01",
+      "spoken": "In this town, if a cat"
+    },
+    {
+      "sequence": 2,
+      "id": "02",
+      "spoken": "stays inside a box too long..."
+    },
+    {
+      "sequence": 3,
+      "id": "03",
+      "spoken": "they become the box."
+    },
+    {
+      "sequence": 4,
+      "id": "04",
+      "spoken": "And nobody knows how to turn them back."
+    },
+    {
+      "sequence": 5,
+      "id": "05",
+      "spoken": "Mocha never liked boxes."
+    },
+    {
+      "sequence": 6,
+      "id": "06",
+      "spoken": "But Latte loved his striped box beside the café window."
+    },
+    {
+      "sequence": 7,
+      "id": "07",
+      "spoken": "Essie loved hers too. She always left a little room for Mocha. He never climbed in."
+    },
+    {
+      "sequence": 8,
+      "id": "08",
+      "spoken": "One morning, Mocha returned to open the café."
+    },
+    {
+      "sequence": 9,
+      "id": "09",
+      "spoken": "Latte was gone."
+    },
+    {
+      "sequence": 10,
+      "id": "10",
+      "spoken": "His favorite striped box was still beneath the window."
+    },
+    {
+      "sequence": 11,
+      "id": "11",
+      "spoken": "\"Latte?\""
+    },
+    {
+      "sequence": 12,
+      "id": "12",
+      "spoken": "Mocha lifted the flaps."
+    },
+    {
+      "sequence": 13,
+      "id": "13",
+      "spoken": "A tiny, familiar meow came from inside the cardboard."
+    },
+    {
+      "sequence": 14,
+      "id": "14",
+      "spoken": "Latte hadn't left."
+    },
+    {
+      "sequence": 15,
+      "id": "15",
+      "spoken": "He had become the box."
+    },
+    {
+      "sequence": 16,
+      "id": "16",
+      "spoken": "Mocha tried food. He shook the box gently."
+    },
+    {
+      "sequence": 17,
+      "id": "17",
+      "spoken": "He begged it to move. Nothing worked."
+    },
+    {
+      "sequence": 18,
+      "id": "18",
+      "spoken": "From then on, Mocha watched Essie constantly."
+    },
+    {
+      "sequence": 19,
+      "id": "19",
+      "spoken": "Every time she climbed into her favorite box,"
+    },
+    {
+      "sequence": 20,
+      "id": "20",
+      "spoken": "he pulled her out."
+    },
+    {
+      "sequence": 21,
+      "id": "21",
+      "spoken": "Essie didn't understand."
+    },
+    {
+      "sequence": 22,
+      "id": "22",
+      "spoken": "She just wanted somewhere"
+    },
+    {
+      "sequence": 23,
+      "id": "23",
+      "spoken": "safe to sleep."
+    },
+    {
+      "sequence": 24,
+      "id": "24",
+      "spoken": "Then one night, Mocha finished closing the café."
+    },
+    {
+      "sequence": 25,
+      "id": "25",
+      "spoken": "Essie hadn't come home. He looked at her usual sleeping spot."
+    },
+    {
+      "sequence": 26,
+      "id": "26",
+      "spoken": "Her box was gone too."
+    },
+    {
+      "sequence": 27,
+      "id": "27",
+      "spoken": "Mocha ran outside."
+    },
+    {
+      "sequence": 28,
+      "id": "28",
+      "spoken": "He checked the bus stop."
+    },
+    {
+      "sequence": 29,
+      "id": "29",
+      "spoken": "The empty market."
+    },
+    {
+      "sequence": 30,
+      "id": "30",
+      "spoken": "Every alley he could find."
+    },
+    {
+      "sequence": 31,
+      "id": "31",
+      "spoken": "Finally, beneath a streetlamp,"
+    },
+    {
+      "sequence": 32,
+      "id": "32",
+      "spoken": "he saw Essie dragging her cardboard box toward a quiet corner."
+    },
+    {
+      "sequence": 33,
+      "id": "33",
+      "spoken": "\"Essie! Wait!\""
+    },
+    {
+      "sequence": 34,
+      "id": "34",
+      "spoken": "But she was too far away."
+    },
+    {
+      "sequence": 35,
+      "id": "35",
+      "spoken": "She curled up inside."
+    },
+    {
+      "sequence": 36,
+      "id": "36",
+      "spoken": "Mocha raced down the alley."
+    },
+    {
+      "sequence": 37,
+      "id": "37",
+      "spoken": "By the time he reached her, the change had begun."
+    },
+    {
+      "sequence": 38,
+      "id": "38",
+      "spoken": "Her paws grew stiff. Her whiskers faded."
+    },
+    {
+      "sequence": 39,
+      "id": "39",
+      "spoken": "And right before his eyes... Essie folded into a cardboard box."
+    },
+    {
+      "sequence": 40,
+      "id": "40",
+      "spoken": "Mocha froze. First Latte. Now Essie."
+    },
+    {
+      "sequence": 41,
+      "id": "41",
+      "spoken": "He tapped the box."
+    },
+    {
+      "sequence": 42,
+      "id": "42",
+      "spoken": "Whispered her name. Held it close."
+    },
+    {
+      "sequence": 43,
+      "id": "43",
+      "spoken": "Still nothing."
+    },
+    {
+      "sequence": 44,
+      "id": "44",
+      "spoken": "The alley turned cold."
+    },
+    {
+      "sequence": 45,
+      "id": "45",
+      "spoken": "Mocha looked inside. He'd never understood"
+    },
+    {
+      "sequence": 46,
+      "id": "46",
+      "spoken": "why his friends loved boxes."
+    },
+    {
+      "sequence": 47,
+      "id": "47",
+      "spoken": "But Essie's box was warm. Dry. A place where she had always felt safe. And she'd always saved a little space for him."
+    },
+    {
+      "sequence": 48,
+      "id": "48",
+      "spoken": "Mocha had never climbed into a box before. But he couldn't leave her alone."
+    },
+    {
+      "sequence": 49,
+      "id": "49",
+      "spoken": "So he climbed in."
+    },
+    {
+      "sequence": 50,
+      "id": "50",
+      "spoken": "The cardboard shook. Two ears appeared."
+    },
+    {
+      "sequence": 51,
+      "id": "51",
+      "spoken": "And Essie tumbled into his arms. She was back."
+    },
+    {
+      "sequence": 52,
+      "id": "52",
+      "spoken": "Mocha had found the cure."
+    },
+    {
+      "sequence": 53,
+      "id": "53",
+      "spoken": "Together, they raced to Latte's striped box."
+    },
+    {
+      "sequence": 54,
+      "id": "54",
+      "spoken": "Essie held the flaps open. Mocha climbed inside."
+    },
+    {
+      "sequence": 55,
+      "id": "55",
+      "spoken": "Pop! Latte sprang out, knocking them both over."
+    },
+    {
+      "sequence": 56,
+      "id": "56",
+      "spoken": "The next morning, Mocha told the entire town what he'd discovered:"
+    },
+    {
+      "sequence": 57,
+      "id": "57",
+      "spoken": "\"If someone becomes a box... climb inside with them."
+    },
+    {
+      "sequence": 58,
+      "id": "58",
+      "spoken": "They'll come back.\" And after that, Mocha still didn't love boxes."
+    },
+    {
+      "sequence": 59,
+      "id": "59",
+      "spoken": "But he kept one by the café window."
+    },
+    {
+      "sequence": 60,
+      "id": "60",
+      "spoken": "Big enough for all three of them."
+    }
+  ]
+}
