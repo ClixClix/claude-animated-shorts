@@ -225,7 +225,7 @@ export function createEpisode1CastCat(id:CatId){
   card.legs.visible=card.mesh.visible&&a.moving;
   shadow.mesh.visible=card.mesh.visible;
   const supportY=supportHeight(pose.position,id==='latte'?0:id==='mocha'?1:2)+.008;
-  const insideBox=(id==='mocha'&&(n===60||(n===59&&s.u>.75)))||
+  const insideBox=(id==='mocha'&&(n===50||n===60||(n===59&&s.u>.75)))||
    (id==='essie'&&[7,19,35,37,38,39,50,59,60].includes(n))||
    (id==='latte'&&[6,55,59,60].includes(n));
   shadow.mesh.position.set(
