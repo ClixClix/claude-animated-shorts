@@ -19,7 +19,7 @@ const EP1='src/v2/episodes/door-at-1111-polish';
 const STOPWORDS=new Set('in this town a an the of at from to into and or with for on it they she he we their his her our is was were be had that then one two by as but while no when if too so not after before'.split(' '));
 
 export const ACTIONS=[
- {id:'transform-to-box',rx:/\b(becom(?:e|es|ing)|turn(?:s|ed)? into|transform(?:s|ed)?|fold(?:s|ed)? into)\b.*\bbox\b|\bbox\b.*\b(transform(?:s|ed)?|becom(?:e|es))\b/i,
+ {id:'transform-to-box',rx:/\b(becom(?:e|es|ing)|became|turn(?:s|ed)? into|transform(?:s|ed)?|fold(?:s|ed)? into)\b.*\bbox\b|\bbox\b.*\b(transform(?:s|ed)?|becom(?:e|es))\b/i,
   camera:'Keep the SAME cardboard identity and scale; uninterrupted three-quarter action insert, restrained impact shake.',
   checks:['Visible cat shape changes into cardboard; no sudden disappearance','Same box geometry/identity in both adjoining shots']},
  {id:'enter-box',rx:/\b(jump(?:s|ed|ing)?|climb(?:s|ed|ing)?|curl(?:s|ed|ing)?)\b.*\b(box|carton)\b/i,
@@ -119,13 +119,13 @@ export function compileStory(story,options={}){
   const camera=actions.length?actions[0].camera:'Choose an Episode01-motivated camera that visibly communicates the narrated event.';
   return {id:'BEAT-'+String(i+1).padStart(3,'0'),sourceParagraph:atom.paragraph,
    narrationText:atom.text,location,locationMentions:current,
-   castMentions:['mocha','essie','espresso','latte'].filter(name=>new RegExp('\\b'+name+'\\b','i').test(atom.text)),
+   castMentions:['mocha','essie','latte'].filter(name=>new RegExp('\\b'+(name==='essie'?'(?:essie|espresso)':name)+'\\b','i').test(atom.text)),
    propReferences:props.map(p=>p.id),actionTypes:types,
    mustShow:'ACT ON SCREEN: '+atom.text,
    cameraIntent:camera,continuityChecks:[...new Set([...requireVisual,...props.map(p=>p.continuity)])],
    requiresRealActing:true,visualStatus:'NOT_IMPLEMENTED',renderedFrameReview:'PENDING'};
  });
- const alleyPhrase=/\bevery alley\b|\b(?:many|several|multiple|different|three|3)\s+(?:distinct\s+)?alleys\b/i.test(source);
+ const alleyPhrase=/\bevery alley\b|\b(?:many|several|multiple|different|three|3)\s+(?:(?:distinct|different)\s+)?alleys\b/i.test(source);
  const minAlleyLocations=alleyPhrase?3:assets.has('alley')?1:0;
  if(minAlleyLocations>=3)assets.set('alley-1/2/3','Three physically distinct sets with distinct bins/signage/walls, photographed via cuts');
  const warnings=[
