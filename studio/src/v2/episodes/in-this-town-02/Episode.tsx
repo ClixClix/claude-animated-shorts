@@ -352,7 +352,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // Show the living cat first, then let the same real carton close AFTER
  // its body folds. An empty twitching carton was visually rejected.
  afflictedBox.setOpenAmount(n===4?
-  .85-.73*ease((s.u-.70)/.27):.67);
+  .85-.73*ease((s.u-.84)/.15):.67);
  if(n===4){
   const twitch=ease((s.u-.22)/.18)*(1-ease((s.u-.56)/.20));
   afflictedBox.flaps.front.rotation.x+=.20*twitch;
@@ -540,14 +540,15 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
    // The second living cat jumps, crouches and folds before the same
    // cardboard flaps close; its floor shadow never floats with the leap.
    const hop=trapped?.23*Math.sin(Math.PI*ease((s.u-.04)/.38)):0;
-   const fold=trapped?ease((s.u-.38)/.52):0;
+   const fold=trapped?ease((s.u-.28)/.50):0;
    const x=p[0]+(trapped?0:(i===1?-.48:.52)*startled);
-   const y=trapped?.23+hop-.17*fold:p[1];
+   const y=trapped?.23+hop-.13*fold:p[1];
    c.mesh.position.set(x,y,p[2]);
    c.mesh.scale.set(trapped?.64*(1-.12*fold):1,
-    trapped?.64*(1-.55*fold):1,trapped?.64:1);
-   c.mesh.rotation.x=trapped?-.25*fold:0;
-   c.mesh.visible=isGuest&&(!trapped||s.u<.96);
+    trapped?.64*(1-.72*fold):1,trapped?.64:1);
+   c.mesh.rotation.x=trapped?-.18*fold:0;
+   c.mesh.rotation.z=trapped?-.34*fold:0;
+   c.mesh.visible=isGuest&&(!trapped||s.u<.94);
    if(shadow){shadow.visible=c.mesh.visible;
     shadow.position.set(x,trapped?.07:p[1]+.006,p[2]);}
    c.mesh.rotation.y=Math.atan2(cam.position.x-p[0],
