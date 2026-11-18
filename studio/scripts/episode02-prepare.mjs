@@ -11,8 +11,9 @@ const draft=JSON.parse(await fs.readFile(path.join(source,'EDITORIAL_SCRATCH_PLA
 const narrationText=(await fs.readFile(path.join(source,'DRAFT_BOX_NARRATION.txt'),'utf8')).trim();
 const wantedPath=(flag)=>{const i=process.argv.indexOf(flag);return i>=0?process.argv[i+1]:undefined;};
 let file=wantedPath('--voice')??process.env.EP02_VOICE_FILE??path.join(out,'Approved_Narration.wav');
-const voiceExists=await fs.access(file).then(()=>true,()=>false);
-const scratch=process.argv.includes('--allow-scratch');
+const forceSilent=process.argv.includes('--force-silent-scratch');
+const voiceExists=!forceSilent&&await fs.access(file).then(()=>true,()=>false);
+const scratch=forceSilent||process.argv.includes('--allow-scratch');
 if(!voiceExists&&!scratch)throw new Error('Missing approved Episode 02 narration. Pass --voice C:\\path\\Approved_Narration.wav, or explicitly --allow-scratch to make a SILENT draft. No paid ElevenLabs request is made.');
 if(!voiceExists){file=path.join(out,'SCRATCH_SILENCE.wav');execFileSync('ffmpeg',['-nostdin','-hide_banner','-v','error','-y','-f','lavfi','-i','anullsrc=r=48000:cl=stereo','-t',String(draft.approximateSeconds),'-c:a','pcm_s16le',file]);}
 const ffprobe=file=>JSON.parse(execFileSync('ffprobe',['-v','error','-show_entries','format=duration','-of','json',file],{encoding:'utf8'}));
@@ -39,7 +40,10 @@ const words=(narrationText.match(/[^\s]+/g)||[]).flatMap(item=>{
 // Expected: array of {text,start,end}, timings in seconds from the FINAL processed voice take.
 let alignment=null;
 const alignPath=wantedPath('--words')??path.join(out,'Approved_Word_Timings.json');
-try{alignment=JSON.parse(await fs.readFile(alignPath,'utf8'));}catch(e){if(e.code!=='ENOENT'||wantedPath('--words'))throw e;}
+if(!forceSilent){
+ try{alignment=JSON.parse(await fs.readFile(alignPath,'utf8'));}
+ catch(e){if(e.code!=='ENOENT'||wantedPath('--words'))throw e;}
+}
 let captions=[];
 if(alignment){
  if(!Array.isArray(alignment)||alignment.length<words.length*.75)throw new Error('Word alignment file is incomplete.');
