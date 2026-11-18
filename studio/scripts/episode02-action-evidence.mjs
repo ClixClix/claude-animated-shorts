@@ -57,7 +57,7 @@ check(3,'CAT_TO_BOX_ANIMATED',t=>t.morph.demo>.65,'Cat-to-box transformation cha
 check(6,'LATTE_ACTUALLY_JUMPS',t=>t.motions.latte.vertical>.25,'Latte must visibly lift off ground and land inside striped box.','critical');
 check(7,'ESSIE_MOVES_TO_LEAVE_SPACE',t=>t.motions.essie.meters>.14,
  'Essie physically shifts aside inside the intact box, not only glances.');
-check(17,'MOCHA_BE GS_TO_MOVE',t=>t.motions.mocha.vertical>.10,
+check(17,'MOCHA_BEGS_TO_MOVE',t=>t.motions.mocha.vertical>.10,
  'Mocha visibly pleads/jumps before settling sadly.');
 check(18,'STREET_WATCHED',t=>t.rooms.includes('street')&&t.motions.essie.meters>.40,
  'Mocha watches and follows Essie outside rather than repeating café stills.');
