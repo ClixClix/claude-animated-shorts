@@ -69,7 +69,7 @@ check(sharedSpec&&Number(sharedSpec[1])>=2.15&&Number(sharedSpec[1])<=2.50&&
 const tSrc=await read('src/v2/episodes/in-this-town-02/timeline.ts');
 check(tSrc.includes('latte:n>=6&&n<=55'),
  'Old Latte box must disappear before the final shared-box scene.');
-const selected=[5,6,7,12,19,20,32,37,49,50,54,55,59,60];
+const selected=[4,5,6,7,12,19,20,32,37,49,50,54,55,59,60];
 const scratch=JSON.parse(await read('src/v2/episodes/in-this-town-02/EDITORIAL_SCRATCH_PLAN.json'));
 const shots=scratch.shots.map(s=>({
  id:s.id,sequence:s.sequence,act:s.act,start:s.estimateStartFrame,
@@ -116,6 +116,20 @@ try{
    onBrowserLog,timeoutInMilliseconds:240000
   });
   frames.push({shot:n,frame:middle,file:filename});
+ }
+ // Shot04's second cat must visibly enter, fold and disappear before
+ // the SAME carton closes. A single midpoint still cannot prove this.
+ // Sample real rendered Remotion frames, not the source timeline values.
+ for(const pct of [.12,.35,.62,.88,.97]){
+  const shot=shots.find(s=>s.sequence===4);
+  const frame=shot.start+Math.floor((shot.end-shot.start-1)*pct);
+  const filename=path.join(out,'EP2_SHOT04_second_cat_'+
+   String(Math.round(pct*100)).padStart(2,'0')+'.png');
+  await renderStill({serveUrl,composition,inputProps:props,frame,
+   output:filename,imageFormat:'png',scale:.5,
+   puppeteerInstance:browser,logLevel:'error',
+   onBrowserLog,timeoutInMilliseconds:240000});
+  frames.push({shot:4,pct,frame,file:filename,kind:'second-cat-morph-proof'});
  }
  // Additional staged frames are indispensable: the middle of shot59
  // alone cannot tell us if the actor really hops over the sidewall.
