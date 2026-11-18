@@ -2,9 +2,24 @@ import {studioRoot} from './lib/runtime.mjs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
+import {existsSync} from 'node:fs';
 const mode=(process.argv[2]??'status').toLowerCase();
 const out=path.join(studioRoot,'out/v2-episodes/in-this-town-02');
-const python=process.env.V2_PYTHON||path.join(studioRoot,'..','.venv',process.platform==='win32'?'Scripts/python.exe':'bin/python');
+// Episode01 accepted V2_PYTHON; the user's new Windows clone is now
+// C:\\V2\\ep02-local-render\\studio, but the shared venv may remain at
+// C:\\V2\\.venv. Resolve that BEFORE starting a long narrated render.
+const pythonCandidates=[
+ process.env.V2_PYTHON,
+ path.join(studioRoot,'..','.venv',process.platform==='win32'?'Scripts/python.exe':'bin/python'),
+ ...(process.platform==='win32'?['C:/V2/.venv/Scripts/python.exe']:[]),
+ 'python'
+].filter(Boolean);
+const python=pythonCandidates.find(p=>{
+ if((p.includes('/')||p.includes('\\'))&&!existsSync(p))return false;
+ const probe=spawnSync(p,['-c','import numpy; print("ok")'],{encoding:'utf8'});
+ return probe.status===0;
+});
+if(!python)throw Error('Episode02 cannot find Python with numpy. Set V2_PYTHON to your Episode01 virtual environment; no render started.');
 const arg=(key)=>{const i=process.argv.indexOf(key);return i>=0?process.argv[i+1]:undefined;};
 const flag=(key)=>process.argv.includes(key);
 const run=(program,args)=>{
@@ -32,6 +47,14 @@ if(mode==='status'){
  // Build all source/scene/audio stages in one sequence. NO typecheck/QA/contact sheet
  // is run here: the user requested a single combined review AFTER full assembly.
  node('prepare',...prepareArgs);
+ // Exactly as Episode01's polish workflow: block production when code,
+ // cat continuity or floor/camera geometry gates have not passed.
+ run(process.platform==='win32'?'npm.cmd':'npm',['run','typecheck']);
+ node('adam-edit-test');
+ node('style-preflight');
+ node('box-tests');
+ node('finale-audit');
+ node('camera-audit');
  py('audio');
  node('render',mode==='build'?'render':'preview');
  node('assemble',mode==='build'?'render':'preview');
