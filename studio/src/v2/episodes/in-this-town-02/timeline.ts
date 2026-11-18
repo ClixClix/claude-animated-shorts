@@ -163,7 +163,12 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   mocha.walking=n===36;
   essie.position=[HOME.alleyBox[0],0,HOME.alleyBox[2]];
   essie.visible=n<=39||n>=50;essie.emotion=n>=50?'happy':n>=37?'scared':'happy';
-  heroBox='essie';flap.essie=n>=50?.87:n>=40?.50:n===39?lerp(.85,.35,ease(u)):.90;
+  // Keep this as a recognisable OPEN box, not a tall sealed crate that
+  // hides the rescue. Transformation is conveyed by the cat art fading
+  // into the same floor-level cardboard; only after the cat has gone do
+  // the flaps settle outward. Avoid upright 90-degree barrier flaps.
+  heroBox='essie';flap.essie=n>=50?.90:n>=40?.84:
+   n===39?lerp(.90,.78,ease(u)):.90;
   if(n===37)morph.essie=.18+.33*ease(u);
   if(n===38)morph.essie=.50+.25*ease(u);
   if(n===39)morph.essie=.75+.25*ease(u);
@@ -398,6 +403,58 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   mocha.headTurn=lerp(-.35,.35,ease((u-.10)/.64));
   mocha.gazeY=-.20*ease((u-.38)/.35);
   mocha.emotion='scared';
+ }
+ // Give held frames actual visual cause/effect, not another long
+ // view of a motionless cat and a motionless cardboard box. All positions
+ // remain inside the established room and alley footprints.
+ if(n===10){
+  mocha.headTurn=lerp(.22,-.22,ease((u-.16)/.58));
+  mocha.gazeY=-.22*ease((u-.26)/.44);
+  mocha.emotion='concerned';
+ }
+ if(n===15){
+  mocha.headTurn=.20*Math.sin(Math.PI*u);
+  mocha.gazeY=lerp(-.04,-.28,ease((u-.44)/.38));
+  mocha.emotion='sad';
+ }
+ if(n===18){
+  mocha.headTurn=lerp(-.24,.20,ease((u-.20)/.58));
+  mocha.gazeY=-.11*ease((u-.36)/.38);
+  essie.headTurn=lerp(.22,-.14,ease((u-.22)/.50));
+ }
+ if(n===22){
+  essie.headTurn=lerp(.22,-.32,ease((u-.26)/.44));
+  essie.gazeY=-.32*ease((u-.34)/.40);
+  essie.emotion='sad';
+ }
+ if(n===26){
+  mocha.headTurn=lerp(.18,-.32,ease((u-.20)/.53));
+  mocha.gazeY=-.34*ease((u-.38)/.42);
+  mocha.emotion='scared';
+ }
+ if([40,41,42,44,47,48].includes(n)){
+  // Mocha takes a real small step, listens, recoils from the unexplained
+  // warmth, then decides to help. Direction is shown by nose/eyes and
+  // grounded foot travel, NOT text or a huge exposition sign.
+  const advance=ease((u-.20)/.58);
+  const retreat=n===40||n===44;
+  const amount=n===41?.14:n===47?.16:n===48?.09:.11;
+  mocha.position=[-9.25,0,2.67+(retreat?amount:-amount)*advance];
+  mocha.walking=u>.20&&u<.78;
+  mocha.headTurn=lerp(retreat?-.16:.22,retreat?.26:-.34,
+   ease((u-.18)/.62));
+  mocha.gazeY=-.22*ease((u-.24)/.52);
+  mocha.emotion=n>=47?'concerned':n===44?'scared':'sad';
+ }
+ if(n===51){
+  mocha.headTurn=lerp(-.28,.25,ease((u-.22)/.50));
+  mocha.gazeY=lerp(-.20,.08,ease((u-.20)/.60));
+  essie.headTurn=lerp(.24,-.20,ease((u-.22)/.55));
+ }
+ if(n===52){
+  mocha.headTurn=lerp(-.16,.29,ease((u-.22)/.52));
+  essie.headTurn=lerp(.16,-.30,ease((u-.22)/.52));
+  mocha.emotion=essie.emotion='happy';
  }
  if(n===35){
   // A slow, comfortable settle before the horror starts.
