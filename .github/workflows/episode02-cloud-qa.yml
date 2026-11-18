@@ -1,13 +1,7 @@
 name: Episode 02 Cloud QA and Frame Review
 
+# Episode 02 preview renders are manually triggered only.
 on:
-  push:
-    branches:
-      - v2-local-render
-    paths:
-      - ".github/workflows/episode02-cloud-qa.yml"
-      - "studio/**"
-      - "LOCAL_UPDATE_FILES.json"
   workflow_dispatch:
 
 permissions:
