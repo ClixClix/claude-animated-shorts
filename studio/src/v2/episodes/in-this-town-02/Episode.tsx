@@ -235,6 +235,12 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   {key:'demo',obj:boxes.demo,pos:s.demoBox,visible:s.show.demo,flap:s.flap.demo},
  ] as const;
  for(const b of boxArray){b.obj.root.position.set(...b.pos);b.obj.root.visible=b.visible;b.obj.setOpenAmount(b.flap);}
+ // Shot 02: tiny side flap reaction when the living kitten resettles.
+ // Keep the same carton and clear face; never lift a wall into the lens.
+ if(n===2){
+  const wobble=Math.sin(Math.PI*s.u)*Math.sin(2*Math.PI*s.u);
+  boxes.demo.flaps.right.rotation.z-=.065*wobble;
+ }
  // The striped box must twitch visibly in shot 10, not remain frozen.
  if(s.shot.sequence===10){
   const twitch=ease((s.u-.46)/.12)*(1-ease((s.u-.60)/.15));
@@ -300,14 +306,19 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  if(curledKitten.mesh.visible){
   const fold=n===3?s.demoCat.morph:0;
   curledKitten.update(s.t,{pose:'curled',expression:n===3?'scared':'neutral',
-   progress:n===2?.16+.20*ease(s.u):.35+.40*fold,
-   morph:fold,look:n===2?.10*Math.sin(s.u*Math.PI):-.18*fold,
-   headTilt:-.08,blink:n===2?Math.max(0,1-Math.abs(s.u-.68)/.15):0});
-  curledKitten.mesh.position.set(s.demoBox[0],.07-.10*fold,s.demoBox[2]);
+   progress:n===2?.14+.23*ease(s.u):.35+.40*fold,
+   // Real 21-frame action: breathing, blink, head and ear adjustment,
+   // distinct tail curl and paw settle; source art stays identical to Shot 1.
+   beat:n===2?s.u:0,
+   morph:fold});
+  // The physical carton stays .88 × .77 metres: increase kitten occupancy,
+  // not box size. Use the same starting scale in Shot 03 for continuity.
+  const breath=n===2?Math.sin(Math.PI*s.u):0;
+  curledKitten.mesh.position.set(s.demoBox[0],.057+.007*breath-.10*fold,s.demoBox[2]);
   curledKitten.mesh.rotation.y=Math.atan2(cam.position.x-s.demoBox[0],
    cam.position.z-s.demoBox[2]);
-  curledKitten.mesh.rotation.x=-.22;
-  curledKitten.mesh.scale.setScalar(1-.28*fold);
+  curledKitten.mesh.rotation.x=-.28;
+  curledKitten.mesh.scale.setScalar(1.40*(1-.36*fold));
  }
  // Episode 01's background supporting-cat asset set. Do not promote their
  // simplified drawings to close-up leading actors; keep them as background.
