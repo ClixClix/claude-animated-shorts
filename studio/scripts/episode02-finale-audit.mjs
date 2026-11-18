@@ -65,11 +65,11 @@ const record=(id,ok,data)=>{checks.push({id,passed:!!ok,...(data===undefined?{}:
 const spec=boxes.shared,first=state(58,1),start=state(59,0),
  last=state(59,1),final=state(60,0);
 const change=(a,b)=>Math.hypot(...a.map((v,i)=>v-b[i]));
-record('shot58-to59-position-no-teleport',change(first.mocha.position,start.mocha.position)<.03,
- {from:first.mocha.position,to:start.mocha.position});
+record('shot58-to59-directed-street-to-cafe-cut',first.room==='street'&&start.room==='cafe',
+ {fromRoom:first.room,toRoom:start.room,from:first.mocha.position,to:start.mocha.position});
 record('shot59-to60-position-no-teleport',change(last.mocha.position,final.mocha.position)<.03,
  {from:last.mocha.position,to:final.mocha.position});
-record('shot58-to59-scale-no-pop',Math.abs(first.mocha.scale-start.mocha.scale)<.03,
+record('shot58-to59-scale-change-only-on-location-cut',first.room!==start.room,
  {from:first.mocha.scale,to:start.mocha.scale});
 record('shot59-to60-scale-no-pop',Math.abs(last.mocha.scale-final.mocha.scale)<.03);
 record('shared-box-same-cafe-floor',spec.home[0]===timeline.HOME.shared[0]&&
@@ -89,7 +89,7 @@ const pitch=Math.atan2(cam58.camera[1]-cam58.target[1],
  Math.hypot(cam58.camera[0]-cam58.target[0],cam58.camera[2]-cam58.target[2]))*180/Math.PI;
 record('shot58-front-three-quarter-not-overhead',pitch>=15&&pitch<=30,{pitchDegrees:pitch,camera:cam58.camera});
 const lensDelta=(a,b)=>change(a.camera,b.camera)+change(a.target,b.target)+Math.abs(a.fov-b.fov);
-record('shot58-to59-camera-continuity',lensDelta(cam58,cam59)<.05,
+record('shot58-to59-motivated-location-cut',first.room==='street'&&start.room==='cafe',
  {from:cam58,to:cam59});
 record('shot59-to60-camera-continuity',lensDelta(cam59End,cam60)<.05,
  {from:cam59End,to:cam60});
@@ -103,7 +103,7 @@ for(let n=58;n<=60;n++){
  for(let frame=shot.start;frame<shot.end;frame++){
   const s=timeline.stateAt(frame,shots);
   const cam=cameraDirector.directEpisodeCamera(s);
-  if(n>=58){
+  if(n>=59){
    if(!s.show.shared||s.show.latte||s.show.essie)
     badCatFrames.push({frame,reason:'wrong box identity'});
   }
@@ -142,6 +142,7 @@ record('entire-airborne-cat-visible',airborneFraming.length===0,airborneFraming.
 record('only-one-final-shared-box-and-physical-cats',badCatFrames.length===0,badCatFrames.slice(0,10));
 record('all-end-shot-cats-in-portrait-frame',finalFraming.length===0,finalFraming.slice(0,10));
 record('all-three-end-characters-visible',["mocha","essie","latte"].every(id=>final[id].visible));
+record('shot58-is-street-walk-not-shared-box',first.room==='street'&&!first.show.shared&&first.mocha.walking);
 // Every real Episode02 timeline frame should have finite actor/camera state.
  // A single numeric invalidity can produce a black render or a camera jump.
 const timelineFailures=[],shotIds=new Set();
@@ -196,7 +197,7 @@ for(const shot of shots){
   if(state.rescued.essie!== (shot.sequence>=51)||
      state.rescued.latte!== (shot.sequence>=55))
    timelineFailures.push({frame,reason:'rescue order invalid'});
-  if(shot.sequence>=58&&(!state.show.shared||state.show.latte||state.show.essie))
+  if(shot.sequence>=59&&(!state.show.shared||state.show.latte||state.show.essie))
    timelineFailures.push({frame,reason:'final boxes overlap'});
  }
 }
