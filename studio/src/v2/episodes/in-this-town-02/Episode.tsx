@@ -127,6 +127,9 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   demo:createEpisodeBox('demo')
  }),[]);
  boxes.demo.root.name='EPISODE02_RULE_DEMO_BOX';
+ // Secondary trapped carton uses the same physical cardboard kit.
+ const afflictedBox=useMemo(()=>createEpisodeBox('demo'),[]);
+ afflictedBox.root.name='EPISODE02_SECOND_AFFLICTED_BOX';
  const characters=useMemo(()=>({
   mocha:createEpisode1CastCat('mocha'),
   essie:createEpisode1CastCat('essie'),
@@ -235,6 +238,16 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   {key:'demo',obj:boxes.demo,pos:s.demoBox,visible:s.show.demo,flap:s.flap.demo},
  ] as const;
  for(const b of boxArray){b.obj.root.position.set(...b.pos);b.obj.root.visible=b.visible;b.obj.setOpenAmount(b.flap);}
+ // Shot 04: another carton visibly shudders while on the sidewalk.
+ afflictedBox.root.visible=n===4;
+ afflictedBox.root.position.set(.40,.04,5.14);
+ afflictedBox.root.scale.setScalar(.84);
+ afflictedBox.setOpenAmount(.08);
+ if(n===4){
+  const twitch=ease((s.u-.22)/.18)*(1-ease((s.u-.56)/.20));
+  afflictedBox.flaps.front.rotation.x+=.48*twitch;
+  afflictedBox.root.rotation.z=.017*Math.sin(Math.PI*s.u*2);
+ }else afflictedBox.root.rotation.z=0;
  // Shot 02: tiny side flap reaction when the living kitten resettles.
  // Keep the same carton and clear face; never lift a wall into the lens.
  if(n===2){
@@ -358,7 +371,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  const walkB=6-wrap(s.t*.31,10);
  const announcementTime=Math.max(0,(s.frame-3483)/30);
  const streetSpots:V3[]=audienceOn?
-  (n===4?[[.55,.03,6.45],[2.9,.03,6.2],[3.8,.03,6.75]]:
+  (n===4?[[-.88,.03,5.08],[3.20,.03,5.05],[3.78,.03,5.00]]:
    // Daytime cure announcement: shoppers walk near shops, not through the
    // sign or the three leads. Night alley shots retain NO crowd.
    [[-2.15+.11*announcementTime,.03,5.55],
@@ -382,7 +395,9 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   const shadow=townspeople.root.children[actorIndex+1];
   if(shadow)shadow.visible=isGuest;
   if(isGuest){
-   const p=spots[i];c.mesh.position.set(...p);
+   const p=spots[i];
+   const startled=n===4?ease((s.u-.26)/.44):0;
+   c.mesh.position.set(p[0]+(i===0?-.24:i===1?.22:0)*startled,p[1],p[2]);
    if(shadow)shadow.position.set(p[0],p[1]+.006,p[2]);
    c.mesh.rotation.y=Math.atan2(cam.position.x-p[0],
     cam.position.z-p[2]);
@@ -431,16 +446,17 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  }
  useEffect(()=>()=>{world.dispose();for(const b of Object.values(boxes))b.dispose();
   Object.values(characters).forEach(c=>c.dispose());
-  demoKitten.dispose();curledKitten.dispose();
+  demoKitten.dispose();curledKitten.dispose();afflictedBox.dispose();
   townspeople.dispose();
   for(const p of dust.arr){p.geo.dispose();p.mat.dispose();}
   props.dispose();atmosphere.sun.dispose();atmosphere.night.dispose();
   effects.ink.dispose();effects.bloom.dispose();effects.tone.dispose();
   effects.grade.dispose();effects.lens.dispose();
- },[world,boxes,characters,demoKitten,curledKitten,townspeople,dust,atmosphere,effects,props]);
+ },[world,boxes,afflictedBox,characters,demoKitten,curledKitten,townspeople,dust,atmosphere,effects,props]);
  return <><primitive object={world.root} dispose={null}/>
   <primitive object={atmosphere.root} dispose={null}/>
   {Object.values(boxes).map(b=><primitive key={b.root.name} object={b.root} dispose={null}/>)}
+  <primitive object={afflictedBox.root} dispose={null}/>
   {Object.values(characters).map(c=>
    <React.Fragment key={c.id}>
     <primitive object={c.card.mesh} dispose={null}/>
