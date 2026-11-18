@@ -35,8 +35,13 @@ function bridgeActor(
  const feet:V3[]=[];
  const footKeys:string[]=[];
  for(let i=0;i<4;i++){
-  const fore=i<2?-.17:.17;
-  const lat=i%2===0?-HALF_WIDTH:HALF_WIDTH;
+  // CRITICAL: match Episode 01 walkingLegs.anatomicalHips indexing EXACTLY.
+  // Its leg indices are [left-front, left-back, right-front, right-back].
+  // Episode 02 previously generated [front-left, front-right, back-left,
+  // back-right], linking diagonally opposite hips/paws and causing long
+  // crossed legs or skating as the cats turned.
+  const fore=i%2===0?-.18:.18;
+  const lat=i<2?-HALF_WIDTH:HALF_WIDTH;
   const phase=cycle+(i===0||i===3?0:Math.PI);
   const move=moving?.10*Math.sin(phase):0;
   const lift=moving?.055*Math.max(0,Math.cos(phase)):0;
