@@ -403,6 +403,24 @@ export function directEpisodeCamera(s:State){
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:n===1?['city-establishing','demo','demoCat']:['demo','demoCat']};
  }
+ // Source 0cab445 complete 60-shot render, frames 243-395:
+ // The automatic focus fitter zooms dynamically onto the airborne Latte
+ // and makes his Episode01 card gigantic (shot 06), then leaves Essie's
+ // face hidden by the intact front wall (shot 07). Use two stable, elevated
+ // 3/4 interior axes with room for the REAL box and jumping silhouette.
+ // No box geometry, original art, or approved opening shots are altered.
+ if(n===6){
+  const camera:V3=[-.55,2.18,3.28],target:V3=[-1.90,.82,2.10],fov=82;
+  return {camera,target,fov,region:'latte' as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:6,selectedIds:['latte','latte-box']};
+ }
+ if(n===7){
+  const camera:V3=[.18,2.46,2.93],target:V3=[.48,.60,.35],fov=78;
+  return {camera,target,fov,region:'essie' as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:7,selectedIds:['essie','essie-box','mocha']};
+ }
  // Closing time is a two-subject shot: Mocha's real muzzle AND the hinged
  // Episode 01 café door. Mocha-only framing omitted the closing action.
  if(n===24){
@@ -417,11 +435,15 @@ export function directEpisodeCamera(s:State){
   // The former shot27 camera looked from INSIDE the house into the opaque
   // threshold: actual 540p frames 1653-1703 showed an empty closed doorway.
   // Film the real outward run from the PORCH instead; do not alter 25-26.
+  // Actual full-source 0cab445 frame sequence 1653-1703 proves Mocha
+  // exits, but grows into a giant near-lens cutout by the end. Pull the
+  // porch camera BACK along the same exterior ray, preserving the open
+  // Episode01 door and leaving room for the full running silhouette.
   const camera:V3=n===25?[3.90,1.72,14.92]:
-   n===26?[3.78,1.73,14.83]:[4.20,1.58,9.55];
+   n===26?[3.78,1.73,14.83]:[4.75,1.82,8.30];
   const target:V3=n===26?[1.38,.46,13.70]:
-    n===27?[3.15,.70,11.50]:[s.mocha.position[0],.86,s.mocha.position[2]];
-  const fov=n===26?63:n===27?72:72;
+    n===27?[3.30,.76,11.45]:[s.mocha.position[0],.86,s.mocha.position[2]];
+  const fov=n===26?63:n===27?78:72;
   return {camera,target,fov,region:'house' as Region,
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:n===26?['essie-home-bed-empty','mocha']:['mocha','episode01-house']};
