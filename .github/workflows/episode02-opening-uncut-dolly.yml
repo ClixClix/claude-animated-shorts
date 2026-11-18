@@ -1,0 +1,106 @@
+name: Episode 02 Opening 01+02 — One Continuous Dolly
+
+on:
+  push:
+    branches:
+      - v2-local-render
+    paths:
+      - ".github/workflows/episode02-opening-uncut-dolly.yml"
+      - "studio/scripts/episode02-render-opening-uncut.mjs"
+      - "studio/src/v2/episodes/in-this-town-02/cameraDirector.ts"
+      - "studio/src/v2/episodes/in-this-town-02/timeline.ts"
+      - "studio/src/v2/episodes/in-this-town-02/Episode.tsx"
+      - "studio/src/v2/episodes/in-this-town-02/ruleCats.ts"
+      - "studio/src/v2/episodes/in-this-town-02/EDITORIAL_SCRATCH_PLAN.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: episode02-uncut-city-to-box-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render-opening:
+    name: Render one actual 105-frame camera move
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    defaults:
+      run:
+        working-directory: studio
+    env:
+      CI: "true"
+      V2_GL: "swangle"
+      V2_RENDER_CONCURRENCY: "1"
+      REMOTION_SKIP_NEW_VERSION_NOTIFICATION: "1"
+    steps:
+      - name: Checkout exact source commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+      - name: Set Chromium
+        shell: bash
+        run: |
+          CHROME_PATH="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -n "$CHROME_PATH" ]; then echo "CHROME=$CHROME_PATH" >> "$GITHUB_ENV"; fi
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Verify Episode 01 style lock and TypeScript
+        run: |
+          npm run typecheck
+          npm run episode2:style-check
+      - name: Prepare all 60 shots for the unchanged full timeline
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const source=JSON.parse(fs.readFileSync('src/v2/episodes/in-this-town-02/EDITORIAL_SCRATCH_PLAN.json','utf8'));
+          const shots=source.shots.map(s=>({
+            id:s.id,sequence:s.sequence,act:s.act,
+            start:s.estimateStartFrame,end:s.estimateEndFrame,
+            narrationAnchor:s.narrationAnchor,
+            cameraAndAction:s.cameraAndAction,soundCue:s.soundCue
+          }));
+          if(shots.length!==60||shots[0].end!==84||shots[1].start!==84||
+             shots[1].end!==105||shots[59].end!==3876)
+             throw new Error('Unexpected episode timeline or shot boundary');
+          const out='out/v2-episodes/in-this-town-02';
+          fs.mkdirSync(out,{recursive:true});
+          fs.writeFileSync(out+'/render-props.json',JSON.stringify({
+            shots,captions:[],previewScale:.5,optimize:true,audioApproved:false
+          },null,2));
+          NODE
+      - name: Render 105 actual consecutive frames as ONE H264 video
+        run: node scripts/episode02-render-opening-uncut.mjs
+      - name: Inspect media and extract transition frames when FFmpeg exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=out/v2-episodes/in-this-town-02/shot01-02-uncut
+          MP4="$BASE/EP02_Shots01-02_ContinuousCityToBox_540p.mp4"
+          test -s "$MP4"
+          if command -v ffprobe >/dev/null 2>&1; then
+            ffprobe -v error -count_frames -select_streams v:0 -show_entries stream=nb_read_frames,width,height,r_frame_rate -of json "$MP4" > "$BASE/EP02_FFprobe.json"
+            node -e "const s=require('./out/v2-episodes/in-this-town-02/shot01-02-uncut/EP02_FFprobe.json').streams[0]; if(Number(s.nb_read_frames)!==105||s.width!==540||s.height!==960)process.exit(2)"
+          fi
+          if command -v ffmpeg >/dev/null 2>&1; then
+            for frame in 0 42 78 83 84 90 97 104; do
+              ffmpeg -nostdin -hide_banner -loglevel error -y -i "$MP4" -vf "select=eq(n\\,$frame)" -vsync 0 -frames:v 1 "$BASE/uncut_frame_${frame}.jpg"
+            done
+          fi
+      - name: Upload playable 3.5s uncut shot and real frames
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: EP02_Opening_01-02_OneContinuousDolly
+          path: studio/out/v2-episodes/in-this-town-02/shot01-02-uncut/
+          if-no-files-found: warn
+          retention-days: 14
+          compression-level: 0
