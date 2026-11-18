@@ -1,0 +1,64 @@
+name: Episode 02 targeted story-shot review (no paid requests)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [v2-local-render]
+    paths:
+      - ".github/workflows/episode02-targeted-story-review.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  seven-shot-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    defaults:
+      run:
+        working-directory: studio
+    env:
+      CI: "true"
+      V2_GL: "swangle"
+      V2_RENDER_CONCURRENCY: "1"
+      REMOTION_SKIP_NEW_VERSION_NOTIFICATION: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+      - name: Install locked modules
+        run: npm ci --no-audit --no-fund
+      - name: Verify exact sources and types
+        run: |
+          npm run typecheck
+          npm run episode2:director-audit
+          npm run episode2:action-audit -- --strict
+      - name: Prepare silent scratch timing, never pay for or regenerate narration
+        run: node scripts/episode02-prepare.mjs --force-silent-scratch --allow-scratch
+      - name: Render actual moving footage for targeted rejected shots
+        run: node scripts/episode02-render.mjs preview --shots 04,05,06,07,49,50,51
+      - name: Extract first-middle-last real frames for contact evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="out/v2-episodes/in-this-town-02/preview-segments"
+          mkdir -p "$OUT/evidence"
+          for SHOT in 04 05 06 07 49 50 51; do
+            for SEC in 0.1 0.6 1.2; do
+              ffmpeg -v error -y -ss "$SEC" -i "$OUT/$SHOT.mp4" -frames:v 1 "$OUT/evidence/${SHOT}_${SEC}.png" || true
+            done
+          done
+      - name: Upload seven shot clips plus sampled frames
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: episode02-targeted-shots-${{ github.run_number }}
+          path: |
+            studio/out/v2-episodes/in-this-town-02/preview-segments
+            studio/out/v2-episodes/in-this-town-02/EP02_DIRECTOR_PREFLIGHT.json
+            studio/out/v2-episodes/in-this-town-02/EP02_ACTION_EVIDENCE.json
+          if-no-files-found: warn
+          retention-days: 7
