@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
-"""Original deterministic Episode 02 cartoon Foley and underscore. No service/API calls.
+"""Original deterministic Episode 02 Foley only; no provider/API calls.
 
-Generates SFX_Stem.wav, Original_Music_Stem.wav and sound cue timing report from
-the latest shot manifest. These stems are original synthesized source, not
-samples/imitations of an existing copyrighted recording. The result is a
-production *starting mix*, not a substitute for critical human audio review.
+The soundtrack is handled separately by episode02-series-music.mjs using the
+actual Episode 01 licensed-source preset. Do NOT synthesize stand-in music.
 """
 from __future__ import annotations
 from pathlib import Path
@@ -18,7 +16,6 @@ duration=manifest['durationInFrames']/FPS
 N=round(duration*SR)
 rng=np.random.default_rng(220211)
 sfx=np.zeros((N,2),np.float32)
-music=np.zeros((N,2),np.float32)
 events=[]
 def add(audio, when, mono, gain=.4, pan=0):
     a=max(0,round(when*SR))
@@ -56,17 +53,6 @@ def meow(when,gain=.24,pan=0,tone=1.0):
     phase=np.cumsum(freq)/SR
     x=(np.sin(2*np.pi*phase)+.18*np.sin(4*np.pi*phase))*env(t,.085,.22)
     add(sfx,when,x,gain,pan)
-def pad(when,length,notes,gain=.12):
-    if length<=0:return
-    t=np.arange(round(length*SR),dtype=np.float32)/SR
-    ramp=np.minimum(1,np.minimum(t/.55,(length-t)/.75)).clip(0,1)
-    v=np.zeros(len(t),np.float32)
-    for k,note in enumerate(notes):
-        hz=440*2**((note-69)/12)
-        v+=np.sin(2*np.pi*hz*t+k*.25).astype(np.float32)*(.62+0.18*np.sin(t*.13+k))
-        v+=.14*np.sin(2*np.pi*hz*2*t+k*.4).astype(np.float32)
-    v=v/max(1,len(notes))*ramp
-    add(music,when,v,gain)
 def footfalls(when,count=3):
     for i in range(count):
         t=np.arange(round(.075*SR),dtype=np.float32)/SR
@@ -85,12 +71,6 @@ def purr(when,dur=.65,gain=.23,pan=0):
     x*=np.sin(np.pi*np.clip(t/dur,0,1))**2
     add(sfx,when,x,gain,pan)
 
-ACT_CHORDS={
- 'RULE':[48,55,60], 'INTRO':[50,57,62], 'LATTE':[45,52,57],
- 'GUARD':[48,55,60], 'MISSING':[45,52,56], 'SEARCH':[43,50,55],
- 'TRANSFORM':[42,49,54], 'AFTERMATH':[41,48,53],
- 'CURE':[48,55,60], 'TOWN':[50,57,62], 'END':[53,60,65],
-}
 # Episode01-style narrated edits may split a beat into A/B/C segments.
 # Music follows every segment, but physical sound actions happen ONCE per
 # spoken story beat, not at every internal camera cut.
@@ -101,16 +81,10 @@ seen_beats=set()
 for i,shot in enumerate(manifest['shots']):
     start=shot['start']/FPS;end=shot['end']/FPS;span=end-start
     n=int(shot['sequence']);cue=shot['soundCue'].lower()
-    act=str(shot['act']).upper()
-    base=.09 if act in ('RULE','MISSING','SEARCH','TRANSFORM','AFTERMATH') else .10
-    if act=='CURE':base=.095
-    if act=='END':base=.13
-    # Original low-level motif that changes harmony with the narrative act.
-    pad(start,span+.05,ACT_CHORDS.get(act,[48,55,60]),gain=base)
     at=start+min(.25,span*.16)
     if n in seen_beats:
         events.append({'shot':shot['id'],'start_seconds':start,'end_seconds':end,
-          'description':'continued shot: ambience/music only; no duplicate cue',
+          'description':'continued shot: SFX only; no duplicate cue',
           'suggested_sync_seconds':at,'source':'original deterministic procedural synthesis'})
         continue
     seen_beats.add(n)
@@ -143,7 +117,6 @@ for number,reverse in [(3,False),(39,False),(50,True),(51,True),(55,True)]:
 fade=min(round(3*SR),N)
 if fade>0:
     ramp=np.linspace(1,0,fade,dtype=np.float32)
-    music[-fade:]*=ramp[:,None]
     sfx[-round(.25*SR):]*=np.linspace(1,0,round(.25*SR),dtype=np.float32)[:,None]
 
 def write(name,arr):
@@ -153,12 +126,11 @@ def write(name,arr):
     with wave.open(str(OUT/name),'wb') as w:
         w.setnchannels(2);w.setsampwidth(2);w.setframerate(SR);w.writeframes(pcm.tobytes())
     return {'file':str(OUT/name),'samples':N,'peak_before_safety':peak}
-report={'original':True,'sourceMusicLicense':'original deterministic procedural composition',
-        'sourceSFXLicense':'original deterministic procedural synthesis','paidRequests':0,
+report={'original':True,'sourceSFXLicense':'original deterministic procedural synthesis','paidRequests':0,
         'durationSeconds':duration,'cueCount':len(events),
         'sfx':write('SFX_Stem.wav',sfx),
-        'music':write('Original_Music_Stem.wav',music),
-        'note':'First complete automatic score/Foley pass; human listening and exact contact cue review are still required.'}
+        'music':None,
+        'note':'Foley only. Episode 01 music requires the real user-supplied source via episode02-series-music.mjs.'}
 (OUT/'EP02_AUDIO_SOURCE.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 (OUT/'EP02_SOUND_CUES.json').write_text(json.dumps(events,indent=2)+'\n',encoding='utf-8')
 print(json.dumps(report,indent=2))
