@@ -512,7 +512,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  if(n===4){
   // Mocha must WITNESS the two distinct town cat-to-box transformations.
   // A closeup of an empty carton with Mocha missing failed the user story.
-  mocha.position=walk([5.15,0,6.35],[4.45,0,6.35],ease(u));
+  mocha.position=walk([4.65,0,6.35],[3.85,0,6.35],ease(u));
   mocha.walking=true;
   mocha.headTurn=lerp(-.52,-.76,ease(u));
   mocha.gazeY=-.15;
@@ -526,7 +526,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   const observe=ease(u/.46),investigate=ease((u-.44)/.25);
   const avoid=ease((u-.70)/.28);
   mocha.position=[
-   4.45-1.34*observe-.39*investigate+.57*avoid,
+   3.85-1.20*observe-.33*investigate+.55*avoid,
    0,
    6.35-.45*observe-.39*investigate+.36*avoid
   ];
