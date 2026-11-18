@@ -142,9 +142,18 @@ export function createEpisode1CastCat(id:CatId){
   }:pose;
   const a=bridgeActor(id,actingPose,next,s);
   const n=s.shot.sequence;
-  const restingInBox=(id==='latte'&&n===6)||
-    (id==='essie'&&[7,19,35,37,38,39].includes(n))||
-    (id==='mocha'&&n===50);
+  // A jumping cat must remain the FULL original Episode01 silhouette until
+  // its paws actually land. The old unconditional shot-06 rest texture made
+  // Latte appear as a giant detached head above an empty striped carton.
+  // The same problem recurred at the final three-cat jump: none of the cats
+  // ever switched to the supported tucked pose after landing.
+  const finaleLanded=n===60&&(
+    (id==='mocha'&&s.u>=.56)||
+    (id==='essie'&&s.u>=.70)||
+    (id==='latte'&&s.u>=.84));
+  const restingInBox=(id==='latte'&&n===6&&s.u>=.70)||
+    (id==='essie'&&(n===7||[19,35].includes(n)&&s.u>=.72||[37,38,39].includes(n)))||
+    (id==='mocha'&&n===50)||finaleLanded;
   // In the rescue close-up he must remain tucked *inside* the same
   // physical carton. A standing 1.52m card cannot fit the 0.56m wall,
   // and jumping out before Essie reforms made the visual rule unclear.
@@ -188,6 +197,11 @@ export function createEpisode1CastCat(id:CatId){
    pose.scale*(1-.30*paper),
    pose.scale
   );
+  // The original illustrated cat stands about 1.52m tall, while the real
+  // carton wall is only ~0.5m. The rest-only artwork reuses Episode01's
+  // head, torso and paws but must occupy a compact, physically supported
+  // vertical silhouette. Do NOT scale the jumping/walking cat this way.
+  if(restingInBox)card.mesh.scale.y*=.57;
   // The paper edges settle toward the inside; preserve above-floor visibility
   // while it shrinks. Clipping and perceived fold quality still need real frames.
   card.mesh.position.y+=.045*paper;
@@ -203,7 +217,7 @@ export function createEpisode1CastCat(id:CatId){
    // Real box floors at y=.044; leave ~1cm above the cardboard bottom.
    // Keep painted head/eyes above the front rim without scaling a full
    // 1.52m cat down into a miniature.
-   card.mesh.position.y=Math.max(card.mesh.position.y,.055);
+   card.mesh.position.y=Math.max(card.mesh.position.y,.13);
   }
   // Preserve the recognisable Episode 01 face and markings until the FINAL
   // fold. The previous aggressive pitch/alpha produced a melted pancake in
