@@ -536,10 +536,10 @@ export function directEpisodeCamera(s:State){
   const mid=Math.floor((s.shot.start+s.shot.end-1)/2);
   const midState=sampleShotState(mid,[s.shot]);
   const fitted=fit(midState);
-  const favor=n===13?.25:n===12?.17:.12;
+  const favor=n===13?.25:.12;
   const target:V3=blend3(fitted.target,
    [midState.mocha.position[0],.68,midState.mocha.position[2]],favor);
-  const pull=n===13?1.27:n===12?1.20:1.15;
+  const pull=n===13?1.27:1.15;
   const camera:V3=[
    target[0]+(fitted.camera[0]-fitted.target[0])*pull,
    target[1]+(fitted.camera[1]-fitted.target[1])*pull,
