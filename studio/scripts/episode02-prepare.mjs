@@ -9,6 +9,15 @@ const out=path.resolve('out/v2-episodes/in-this-town-02');
 const source=path.resolve('src/v2/episodes/in-this-town-02');
 await fs.mkdir(out,{recursive:true});
 const draft=JSON.parse(await fs.readFile(path.join(source,'EDITORIAL_SCRATCH_PLAN.json'),'utf8'));
+const director=JSON.parse(await fs.readFile(path.join(source,'PRODUCTION_DIRECTOR_LOCK.json'),'utf8'));
+if(director.shots.length!==draft.shots.length||director.shots.some((b,i)=>
+ b.sequence!==draft.shots[i].sequence||!b.visibleAction||!b.camera))
+ throw Error('EP02_DIRECTOR_LOCK_MISMATCH: locked story beats are not aligned to the narration shot plan.');
+// The scratch file remains ONLY the timing/anchor source. The current user's
+// visible actions and camera direction come from the one authoritative lock.
+draft.shots.forEach((beat,i)=>{
+ beat.cameraAndAction=director.shots[i].visibleAction+' | CAMERA: '+director.shots[i].camera;
+});
 const narrationText=(await fs.readFile(path.join(source,'DRAFT_BOX_NARRATION.txt'),'utf8')).trim();
 const wantedPath=(flag)=>{const i=process.argv.indexOf(flag);return i>=0?process.argv[i+1]:undefined;};
 let file=wantedPath('--voice')??process.env.EP02_VOICE_FILE??path.join(out,'Approved_Narration.wav');
