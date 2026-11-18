@@ -15,7 +15,7 @@ permissions:
 
 concurrency:
   group: episode02-cloud-qa-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   code-and-frame-review:
