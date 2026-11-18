@@ -107,13 +107,42 @@ export function createEpisodeBox(identity:BoxIdentity) {
   panel(flaps.left,spec.id+'-left-flap',[w*.47,.024,d-.055],[w*.235,0,0]);
   panel(flaps.right,spec.id+'-right-flap',[w*.47,.024,d-.055],[-w*.235,0,0]);
   if(spec.tape==='striped'){
-    // Two diagonal pale bands on the front face. They are part of Latte's
-    // recognizable box identity and remain present in BOXED and RESTORED states.
-    const stripeLen=Math.min(h*.72,w*.75);
-    for(const [i,x] of [-w*.18,w*.18].entries()){
-      const piece=panel(root,spec.id+'-tape-'+(i+1),[.075,stripeLen,.009],
-        [x,h*.48+.04,d/2+.006],tape);
-      piece.rotation.z=i===0?-.28:.28;
+    // SOURCE-LOCK: Latte's ORIGINAL carton is visibly striped on all sides.
+    // Earlier footage looked plain because only two tiny strips of tape existed.
+    // Never change its transform/identity between introduction and rescue.
+    const darkStripe=new T.MeshStandardMaterial({color:'#70472e',roughness:.96,metalness:0});
+    const lightStripe=new T.MeshStandardMaterial({color:'#efd2a6',roughness:.96,metalness:0});
+    materials.push(darkStripe,lightStripe);
+    const paint=(parent:T.Group,name:string,size:[number,number,number],
+      position:[number,number,number],mat:T.Material)=>{
+      const geo=new T.BoxGeometry(...size);
+      const mesh=new T.Mesh(geo,mat);
+      mesh.name=name;mesh.position.set(...position);
+      mesh.castShadow=false;mesh.receiveShadow=true;
+      resources.push(geo);parent.add(mesh);
+    };
+    // Seven wraparound alternating bands, readable even in low-res preview.
+    const count=7,thickness=Math.min(.051,h/(count+2));
+    for(let i=0;i<count;i++){
+      const y=.04+h*(i+.72)/(count+1);
+      const mat=i%2?lightStripe:darkStripe;
+      paint(root,spec.id+'-stripe-front-'+i,[w+.009,thickness,.006],
+        [0,y,d/2+.005],mat);
+      paint(root,spec.id+'-stripe-back-'+i,[w+.009,thickness,.006],
+        [0,y,-d/2-.005],mat);
+      paint(root,spec.id+'-stripe-left-'+i,[.006,thickness,d+.009],
+        [-w/2-.005,y,0],mat);
+      paint(root,spec.id+'-stripe-right-'+i,[.006,thickness,d+.009],
+        [w/2+.005,y,0],mat);
+    }
+    // The real flaps hinge, so paint attached to each flap follows its motion.
+    for(let i=0;i<7;i++){
+      const x=-w*.39+i*w*.13;
+      const mat=i%2?darkStripe:lightStripe;
+      paint(flaps.front,spec.id+'-stripe-front-flap-'+i,[w*.075,.007,d*.41],
+        [x,.016,-d*.235],mat);
+      paint(flaps.back,spec.id+'-stripe-back-flap-'+i,[w*.075,.007,d*.41],
+        [x,.016,d*.235],mat);
     }
   }
   function setOpenAmount(input:number){
