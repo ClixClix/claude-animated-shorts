@@ -74,7 +74,8 @@ record('shot58-to59-scale-change-only-on-location-cut',first.room!==start.room,
 record('shot59-to60-scale-no-pop',Math.abs(last.mocha.scale-final.mocha.scale)<.03);
 record('shared-box-same-cafe-floor',spec.home[0]===timeline.HOME.shared[0]&&
  spec.home[2]===timeline.HOME.shared[2],{boxHome:spec.home,sceneHome:timeline.HOME.shared});
-const finalCatScale=(final.mocha.scale+final.essie.scale+final.latte.scale)/3;
+const settled=state(60,1);
+const finalCatScale=(settled.mocha.scale+settled.essie.scale+settled.latte.scale)/3;
 const nativeEpisode01CatHeight=1.52; // The original createEpisodeCat artwork height.
 const widthPerVisibleCatHeight=spec.width/(nativeEpisode01CatHeight*finalCatScale);
 record('finale-cat-not-miniature-relative-to-box',
@@ -107,7 +108,7 @@ for(let n=58;n<=60;n++){
    if(!s.show.shared||s.show.latte||s.show.essie)
     badCatFrames.push({frame,reason:'wrong box identity'});
   }
-  if(n===59){
+  if(n===60){
    const cat=s.mocha,half=.67*cat.scale;
    // Check near sidewall crossing only: the correctly staged entrance
    // goes over the left rim; once x is INSIDE the box, descent is legal.
@@ -117,12 +118,12 @@ for(let n=58;n<=60;n++){
    }
    // After takeoff, both ears/body must remain in a usable portrait frame.
    // A prior locked camera made the entire jump happen off the left edge.
-   if(s.u>=.24&&s.u<=.74){
+   if(s.u>=.34&&s.u<=.80){
     const f=catFace(cat,cam);
     if(!f.fullyVisible)airborneFraming.push({frame,u:s.u,face:f});
    }
   }
-  if(n===60){
+  if(n===60&&s.u>=.86){
    const all=['mocha','essie','latte'].map(name=>{
     const c=s[name],half=.67*c.scale;
     const boxFits=c.visible&&c.position[0]-half>=left-.01&&
@@ -141,8 +142,14 @@ record('no-premature-left-wall-crossover',badJumpFrames.length===0,badJumpFrames
 record('entire-airborne-cat-visible',airborneFraming.length===0,airborneFraming.slice(0,10));
 record('only-one-final-shared-box-and-physical-cats',badCatFrames.length===0,badCatFrames.slice(0,10));
 record('all-end-shot-cats-in-portrait-frame',finalFraming.length===0,finalFraming.slice(0,10));
-record('all-three-end-characters-visible',["mocha","essie","latte"].every(id=>final[id].visible));
+record('all-three-end-characters-visible',["mocha","essie","latte"].every(id=>settled[id].visible));
 record('shot58-is-street-walk-not-shared-box',first.room==='street'&&!first.show.shared&&first.mocha.walking);
+record('shot59-hesitant-approach-not-premature-jump',last.mocha.position[1]===0&&last.mocha.position[0]<left);
+record('shot60-all-three-physically-jump',['mocha','essie','latte'].every(id=>{
+ const startPose=state(60,0)[id],mid=state(60,.48)[id],endPose=settled[id];
+ return startPose.position[1]===0&&endPose.position[1]>=.10&&
+  [state(60,.32)[id].position[1],mid.position[1],state(60,.68)[id].position[1]].some(y=>y>.65);
+}));
 // Every real Episode02 timeline frame should have finite actor/camera state.
  // A single numeric invalidity can produce a black render or a camera jump.
 const timelineFailures=[],shotIds=new Set();
