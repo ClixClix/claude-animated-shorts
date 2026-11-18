@@ -9,6 +9,7 @@ on:
       - "studio/scripts/series-one-prompt.mjs"
       - "studio/scripts/series-one-prompt.test.mjs"
       - "studio/scripts/episode02-director-preflight.mjs"
+      - "studio/scripts/episode02-action-evidence.mjs"
       - "studio/scripts/episode02-series-music.mjs"
       - "studio/scripts/episode02-prepare.mjs"
       - "studio/scripts/episode02-finish.mjs"
@@ -46,14 +47,17 @@ jobs:
         run: npm run typecheck
       - name: Strict source presence for user's Episode 02 beats
         run: npm run episode2:director-audit
-      - name: Sample actual Episode 02 character and box movement for story beats
-        run: npm run episode2:action-audit
+      - name: Enforce locked Episode 02 physical-action source checks (not artistic approval)
+        run: npm run episode2:action-audit -- --strict
       - name: Publish source-only failure report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: in-this-town-source-qa-${{ github.run_number }}
-          path: studio/out/v2-episodes/in-this-town-02/EP02_DIRECTOR_PREFLIGHT.json
+          path: |
+            studio/out/v2-episodes/in-this-town-02/EP02_DIRECTOR_PREFLIGHT.json
+            studio/out/v2-episodes/in-this-town-02/EP02_ACTION_EVIDENCE.json
+            studio/out/v2-episodes/in-this-town-02/EP02_REMAINING_WORK.md
           if-no-files-found: ignore
           retention-days: 7
 
