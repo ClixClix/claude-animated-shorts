@@ -52,14 +52,15 @@ function focusSet(s:State):Extents[]{
  if(n===10||n===13)return [B('latte')];
  if(n===12)return [C('mocha'),B('latte')];
  if(n===18||n===20||n===22)return [C('mocha'),C('essie'),B('essie')];
- if(n===19)return [C('mocha'),C('essie'),B('essie')];
+ if(n===19)return [C('essie'),B('essie')]; // Mocha is hidden in this Essie-only insert.
  if(n===21)return [C('essie')];
  if(n===26)return [C('mocha'),B('essie')]; // Mocha plus the empty sleeping spot
  if(n===31||n===34)return [C('mocha'),C('essie'),B('essie')];
  if(n===32)return [C('essie'),B('essie')];
  if(n===35)return [C('essie'),B('essie')];
- if(n===37||n===38)return [C('mocha'),C('essie'),B('essie')];
- if(n===39||n===40||n===41||n===42||n===44||n===47||n===49||n===50||n===51)return [C('mocha'),B('essie'),...(n===39||n===50||n===51?[C('essie')]:[])];
+ if(n===37||n===38)return [C('essie'),B('essie')]; // Mocha is deliberately offscreen.
+ if(n===39)return [C('essie'),B('essie')]; // Match the transformation-only visible cast.
+ if(n===40||n===41||n===42||n===44||n===47||n===49||n===50||n===51)return [C('mocha'),B('essie'),...(n===50||n===51?[C('essie')]:[])];
  if(n===45)return [B('essie')];
  if(n===46)return [C('mocha'),B('essie')];
  if(n===52)return [C('mocha'),C('essie')];
