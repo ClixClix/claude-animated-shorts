@@ -485,7 +485,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  });
  // Give Shot 05 Mocha his own readable reaction, not a guest blocking
  // his face at the door. The busy living town remains visible in Shots 01-04.
- const outsideBusy=n<=4||n===8||n===56||n===57;
+ const outsideBusy=n<=4||n===8||n===56||n===57||n===58;
  // Preserve daytime patrons in wide shots; the foreground guest in 11/14
  // otherwise covers half of Mocha's face in the real tight reaction frames.
  // Keep guests in wide cafe shots; close box faces need a clear lens.
@@ -537,7 +537,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // Reuse ORIGINAL Episode 01 car meshes throughout the connected district.
  // Their prior fixed t=0 update froze them in place in Episode 02.
  // Main-road lanes are at z=7.45 and z=9.45, clear of cat sidewalks.
- const roadLife=n<=5||n===8||n===28||n===56||n===57;
+ const roadLife=n<=5||n===8||n===28||n===56||n===57||n===58;
  for(let i=0;i<2;i++){
   const car=world.root.getObjectByName('passing-car-'+i);
   if(!car)continue;
