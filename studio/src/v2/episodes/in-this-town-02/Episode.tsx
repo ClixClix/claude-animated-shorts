@@ -13,7 +13,7 @@ import {createKitten} from '../../animation/kitten';
 import {storyAt as kittenStoryAt} from '../../animation/timeline';
 import {TownPopulation} from '../door-at-1111-polish/population';
 import {createEpisode1CastCat} from './episode1Cast';
-import {createCurledSourceKitten} from './ruleCats';
+import {createCurledSourceKitten,createRuleCat} from './ruleCats';
 import {LensBlur} from '../../../videos/bridge/lensblur';
 import {CHAR} from '../../../videos/bridge/shade';
 import {CARD_K} from '../../../videos/bridge/cardshade';
@@ -198,6 +198,14 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // Secondary trapped carton uses the same physical cardboard kit.
  const afflictedBox=useMemo(()=>createEpisodeBox('demo'),[]);
  afflictedBox.root.name='EPISODE02_SECOND_AFFLICTED_BOX';
+ // Three DIFFERENT original-style illustrated town cats, each with its own
+ // permanent cardboard box. This replaces the incorrect single empty twitch.
+ const streetBoxes=useMemo(()=>[createEpisodeBox('demo'),createEpisodeBox('demo')],[]);
+ streetBoxes[0].root.name='EP02_TOWN_BOX_SLATE';
+ streetBoxes[1].root.name='EP02_TOWN_BOX_HONEY';
+ const streetTransformationCats=useMemo(()=>[
+  createRuleCat('hazel'),createRuleCat('slate'),createRuleCat('honey')
+ ],[]);
  const characters=useMemo(()=>({
   mocha:createEpisode1CastCat('mocha'),
   essie:createEpisode1CastCat('essie'),
@@ -342,22 +350,50 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // Keep complete four-sided cardboard geometry in ALL shots. Camera staging
  // must reveal the cat naturally; never shorten/erase box walls for a portrait.
  // Front wall and flap shape stay identical throughout café and alley scenes.
- // Shot 04: another carton visibly shudders while on the sidewalk.
- afflictedBox.root.visible=n===4;
- afflictedBox.root.position.set(.40,.04,5.14);
- afflictedBox.root.scale.setScalar(.84);
- // Leave the second carton visibly hollow instead of looking like a
- // closed empty package. Its motion tells the story without a giant sign.
- // A SECOND actual Episode01 street cat is trapped here in shot04.
- // Show the living cat first, then let the same real carton close AFTER
- // its body folds. An empty twitching carton was visually rejected.
- afflictedBox.setOpenAmount(n===4?
-  .85-.73*ease((s.u-.84)/.15):.67);
- if(n===4){
-  const twitch=ease((s.u-.22)/.18)*(1-ease((s.u-.56)/.20));
-  afflictedBox.flaps.front.rotation.x+=.20*twitch;
-  afflictedBox.root.rotation.z=.012*Math.sin(Math.PI*s.u*2);
- }else afflictedBox.root.rotation.z=0;
+ // Director lock, shots 04-05: three different town cats JUMP into
+ // three physically distinct boxes and visibly fold into the cardboard.
+ // Shot 04 holds two quick interleaved jumps, Shot 05's third jump occurs
+ // AS Mocha walks along the sidewalk watching, before he refuses a box.
+ // All animals are the existing Episode 01-style detailed rule-cat drawings.
+ const events:{
+  box:ReturnType<typeof createEpisodeBox>;
+  cat:ReturnType<typeof createRuleCat>;
+  pos:V3;p:number;active:boolean;
+ }[]=[
+  {box:afflictedBox,cat:streetTransformationCats[0],
+   pos:[.40,.04,5.14],p:n===4?clamp(s.u/.59):1,active:n===4||n===5},
+  {box:streetBoxes[0],cat:streetTransformationCats[1],
+   pos:[-1.45,.04,5.20],p:n===4?clamp((s.u-.35)/.63):1,active:n===4||n===5},
+  {box:streetBoxes[1],cat:streetTransformationCats[2],
+   pos:[3.75,.04,5.20],p:n===5?clamp(s.u/.58):0,active:n===5},
+ ];
+ events.forEach((e,i)=>{
+  const p=e.p;
+  e.box.root.visible=e.active;
+  e.box.root.position.set(...e.pos);
+  const tuck=ease((p-.28)/.43);
+  const fold=ease((p-.64)/.30);
+  const turn=ease((p-.77)/.20);
+  // Lift clear of the rim, then SETTLE into the same box before folding.
+  // The cat never simply disappears behind the front wall.
+  e.box.setOpenAmount(.98-.83*turn);
+  e.box.root.rotation.z=e.active?.009*fold*Math.sin(p*Math.PI*3):0;
+  e.cat.update(s.t+i*.31,{
+   pose:p>.54?'curled':'standing',
+   expression:fold>.40?'scared':'surprised',
+   progress:tuck,morph:fold,
+   walking:p<.28,
+   look:-.13+fold*.25
+  });
+  const x=e.pos[0]+.53*(1-tuck);
+  const y=.08+.13*tuck+.70*Math.sin(Math.PI*tuck)-.045*fold;
+  const z=e.pos[2]+.56*(1-tuck);
+  e.cat.mesh.position.set(x,y,z);
+  e.cat.mesh.scale.set(.73*(1-.13*fold),.73*(1-.52*fold),.73);
+  e.cat.mesh.rotation.y=Math.atan2(cam.position.x-x,cam.position.z-z);
+  e.cat.mesh.rotation.x=-.12*fold;
+  e.cat.mesh.visible=e.active&&p<.99;
+ });
  // Shot 02: tiny side flap reaction when the living kitten resettles.
  // Keep the same carton and clear face; never lift a wall into the lens.
  if(n===2){
@@ -497,7 +533,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  });
  // Give Shot 05 Mocha his own readable reaction, not a guest blocking
  // his face at the door. The busy living town remains visible in Shots 01-04.
- const outsideBusy=n<=4||n===8||n===56||n===57||n===58;
+ const outsideBusy=n<=5||n===8||n===56||n===57||n===58;
  // Preserve daytime patrons in wide shots; the foreground guest in 11/14
  // otherwise covers half of Mocha's face in the real tight reaction frames.
  // Keep guests in wide cafe shots; close box faces need a clear lens.
@@ -510,7 +546,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  const walkB=6-wrap(s.t*.31,10);
  const announcementTime=Math.max(0,(s.frame-3483)/30);
  const streetSpots:V3[]=audienceOn?
-  (n===4?[[.40,.02,5.14],[-1.12,.03,5.05],[3.70,.03,5.00]]:
+  (n===4?[[-3.60,.02,5.25],[-2.70,.03,5.05],[4.80,.03,5.08]]:
    // Daytime cure announcement: shoppers walk near shops, not through the
    // sign or the three leads. Night alley shots retain NO crowd.
    [[-2.15+.11*announcementTime,.03,5.55],
@@ -536,7 +572,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   if(isGuest){
    const p=spots[i];
    const startled=n===4?ease((s.u-.26)/.44):0;
-   const trapped=n===4&&i===0;
+   const trapped=false; // Hero street transformations are performed by illustrated rule cats above.
    // The second living cat jumps, crouches and folds before the same
    // cardboard flaps close; its floor shadow never floats with the leap.
    const hop=trapped?.23*Math.sin(Math.PI*ease((s.u-.04)/.38)):0;
@@ -599,17 +635,20 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  useEffect(()=>()=>{world.dispose();for(const b of Object.values(boxes))b.dispose();
   Object.values(characters).forEach(c=>c.dispose());
   demoKitten.dispose();curledKitten.dispose();afflictedBox.dispose();
+  streetBoxes.forEach(b=>b.dispose());streetTransformationCats.forEach(c=>c.dispose());
   townspeople.dispose();audience.forEach(group=>group.dispose());
   for(const p of dust.arr){p.geo.dispose();p.mat.dispose();}
   props.dispose();atmosphere.sun.dispose();atmosphere.night.dispose();
   atmosphere.comfort.dispose();
   effects.ink.dispose();effects.bloom.dispose();effects.tone.dispose();
   effects.grade.dispose();effects.lens.dispose();
- },[world,boxes,afflictedBox,characters,demoKitten,curledKitten,townspeople,audience,dust,atmosphere,effects,props]);
+ },[world,boxes,afflictedBox,streetBoxes,streetTransformationCats,characters,demoKitten,curledKitten,townspeople,audience,dust,atmosphere,effects,props]);
  return <><primitive object={world.root} dispose={null}/>
   <primitive object={atmosphere.root} dispose={null}/>
   {Object.values(boxes).map(b=><primitive key={b.root.name} object={b.root} dispose={null}/>)}
   <primitive object={afflictedBox.root} dispose={null}/>
+  {streetBoxes.map((b,i)=><primitive key={'street-box-'+i} object={b.root} dispose={null}/>)}
+  {streetTransformationCats.map((c,i)=><primitive key={'town-cat-'+i} object={c.mesh} dispose={null}/>)}
   {Object.values(characters).map(c=>
    <React.Fragment key={c.id}>
     <primitive object={c.card.mesh} dispose={null}/>
