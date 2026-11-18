@@ -31,7 +31,20 @@ function bridgeActor(
  const dir:V3=length>.00005?vec(delta[0]/length,0,delta[2]/length):[1,0,0];
  const side:V3=[-dir[2],0,dir[0]];
  const seed=id==='latte'?0:id==='mocha'?1:2;
- const cycle=s.t*2.6*Math.PI*2;
+ // Tie foot cycles to actual travel in the 2-second Shot 05 avoidance:
+ // previously the paws kept cycling at constant 2.6Hz while the body
+ // eased to a stop, creating visible skating and treadmill motion.
+ const smooth=(v:number)=>{const t=clamp(v);return t*t*(3-2*t);};
+ const travel=s.shot.sequence===5?
+   .65*smooth(s.u/.40)+.56*smooth((s.u-.48)/.40):
+   s.t*.82;
+ const cycle=travel/.32*Math.PI*2;
+ const stepIntensity=clamp(length*30/.62);
+ const camOffset=vec(s.camera[0]-p[0],0,s.camera[2]-p[2]);
+ const d=Math.hypot(camOffset[0],camOffset[2])||1;
+ const camRight=vec(camOffset[2]/d,0,-camOffset[0]/d);
+ const movingYaw=moving?Math.max(-.62,Math.min(.62,
+   (dir[0]*camRight[0]+dir[2]*camRight[2])*.57)):.06;
  const feet:V3[]=[];
  const footKeys:string[]=[];
  for(let i=0;i<4;i++){
@@ -43,8 +56,8 @@ function bridgeActor(
   const fore=i%2===0?-.18:.18;
   const lat=i<2?-HALF_WIDTH:HALF_WIDTH;
   const phase=cycle+(i===0||i===3?0:Math.PI);
-  const move=moving?.10*Math.sin(phase):0;
-  const lift=moving?.055*Math.max(0,Math.cos(phase)):0;
+  const move=moving?.085*stepIntensity*Math.sin(phase):0;
+  const lift=moving?.045*stepIntensity*Math.max(0,Math.cos(phase)):0;
   const x=p[0]+dir[0]*(fore+move)+side[0]*lat;
   const z=p[2]+dir[2]*(fore+move)+side[2]*lat;
   const surface=Math.max(
@@ -57,10 +70,10 @@ function bridgeActor(
  const expr=pose.emotion;
  return {
   feet,footKeys,heading:dir,position:[...p] as V3,
-  moving,travel:s.t*.82,emotion:expr==='scared'?1:expr==='sad'?.5:0,
+  moving,travel,emotion:expr==='scared'?1:expr==='sad'?.5:0,
   pose:{
    walking:moving,gait:cycle,
-   yaw:moving?.55:.06,
+   yaw:movingYaw,
    expression:expr,headTurn:pose.headTurn,gazeX:pose.headTurn,
    gazeY:pose.gazeY,
    headTilt:expr==='sad'?-.12:expr==='scared'?.09:expr==='concerned'?.13:expr==='happy'?-.035:0,
