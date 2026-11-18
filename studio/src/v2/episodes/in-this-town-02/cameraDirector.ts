@@ -361,6 +361,22 @@ export function directEpisodeCamera(s:State){
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:1,selectedIds:['city-establishing','demo','demoCat']};
  }
+ if(n===2){
+  // Shot 01 is approved. Its last frame ends at the following exact lens
+  // and camera pose. The next 21 frames CONTINUE the SAME take, dollying
+  // right into the original kitten/box with no reset, pan discontinuity or cut.
+  const u=easeTrack(s.u);
+  const startCamera:V3=[4.6,4.20,13.4];
+  const startTarget:V3=[s.demoBox[0],.57,s.demoBox[2]];
+  const endCamera:V3=[s.demoBox[0]+.54,2.16,s.demoBox[2]+2.20];
+  const endTarget:V3=[s.demoBox[0],.36,s.demoBox[2]];
+  const camera=blend3(startCamera,endCamera,u);
+  const target=blend3(startTarget,endTarget,u);
+  const fov=55-6*u;
+  return {camera,target,fov,region:'demo' as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:2,selectedIds:['demo','demoCat']};
+ }
  // 46 deliberately cuts inside the shot to two brief café memories.
  // 58–60 have a single explicitly choreographed, cut-continuous finale.
  if(n===46||n>=58)return fit(s);
