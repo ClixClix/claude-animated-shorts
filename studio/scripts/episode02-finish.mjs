@@ -8,15 +8,16 @@ const readiness=JSON.parse(await fs.readFile(path.join(out,'PRODUCTION_READINESS
 const duration=manifest.durationInFrames/30;
 const ff=(args)=>execFileSync('ffmpeg',['-nostdin','-hide_banner','-v','error',...args],{maxBuffer:8*1024*1024});
 const voice=path.join(out,'Narration_Stem.wav'),sfx=path.join(out,'SFX_Stem.wav');
-const originalMusic=path.join(out,'Original_Music_Stem.wav');
+const music=path.join(out,'Music_Stem.wav');
+const musicProof=path.join(out,'EP02_SERIES_MUSIC_SOURCE.json');
 const inputFile=process.argv.includes('--preview')?'EP02_540p_Visual.mp4':'EP02_1080p_Visual.mp4';
 const visual=path.join(out,inputFile);
 const exists=async file=>fs.access(file).then(()=>true,()=>false);
-for(const file of [voice,sfx,originalMusic,visual])if(!await exists(file))throw Error('Missing input: '+file);
-const licensed=(process.argv.indexOf('--licensed-music')>=0)?process.argv[process.argv.indexOf('--licensed-music')+1]:null;
-if(licensed&&!await exists(licensed))throw Error('Music override missing.');
-if(licensed&&!process.argv.includes('--music-rights-confirmed'))throw Error('For external music, pass --music-rights-confirmed after checking the actual license for this use.');
-const music=licensed??originalMusic;
+for(const file of [voice,sfx,music,musicProof,visual])if(!await exists(file))throw Error('EP02_REQUIRED_ASSET_MISSING: '+file);
+if(process.argv.includes('--licensed-music'))throw Error('EP02_MUSIC_LOCK: Use V2_MUSIC_FILE to supply the approved Episode 01 soundtrack; arbitrary overrides are disabled.');
+const musicSource=JSON.parse(await fs.readFile(musicProof,'utf8'));
+if(musicSource.stage!=='EP01_SERIES_MUSIC_REUSED'||musicSource.sourceTitle!=='Numbers — Instrumental Intro Loop')
+ throw Error('EP02_MUSIC_LOCK: a non-series soundtrack was supplied.');
 const scratch=!readiness.voiceProvided;
 const preview=process.argv.includes('--preview');
 function mix(label,includeMusic){
@@ -25,8 +26,8 @@ function mix(label,includeMusic){
  let filter="[0:a]aresample=48000,aformat=sample_fmts=fltp:channel_layouts=stereo,highpass=f=65,volume=1.0[n];"+
             "[1:a]aresample=48000,aformat=sample_fmts=fltp:channel_layouts=stereo,volume=0.82[s];";
  if(includeMusic){
-  inputs.push('-stream_loop','-1','-i',music);
-  filter+="[2:a]aresample=48000,aformat=sample_fmts=fltp:channel_layouts=stereo,volume=0.74[m];"+
+  inputs.push('-i',music);
+  filter+="[2:a]aresample=48000,aformat=sample_fmts=fltp:channel_layouts=stereo,volume=1.0[m];"+
     "[m][n]sidechaincompress=threshold=0.025:ratio=4:attack=45:release=400[duck];"+
     "[n][s][duck]amix=inputs=3:normalize=0,";
  }else filter+="[n][s]amix=inputs=2:normalize=0,";
@@ -48,9 +49,11 @@ const withMusic=mix('With_Music',true);
 const report={
  stage:'DELIVERABLES_CREATED_AWAITING_BATCH_QA',
  voiceApprovedForEpisode:readiness.voiceProvided,
- providedWordTimings:readiness.captionAlignment==='provided_exact_timings',
- musicLicensedOverride:!!licensed,
- sourceMusic:licensed?'user-supplied; rights claimed via explicit flag':'original deterministic procedural soundtrack',
+ providedWordTimings:readiness.captionAlignment==='ADAM_EXACT_WORD_TIMINGS',
+ musicLicensedOverride:false,
+ sourceMusic:musicSource.sourceTitle+' — '+musicSource.artist+' (Episode 01 source, original intro loop)',
+ sourceMusicSHA256:musicSource.sourceSHA256,
+ musicRightsConfirmedForPublication:false,
  framesExpected:manifest.durationInFrames,duration,
  outputs:[noMusic,withMusic],paidNarrationRequests:0,publishingAllowed:false,
  note:scratch?'Silent narration draft; cannot be public final.':'Final candidate only; not verified until batch full-video QA and user creative/right review.'
