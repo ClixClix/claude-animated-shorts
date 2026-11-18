@@ -183,10 +183,8 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   for(const n of ['chased-mouse','home-blanket','blanket','fresh-water-bowl',
     'last-bus','latte-hiding-box','welcome-sign','alley-motion',
     'opening-setting-sun','rain-outside-only','door-open-plaque',
-    'episode-clock','city-clock-tower','backup-lantern','latte-home',
-    'home-interior-finish','home-low-bookcase',
-    'home-cat-tower','latte-cat-bed',
-    'home-food','home-water','home-moonlight'])
+    'episode-clock','city-clock-tower','backup-lantern',
+    'home-cat-tower'])
       w.root.getObjectByName(n)?.traverse(o=>{o.visible=false;});
   // No attempt to modify the original source files or cache.
   return w;
@@ -310,6 +308,18 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // Cinematic foreground masking changes shot visibility, not original assets.
  const foregroundPlant=world.cafe.fixtures.get('entrance-plant');
  if(foregroundPlant)foregroundPlant.visible=!(s.shot.sequence>=58&&s.shot.sequence<=60);
+ // episode02-house-visible: restore Episode 01's exact house for Mocha's search.
+ const atHouse=n>=25&&n<=27;
+ for(const id of ['latte-home','home-interior-finish','home-low-bookcase',
+   'latte-cat-bed','home-food','home-water','home-moonlight']){
+  const item=world.root.getObjectByName(id);if(item)item.visible=atHouse;
+ }
+ // Physical scene assets only appear in their actual story beats.
+ props.market.visible=n===29;
+ props.alleys.forEach((a,i)=>{a.visible=n===30&&s.searchAlleyIndex===i;});
+ props.cafeBed.visible=n===22||n===23;
+ props.homeBed.visible=atHouse;
+ props.stool.visible=n===56||n===57;
  const boxArray=[
   {key:'latte',obj:boxes.latte,pos:s.latteBox,visible:s.show.latte,flap:s.flap.latte},
   {key:'essie',obj:boxes.essie,pos:s.essieBox,visible:s.show.essie,flap:s.flap.essie},
@@ -317,27 +327,9 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   {key:'demo',obj:boxes.demo,pos:s.demoBox,visible:s.show.demo,flap:s.flap.demo},
  ] as const;
  for(const b of boxArray){b.obj.root.position.set(...b.pos);b.obj.root.visible=b.visible;b.obj.setOpenAmount(b.flap);}
- // EP02 FILM-SAFE BOX CLOSEUPS: the original upright illustrated cats are
- // occluded by fully opaque 3D front walls even when the camera is correctly
- // in front of the box. A lower front WALL for these actor-driven portraits
- // (not a global scale or body rig change) reveals the same Episode01 face
- // and paw artwork, while the other three box walls remain physically intact.
- // Reset on EVERY frame: Remotion can render frames non-sequentially.
- const boxRestPortraits:{box:typeof boxes.essie;enabled:boolean}[]=[
-  {box:boxes.latte,enabled:n===6},
-  {box:boxes.essie,enabled:[7,19,35,37,38,39].includes(n)}
- ];
- for(const {box,enabled} of boxRestPortraits){
-  const front=box.root.getObjectByName(box.spec.id+'-front') as T.Mesh|undefined;
-  if(front){
-   front.scale.y=enabled?.42:1;
-   front.position.y=box.spec.height*(enabled?.21:.5)+.04;
-  }
-  // A fully raised foreground flap can hide the entire head in a 9:16
-  // composition even if the wall has been lowered. Hide it ONLY on
-  // the close cutaway; all other flaps retain their actual hinges.
-  box.flaps.front.visible=!enabled;
- }
+ // Keep complete four-sided cardboard geometry in ALL shots. Camera staging
+ // must reveal the cat naturally; never shorten/erase box walls for a portrait.
+ // Front wall and flap shape stay identical throughout café and alley scenes.
  // Shot 04: another carton visibly shudders while on the sidewalk.
  afflictedBox.root.visible=n===4;
  afflictedBox.root.position.set(.40,.04,5.14);
