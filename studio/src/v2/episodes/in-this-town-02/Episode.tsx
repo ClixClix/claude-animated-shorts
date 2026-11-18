@@ -348,11 +348,15 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  afflictedBox.root.scale.setScalar(.84);
  // Leave the second carton visibly hollow instead of looking like a
  // closed empty package. Its motion tells the story without a giant sign.
- afflictedBox.setOpenAmount(.67);
+ // A SECOND actual Episode01 street cat is trapped here in shot04.
+ // Show the living cat first, then let the same real carton close AFTER
+ // its body folds. An empty twitching carton was visually rejected.
+ afflictedBox.setOpenAmount(n===4?
+  .85-.73*ease((s.u-.70)/.27):.67);
  if(n===4){
   const twitch=ease((s.u-.22)/.18)*(1-ease((s.u-.56)/.20));
-  afflictedBox.flaps.front.rotation.x+=.48*twitch;
-  afflictedBox.root.rotation.z=.017*Math.sin(Math.PI*s.u*2);
+  afflictedBox.flaps.front.rotation.x+=.20*twitch;
+  afflictedBox.root.rotation.z=.012*Math.sin(Math.PI*s.u*2);
  }else afflictedBox.root.rotation.z=0;
  // Shot 02: tiny side flap reaction when the living kitten resettles.
  // Keep the same carton and clear face; never lift a wall into the lens.
@@ -532,12 +536,20 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   if(isGuest){
    const p=spots[i];
    const startled=n===4?ease((s.u-.26)/.44):0;
-   c.mesh.position.set(p[0]+(n===4&&i===0?0:(i===0?-.24:i===1?.22:0)*startled),p[1],p[2]);
-   // Original town guest #0 is the *other* cat caught inside the second
-   // 0.84-scale carton. Ears and expression remain visible, rather than
-   // displaying two unexplained empty cardboard boxes.
-   c.mesh.scale.setScalar(n===4&&i===0?.64:1);
-   if(shadow)shadow.position.set(c.mesh.position.x,p[1]+.006,p[2]);
+   const trapped=n===4&&i===0;
+   // The second living cat jumps, crouches and folds before the same
+   // cardboard flaps close; its floor shadow never floats with the leap.
+   const hop=trapped?.23*Math.sin(Math.PI*ease((s.u-.04)/.38)):0;
+   const fold=trapped?ease((s.u-.38)/.52):0;
+   const x=p[0]+(trapped?0:(i===1?-.48:.52)*startled);
+   const y=trapped?.23+hop-.17*fold:p[1];
+   c.mesh.position.set(x,y,p[2]);
+   c.mesh.scale.set(trapped?.64*(1-.12*fold):1,
+    trapped?.64*(1-.55*fold):1,trapped?.64:1);
+   c.mesh.rotation.x=trapped?-.25*fold:0;
+   c.mesh.visible=isGuest&&(!trapped||s.u<.96);
+   if(shadow){shadow.visible=c.mesh.visible;
+    shadow.position.set(x,trapped?.07:p[1]+.006,p[2]);}
    c.mesh.rotation.y=Math.atan2(cam.position.x-p[0],
     cam.position.z-p[2]);
   }
