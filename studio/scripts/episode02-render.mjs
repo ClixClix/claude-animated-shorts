@@ -22,6 +22,7 @@ const sourceFiles=[
  'src/v2/series/episode1Style.ts',
  'src/v2/series/IN_THIS_TOWN_STYLE_LOCK.json',
  'src/v2/episodes/in-this-town-02/episode1Cast.ts',
+ 'src/v2/episodes/in-this-town-02/ruleCats.ts',
  'src/v2/episodes/in-this-town-02/catBehaviors.ts',
  'src/v2/episodes/door-at-1111-polish/walkingLegs.ts',
  'src/v2/episodes/door-at-1111-polish/population.ts',
@@ -39,6 +40,8 @@ const sourceFiles=[
  'src/v2/cafe/config.ts','src/v2/cafe/environment.ts',
  'src/v2/cats/Cat.tsx','src/v2/cats/drawCat.ts','src/v2/cats/designs.ts',
  'src/videos/bridge/cardshade.ts','src/videos/bridge/ink.ts',
+ 'src/videos/bridge/grade.ts','src/videos/bridge/shade.ts',
+ 'src/v2/cats/pose.ts',
 ];
 const hash=x=>createHash('sha256').update(x).digest('hex');
 const sourceHash=hash((await Promise.all(sourceFiles.map(f=>fs.readFile(path.join(studioRoot,f))))).map(b=>hash(b)).join(':'));
