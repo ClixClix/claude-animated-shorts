@@ -344,38 +344,50 @@ const blend3=(a:V3,b:V3,u:number):V3=>[
 ];
 export function directEpisodeCamera(s:State){
  const n=s.shot.sequence;
- if(n===1){
-  // The VERY FIRST frame must clearly establish a LIVING CITY, not a wall
-  // or the old close-up. Move along an elevated, open corridor above the
-  // district roofs and gently settle on the original demo cat/box.
-  // Do not enter the cafe's vertical facade or the giant shop panels.
-  const u=easeTrack(s.u);
-  const startCamera:V3=[4.6,31.5,52.0];
-  const endCamera:V3=[4.6,4.20,13.4];
-  const startTarget:V3=[1.80,3.8,8.3];
-  const endTarget:V3=[s.demoBox[0],.57,s.demoBox[2]];
-  const camera=blend3(startCamera,endCamera,u);
-  const target=blend3(startTarget,endTarget,u);
-  const fov=80-25*u;
+ if(n===1||n===2){
+  // ONE continuous 105-frame city-to-kitten crane across editorial shots 01/02.
+  // Old footage snapped to a far street view at frame 83, then rushed through
+  // 8+ metres of city geometry in the 21-frame closeup. At the boundary,
+  // position, look-at, FOV AND motion derivative now come from the SAME curve.
+  // Phase 2 arcs RIGHT along the real sidewalk, descending to a three-quarter
+  // kitten-and-box view instead of flying into storefront panels or signage.
+  const total=104,split=83;
+  const t=clamp(s.frame/total,0,1);
+  const q=split/total;
+  const boxX=s.demoBox[0],boxZ=s.demoBox[2];
+  const bez=(a:number,b:number,c:number,d:number,u:number)=>{
+   const v=1-u;return v*v*v*a+3*v*v*u*b+3*v*u*u*c+u*u*u*d;
+  };
+  const bez3=(a:V3,b:V3,c:V3,d:V3,u:number):V3=>[
+   bez(a[0],b[0],c[0],d[0],u),
+   bez(a[1],b[1],c[1],d[1],u),
+   bez(a[2],b[2],c[2],d[2],u)
+  ];
+  const a:V3=[4.6,31.5,52.0]; // preserve approved city reveal
+  const b:V3=[4.35,27.8,44.0];
+  const c:V3=[boxX-.05,4.45,boxZ+3.0];
+  const d:V3=[boxX+.75,2.05,boxZ+2.30];
+  const k=(1-q)/q; // maintain equal first derivative through frame 83
+  const b2:V3=[d[0]+(d[0]-c[0])*k,
+   d[1]+(d[1]-c[1])*k,d[2]+(d[2]-c[2])*k];
+  const c2:V3=[boxX+1.05,1.73,boxZ+1.78];
+  const d2:V3=[boxX+1.16,1.70,boxZ+1.66];
+  const targetA:V3=[1.8,3.8,8.3];
+  const targetB:V3=[boxX,2.15,boxZ+1.9];
+  const targetC:V3=[boxX,.58,boxZ];
+  const targetD:V3=[boxX,.43,boxZ];
+  const targetB2:V3=[targetD[0]+(targetD[0]-targetC[0])*k,
+   targetD[1]+(targetD[1]-targetC[1])*k,
+   targetD[2]+(targetD[2]-targetC[2])*k];
+  const targetC2:V3=[boxX,.37,boxZ],targetD2:V3=[boxX,.36,boxZ];
+  const first=t<=q,u=first?t/q:(t-q)/(1-q);
+  const camera=first?bez3(a,b,c,d,u):bez3(d,b2,c2,d2,u);
+  const target=first?bez3(targetA,targetB,targetC,targetD,u):
+   bez3(targetD,targetB2,targetC2,targetD2,u);
+  const fov=first?bez(80,78,56,54,u):bez(54,54+(54-56)*k,52,51,u);
   return {camera,target,fov,region:'town' as Region,
    framing:projections(corners(focusSet(s)),target,camera,fov),
-   shot:1,selectedIds:['city-establishing','demo','demoCat']};
- }
- if(n===2){
-  // Shot 01 is approved. Its last frame ends at the following exact lens
-  // and camera pose. The next 21 frames CONTINUE the SAME take, dollying
-  // right into the original kitten/box with no reset, pan discontinuity or cut.
-  const u=easeTrack(s.u);
-  const startCamera:V3=[4.6,4.20,13.4];
-  const startTarget:V3=[s.demoBox[0],.57,s.demoBox[2]];
-  const endCamera:V3=[s.demoBox[0]+.54,2.16,s.demoBox[2]+2.20];
-  const endTarget:V3=[s.demoBox[0],.36,s.demoBox[2]];
-  const camera=blend3(startCamera,endCamera,u);
-  const target=blend3(startTarget,endTarget,u);
-  const fov=55-6*u;
-  return {camera,target,fov,region:'demo' as Region,
-   framing:projections(corners(focusSet(s)),target,camera,fov),
-   shot:2,selectedIds:['demo','demoCat']};
+   shot:n,selectedIds:n===1?['city-establishing','demo','demoCat']:['demo','demoCat']};
  }
  // 46 deliberately cuts inside the shot to two brief café memories.
  // 58–60 have a single explicitly choreographed, cut-continuous finale.
