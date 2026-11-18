@@ -145,7 +145,7 @@ record('all-three-end-characters-visible',["mocha","essie","latte"].every(id=>fi
 // Every real Episode02 timeline frame should have finite actor/camera state.
  // A single numeric invalidity can produce a black render or a camera jump.
 const timelineFailures=[],shotIds=new Set();
-const alleyFacadeCollisions=[],alleyBoxWallCrossings=[],missingEssieDuringLatteRescue=[];
+const alleyFacadeCollisions=[],alleyBoxWallCrossings=[],alleyRescueExitCrossings=[],mochaTooEarlyExit=[],missingEssieDuringLatteRescue=[];
 for(const shot of shots){
  shotIds.add(shot.sequence);
  if(shot.end<=shot.start||shot.start<0||!Number.isInteger(shot.start)||
@@ -164,6 +164,20 @@ for(const shot of shots){
     if(Math.abs(state.mocha.position[2]-front)<.10&&
        state.mocha.position[1]<boxes.essie.height+.04)
      alleyBoxWallCrossings.push({frame,shot:shot.sequence,position:state.mocha.position,front});
+   }
+   if(shot.sequence===50&&
+      Math.abs(state.mocha.position[2]-timeline.HOME.alleyBox[2])>
+        boxes.essie.depth*.5)
+    mochaTooEarlyExit.push({frame,shot:50,position:state.mocha.position});
+   if(shot.sequence===51){
+    const front=timeline.HOME.alleyBox[2]+boxes.essie.depth/2;
+    for(const id of ['mocha','essie']){
+     const cat=state[id];
+     if(Math.abs(cat.position[2]-front)<.10&&
+        cat.position[1]<boxes.essie.height+.04)
+      alleyRescueExitCrossings.push({frame,shot:51,id,
+       position:cat.position,front});
+    }
    }
   }
   if([53,54,55].includes(shot.sequence)&&!state.essie.visible)
@@ -190,6 +204,10 @@ record('alley-cats-clear-permanent-shop-facade',alleyFacadeCollisions.length===0
  alleyFacadeCollisions.slice(0,12));
 record('alley-rescue-clears-physical-box-rim',alleyBoxWallCrossings.length===0,
  alleyBoxWallCrossings.slice(0,12));
+record('mocha-remains-in-essie-box-during-reformation',
+ mochaTooEarlyExit.length===0,mochaTooEarlyExit.slice(0,12));
+record('rescued-cats-step-over-cardboard-rim',
+ alleyRescueExitCrossings.length===0,alleyRescueExitCrossings.slice(0,12));
 record('essie-present-during-latte-rescue',missingEssieDuringLatteRescue.length===0,
  missingEssieDuringLatteRescue.slice(0,12));
 record('all-60-shot-ids-present',shots.length===60&&shotIds.size===60&&
