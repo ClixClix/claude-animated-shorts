@@ -47,10 +47,16 @@ export function createEpisodeBox(identity:BoxIdentity) {
   root.userData={role:'episode02-magic-box',identity,stableId:spec.id};
   const base=new T.MeshStandardMaterial({color:spec.color,roughness:.94,metalness:0,side:T.DoubleSide});
   const edge=new T.MeshStandardMaterial({color:'#806347',roughness:.95,metalness:0});
+  // The old boxes were single-tone solids with no visual depth behind the
+  // flat Episode01 artwork. A darker inset gives the cat a believable bed
+  // and provides consistent floor/wall contact across three-quarter angles.
+  const inner=new T.MeshStandardMaterial({
+    color:'#977451',roughness:.98,metalness:0,side:T.DoubleSide
+  });
   const ink=new T.LineBasicMaterial({color:'#382e31',transparent:true,opacity:.78});
   const tape=new T.MeshStandardMaterial({color:'#e7cda1',roughness:.86,metalness:0});
   const resources:T.BufferGeometry[]=[];
-  const materials:T.Material[]=[base,edge,ink,tape];
+  const materials:T.Material[]=[base,edge,inner,ink,tape];
   const {width:w,depth:d,height:h}=spec;
   const thick=.032;
   const panel=(parent:T.Group, name:string, size:[number,number,number],
@@ -67,10 +73,22 @@ export function createEpisodeBox(identity:BoxIdentity) {
   };
   // The interior stays hollow; the bottom is slightly above the actual Y=0 floor.
   panel(root,spec.id+'-floor',[w,.04,d],[0,.024,0],edge);
+  // Inset paper bed, a few millimetres above the true cardboard floor.
+  // Episode02 resting paws/shadows are already anchored at Y≈.055;
+  // unlike a fake foot platform this stays *inside* the original box.
+  panel(root,spec.id+'-floor-liner',[w-.095,.006,d-.095],[0,.048,0],inner);
   panel(root,spec.id+'-front',[w,h,thick],[0,h/2+.04,d/2-thick/2]);
   panel(root,spec.id+'-back',[w,h,thick],[0,h/2+.04,-d/2+thick/2]);
   panel(root,spec.id+'-left',[thick,h,d-2*thick],[-w/2+thick/2,h/2+.04,0]);
   panel(root,spec.id+'-right',[thick,h,d-2*thick],[w/2-thick/2,h/2+.04,0]);
+  // Recessed inner cardboard surfaces create a readable side/back depth
+  // without changing the external dimensions or hiding the cat's face.
+  panel(root,spec.id+'-back-inner',[w-.07,h-.10,.006],
+   [0,h/2+.04,-d/2+.038],inner);
+  panel(root,spec.id+'-left-inner',[.006,h-.10,d-.09],
+   [-w/2+.038,h/2+.04,0],inner);
+  panel(root,spec.id+'-right-inner',[.006,h-.10,d-.09],
+   [w/2-.038,h/2+.04,0],inner);
   const flaps={
     front:new T.Group(),back:new T.Group(),left:new T.Group(),right:new T.Group(),
   };
