@@ -287,12 +287,16 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // Preserve the EXACT kitten frame and silhouette across frame 83 -> 84.
  // Gently tuck its original upright pose into the already-rendered curled
  // version DURING the uninterrupted push rather than popping at the edit.
- const curlMix=n===2?ease((s.u-.25)/.58):n===3?1:0;
- demoKitten.mesh.visible=s.demoCat.visible&&s.demoCat.morph<.95&&(n===1||(n===2&&curlMix<.995));
+ // ONE kitten identity and footprint across shots 01 -> 02 -> 03. The
+ // former 0.95-scale upright original / 1.40-scale curled crossfade
+ // produced a giant translucent duplicate on top of a tiny seated cat.
+ // The original is kept as the source texture ONLY; the curled instance
+ // is the sole visible kitten throughout this 105-frame crane.
+ demoKitten.mesh.visible=false;
  const originalMat=demoKitten.mesh.material as T.MeshLambertMaterial;
- originalMat.transparent=n===2;
- originalMat.depthWrite=n!==2;
- originalMat.opacity=n===2?1-curlMix:1;
+ originalMat.transparent=false;
+ originalMat.depthWrite=true;
+ originalMat.opacity=1;
  demoKitten.mesh.position.set(...s.demoCat.position);
  // Physical paper-fold acting in shot 03: hold the actual Episode01 kitten
  // visibly above the rim first, then fold/sink into its ONE persistent box.
@@ -304,22 +308,20 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // The rule-cat remains the approved illustrated kitten, not a substitute
  // 3-D toy. Gently recline its real card inside the physical box so the
  // raised shot-02 angle sees a supported body/face rather than an edge-on slab.
- // Keep the approved Shot 01 original kitten upright at the exact
- // frame-83/84 seam; recline it only as its curled pose fades in.
- demoKitten.mesh.rotation.x=n===3?-.42-.26*demoFold:
-  n===2?-.42*ease((s.u-.08)/.77):0;
+ // This source art is never displayed as a second mesh during the opening.
+ demoKitten.mesh.rotation.x=0;
  demoKitten.mesh.rotation.y=Math.atan2(cam.position.x-s.demoCat.position[0],
   cam.position.z-s.demoCat.position[2]);
  // Actual 21-frame proof showed a tiny upright kitten throughout Shot 02.
  // Reuse the approved illustration technique, now with a horizontal curled
  // torso, resting paws and a lifted recognizable face inside SAME box.
- curledKitten.mesh.visible=n===2||n===3;
+ curledKitten.mesh.visible=s.demoCat.visible&&n>=1&&n<=3;
  const tuckedMat=curledKitten.mesh.material as T.MeshLambertMaterial;
- tuckedMat.opacity=n===2?curlMix:1;
+ tuckedMat.opacity=1;
  if(curledKitten.mesh.visible){
   const fold=n===3?s.demoCat.morph:0;
   curledKitten.update(s.t,{
-   progress:n===2?.14+.23*ease(s.u):.35+.40*fold,
+   progress:n<=2?.14+(n===2?.23*ease(s.u):0):.35+.40*fold,
    // Real 21-frame action: breathing, blink, head and ear adjustment,
    // distinct tail curl and paw settle; source art stays identical to Shot 1.
    beat:n===2?s.u:0,
