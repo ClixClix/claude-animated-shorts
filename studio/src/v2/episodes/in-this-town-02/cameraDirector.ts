@@ -495,10 +495,28 @@ export function directEpisodeCamera(s:State){
   return {...from,camera,target,fov,
    framing:projections(corners(focusSet(s)),target,camera,fov)};
  }
- // On a held reaction, reframe once at the shot midpoint instead of
- // re-solving the FOV, dolly distance and look-at on every moving frame.
+ // On held reaction shots, keep the established lens but give the
+ // audience one deliberate, gentle motivated push. The previous complete
+ // film had many 2–3-second image-identical frames; the story became a
+ // slide show despite successful CI. Never dynamically refit per frame.
  const middle=Math.floor((s.shot.start+s.shot.end-1)/2);
  const held=fit(sampleShotState(middle,oneShot));
+ const livingHoldShots=new Set([10,15,17,18,22,26,31,34,40,44,47,51,52]);
+ if(livingHoldShots.has(n)){
+  const progress=easeTrack(s.u);
+  const dx=held.target[0]-held.camera[0];
+  const dy=held.target[1]-held.camera[1];
+  const dz=held.target[2]-held.camera[2];
+  const length=Math.hypot(dx,dy,dz)||1;
+  const push=.20*progress; // meters, not a focal-length or actor scale pop
+  const camera:V3=[
+   held.camera[0]+push*dx/length,
+   held.camera[1]+push*dy/length,
+   held.camera[2]+push*dz/length
+  ];
+  return {...held,camera,
+   framing:projections(corners(focusSet(s)),held.target,camera,held.fov)};
+ }
  return {...held,
   framing:projections(corners(focusSet(s)),held.target,held.camera,held.fov)};
 }
