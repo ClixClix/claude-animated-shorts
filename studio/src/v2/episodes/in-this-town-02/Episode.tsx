@@ -305,7 +305,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  curledKitten.mesh.visible=n===2||n===3;
  if(curledKitten.mesh.visible){
   const fold=n===3?s.demoCat.morph:0;
-  curledKitten.update(s.t,{pose:'curled',expression:n===3?'scared':'neutral',
+  curledKitten.update(s.t,{
    progress:n===2?.14+.23*ease(s.u):.35+.40*fold,
    // Real 21-frame action: breathing, blink, head and ear adjustment,
    // distinct tail curl and paw settle; source art stays identical to Shot 1.
