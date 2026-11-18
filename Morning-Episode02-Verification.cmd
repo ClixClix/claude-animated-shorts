@@ -18,11 +18,16 @@ echo [3/4] Episode 2 director/scene blockers (NO RENDER)...
 call npm.cmd run episode2:director-audit
 if errorlevel 1 goto error
 echo.
-echo [4/4] Episode 2 narration/visual output status...
+echo [4/5] Check which required story actions have actual source motion...
+call npm.cmd run episode2:action-audit
+if errorlevel 1 goto error
+echo.
+echo [5/5] Episode 2 narration/visual output status...
 call npm.cmd run episode2:status
 if errorlevel 1 goto error
 echo.
-echo Source checks passed. This does not certify camera moves, CGI acting or music rights.
+echo Source-stage checks finished. Read EP02_ACTION_EVIDENCE.json for motion gaps.
+echo Missing action footage is NOT a pass; this only verifies code and reports remaining gaps.
 echo To render a locally narrated 540p preview, launch this script with --preview
 if /I "%~1"=="--preview" (
  echo.
