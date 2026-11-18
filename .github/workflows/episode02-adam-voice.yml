@@ -1,0 +1,68 @@
+name: Episode 02 Adam Voice Only
+
+on:
+  workflow_dispatch:
+    inputs:
+      approve_characters:
+        description: "Confirm approved narration character count (2305)"
+        required: true
+        type: string
+      paid_generation_approved:
+        description: "I authorize one billed ElevenLabs narration request"
+        required: true
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  generate-voice:
+    if: ${{ inputs.paid_generation_approved && inputs.approve_characters == '2305' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: studio
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Install ffmpeg if needed
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ffmpeg
+          fi
+      - name: Confirm ElevenLabs secret is available
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: |
+          test -n "$ELEVENLABS_API_KEY" || { echo "ELEVENLABS_API_KEY secret is unavailable"; exit 1; }
+      - name: Generate Adam narration once (may consume ElevenLabs credits)
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: node scripts/episode02-generate-voice.mjs --allow-paid --rotated-key-confirmed --approve-characters 2305
+      - name: Verify narration deliverables
+        run: |
+          test -s out/v2-episodes/in-this-town-02/Approved_Narration.wav
+          test -s out/v2-episodes/in-this-town-02/Approved_Word_Timings.json
+          test -s out/v2-episodes/in-this-town-02/EP02_VOICE_PROVENANCE.json
+      - name: Upload audio and timestamps for local rendering
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: episode02-adam-voice-${{ github.run_id }}
+          path: |
+            studio/out/v2-episodes/in-this-town-02/Approved_Narration.wav
+            studio/out/v2-episodes/in-this-town-02/Approved_Word_Timings.json
+            studio/out/v2-episodes/in-this-town-02/EP02_VOICE_PROVENANCE.json
+            studio/out/v2-episodes/in-this-town-02/EP02_PAID_VOICE_ATTEMPT.json
+          if-no-files-found: warn
+          retention-days: 14
