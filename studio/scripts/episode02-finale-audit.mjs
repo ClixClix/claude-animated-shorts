@@ -161,17 +161,17 @@ for(const shot of shots){
      alleyFacadeCollisions.push({frame,shot:shot.sequence,id,x:cat.position[0],right});
    }
    if(shot.sequence===49||shot.sequence===50){
-    const front=timeline.HOME.alleyBox[2]+boxes.essie.depth/2;
+    const front=state.essieBox[2]+boxes.essie.depth/2;
     if(Math.abs(state.mocha.position[2]-front)<.10&&
        state.mocha.position[1]<boxes.essie.height+.04)
      alleyBoxWallCrossings.push({frame,shot:shot.sequence,position:state.mocha.position,front});
    }
    if(shot.sequence===50&&
-      Math.abs(state.mocha.position[2]-timeline.HOME.alleyBox[2])>
+      Math.abs(state.mocha.position[2]-state.essieBox[2])>
         boxes.essie.depth*.5)
     mochaTooEarlyExit.push({frame,shot:50,position:state.mocha.position});
    if(shot.sequence===51){
-    const front=timeline.HOME.alleyBox[2]+boxes.essie.depth/2;
+    const front=state.essieBox[2]+boxes.essie.depth/2;
     for(const id of ['mocha','essie']){
      const cat=state[id];
      if(Math.abs(cat.position[2]-front)<.10&&
