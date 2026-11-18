@@ -435,9 +435,12 @@ export function directEpisodeCamera(s:State){
  // Leave approved Shot 01/02 crane and all unrelated cuts untouched.
  if(n===6||n===7||n===19){
   const p=n===6?s.latteBox:s.essieBox;
-  const camera:V3=n===6?[p[0]+.92,1.35,p[2]+1.72]:
-    n===7?[p[0]+.50,1.77,p[2]+3.05]:
-    [p[0]+.48,1.60,p[2]+2.80];
+  // Quiet, visible push toward the resting face. The original source
+  // held every frame on an identical billboard for 2–3 seconds.
+  const advance=.15*easeTrack(s.u);
+  const camera:V3=n===6?[p[0]+.92,1.35,p[2]+1.72-advance]:
+    n===7?[p[0]+.50,1.77,p[2]+3.05-advance]:
+    [p[0]+.48,1.60,p[2]+2.80-advance];
   const target:V3=n===6?[p[0],.57,p[2]]:
     [p[0]+.20,.68,p[2]+.10];
   const fov=n===6?56:n===7?70:65;
@@ -452,7 +455,8 @@ export function directEpisodeCamera(s:State){
   // open-front side from the alley mouth, a grounded 3/4 portrait view.
   const distance=n===35?2.75:n===37?2.42:n===38?2.32:2.42;
   const height=n===35?1.68:n===37?1.55:n===38?1.53:1.55;
-  const camera:V3=[p[0]+.58,height,p[2]+distance];
+  const camera:V3=[p[0]+.58,height,
+   p[2]+distance-.14*easeTrack(s.u)];
   const target:V3=[p[0],.70,p[2]+.04];
   const fov=n===35?63:n===37?60:n===38?59:62;
   return {camera,target,fov,region:'alley' as Region,
