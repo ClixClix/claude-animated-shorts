@@ -26,6 +26,12 @@ export const HOME={
   market:[-7.3,0,6.5] as V3,
   alleyMouth:[-9.25,0,4.7] as V3,
   alleyBox:[-9.15,0,1.4] as V3,
+  essieCafeBed:[2.68,0,-1.84] as V3,
+  essieHomeBed:[1.38,.20,13.70] as V3,
+  houseDoor:[3.15,0,12.15] as V3,
+  searchAlleyA:[-18.5,0,2.55] as V3,
+  searchAlleyB:[18.5,0,2.55] as V3,
+  searchAlleyC:[-9.15,0,3.05] as V3,
   demo:[1.8,0,5.35] as V3
 };
 const hidden=():ActorPose=>({position:[0,0,0],visible:false,walking:false,emotion:'neutral',headTurn:0,scale:1,morph:0,gazeY:0});
@@ -44,7 +50,7 @@ export type State={
  flap:{latte:number;essie:number;shared:number;demo:number};
  morph:{essie:number;latte:number;demo:number};
  rescued:{essie:boolean;latte:boolean};
- heroBox:'latte'|'essie'|'shared'|'demo'|null;room:string;
+ heroBox:'latte'|'essie'|'shared'|'demo'|null;room:string;searchAlleyIndex:number|null;
 };
 export const locateShot=(frame:number,shots:EditShot[])=>{
  const found=shots.find(s=>frame>=s.start&&frame<s.end);
@@ -76,6 +82,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  const flap={latte:.85,essie:.85,shared:.98,demo:.85}; // Lay finale side flaps almost flat, not across Mocha's approach.
  const morph={essie:0,latte:0,demo:0};
  let heroBox:State['heroBox']=null,room='cafe';
+ let searchAlleyIndex:number|null=null;
  let cam=cameraPreset([3.1,1.8,9.7],[2.1,.8,6.7],59);
  const focus=(p:V3,dist=2.8,fov=51,side=1.4)=>cameraPreset([p[0]+side,Math.max(1.3,p[1]+1.8),p[2]+dist],[p[0],p[1]+.75,p[2]],fov);
  if(n<=4){
@@ -132,24 +139,56 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  }
  if(n>=18&&n<=23){
   mocha.position=n===20?mix([1.35,0,1.35],HOME.essie,ease(u)):[1.1,0,1.2];
-  essie.position=n===20?walk(HOME.essie,[.9,0,1.0],u):n===22?[.9,0,1.0]:[HOME.essie[0],0,HOME.essie[2]];
+  essie.position=n===20?walk(HOME.essie,[.9,0,1.0],u):n===22?walk([.9,0,1.0],HOME.essieCafeBed,u):n===23?[...HOME.essieCafeBed]:[HOME.essie[0],0,HOME.essie[2]];
+  if(n===18){
+   room='street';heroBox=null;show.essie=false;
+   essie.position=walk([1.55,0,7.5],[2.20,0,6.2],u);
+   // Mocha hurries to her side and steers her clear by her floof.
+   mocha.position=walk([.45,0,7.65],[essie.position[0]-.55,0,essie.position[2]+.18],u);
+   essie.walking=mocha.walking=true;
+  }
+  if(n===22||n===23)show.essie=false;
   essie.emotion=n>=20?'sad':'happy';mocha.emotion=n===23?'sad':'scared';
   heroBox='essie';cam=n===19?focus(HOME.essie,2,42,.9):n===21?focus(essie.position,1.8,37,1.2):
      n===23?focus(mocha.position,1.8,39,1.2):cameraPreset([3.1,2.0,3.6],[.3,.8,.8],55);
  }
  if(n>=24&&n<=27){
-  // Closing is a separate doorway beat, not a duplicate of the next
-  // empty sleeping spot. Keep the existing Episode01 cat and café geometry.
-  mocha.position=n===27?walk(HOME.door,HOME.entrance,u):
-    n===26?[-1.05,0,1.35]:n===24?[2.00,0,3.50]:[.8,0,1.5];
-  mocha.emotion='scared';essie.visible=false;show.essie=false;
-  cam=n===24?cameraPreset([4.6,1.8,6.2],[2.3,1.35,4.55],57):n===26?focus(HOME.essie,2.1,41,.85):
-    n===27?cameraPreset([5,2.3,9.2],[2.4,.8,5.2],56):focus(mocha.position,2.6,45,1);
-  if(n===27){room='street';mocha.walking=true;}
+  // Sunset closes the café, then the action moves to Episode 01's REAL house.
+  // Never reuse the café in place of the missing-cat HOME story beats.
+  mocha.emotion=n===24?'neutral':'scared';essie.visible=false;show.essie=false;
+  if(n===24){
+   room='street';
+   mocha.position=walk([2.45,0,5.70],[2.55,0,4.80],u);
+   mocha.walking=true;
+   cam=cameraPreset([4.5,2.0,7.0],[2.35,1.2,4.45],63);
+  }else if(n===25){
+   room='house';
+   mocha.position=walk([3.40,.20,13.30],[1.85,.20,14.00],u);
+   mocha.walking=true;
+   cam=cameraPreset([3.95,1.85,14.90],[1.60,.7,13.75],65);
+  }else if(n===26){
+   room='house';
+   mocha.position=[1.85,.20,14.0];
+   mocha.headTurn=lerp(-.30,.25,ease(u));
+   cam=cameraPreset([3.86,1.75,14.65],[HOME.essieHomeBed[0],.42,HOME.essieHomeBed[2]],64);
+  }else{
+   room='house';
+   mocha.position=walk(HOME.houseDoor,[3.45,0,10.8],u);
+   mocha.walking=true;
+   cam=cameraPreset([3.9,2.3,14.8],[3.25,.7,11.9],65);
+  }
  }
- if(n>=28&&n<=34){room='street';mocha.walking=n<=33;mocha.emotion='scared';essie.visible=n>=31;
-  mocha.position=n===28?walk(HOME.entrance,HOME.busStop,u):n===29?walk(HOME.busStop,HOME.market,u):
-     n===30?walk(HOME.market,HOME.alleyMouth,u):n<=32?[-9.25,0,4.2]:n===33?[-9.25,0,4.5]:[-9.25,0,4.0];
+ if(n>=28&&n<=34){room=n===29?'market':n===30?'search-alley':'street';mocha.walking=n<=33;mocha.emotion='scared';essie.visible=n>=31;
+  mocha.position=n===28?walk(HOME.houseDoor,HOME.busStop,u):n===29?walk(HOME.busStop,HOME.market,u):
+     n===30?walk(HOME.searchAlleyA,HOME.searchAlleyA,u):n<=32?[-9.25,0,4.2]:n===33?[-9.25,0,4.5]:[-9.25,0,4.0];
+  if(n===30){
+   searchAlleyIndex=Math.min(2,Math.floor(u*3));
+   const anchor=[HOME.searchAlleyA,HOME.searchAlleyB,HOME.searchAlleyC][searchAlleyIndex];
+   const within=u*3-searchAlleyIndex;
+   mocha.position=walk([anchor[0],0,anchor[2]+1.0],
+     [anchor[0],0,anchor[2]-.38],within);
+   mocha.walking=true;
+  }
   essie.position=n===32?walk([-9.1,0,2.7],HOME.alleyBox,u):HOME.alleyBox;
   if(n===31)essie.position=[-9.25,0,2.8];if(n===34)essie.position=HOME.alleyBox;
   essie.emotion='happy';essie.walking=n===32;
@@ -517,6 +556,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   mocha.emotion='sad';
  }
  if(n===56){
+  mocha.position=[1.1,.425,6.4]; // paws planted on the physical town stool seat
   // Readable group responses when the cure appears in a populated street.
   mocha.headTurn=-.16+.26*ease((u-.20)/.50);
   essie.headTurn=.18-.26*ease((u-.35)/.48);
@@ -531,7 +571,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  mocha,essie,latte,demoCat,
  latteBox,essieBox,sharedBox,demoBox,
  show:{...show,shared:openShared},flap,morph,
- rescued:{essie:n>=51,latte:n>=55},heroBox,room
+ rescued:{essie:n>=51,latte:n>=55},heroBox,room,searchAlleyIndex
  };
  return out;
 }
