@@ -280,7 +280,11 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  CARD_K.uPx.value=previewScale;
  // Open the existing hinged door fully against the wall for the return
  // sprint, rather than letting its leaf cut through Mocha and Essie.
- world.door.rotation.y=s.shot.sequence===24?-.3:s.shot.sequence===27?-1.18:s.shot.sequence>=53?-Math.PI/2:0;
+ // In shot 24 the physical Episode 01 café door swings from OPEN to CLOSED
+  // only after Mocha reaches its nose plate. A stationary CLOSED sign is not
+  // the action; leave the original hinged leaf and frame intact.
+  const closingDoor=n===24?ease((s.u-.43)/.44):0;
+  world.door.rotation.y=n===24?-1.10*(1-closingDoor):n===27?-1.18:n>=53?-Math.PI/2:0;
  // Shot 27 is the actual Episode01 HOUSE exit, not the cafe door. The
  // inherited Episode01 frame-zero house door was shut while Mocha ran
  // through its opaque leaf. Open only during the house entrance/exit beats.
