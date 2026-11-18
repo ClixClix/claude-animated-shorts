@@ -1,11 +1,10 @@
 @echo off
 setlocal
 title Episode 02 - Corrected Story Preview
-cd /d "%~dp0"
+cd /d "%~dp0studio"
 echo [1/4] Updating Episode 02 source from verified v2-local-render branch...
 git pull --ff-only origin v2-local-render
 if errorlevel 1 goto :fail
-cd /d "%~dp0studio"
 echo [2/4] Checking authoritative shot directions and physical actions...
 node scripts/episode02-director-preflight.mjs --strict
 if errorlevel 1 goto :fail
