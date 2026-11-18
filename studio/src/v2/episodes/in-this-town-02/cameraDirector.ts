@@ -406,11 +406,14 @@ export function directEpisodeCamera(s:State){
  // Story-locked geography: the house is the Episode 01 HOME, not café B-roll.
  if(s.room==='house'){
   const n=s.shot.sequence;
+  // The former shot27 camera looked from INSIDE the house into the opaque
+  // threshold: actual 540p frames 1653-1703 showed an empty closed doorway.
+  // Film the real outward run from the PORCH instead; do not alter 25-26.
   const camera:V3=n===25?[3.90,1.72,14.92]:
-   n===26?[3.78,1.73,14.83]:[3.45,1.80,14.92];
+   n===26?[3.78,1.73,14.83]:[4.20,1.58,9.55];
   const target:V3=n===26?[1.38,.46,13.70]:
-    n===27?[3.15,.75,12.25]:[s.mocha.position[0],.86,s.mocha.position[2]];
-  const fov=n===26?63:72;
+    n===27?[3.15,.70,11.50]:[s.mocha.position[0],.86,s.mocha.position[2]];
+  const fov=n===26?63:n===27?72:72;
   return {camera,target,fov,region:'house' as Region,
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:n===26?['essie-home-bed-empty','mocha']:['mocha','episode01-house']};

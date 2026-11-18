@@ -281,6 +281,10 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // Open the existing hinged door fully against the wall for the return
  // sprint, rather than letting its leaf cut through Mocha and Essie.
  world.door.rotation.y=s.shot.sequence===24?-.3:s.shot.sequence===27?-1.18:s.shot.sequence>=53?-Math.PI/2:0;
+ // Shot 27 is the actual Episode01 HOUSE exit, not the cafe door. The
+ // inherited Episode01 frame-zero house door was shut while Mocha ran
+ // through its opaque leaf. Open only during the house entrance/exit beats.
+ world.homeDoor.rotation.y=(n===25||n===27)?-Math.PI/2:0;
  // The return shot tracks through the already-open entrance. Mask only
  // its swung-open leaf, which still cut across both cats in real 540p footage.
  world.door.visible=s.shot.sequence!==53;

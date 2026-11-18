@@ -70,6 +70,9 @@ check(25,'ORIGINAL_HOUSE_USED',t=>t.rooms.includes('house')&&t.motions.mocha.met
  'Mocha searches the Episode01 house, not café.');
 check(26,'HOUSE_EMPTY_BED_POV',t=>t.rooms.includes('house'),
  'Mocha sees an actually empty Essie sleeping spot in the house.');
+check(27,'MOCHA_RUNS_OUT_HOUSE_DOOR',t=>t.rooms.includes('house')&&
+ t.motions.mocha.meters>1.10&&t.motions.mocha.visibility,
+ 'Mocha visibly travels through the actual Episode01 house doorway; camera and door clearance require moving-footage QA.','high');
 check(29,'MARKET_DISTINCT',t=>t.rooms.includes('market'),
  'Market beat must be set at the physical market.');
 check(30,'THREE_DIFFERENT_ALLEYS',t=>t.alleyIndices.length===3,
