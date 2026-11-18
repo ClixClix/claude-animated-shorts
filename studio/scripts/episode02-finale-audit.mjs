@@ -94,6 +94,16 @@ record('shot58-to59-motivated-location-cut',first.room==='street'&&start.room===
  {from:cam58,to:cam59});
 record('shot59-to60-camera-continuity',lensDelta(cam59End,cam60)<.05,
  {from:cam59End,to:cam60});
+ // Regression guard from ACTUAL current-source cloud footage: at z=5.35
+ // shots59/60 render only the café's opaque outside facade, despite passing
+ // all earlier numerical cat/box checks. The older z=4.12 ray showed the
+ // interior and shared carton. This threshold is a SOURCE safety check;
+ // a fresh MP4 is still required to verify visible cats and contact.
+ const sharedWindowRays=[cam59,cam59End,cam60,
+  cameraDirector.directEpisodeCamera(settled)];
+ record('shot59-60-opaque-facade-ray-clearance',
+  sharedWindowRays.every(c=>c.camera[2]<=4.25),
+  sharedWindowRays.map(c=>({camera:c.camera,target:c.target})));
 
 const left=timeline.HOME.shared[0]-spec.width/2,right=left+spec.width;
 const front=timeline.HOME.shared[2]+spec.depth/2,back=front-spec.depth;

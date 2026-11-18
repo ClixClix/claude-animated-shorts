@@ -166,16 +166,20 @@ function fit(s:State){
    framing:projections(corners(focus),target,camera,fov),
    shot:58,selectedIds:['mocha','essie','latte','street-life']};
  }
- // Beat 59 holds a wide, grounded approach; beat 60 shows THREE complete
- // jumps. Keep the lens identical at their cut, then push after all cats
- // have cleared their box walls. No sudden midair camera refit.
+ // Evidence-backed finale camera. In the 231-frame cloud QA preview
+ // from run #44257023170, camera z=5.35 stared into the OPAQUE café
+ // facade for EVERY frame of shots 59-60. Earlier full movie #44240680452
+ // visibly framed the real interior/box at z=4.12. Restore that proven
+ // window-side ray, keep shot59's approach pan and hold the same lens at
+ // the 59->60 cut; only push after the three cats have landed.
  if(s.shot.sequence>=59){
   const n=s.shot.sequence,u=clamp(s.u,0,1);
+  const recenter=n===59?easeTrack((u-.42)/.55):1;
   const push=n===60?easeTrack((u-.62)/.37):0;
-  const trackX=-2.45+.55*push;
-  const camera:V3=[trackX,2.10,5.35-.20*push];
-  const target:V3=[trackX,.78,2.10];
-  const fov=95-3*push;
+  const trackX=-2.95+1.50*recenter;
+  const camera:V3=[trackX,1.98,4.12-.08*push];
+  const target:V3=[trackX,.83,2.11];
+  const fov=98-5*push;
   return {camera,target,fov,region:'shared' as Region,
    framing:projections(corners(focus),target,camera,fov),
    shot:n,selectedIds:focus.map(x=>x.id)};
@@ -516,7 +520,19 @@ export function directEpisodeCamera(s:State){
  // rescue two-shot (20). Keep the camera on its proven ray, pull back a
  // little, and bias the look-at toward his acting rather than empty carton.
  // This is a locked per-shot frame, never a frame-by-frame auto-fit zoom.
- if(n===12||n===13||n===20){
+ // Actual 63-frame current-source shot12 (#44257023131, shard 0)
+ // is blocked by an opaque vertical café partition for ALL eight sampled
+ // motion frames. Shot11's adjacent established camera ray visibly clears
+ // the partition and shows Mocha + Latte's box. Match that axis rather than
+ // auto-fitting from behind the solid wall; the nose/flap contact still
+ // needs a new moving-footage review.
+ if(n===12){
+  const camera:V3=[-1.95,1.80,4.00],target:V3=[-.80,.82,2.78],fov=75;
+  return {camera,target,fov,region:'latte' as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:n,selectedIds:['mocha','latte-box-flaps']};
+ }
+ if(n===13||n===20){
   const mid=Math.floor((s.shot.start+s.shot.end-1)/2);
   const midState=sampleShotState(mid,[s.shot]);
   const fitted=fit(midState);
