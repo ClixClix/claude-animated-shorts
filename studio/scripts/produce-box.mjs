@@ -46,10 +46,23 @@ if(mode==='status'){
 }else if(mode==='build'||mode==='build-preview'){
  // Build all source/scene/audio stages in one sequence. NO typecheck/QA/contact sheet
  // is run here: the user requested a single combined review AFTER full assembly.
+ // An Episode01-style narrated render REQUIRES the actual Adam recording
+ // and verified timing files. Fail immediately with an actionable message,
+ // before modifying any manifest or starting a long expensive render.
+ if(!flag('--allow-scratch')){
+  const outputFile=arg('--voice')??process.env.EP02_VOICE_FILE??path.join(out,'Approved_Narration.wav');
+  const required=[outputFile,path.join(out,'Approved_Word_Timings.json'),
+   path.join(out,'EP02_VOICE_PROVENANCE.json')];
+  const missing=required.filter(p=>!existsSync(p));
+  if(missing.length)throw Error('EP02_ADAM_NARRATION_NOT_READY: missing '+missing.join(', ')+
+   '. Generate ONE approved ElevenLabs Adam recording first. Run npm.cmd run episode2:voice-count to inspect character count / required provider approval. Do not run preview/build/check until real Adam audio and timestamps exist. No paid request was made.');
+ }
  node('prepare',...prepareArgs);
  // Exactly as Episode01's polish workflow: block production when code,
  // cat continuity or floor/camera geometry gates have not passed.
- run(process.platform==='win32'?'npm.cmd':'npm',['run','typecheck']);
+ // Windows Node 24 spawnSync('npm.cmd') fails with EINVAL. Invoke the
+ // installed TypeScript CLI via Node directly (same TypeScript compiler).
+ run(process.execPath,[path.join(studioRoot,'node_modules/typescript/bin/tsc'),'--noEmit']);
  node('adam-edit-test');
  node('style-preflight');
  node('box-tests');
@@ -61,9 +74,15 @@ if(mode==='status'){
  node('finish',...(mode==='build-preview'?['--preview']:[]),...audioArgs);
  console.log('All Episode 02 stages assembled. NO QA has been executed. Run: node scripts/produce-box.mjs check');
 }else if(mode==='check'){
+ // The final gate only checks a completed production master. Do not hide
+ // a missing Adam build behind unrelated TypeScript or Windows errors.
+ if(!existsSync(path.join(out,'EP02_FINISHING_STATUS.json')))
+  throw Error('EP02_CHECK_BEFORE_BUILD: no completed Episode02 finishing report exists. Generate Adam voice, run episode2:preview-adam and episode2:build first; then run episode2:check. This command cannot make the missing video.');
  // THE ONE BATCH REVIEW GATE. This is intentionally opt-in and never runs
  // during build. It can highlight problems but cannot certify storytelling.
- run(process.platform==='win32'?'npm.cmd':'npm',['run','typecheck']);
+ // Windows Node 24 spawnSync('npm.cmd') fails with EINVAL. Invoke the
+ // installed TypeScript CLI via Node directly (same TypeScript compiler).
+ run(process.execPath,[path.join(studioRoot,'node_modules/typescript/bin/tsc'),'--noEmit']);
  node('box-tests');
  node('camera-audit');
  const ready=JSON.parse(await fs.readFile(path.join(out,'EP02_FINISHING_STATUS.json'),'utf8'));
