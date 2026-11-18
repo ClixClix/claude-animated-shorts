@@ -4,7 +4,7 @@ export const FPS=30;
 export const FIRST_DRAFT_FRAMES=3876;
 export type BoxStage='normal'|'resting'|'morphing'|'boxed'|'rescuing'|'restored';
 export type ActorPose={position:V3;visible:boolean;walking:boolean;emotion:'neutral'|'happy'|'sad'|'scared'|'surprised'|'concerned';headTurn:number;scale:number;morph:number;gazeY:number};
-export type EditShot={id:string;sequence:number;act:string;start:number;end:number;cameraAndAction:string;narrationAnchor:string;soundCue:string};
+export type EditShot={id:string;sequence:number;act:string;start:number;end:number;sourceStart?:number;sourceEnd?:number;cameraAndAction:string;narrationAnchor:string;soundCue:string};
 export type EpisodeEdit={shots:EditShot[];captions?:{start:number;end:number;text:string}[]};
 export const SCRATCH_EDIT:EpisodeEdit={shots:scratch.shots.map(s=>({
  id:s.id,sequence:s.sequence,act:s.act,start:s.estimateStartFrame,end:s.estimateEndFrame,
@@ -50,7 +50,22 @@ export const locateShot=(frame:number,shots:EditShot[])=>{
  return found??shots.at(-1)!;
 };
 export function stateAt(frame:number,shots:EditShot[]):State{
- const sh=locateShot(frame,shots),n=sh.sequence,u=clamp((frame-sh.start)/Math.max(1,sh.end-sh.start-1)),t=frame/30;
+ const sh=locateShot(frame,shots),n=sh.sequence;
+ // Episode01 polished pipeline: the actual ADAM narration controls EDIT
+ // boundaries; the source performance still uses its original deterministic
+ // animation-clock so a longer spoken line cannot reset paws, flaps, or the
+ // continuous approved city crane. Preserve the original scratch behavior
+ // when no explicit source-range remap was supplied.
+ const sourceShot=scratch.shots[n-1];
+ if(!sourceShot||sourceShot.sequence!==n)throw Error('Unknown episode beat '+n);
+ const outputU=clamp((frame-sh.start)/Math.max(1,sh.end-sh.start-1));
+ const from=sh.sourceStart??sourceShot.estimateStartFrame;
+ const to=sh.sourceEnd??sourceShot.estimateEndFrame;
+ if(!(to>from))throw Error('Invalid narration-to-performance source range: '+sh.id);
+ const sourceFrame=Math.round(lerp(from,to-1,outputU));
+ const u=clamp((sourceFrame-sourceShot.estimateStartFrame)/
+  Math.max(1,sourceShot.estimateEndFrame-sourceShot.estimateStartFrame-1));
+ const t=sourceFrame/30;
  let day=n<=23||n>=56;
  let mocha=actor(HOME.cafeMocha,n>=5,'neutral'),essie=actor(closer(HOME.essie),n===7||(n>=18&&n<=23),'happy'),latte=actor(closer(HOME.latte),n===6,'happy');
  let demoCat=actor(closer(HOME.demo,.2,0),n<=3,'happy');
@@ -511,7 +526,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  const inTown=n>=56&&n<=57;
  if(inTown){latte.position=[2.5,0,6.3];}
  const out:State={
- frame,shot:sh,u,t,daylight:day,camera:cam.camera,target:cam.target,fov:cam.fov,blur:cam.blur,
+ frame:sourceFrame,shot:sh,u,t,daylight:day,camera:cam.camera,target:cam.target,fov:cam.fov,blur:cam.blur,
  mocha,essie,latte,demoCat,
  latteBox,essieBox,sharedBox,demoBox,
  show:{...show,shared:openShared},flap,morph,
