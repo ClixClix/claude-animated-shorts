@@ -14,8 +14,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: ep02-continuous-city-crane-${{ github.ref }}
-  cancel-in-progress: true
+  group: ep02-continuous-city-crane-${{ github.sha }}
+  cancel-in-progress: false
 
 jobs:
   continuous-opening:
