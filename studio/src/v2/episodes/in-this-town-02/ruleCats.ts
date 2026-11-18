@@ -162,6 +162,7 @@ export function createCurledSourceKitten(source:T.Texture){
   if(!src)return;
   const progress=Math.max(0,Math.min(1,o.progress??.18));
   const morph=Math.max(0,Math.min(1,o.morph??0));
+  const paper=morph*morph*(3-2*morph);
   const beat=Math.max(0,Math.min(1,o.beat??0));
   const ease=(a:number)=>{const t=Math.max(0,Math.min(1,a));return t*t*(3-2*t);};
   // Distinct real movement in 21 frames: one breath, head resettling, ear
@@ -178,23 +179,24 @@ export function createCurledSourceKitten(source:T.Texture){
   g.save();g.translate(338,361);
   g.rotate(-.115*tailPulse);
   g.drawImage(src,270*2,285*2,120*2,190*2,
-    -54,-81,116,139);
+    -54,-81+30*paper,116+20*paper,139*(1-.72*paper));
   g.restore();
   // Visible horizontal body: fill the measured .88m x .77m carton without
   // stretching box geometry. Breathing also raises the back and shoulders.
   g.drawImage(src,109*2,287*2,216*2,195*2,
-    130+3*pawTuck,289-5*breathing+3*pawTuck,
-    264+7*breathing-4*pawTuck,139+6*breathing-3*pawTuck);
+    130+3*pawTuck-18*paper,289-5*breathing+3*pawTuck+43*paper,
+    264+7*breathing-4*pawTuck+37*paper,
+    (139+6*breathing-3*pawTuck)*(1-.78*paper));
   // Keep the EXACT original kitten's eyes, crown, ears, nose and whiskers.
   // The small head slide makes it glance toward the box wall before the
   // transformation instead of staring at camera as a still illustration.
   const headX=91-7*settling;
   const headY=158+progress*8-2*breathing+3*settling;
   g.drawImage(src,102*2,78*2,222*2,245*2,
-    headX,headY,225,217);
+    headX-24*paper,headY+38*paper,225+48*paper,217*(1-.80*paper));
   // A quick right-ear flick uses the original painted ear itself. Overlay
   // is intentionally tiny (no replacement limbs or foreign sprite parts).
-  if(earPulse>.06){
+  if(earPulse>.06 && paper<.12){
    g.save();
    g.globalAlpha=.34*earPulse;
    g.translate(headX+183,headY+93);
@@ -203,9 +205,20 @@ export function createCurledSourceKitten(source:T.Texture){
      -29,-91,59,109);
    g.restore();
   }
-  if(morph>.03){
-   g.globalAlpha=.38*morph;g.fillStyle='#c6ad87';
-   g.beginPath();g.ellipse(250,345,122,65,0,0,Math.PI*2);g.fill();
+  if(paper>.05){
+   // Cat anatomy visibly becomes the PAPER SURFACE of its same carton:
+   // torso spreads into a flat crease, head/ears flatten into the material.
+   // This is not a dissolving duplicate or an arbitrary scale pop.
+   g.globalAlpha=Math.min(.83,paper*.88);
+   g.fillStyle='#bb926c';
+   g.fillRect(97+14*paper,343-7*paper,294,32+10*paper);
+   g.strokeStyle='#806347';g.lineWidth=3;
+   g.beginPath();
+   g.moveTo(105,355);g.lineTo(389,355+4*paper);
+   g.moveTo(200,335);g.lineTo(218,369);
+   g.moveTo(300,333);g.lineTo(314,369);
+   g.stroke();
+   g.globalAlpha=1;
   }
   g.restore();tex.needsUpdate=true;
  };
