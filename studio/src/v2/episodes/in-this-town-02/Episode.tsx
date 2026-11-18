@@ -368,6 +368,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
    pos:[3.75,.04,5.20],p:n===5?clamp(s.u/.58):0,active:n===5},
  ];
  events.forEach((e,i)=>{
+  if(!e.active){e.box.root.visible=false;e.cat.mesh.visible=false;return;}
   const p=e.p;
   e.box.root.visible=e.active;
   e.box.root.position.set(...e.pos);
@@ -381,7 +382,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   e.cat.update(s.t+i*.31,{
    pose:p>.54?'curled':'standing',
    expression:fold>.40?'scared':'surprised',
-   progress:tuck,morph:fold,
+   progress:tuck,morph:fold,curlBlend:ease((p-.37)/.27),
    walking:p<.28,
    look:-.13+fold*.25
   });
