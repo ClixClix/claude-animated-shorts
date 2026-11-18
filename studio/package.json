@@ -33,7 +33,11 @@
     "episode2:preview-adam": "node scripts/produce-box.mjs build-preview",
     "episode2:adam-edit-test": "node scripts/episode02-adam-edit-test.mjs",
     "episode2:voice-count": "node scripts/episode02-voice-count.mjs",
-    "episode2:generate-adam": "node scripts/episode02-generate-voice.mjs"
+    "episode2:generate-adam": "node scripts/episode02-generate-voice.mjs",
+    "episode2:director-audit": "node scripts/episode02-director-preflight.mjs --strict",
+    "episode2:series-music": "node scripts/episode02-series-music.mjs",
+    "episode2:remix-preview": "node scripts/episode02-series-music.mjs && node scripts/episode02-finish.mjs --preview",
+    "episode2:remix-master": "node scripts/episode02-series-music.mjs && node scripts/episode02-finish.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "9.1.2",
