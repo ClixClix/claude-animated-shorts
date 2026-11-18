@@ -389,6 +389,40 @@ export function directEpisodeCamera(s:State){
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:n===1?['city-establishing','demo','demoCat']:['demo','demoCat']};
  }
+ // 03 continues the APPROVED kitten three-quarter orientation from
+ // frame 104: no arbitrary top-down snap as the living body becomes paper.
+ if(n===3){
+  const u=easeTrack(s.u),p=s.demoBox;
+  const camera:V3=[p[0]+1.16-.24*u,1.70-.13*u,p[2]+1.66-.26*u];
+  const target:V3=[p[0],.36-.08*u,p[2]];
+  const fov=51-2.5*u;
+  return {camera,target,fov,region:'town' as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:n,selectedIds:['demo','demoCat']};
+ }
+ // 04 is a motivated REVEAL, not a second static kitten close-up:
+ // both the transformed primary carton and the nearby distressed carton
+ // are composed from the sidewalk with curious townspeople behind them.
+ if(n===4){
+  const u=easeTrack(s.u);
+  const camera:V3=[2.46-.25*u,2.05-.11*u,9.30-.22*u];
+  const target:V3=[1.16-.20*u,.47,5.25];
+  const fov=66-2*u;
+  return {camera,target,fov,region:'town' as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:n,selectedIds:['demo','second-trapped-box','town-reaction']};
+ }
+ // 05 returns to Mocha's ACTING instead of letting the camera get
+ // swallowed by the cafe facade or treating a sign as the story subject.
+ if(n===5){
+  const u=easeTrack(s.u),p=s.demoBox;
+  const camera:V3=[3.85-.24*u,1.79-.14*u,8.42-.29*u];
+  const target:V3=[2.58-.13*u,.60,p[2]];
+  const fov=57;
+  return {camera,target,fov,region:'town' as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:n,selectedIds:['mocha','demo']};
+ }
  // 46 deliberately cuts inside the shot to two brief café memories.
  // 58–60 have a single explicitly choreographed, cut-continuous finale.
  if(n===46||n>=58)return fit(s);
