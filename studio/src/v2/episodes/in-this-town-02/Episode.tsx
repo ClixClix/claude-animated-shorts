@@ -161,7 +161,12 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   sun.position.set(-14,28,18);sun.name='episode02-morning-sun';
   const night=new T.PointLight('#f8c98b',22,9,2);
   night.name='episode02-alley-key';night.position.set(-8.7,3.1,1.8);
-  return {root:new T.Group(),sun,night};
+  // A restrained practical warm glow ON the floor of Essie's original
+  // alley box is the visual clue Mocha discovers; no explanatory text.
+  const comfort=new T.PointLight('#ffd8a2',0,2.8,2);
+  comfort.name='episode02-alley-box-comfort';
+  comfort.position.set(-9.15,.23,1.40);
+  return {root:new T.Group(),sun,night,comfort};
  },[]);
  const effects=useMemo(()=>({
   ink:new InkPass(scene,camera as T.PerspectiveCamera,
@@ -172,7 +177,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   grade:new GradeEffect(EPISODE1_STYLE.grade,.7),
   lens:new LensBlur({...EPISODE1_STYLE.lens})
  }),[scene,camera,previewScale]);
- atmosphere.root.add(atmosphere.sun,atmosphere.night);
+ atmosphere.root.add(atmosphere.sun,atmosphere.night,atmosphere.comfort);
  const cam=camera as T.PerspectiveCamera;
  // Central 9:16-safe director. Per-shot arbitrary coordinates were originally
  // framed for a much wider field and placed several alley cameras inside the
@@ -191,6 +196,11 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  gl.localClippingEnabled=true;
  atmosphere.sun.intensity=s.daylight?2.9:.3;
  atmosphere.night.intensity=s.room==='alley'?26:s.daylight?0:9;
+ // First the box is merely eerie, then its warmth becomes visible as
+ // Mocha approaches, and finally it fades into the actual rescue.
+ atmosphere.comfort.intensity=s.shot.sequence>=45&&
+  s.shot.sequence<=50&&s.room==='alley'?
+    (s.shot.sequence===45?2+9*ease((s.u-.20)/.67):11):0;
  CHAR.uCharTint.value.set(...EPISODE1_STYLE.character.tint);
  CHAR.uCharShade.value=EPISODE1_STYLE.character.shade;
  CHAR.uGrad.value=EPISODE1_STYLE.character.gradient;
@@ -281,6 +291,14 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  if(s.shot.sequence===10){
   const twitch=ease((s.u-.46)/.12)*(1-ease((s.u-.60)/.15));
   boxes.latte.flaps.front.rotation.x+=.30*twitch;
+ }
+ // The empty alley box must RESPOND during the long silent decision.
+ // A small flap twitch and the warm floor light create a visual beat without
+ // fake hands, new cat assets or narration. Never tip the entire carton.
+ if(n===41||n===44||n===47||n===48){
+  const tap=ease((s.u-.25)/.15)*(1-ease((s.u-.55)/.22));
+  const breeze=n===44?.07:n===47?.045:.035;
+  boxes.essie.flaps.back.rotation.x-=breeze*tap;
  }
  // Mocha nudges two REAL flaps sequentially while his original Episode01
  // muzzle approaches the rim; no human-like paws or floating flap opening.
@@ -482,6 +500,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   townspeople.dispose();
   for(const p of dust.arr){p.geo.dispose();p.mat.dispose();}
   props.dispose();atmosphere.sun.dispose();atmosphere.night.dispose();
+  atmosphere.comfort.dispose();
   effects.ink.dispose();effects.bloom.dispose();effects.tone.dispose();
   effects.grade.dispose();effects.lens.dispose();
  },[world,boxes,afflictedBox,characters,demoKitten,curledKitten,townspeople,dust,atmosphere,effects,props]);
