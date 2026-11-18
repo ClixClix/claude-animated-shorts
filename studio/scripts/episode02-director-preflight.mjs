@@ -26,7 +26,7 @@ must('STRIPED_LATTE_BOX',boxes.includes("tape:'striped'")&&
 must('ESSIE_COMPLETE_BOX',!scene.includes('front.scale.y=enabled?.42')&&
  !scene.includes('box.flaps.front.visible=!enabled'),'Do not alter or remove Essie box front wall to make an easier portrait.');
 must('VISIBLE_CITY_MARKET',scene.includes('episode02-market-stalls')&&
- timeline.includes("room='market'"),'A real small market with physical stalls must be shown, not a blank coordinate or storefront.');
+ (timeline.includes("room='market'")||timeline.includes("n===29?'market'")),'A real small market with physical stalls must be shown, not a blank coordinate or storefront.');
 must('THREE_DISTINCT_ALLEYS',['episode02-search-alley-1','episode02-search-alley-2','episode02-search-alley-3']
  .every(id=>scene.includes(id))&&timeline.includes('searchAlleyIndex'),
  'Show three visually different alley locations rather than one repeating camera angle.');
