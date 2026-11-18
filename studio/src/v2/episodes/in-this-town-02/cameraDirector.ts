@@ -161,7 +161,7 @@ function fit(s:State){
  // Director beat 58 takes place OUTSIDE on the living town street.
  // The next shot is an intentional location cut to the café window.
  if(s.shot.sequence===58){
-  const camera:V3=[4.9,2.0,9.0],target:V3=[1.50,.8,5.95],fov=75;
+  const camera:V3=[4.9,2.16,9.0],target:V3=[1.50,.8,5.95],fov=75;
   return {camera,target,fov,region:'town' as Region,
    framing:projections(corners(focus),target,camera,fov),
    shot:58,selectedIds:['mocha','essie','latte','street-life']};
