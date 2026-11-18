@@ -33,6 +33,40 @@ for(const check of checks){
  }
 }
 const passed=results.length===checks.length&&results.every(x=>x.passed);
+// Non-blocking EDITORIAL timing audit: exact spoken-word map is not aligned
+// to any authorized recorded narration yet. Flag impossible per-shot densities
+// without changing the approved 60-shot visual timeline or calling a voice API.
+let narrationTimingAudit={status:'UNAVAILABLE'};
+try{
+ const dir=path.join(studioRoot,'src/v2/episodes/in-this-town-02');
+ const [plan,map,source]=await Promise.all([
+  fs.readFile(path.join(dir,'EDITORIAL_SCRATCH_PLAN.json'),'utf8').then(JSON.parse),
+  fs.readFile(path.join(dir,'NARRATION_SHOT_ALIGNMENT_PLAN.json'),'utf8').then(JSON.parse),
+  fs.readFile(path.join(dir,'DRAFT_BOX_NARRATION.txt'),'utf8')
+ ]);
+ const words=s=>String(s).match(/[A-Za-z0-9]+(?:['’][A-Za-z0-9]+)*/g)??[];
+ const normalize=s=>words(s.toLowerCase()).map(w=>w.replace(/’/g,"'")).join(' ');
+ const exactWordsMatch=normalize(map.shots.map(s=>s.spoken).join(' '))===normalize(source);
+ const flagged=map.shots.map((s,i)=>{
+  const edit=plan.shots[i];
+  if(!edit||String(edit.id)!==String(s.id))throw Error('Narration shot order mismatch at '+(i+1));
+  const duration=(edit.estimateEndFrame-edit.estimateStartFrame)/30;
+  const count=words(s.spoken).length;
+  return {shot:s.id,startFrame:edit.estimateStartFrame,endFrameExclusive:edit.estimateEndFrame,
+   seconds:+duration.toFixed(3),words:count,impliedWpm:Math.round(count*60/duration)};
+ }).filter(x=>x.impliedWpm>250);
+ narrationTimingAudit={status:'UNTIMED_SCRATCH_WARNING_NOT_AUDIO_FAILURE',
+  exactWordsMatch,shots:map.shots.length,wordCount:words(source).length,
+  totalFrames:plan.approximateFrameCount,thresholdWpm:250,
+  flaggedShots:flagged,flaggedCount:flagged.length,
+  note:'These are implied words/minute if every mapped line must fit inside its single shot. Actual voice timings may span cuts. Do not retime approved visuals or synthesize paid narration without explicit authorization.'};
+ if(!exactWordsMatch||map.shots.length!==60)
+  narrationTimingAudit.status='SOURCE_SCRIPT_MAPPING_MISMATCH';
+ console.log('EP02 NON-BLOCKING NARRATION TIMING:',JSON.stringify(narrationTimingAudit));
+}catch(e){
+ narrationTimingAudit={status:'AUDIT_UNAVAILABLE',error:String(e)};
+ console.warn('EP02 narration timing audit unavailable:',String(e));
+}
 const reportDir=path.join(studioRoot,'out/v2-episodes/in-this-town-02/series-style-qa');
 await fs.mkdir(reportDir,{recursive:true});
 let previewResult='NOT_REQUESTED';
@@ -49,7 +83,7 @@ if(preview&&passed){
 const out={stage:passed?'SOURCE_AND_GEOMETRY_CHECKS_PASS_VISUAL_REVIEW_PENDING':'CODE_AUDIT_FAILED',
  passed,checks:results,preview:previewResult,sourceReviewComplete:passed,
  artisticReviewComplete:false,confidenceInEpisode01VisualParity:null,
- noPaidMedia:true,noPublishing:true,
+ noPaidMedia:true,noPublishing:true,narrationTimingAudit,
  note:'No code test can claim 99% similarity to the Episode01 movie until actual Episode02 moving footage is inspected.'
 };
 const filename=path.join(reportDir,'EP2_REPEATABLE_CODE_AUDIT.json');
