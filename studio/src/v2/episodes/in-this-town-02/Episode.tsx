@@ -238,6 +238,27 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   {key:'demo',obj:boxes.demo,pos:s.demoBox,visible:s.show.demo,flap:s.flap.demo},
  ] as const;
  for(const b of boxArray){b.obj.root.position.set(...b.pos);b.obj.root.visible=b.visible;b.obj.setOpenAmount(b.flap);}
+ // EP02 FILM-SAFE BOX CLOSEUPS: the original upright illustrated cats are
+ // occluded by fully opaque 3D front walls even when the camera is correctly
+ // in front of the box. A lower front WALL for these actor-driven portraits
+ // (not a global scale or body rig change) reveals the same Episode01 face
+ // and paw artwork, while the other three box walls remain physically intact.
+ // Reset on EVERY frame: Remotion can render frames non-sequentially.
+ const boxRestPortraits:{box:typeof boxes.essie;enabled:boolean}[]=[
+  {box:boxes.latte,enabled:n===6},
+  {box:boxes.essie,enabled:[7,19,35,37,38,39].includes(n)}
+ ];
+ for(const {box,enabled} of boxRestPortraits){
+  const front=box.root.getObjectByName(box.spec.id+'-front') as T.Mesh|undefined;
+  if(front){
+   front.scale.y=enabled?.42:1;
+   front.position.y=box.spec.height*(enabled?.21:.5)+.04;
+  }
+  // A fully raised foreground flap can hide the entire head in a 9:16
+  // composition even if the wall has been lowered. Hide it ONLY on
+  // the close cutaway; all other flaps retain their actual hinges.
+  box.flaps.front.visible=!enabled;
+ }
  // Shot 04: another carton visibly shudders while on the sidewalk.
  afflictedBox.root.visible=n===4;
  afflictedBox.root.position.set(.40,.04,5.14);
@@ -363,7 +384,9 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  const ep1CrowdState={...previousEpisodeState(0,DRAFT_SHOTS),
   frame:s.frame,t:s.t,camera:directed.camera,target:directed.target};
  townspeople.update(ep1CrowdState);
- const outsideBusy=n<=5||n===8||n===56||n===57;
+ // Give Shot 05 Mocha his own readable reaction, not a guest blocking
+ // his face at the door. The busy living town remains visible in Shots 01-04.
+ const outsideBusy=n<=4||n===8||n===56||n===57;
  // Preserve daytime patrons in wide shots; the foreground guest in 11/14
  // otherwise covers half of Mocha's face in the real tight reaction frames.
  // Keep guests in wide cafe shots; close box faces need a clear lens.
@@ -376,7 +399,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  const walkB=6-wrap(s.t*.31,10);
  const announcementTime=Math.max(0,(s.frame-3483)/30);
  const streetSpots:V3[]=audienceOn?
-  (n===4?[[-.88,.03,5.08],[3.20,.03,5.05],[3.78,.03,5.00]]:
+  (n===4?[[.40,.02,5.14],[-1.12,.03,5.05],[3.70,.03,5.00]]:
    // Daytime cure announcement: shoppers walk near shops, not through the
    // sign or the three leads. Night alley shots retain NO crowd.
    [[-2.15+.11*announcementTime,.03,5.55],
@@ -402,7 +425,11 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   if(isGuest){
    const p=spots[i];
    const startled=n===4?ease((s.u-.26)/.44):0;
-   c.mesh.position.set(p[0]+(i===0?-.24:i===1?.22:0)*startled,p[1],p[2]);
+   c.mesh.position.set(p[0]+(n===4&&i===0?0:(i===0?-.24:i===1?.22:0)*startled),p[1],p[2]);
+   // Original town guest #0 is the *other* cat caught inside the second
+   // 0.84-scale carton. Ears and expression remain visible, rather than
+   // displaying two unexplained empty cardboard boxes.
+   c.mesh.scale.setScalar(n===4&&i===0?.64:1);
    if(shadow)shadow.position.set(c.mesh.position.x,p[1]+.006,p[2]);
    c.mesh.rotation.y=Math.atan2(cam.position.x-p[0],
     cam.position.z-p[2]);
