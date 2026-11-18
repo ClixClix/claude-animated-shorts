@@ -45,10 +45,24 @@ for(const shot of manifest.shots){
 }
 const indices=[...new Set(selected.map(x=>x.frame))].sort((a,b)=>a-b);
 if(indices.length!==180)throw Error('Expected 180 independent actual-frame samples; got '+indices.length);
-const filter='select='+indices.map(n=>'eq(n\\,'+n+')').join('+');
-run('ffmpeg',['-nostdin','-hide_banner','-v','error','-y','-i',movie,
- '-vf',filter,'-fps_mode','vfr','-q:v','4',
- path.join(review,'sample_%03d.jpg')],32*1024*1024);
+// FFmpeg's expression evaluator fails to initialize a single 180-term
+// select filter on some installations (reproduced locally). Decode in nine
+// bounded groups of 20 independent frame indices instead. Each run starts
+// output numbering at its exact absolute sample ordinal, so the 60-shot
+// HTML board still points to the intended original source frames.
+const batchSize=20;
+for(let start=0;start<indices.length;start+=batchSize){
+ const batch=indices.slice(start,start+batchSize);
+ const filter='select='+batch.map(n=>'eq(n\\\\,'+n+')').join('+');
+ run('ffmpeg',['-nostdin','-hide_banner','-v','error','-y','-i',movie,
+  '-vf',filter,'-fps_mode','vfr','-q:v','4',
+  '-start_number',String(start+1),
+  path.join(review,'sample_%03d.jpg')],32*1024*1024);
+ for(let i=0;i<batch.length;i++){
+  const sample='sample_'+String(start+i+1).padStart(3,'0')+'.jpg';
+  await fs.access(path.join(review,sample));
+ }
+}
 const frameToImage=new Map(indices.map((n,i)=>[n,'sample_'+String(i+1).padStart(3,'0')+'.jpg']));
 for(const s of selected){
  s.image=frameToImage.get(s.frame);
