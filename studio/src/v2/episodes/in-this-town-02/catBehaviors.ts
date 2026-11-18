@@ -25,6 +25,17 @@ export function catBehaviorFor(
 ):CatBehavior|null{
  const n=s.shot.sequence;
  if(id==='mocha'){
+  if(n===18)return{
+   // Mocha catches Essie by the neck floof during the outside chase.
+   // The face leans in without adding hands or replacing Episode01 body art.
+   mode:'muzzle-comfort',
+   target:[s.essie.position[0]-.14,s.essie.position[1]+.52,s.essie.position[2]],
+   intensity:.74*pulse(s.u)
+  };
+  if(n===42)return{
+   // Contact with the physical box front flap as he brings it closer.
+   mode:'mouth-carry',target:lip(s.essieBox,'essie'),intensity:.92*pulse(s.u)
+  };
   if([12,13,16].includes(n))return{
    mode:n===16?'sniff':'nose-nudge',target:lip(s.latteBox,'latte'),
    intensity:n===13?.42:.68*pulse(s.u)};
