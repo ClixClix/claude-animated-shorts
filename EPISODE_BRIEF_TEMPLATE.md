@@ -1,3 +1,5 @@
+> **ONE-PROMPT POLICY:** The user supplies a story, not a technical shot list. The production agent fills this template, derives each visual action and camera from the words, and implements/verifies the CGI. Do not ask the user to manually enumerate shots or repeat Episode 01 styles already locked in [AGENTS.md](AGENTS.md). Only seek permission for genuinely new paid services, content rights, or publication. For Episode 02, its [production director lock](studio/src/v2/episodes/in-this-town-02/PRODUCTION_DIRECTOR_LOCK.json) already contains the full user direction.
+
 # New episode brief (complete before production)
 
 - Series/title:
