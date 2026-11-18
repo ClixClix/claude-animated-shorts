@@ -133,7 +133,8 @@ function createStoryProps(){
 
  // Three genuinely different search alleys, separately photographed in beat 30.
  const alleys=([-18.5,18.5,-9.15] as number[]).map((x,i)=>{
-   const lane=new T.Group();lane.name='episode02-search-alley-'+(i+1);
+   const lane=new T.Group();
+   lane.name=['episode02-search-alley-1','episode02-search-alley-2','episode02-search-alley-3'][i];
    lane.position.set(x,0,i===2?3.05:2.55);
    const wallColors=['#687986','#7e796f','#576d70'];
    for(const side of [-1,1]){
@@ -212,6 +213,9 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  ),[demoKitten]);
  // Exactly the existing Episode 01 supporting cats, as background guests only.
  const townspeople=useMemo(()=>new TownPopulation(),[]);
+ const audience=useMemo(()=>Array.from({length:2},(_,i)=>{
+  const group=new TownPopulation();group.root.name='episode02-town-audience-'+(i+1);return group;
+ }),[]);
  // No detached forelimb/hand rigs. Cats interact with boxes using their
  // original Episode 01 heads, noses, mouths and natural planted paws.
  const dust=useMemo(()=>{
@@ -463,6 +467,22 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  const ep1CrowdState={...previousEpisodeState(0,DRAFT_SHOTS),
   frame:s.frame,t:s.t,camera:directed.camera,target:directed.target};
  townspeople.update(ep1CrowdState);
+ // The next morning Mocha addresses a gathering of 16 actual Episode 01 extras.
+ audience.forEach((group,g)=>{
+  group.update(ep1CrowdState);
+  group.root.visible=n===56||n===57;
+  group.actors.forEach((actor,i)=>{
+   const side=i%2===0?-1:1,rank=Math.floor(i/2);
+   const x=1.1+side*(1.10+rank*.54+g*.12);
+   const z=5.38+(rank%2)*.40+g*.75;
+   actor.mesh.position.set(x,.03,z);actor.mesh.visible=true;
+   actor.mesh.rotation.y=Math.atan2(cam.position.x-x,cam.position.z-z);
+   actor.mesh.scale.setScalar(.74+(i%3)*.07);
+   const index=group.root.children.indexOf(actor.mesh);
+   const shadow=group.root.children[index+1];
+   if(shadow){shadow.visible=true;shadow.position.set(x,.036,z);}
+  });
+ });
  // Give Shot 05 Mocha his own readable reaction, not a guest blocking
  // his face at the door. The busy living town remains visible in Shots 01-04.
  const outsideBusy=n<=4||n===8||n===56||n===57;
@@ -558,13 +578,13 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  useEffect(()=>()=>{world.dispose();for(const b of Object.values(boxes))b.dispose();
   Object.values(characters).forEach(c=>c.dispose());
   demoKitten.dispose();curledKitten.dispose();afflictedBox.dispose();
-  townspeople.dispose();
+  townspeople.dispose();audience.forEach(group=>group.dispose());
   for(const p of dust.arr){p.geo.dispose();p.mat.dispose();}
   props.dispose();atmosphere.sun.dispose();atmosphere.night.dispose();
   atmosphere.comfort.dispose();
   effects.ink.dispose();effects.bloom.dispose();effects.tone.dispose();
   effects.grade.dispose();effects.lens.dispose();
- },[world,boxes,afflictedBox,characters,demoKitten,curledKitten,townspeople,dust,atmosphere,effects,props]);
+ },[world,boxes,afflictedBox,characters,demoKitten,curledKitten,townspeople,audience,dust,atmosphere,effects,props]);
  return <><primitive object={world.root} dispose={null}/>
   <primitive object={atmosphere.root} dispose={null}/>
   {Object.values(boxes).map(b=><primitive key={b.root.name} object={b.root} dispose={null}/>)}
@@ -578,6 +598,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   <primitive object={demoKitten.mesh} dispose={null}/>
   <primitive object={curledKitten.mesh} dispose={null}/>
   <primitive object={townspeople.root} dispose={null}/>
+  {audience.map(group=><primitive key={group.root.name} object={group.root} dispose={null}/>)}
   <primitive object={props.root} dispose={null}/>
   <primitive object={dust.root} dispose={null}/>
   <EffectComposer multisampling={4}>
