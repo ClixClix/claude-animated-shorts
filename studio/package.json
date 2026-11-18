@@ -28,7 +28,8 @@
     "episode2:code-audit": "node scripts/episode02-quality-cycle.mjs",
     "episode2:visual-cycle": "node scripts/episode02-quality-cycle.mjs --preview",
     "episode2:motion-preview": "node scripts/episode02-finale-cloud-movie.mjs",
-    "episode2:local-full-review": "node scripts/episode02-local-full-review.mjs"
+    "episode2:local-full-review": "node scripts/episode02-local-full-review.mjs",
+    "episode2:review-existing": "node scripts/episode02-full-review.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "9.1.2",
