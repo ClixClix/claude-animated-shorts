@@ -94,8 +94,9 @@ check(56,'TOWN_ANNOUNCEMENT_STOOL',t=>t.rooms.includes('street')&&
  t.motions.mocha.visibility&&t.motions.mocha.minY>.30,'Mocha stands physically elevated on stool before live gathered cats.');
 check(58,'MOCHA_NOW_WALKS_OUTSIDE',t=>t.rooms.includes('street')&&
  t.motions.mocha.meters>.45,'Mocha walks down the town street, smiling at cats near boxes.');
-check(59,'FINAL_MOCHA_JUMP',t=>t.motions.mocha.vertical>.25,
- 'Mocha physically clears the shared box lip.','critical');
+check(59,'MOCHA_HESITANT_APPROACH',t=>t.rooms.includes('cafe')&&
+ t.motions.mocha.meters>.28&&t.motions.mocha.vertical<.08,
+ 'Director lock: Mocha walks hesitantly toward the shared box in shot 59; no jump until shot 60.','critical');
 check(60,'THREE_CAT_FINAL_JUMP',t=>['mocha','essie','latte'].every(id=>t.motions[id].vertical>.65),
  'Director lock requires ALL THREE cats to jump into the shared box in shot 60, not a static tableau.','critical');
 const important=[4,8,9,12,13,16,20,24,31,33,34,37,38,40,41,44,45,46,47,48,50,51,52,57];
