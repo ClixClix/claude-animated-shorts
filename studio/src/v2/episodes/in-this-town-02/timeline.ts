@@ -183,8 +183,12 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   mocha.emotion=n===24?'neutral':'scared';essie.visible=false;show.essie=false;
   if(n===24){
    room='street';
-   mocha.position=walk([2.45,0,5.70],[2.55,0,4.80],u);
-   mocha.walking=true;
+   // The Episode 01 café door closes on camera: approach its nose plate,
+   // pause for muzzle contact, then retreat before the leaf reaches the paws.
+   const approach=ease((u-.08)/.38),retreat=ease((u-.68)/.25);
+   mocha.position=[lerp(2.45,2.55,approach),0,
+     lerp(5.70,4.78,approach)+.29*retreat];
+   mocha.walking=(u>.08&&u<.46)||(u>.68&&u<.93);
    cam=cameraPreset([4.5,2.0,7.0],[2.35,1.2,4.45],63);
   }else if(n===25){
    room='house';
