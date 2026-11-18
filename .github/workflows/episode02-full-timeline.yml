@@ -1,15 +1,7 @@
 name: Episode 02 Full 60-Shot Cloud Visual Run
 
+# Full-film renders are manual only to avoid repeated silent cloud renders.
 on:
-  push:
-    branches:
-      - v2-local-render
-    paths:
-      - ".github/workflows/episode02-full-timeline.yml"
-      - "studio/src/v2/episodes/in-this-town-02/**"
-      - "studio/scripts/episode02-full-review.mjs"
-      - "studio/scripts/episode02-render.mjs"
-      - "studio/scripts/episode02-assemble.mjs"
   workflow_dispatch:
 
 permissions:
