@@ -202,6 +202,14 @@ export function createEpisode1CastCat(id:CatId){
   // head, torso and paws but must occupy a compact, physically supported
   // vertical silhouette. Do NOT scale the jumping/walking cat this way.
   if(restingInBox)card.mesh.scale.y*=.57;
+  // In the actual source f9466b7 shot07 image, Essie's black resting
+  // silhouette is a tiny near-floor scribble, completely below the intact
+  // 0.56m front wall. Enlarge only the Episode02 shot07 tucked painting;
+  // never shrink/remove the real box wall or alter Episode01 source art.
+  if(restingInBox&&id==='essie'&&n===7){
+   card.mesh.scale.x*=1.15;
+   card.mesh.scale.y*=1.22;
+  }
   // The paper edges settle toward the inside; preserve above-floor visibility
   // while it shrinks. Clipping and perceived fold quality still need real frames.
   card.mesh.position.y+=.045*paper;
@@ -217,7 +225,10 @@ export function createEpisode1CastCat(id:CatId){
    // Real box floors at y=.044; leave ~1cm above the cardboard bottom.
    // Keep painted head/eyes above the front rim without scaling a full
    // 1.52m cat down into a miniature.
-   card.mesh.position.y=Math.max(card.mesh.position.y,.13);
+   // Raise the tucked shot07 head just above the original cardboard rim;
+   // the painted torso and paws remain inside the actual hollow carton.
+   card.mesh.position.y=Math.max(card.mesh.position.y,
+    id==='essie'&&n===7?.27:.13);
   }
   // Preserve the recognisable Episode 01 face and markings until the FINAL
   // fold. The previous aggressive pitch/alpha produced a melted pancake in
