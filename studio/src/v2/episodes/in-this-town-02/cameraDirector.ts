@@ -423,6 +423,33 @@ export function directEpisodeCamera(s:State){
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:['mocha','demo']};
  }
+ // LOCK RESTING-CAT PERSPECTIVE: Episode 01 cats are illustrated,
+ // not full volumetric anatomy. Automatic fit and overhead cameras showed
+ // them as narrow billboards in huge empty boxes. Aim along each box's
+ // physical floor plane, keeping face + shoulders readable above the rim.
+ // Leave approved Shot 01/02 crane and all unrelated cuts untouched.
+ if(n===6||n===7||n===19){
+  const p=n===6?s.latteBox:s.essieBox;
+  const camera:V3=n===6?[p[0]+.92,1.35,p[2]+1.72]:
+    [p[0]+1.48,1.44,p[2]+2.20];
+  const target:V3=n===6?[p[0],.57,p[2]]:
+    [p[0]+.18,.61,p[2]+.14];
+  const fov=n===6?56:n===7?64:66;
+  return {camera,target,fov,region:'cafe' as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:n,selectedIds:[n===6?'latte':'essie','box']};
+ }
+ if([35,37,38,39].includes(n)){
+  const p=s.essieBox;
+  const distance=n===35?2.30:n===37?1.94:n===38?1.84:1.90;
+  const height=n===35?1.36:n===37?1.23:n===38?1.20:1.21;
+  const camera:V3=[p[0]-.22,height,p[2]-distance];
+  const target:V3=[p[0],n===35?.61:.58,p[2]+.08];
+  const fov=n===35?61:n===37?54:n===38?54:58;
+  return {camera,target,fov,region:'alley' as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:n,selectedIds:['essie','box']};
+ }
  // 46 deliberately cuts inside the shot to two brief café memories.
  // 58–60 have a single explicitly choreographed, cut-continuous finale.
  if(n===46||n>=58)return fit(s);
