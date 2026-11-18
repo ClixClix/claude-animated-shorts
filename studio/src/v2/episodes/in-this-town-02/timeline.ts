@@ -82,9 +82,11 @@ export function stateAt(frame:number,shots:EditShot[]):State{
     demoCat.visible=true;demoCat.morph=fold;
     demoCat.position=[HOME.demo[0],.13-.16*fold,HOME.demo[2]];
     morph.demo=fold;
-    flap.demo=lerp(1,.25,ease((u-.36)/.56));
+    // Keep the cartoon anatomy in clear view while it folds; previously
+    // closing the 3-D lid at 25% covered the entire transformation.
+    flap.demo=lerp(1,.90,ease((u-.77)/.23));
    }
-  if(n===4){demoCat.visible=false;flap.demo=.33;}
+  if(n===4){demoCat.visible=false;flap.demo=.72;}
  }
  if(n===5){mocha.position=walk(HOME.entrance,[1.15,0,6],u);mocha.walking=true;mocha.emotion='sad';heroBox='demo';cam=cameraPreset([5.15,1.7,9.0],[2,.7,5.1],55);}
  if(n===6){latte.position=[HOME.latte[0],.02,HOME.latte[2]];latte.emotion='happy';mocha.visible=false;heroBox='latte';cam=focus(HOME.latte,2.6,46,-.25);flap.latte=.9;}
@@ -331,12 +333,12 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   // outside the .88m carton (x=1.36..2.24), storefront and vehicle lanes.
   const approach=ease(u/.40),recoil=ease((u-.48)/.40);
   mocha.position=[
-   3.74-.65*approach+.56*recoil,
+   3.46-.50*approach+.37*recoil,
    0,
-   5.03+.08*approach+.10*recoil
+   5.03+.10*approach+.07*recoil
   ];
   mocha.walking=u<.42||(u>.52&&u<.89);
-  mocha.headTurn=-.43*approach+.66*recoil;
+  mocha.headTurn=-.46*approach+.88*recoil;
   mocha.gazeY=-.23*approach+.16*recoil;
   mocha.emotion=u>.20&&u<.77?'scared':'sad';
  }
@@ -344,7 +346,8 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   // Essie invites him with a hopeful glance; Mocha consciously refuses.
   essie.headTurn=lerp(-.16,.24,ease((u-.10)/.46));
   essie.gazeY=lerp(-.12,.10,ease((u-.20)/.50));
-  mocha.position=walk([1.45,0,.90],[1.70,0,1.24],u);
+  // Keep Mocha BEHIND Essie's box plane, not between camera and her face.
+  mocha.position=walk([1.30,0,-.12],[1.52,0,.08],u);
   mocha.headTurn=lerp(-.24,.26,ease((u-.38)/.50));
   mocha.walking=u>.25&&u<.86;
  }
