@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 import crypto from 'node:crypto';
+import {createNarratedEpisodeEdit} from './lib/episode02-adam-edit.mjs';
 
 const out=path.resolve('out/v2-episodes/in-this-town-02');
 const source=path.resolve('src/v2/episodes/in-this-town-02');
@@ -19,19 +20,9 @@ if(!voiceExists){file=path.join(out,'SCRATCH_SILENCE.wav');execFileSync('ffmpeg'
 const ffprobe=file=>JSON.parse(execFileSync('ffprobe',['-v','error','-show_entries','format=duration','-of','json',file],{encoding:'utf8'}));
 const voiceSeconds=Number(ffprobe(file).format.duration);
 if(!Number.isFinite(voiceSeconds)||voiceSeconds<=0)throw Error('Voice duration invalid.');
-// Aim for tail room while fitting the genuine, externally supplied spoken take.
-// A silent scratch intentionally retains the original approved 129.2-second editorial plan.
-const total=voiceExists?Math.ceil((voiceSeconds+2)*30):draft.approximateFrameCount;
-const ratio=total/draft.approximateFrameCount;
-let cursor=0;
-const shots=draft.shots.map((s,i)=>{
- const end=i===draft.shots.length-1?total:Math.round(s.estimateEndFrame*ratio);
- const item={id:s.id,sequence:s.sequence,act:s.act,start:cursor,end,
-  narrationAnchor:s.narrationAnchor,cameraAndAction:s.cameraAndAction,soundCue:s.soundCue};
- if(end<=cursor||end-cursor>120)throw new Error('Invalid shot '+s.id+' after duration change; production edit needs review of shot splitting before rendering.');
- cursor=end;return item;
-});
-const duration=cursor/30;
+// Exact Episode01 editorial workflow: Adam's recorded words drive the edit.
+// A uniform stretch of every silent draft shot is prohibited.
+let shots=[],cursor=0,narrationEdit=null;
 const words=(narrationText.match(/[^\s]+/g)||[]).flatMap(item=>{
  const clean=item.replace(/^['"“”]+|['"“”,.!?:;]+$/g,'');
  return clean?[clean]:[];
@@ -44,6 +35,36 @@ if(!forceSilent){
  try{alignment=JSON.parse(await fs.readFile(alignPath,'utf8'));}
  catch(e){if(e.code!=='ENOENT'||wantedPath('--words'))throw e;}
 }
+if(voiceExists){
+ if(!alignment)throw Error('A recorded Adam voice requires Approved_Word_Timings.json. Do not guess spoken word timing or uniformly stretch shot durations.');
+ const provenanceFile=path.join(out,'EP02_VOICE_PROVENANCE.json');
+ const provenance=JSON.parse(await fs.readFile(provenanceFile,'utf8').catch(()=>{
+  throw Error('Missing verified ElevenLabs Adam provenance. Use the existing one-time Episode01 voice generator and do not substitute another voice.');
+ }));
+ const plan=JSON.parse(await fs.readFile(path.join(source,'NARRATION_SHOT_ALIGNMENT_PLAN.json'),'utf8'));
+ narrationEdit=createNarratedEpisodeEdit({
+  script:narrationText,plan,draft,alignment,voiceSeconds,provenance
+ });
+ shots=narrationEdit.shots;
+ cursor=narrationEdit.durationInFrames;
+ await fs.writeFile(path.join(out,'EP02_ADAM_NARRATED_EDIT.json'),
+  JSON.stringify(narrationEdit,null,2)+'\n');
+}else{
+ cursor=draft.approximateFrameCount;
+ shots=draft.shots.map(s=>({
+  id:s.id,sequence:s.sequence,act:s.act,
+  start:s.estimateStartFrame,end:s.estimateEndFrame,
+  sourceStart:s.estimateStartFrame,sourceEnd:s.estimateEndFrame,
+  narrationAnchor:s.narrationAnchor,
+  cameraAndAction:s.cameraAndAction,soundCue:s.soundCue
+ }));
+}
+const duration=cursor/30;
+if(shots.some((s,i)=>s.end<=s.start||s.end-s.start>120||
+  s.start!==(i?shots[i-1].end:0))||
+  shots.at(-1)?.end!==cursor||
+  new Set(shots.map(s=>s.sequence)).size!==60)
+ throw Error('Episode02 source-matched narrated edit has missing, overlapping, or oversized shots.');
 let captions=[];
 if(alignment){
  if(!Array.isArray(alignment)||alignment.length<words.length*.75)throw new Error('Word alignment file is incomplete.');
@@ -68,8 +89,12 @@ execFileSync('ffmpeg',['-nostdin','-hide_banner','-v','error','-y','-i',file,
 await fs.writeFile(path.join(out,'PRODUCTION_READINESS.json'),JSON.stringify({
  stage:'PREPARED_NOT_CHECKED',sourceSignature:signature,durationInFrames:cursor,durationSeconds:duration,
  shots:shots.length,voiceInput:file,voiceProvided:voiceExists,
- captionAlignment:alignment?'provided_exact_timings':'NONE_NO_CAPTIONS',
+ captionAlignment:narrationEdit?'ADAM_EXACT_WORD_TIMINGS':'NONE_NO_CAPTIONS',
+ narrator:voiceExists?'ElevenLabs Adam / original Episode01 preset':null,
+ narratedEdit:narrationEdit?path.join(out,'EP02_ADAM_NARRATED_EDIT.json'):null,
  publishingAllowed:false,paidGenerationRequests:0,
  note:voiceExists?'Narration supplied locally by user. Rights, voice match and sync not reviewed.':'Silent SCRATCH only. Must supply approved narration before release.'
 },null,2)+'\n');
-console.log(JSON.stringify({stage:'prepared',frames:cursor,shots:shots.length,duration,voiceProvided:voiceExists,words:words.length,alignment:!!alignment,paidRequests:0}));
+console.log(JSON.stringify({stage:'prepared',frames:cursor,shots:shots.length,duration,voiceProvided:voiceExists,words:words.length,alignment:!!alignment,
+ narratedEditing:!!narrationEdit,sourceMappedShots:shots.length,
+ paidRequests:0}));
