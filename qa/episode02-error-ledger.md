@@ -1,5 +1,14 @@
 # Episode 02 — visual QA error ledger
 
+### 17 Nov 2026 — Cat rig and box perspective correction (LOCAL QA needed)
+
+- **HIGH E02-RIG-PAWS / all walking shots, immediately visible in Shot 05 frames 183–242 — FIXED IN CODE / RERENDER PENDING:** Verified SOURCE bug in `episode1Cast.ts`: Episode 02 generated paws in [front-left, front-right, back-left, back-right] order while Episode 01 `walkingLegs.anatomicalHips()` expects [left-front, left-back, right-front, right-back]. This links mismatched hips/feet and can create diagonal or unnatural locomotion. Episode 02 indexing now matches Episode 01 exactly (`ca5353b`). Gait velocity attenuation and signed camera-relative walking yaw were then added (`33f2b63`) to reduce slow-motion treadmill feet. No new local video yet; not artistically verified.
+- **HIGH E02-BOX-REST / Shots 06, 07, 19, 35, 37–39; reference frames 243–395, 1125–1190, 2139–2459 — FIXED IN CODE / RERENDER PENDING:** Verified source uses full 1.52m upright Episode 01 cards at -0.38 rad pitch even inside .48–.56m boxes, making paws float and heads resemble vertical paper sprites. New Episode02-only box-rest composition crops/arranges the ORIGINAL Episode01 art into a low torso, visible face and tucked paws; no replacement character design or Episode01 code mutation. It uses a carton-floor root and matched contact shadow height. Commit `eb8fc03`. The revised compositing may introduce art seams; MUST inspect actual frames before calling corrected.
+- **HIGH E02-CAMERA-REST / Shots 06, 07, 19, 35, 37–39 — FIXED IN CODE / RERENDER PENDING:** Earlier generated box views could be steep or placed behind cardboard walls, exaggerating the 2.5D card and scale. Authored lower 3/4 cameras focused on the true carton position, not signage (`6ea5fc7`, type correction `42e2c35`). Actual occlusions/edge-on faces still unchecked.
+- **LOCAL TEST:** `npm.cmd run episode2:local-rig-review` runs TypeScript and Episode1 style checks and exports `out/v2-episodes/in-this-town-02/rig-and-box-review/EP02_Shots03-07_RigAndBox_540p.mp4` (291 contiguous frames / 9.7 sec / 540×960 / silent) plus diagnostic stills in Shots 19 and 35–39. Commits `e20836c`, `41e7e48`. Nothing has been rendered with these latest changes yet in this QA session; do NOT claim visual parity or release signoff.
+- **No new artifact/runtime failures verified**; updated source has not undergone local TypeScript, texture-composite runtime or full-film visual checks. Previous user-approved Shots 01–02 not deliberately altered. Existing open/fixed totals in older entries remain provisional until a complete new 60-shot review.
+
+
 ### 17 Nov 2026 — Local Shot 03–05 story escalation source implementation
 
 - **Approved context:** Actual user-reviewed local 105-frame Shot 01–02 video, no dual-size kitten duplicate. Source for those shots preserved; the review clip is the only artistic approval of those two shots.
