@@ -1,13 +1,7 @@
 name: Episode 02 — Seamless Shot 01 to Shot 02 Right Crane
 
+# Episode 02 preview renders are manually triggered only.
 on:
-  push:
-    branches: [v2-local-render]
-    paths:
-      - ".github/workflows/episode02-opening-crane-preview.yml"
-      - "studio/scripts/episode02-opening-crane-preview.mjs"
-      - "studio/src/v2/episodes/in-this-town-02/cameraDirector.ts"
-      - "studio/src/v2/episodes/in-this-town-02/Episode.tsx"
   workflow_dispatch:
 
 permissions:
