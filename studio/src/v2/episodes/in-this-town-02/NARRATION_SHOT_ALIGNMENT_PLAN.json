@@ -2,11 +2,11 @@
   "episode": "The Cat Who Became a Box",
   "narrator": {
     "provider": "ElevenLabs",
-    "voiceName": "Sawyer",
-    "voiceId": "8dEUmyPMdDdK91vboYih",
+    "voiceName": "Adam",
+    "voiceId": "pNInz6obpgDQGcFmaJgB",
     "modelId": "eleven_multilingual_v2"
   },
-  "status": "SOURCE_TEXT_VERIFIED_UNTIMED",
+  "status": "SOURCE_TEXT_VERIFIED_UNTIMED_ADAM_LOCKED",
   "source": "DRAFT_BOX_NARRATION.txt",
   "shots": [
     {
