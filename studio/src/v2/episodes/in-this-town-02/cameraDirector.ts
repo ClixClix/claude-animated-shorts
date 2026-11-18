@@ -158,21 +158,25 @@ function preferredFov(s:State){
 }
 function fit(s:State){
  const focus=focusSet(s),center=boundsCenter(focus),r=region(s);
- // The finale uses a low, front 3/4 camera rather than an overhead
- // box-first composition. Start 58 and 59 on exactly the same lens so Mocha
- // is visible APPROACHING, then follow his jump and gently reveal the trio.
- // 60 begins at the end of 59's pose/lens; no hard reframing cut.
- if(s.shot.sequence>=58){
+ // Director beat 58 takes place OUTSIDE on the living town street.
+ // The next shot is an intentional location cut to the café window.
+ if(s.shot.sequence===58){
+  const camera:V3=[4.9,2.0,9.0],target:V3=[1.50,.8,5.95],fov=75;
+  return {camera,target,fov,region:'town' as Region,
+   framing:projections(corners(focus),target,camera,fov),
+   shot:58,selectedIds:['mocha','essie','latte','street-life']};
+ }
+ // Beat 59 holds a wide, grounded approach; beat 60 shows THREE complete
+ // jumps. Keep the lens identical at their cut, then push after all cats
+ // have cleared their box walls. No sudden midair camera refit.
+ if(s.shot.sequence>=59){
   const n=s.shot.sequence,u=clamp(s.u,0,1);
-  // A fixed start lens observes Mocha's decision. Pan ONCE, gently,
-  // only after take-off, instead of chasing the cat then reversing direction
-  // toward the group mid-jump. Match the end of 59 to the start of 60.
-  const recenter=n===59?easeTrack((u-.42)/.55):n===60?1:0;
-  const trackX=-2.95+1.50*recenter;
-  const camera:V3=[trackX,1.98,4.12-(n===60?.08*easeTrack(u):0)];
-  const target:V3=[trackX,.83,2.11];
-  const fov=98-(n===60?5*easeTrack(u):0); // Constant lens through jump; small final push.
-  return {camera,target,fov,region:r,
+  const push=n===60?easeTrack((u-.62)/.37):0;
+  const trackX=-2.45+.55*push;
+  const camera:V3=[trackX,2.10,5.35-.20*push];
+  const target:V3=[trackX,.78,2.10];
+  const fov=95-3*push;
+  return {camera,target,fov,region:'shared' as Region,
    framing:projections(corners(focus),target,camera,fov),
    shot:n,selectedIds:focus.map(x=>x.id)};
  }
