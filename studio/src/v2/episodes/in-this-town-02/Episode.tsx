@@ -242,7 +242,9 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  afflictedBox.root.visible=n===4;
  afflictedBox.root.position.set(.40,.04,5.14);
  afflictedBox.root.scale.setScalar(.84);
- afflictedBox.setOpenAmount(.08);
+ // Leave the second carton visibly hollow instead of looking like a
+ // closed empty package. Its motion tells the story without a giant sign.
+ afflictedBox.setOpenAmount(.67);
  if(n===4){
   const twitch=ease((s.u-.22)/.18)*(1-ease((s.u-.56)/.20));
   afflictedBox.flaps.front.rotation.x+=.48*twitch;
@@ -345,11 +347,13 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   // The physical carton stays .88 × .77 metres: increase kitten occupancy,
   // not box size. Use the same starting scale in Shot 03 for continuity.
   const breath=n===2?Math.sin(Math.PI*s.u):0;
-  curledKitten.mesh.position.set(s.demoBox[0],.057+.007*breath-.10*fold,s.demoBox[2]);
+  // Do not sink the entire cat BELOW the cardboard floor while morphing.
+ curledKitten.mesh.position.set(s.demoBox[0],.057+.007*breath-.012*fold,s.demoBox[2]);
   curledKitten.mesh.rotation.y=Math.atan2(cam.position.x-s.demoBox[0],
    cam.position.z-s.demoBox[2]);
   curledKitten.mesh.rotation.x=-.28;
-  curledKitten.mesh.scale.setScalar(1.40*(1-.36*fold));
+  // Let the paint fold in its texture, not via a 36% magic-size pop.
+ curledKitten.mesh.scale.setScalar(1.40*(1-.11*fold));
  }
  // Episode 01's background supporting-cat asset set. Do not promote their
  // simplified drawings to close-up leading actors; keep them as background.
@@ -362,7 +366,8 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  const outsideBusy=n<=5||n===8||n===56||n===57;
  // Preserve daytime patrons in wide shots; the foreground guest in 11/14
  // otherwise covers half of Mocha's face in the real tight reaction frames.
- const cafeBusy=n>=6&&n<=23&&n!==11&&n!==14;
+ // Keep guests in wide cafe shots; close box faces need a clear lens.
+ const cafeBusy=n>=6&&n<=23&&![7,11,14,19].includes(n);
  const audienceOn=n===4||n===56||n===57;
  // Deterministic sidewalk motion, not random positions on each render frame.
  // Keep everyone off the road and away from the hero's box contact.
