@@ -105,14 +105,17 @@ export function createEpisode1CastCat(id:CatId){
   // Rear body/haunch stretches along the *bottom* of its carton,
   // rather than standing above the flap as a flat vertical sticker.
   g.drawImage(src,276*2,284*2,125*2,180*2,286,326,111,123);
-  g.drawImage(src,145*2,270*2,243*2,205*2,131,329,272,116);
+  const breathing=Math.sin(time*2.1);
+  g.drawImage(src,145*2,270*2,243*2,205*2,
+   131,329-4*breathing,272,116+5*breathing);
   // Original Episode 01 eyes, ear shapes, markings, muzzle and whiskers.
   // The face is lifted only enough to remain legible above the front rim.
-  const breath=1.1*Math.sin(time*1.8);
+  const breath=4.2*Math.sin(time*2.1+.22);
   g.drawImage(src,125*2,63*2,260*2,251*2,115,130+breath,267,211);
   // Both actual painted forepaws tuck below the chin, touching the bed
   // of the carton instead of extending out through its side walls.
-  g.drawImage(src,172*2,383*2,166*2,103*2,178,402,155,65);
+  g.drawImage(src,172*2,383*2,166*2,103*2,
+   178,402+1.6*Math.sin(time*1.9),155,65);
   g.restore();restTexture.needsUpdate=true;
  };
  const update=(pose:ActorPose,next:ActorPose,s:State,camera:T.PerspectiveCamera,behavior:CatBehavior|null=null)=>{
