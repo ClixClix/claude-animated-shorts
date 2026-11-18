@@ -435,7 +435,7 @@ export function directEpisodeCamera(s:State){
   const target:V3=n===6?[p[0],.57,p[2]]:
     [p[0]+.18,.61,p[2]+.14];
   const fov=n===6?56:n===7?64:66;
-  return {camera,target,fov,region:'cafe' as Region,
+  return {camera,target,fov,region:(n===6?'latte':'essie') as Region,
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:[n===6?'latte':'essie','box']};
  }
