@@ -96,8 +96,8 @@ check(58,'MOCHA_NOW_WALKS_OUTSIDE',t=>t.rooms.includes('street')&&
  t.motions.mocha.meters>.45,'Mocha walks down the town street, smiling at cats near boxes.');
 check(59,'FINAL_MOCHA_JUMP',t=>t.motions.mocha.vertical>.25,
  'Mocha physically clears the shared box lip.','critical');
-check(60,'THREE_CAT_FINAL_SETTLE',t=>t.motions.mocha.meters>.08&&t.motions.latte.meters>.07,
- 'After Mocha jumps in shot 59, final shot 60 should show subtle supported settling together, not an invented second jump.');
+check(60,'THREE_CAT_FINAL_JUMP',t=>['mocha','essie','latte'].every(id=>t.motions[id].vertical>.65),
+ 'Director lock requires ALL THREE cats to jump into the shared box in shot 60, not a static tableau.','critical');
 const important=[4,8,9,12,13,16,20,24,31,33,34,37,38,40,41,44,45,46,47,48,50,51,52,57];
 for(const n of important)unreviewed.push({shot:n,problem:'Requires ACTUAL rendered source/video inspection for prop interactions, legibility and action continuity; time-series pose changes are insufficient.'});
 const failures=measured.filter(m=>m.result!=='PASS_SOURCE_MOTION');
