@@ -284,7 +284,15 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   kittenBlink:n===2?Math.max(0,1-Math.abs(s.u-.64)/.20):0
  };
  demoKitten.update(kittenState,s.frame);
- demoKitten.mesh.visible=s.demoCat.visible&&s.demoCat.morph<.95&&n!==2&&n!==3;
+ // Preserve the EXACT kitten frame and silhouette across frame 83 -> 84.
+ // Gently tuck its original upright pose into the already-rendered curled
+ // version DURING the uninterrupted push rather than popping at the edit.
+ const curlMix=n===2?ease((s.u-.25)/.58):n===3?1:0;
+ demoKitten.mesh.visible=s.demoCat.visible&&s.demoCat.morph<.95&&(n===1||(n===2&&curlMix<.995));
+ const originalMat=demoKitten.mesh.material as T.MeshLambertMaterial;
+ originalMat.transparent=n===2;
+ originalMat.depthWrite=n!==2;
+ originalMat.opacity=n===2?1-curlMix:1;
  demoKitten.mesh.position.set(...s.demoCat.position);
  // Physical paper-fold acting in shot 03: hold the actual Episode01 kitten
  // visibly above the rim first, then fold/sink into its ONE persistent box.
@@ -303,6 +311,8 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // Reuse the approved illustration technique, now with a horizontal curled
  // torso, resting paws and a lifted recognizable face inside SAME box.
  curledKitten.mesh.visible=n===2||n===3;
+ const tuckedMat=curledKitten.mesh.material as T.MeshLambertMaterial;
+ tuckedMat.opacity=n===2?curlMix:1;
  if(curledKitten.mesh.visible){
   const fold=n===3?s.demoCat.morph:0;
   curledKitten.update(s.t,{
