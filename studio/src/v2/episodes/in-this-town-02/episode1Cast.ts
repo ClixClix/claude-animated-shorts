@@ -97,7 +97,7 @@ export function createEpisode1CastCat(id:CatId){
  const restContext=restCanvas.getContext('2d')!;
  const restTexture=new T.CanvasTexture(restCanvas);
  restTexture.colorSpace=T.SRGBColorSpace;restTexture.anisotropy=8;
- const renderRest=(time:number)=>{
+ const renderRest=(time:number,standingMix=0)=>{
   const src=card.texture.image as HTMLCanvasElement;
   const g=restContext;
   g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,1000,1100);
@@ -123,7 +123,17 @@ export function createEpisode1CastCat(id:CatId){
   // of the carton instead of extending out through its side walls.
   g.drawImage(src,172*2,383*2,166*2,103*2,
    178,402+1.6*Math.sin(time*1.9),155,65);
-  g.restore();restTexture.needsUpdate=true;
+  g.restore();
+  // Blend exactly the same Episode 01 character art between upright and
+  // tucked states. Switching the texture in one frame made Mocha visibly
+  // POP/GLITCH at box entry and rescue exit. This is a continuous mix.
+  if(standingMix>0){
+   g.save();g.setTransform(1,0,0,1,0,0);
+   g.globalAlpha=clamp(standingMix);
+   g.drawImage(src,0,0,restCanvas.width,restCanvas.height);
+   g.restore();
+  }
+  restTexture.needsUpdate=true;
  };
  const update=(pose:ActorPose,next:ActorPose,s:State,camera:T.PerspectiveCamera,behavior:CatBehavior|null=null)=>{
   // Using a neutral Episode 01 state avoids executing its *story-specific*
@@ -160,7 +170,7 @@ export function createEpisode1CastCat(id:CatId){
     (id==='latte'&&s.u>=.84));
   const restingInBox=(id==='latte'&&n===6&&s.u>=.70)||
     (id==='essie'&&(n===7||[19,35].includes(n)&&s.u>=.72||[37,38,39].includes(n)))||
-    (id==='mocha'&&((n===49&&s.u>=.84)||n===50||(n===51&&s.u<.34)))||finaleLanded;
+    (id==='mocha'&&((n===49&&s.u>=.80)||n===50||n===51))||finaleLanded;
   // In the rescue close-up he must remain tucked *inside* the same
   // physical carton. A standing 1.52m card cannot fit the 0.56m wall,
   // and jumping out before Essie reforms made the visual rule unclear.
@@ -175,7 +185,10 @@ export function createEpisode1CastCat(id:CatId){
     behavior.mode==='muzzle-comfort'?.46*behavior.intensity:0);
   }
   card.updateActor(a,ep1);
-  if(restingInBox)renderRest(s.t);
+  const standingMix=id==='mocha'&&n===49?
+   1-clamp((s.u-.80)/.20):
+   id==='mocha'&&n===51?clamp((s.u-.28)/.32):0;
+  if(restingInBox)renderRest(s.t,standingMix);
   const activeTexture=restingInBox?restTexture:card.texture;
   if(card.mesh.material.map!==activeTexture){
    card.mesh.material.map=activeTexture;
@@ -208,7 +221,7 @@ export function createEpisode1CastCat(id:CatId){
   // carton wall is only ~0.5m. The rest-only artwork reuses Episode01's
   // head, torso and paws but must occupy a compact, physically supported
   // vertical silhouette. Do NOT scale the jumping/walking cat this way.
-  if(restingInBox)card.mesh.scale.y*=.57;
+  if(restingInBox)card.mesh.scale.y*=.57+.43*standingMix;
   // In the actual source f9466b7 shot07 image, Essie's black resting
   // silhouette is a tiny near-floor scribble, completely below the intact
   // 0.56m front wall. Enlarge only the Episode02 shot07 tucked painting;
