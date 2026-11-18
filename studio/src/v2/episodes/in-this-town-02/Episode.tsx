@@ -315,16 +315,19 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // Actual 21-frame proof showed a tiny upright kitten throughout Shot 02.
  // Reuse the approved illustration technique, now with a horizontal curled
  // torso, resting paws and a lifted recognizable face inside SAME box.
- curledKitten.mesh.visible=s.demoCat.visible&&n>=1&&n<=3;
+ curledKitten.mesh.visible=s.demoCat.visible&&((n>=1&&n<=3)||n===57);
  const tuckedMat=curledKitten.mesh.material as T.MeshLambertMaterial;
- tuckedMat.opacity=1;
+ // The kitten materializes as Mocha demonstrates the cure; no pop-cut.
+ tuckedMat.transparent=n===57;
+ tuckedMat.opacity=n===57?ease((s.u-.34)/.34):1;
+ tuckedMat.depthWrite=n!==57||s.u>.68;
  if(curledKitten.mesh.visible){
-  const fold=n===3?s.demoCat.morph:0;
+  const fold=n===3?s.demoCat.morph:n===57?1-ease((s.u-.32)/.60):0;
   curledKitten.update(s.t,{
-   progress:n<=2?.14+(n===2?.23*ease(s.u):0):.35+.40*fold,
+   progress:n===57?.35-.21*ease((s.u-.35)/.50):n<=2?.14+(n===2?.23*ease(s.u):0):.35+.40*fold,
    // Real 21-frame action: breathing, blink, head and ear adjustment,
    // distinct tail curl and paw settle; source art stays identical to Shot 1.
-   beat:n===2?s.u:0,
+   beat:n===2||n===57?s.u:0,
    morph:fold});
   // The physical carton stays .88 × .77 metres: increase kitten occupancy,
   // not box size. Use the same starting scale in Shot 03 for continuity.
@@ -406,7 +409,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   car.position.set(lane,.03,z);
   car.rotation.y=Math.PI/2;
  }
- props.board.visible=n===57;
+ props.board.visible=false; // The cure is acted out in shot 57, never explained by a billboard.
  props.sign.visible=n===24;
  props.treat.visible=n===16;
  // Face-based contact above drives the interaction. No detached arm,
