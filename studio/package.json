@@ -29,7 +29,11 @@
     "episode2:visual-cycle": "node scripts/episode02-quality-cycle.mjs --preview",
     "episode2:motion-preview": "node scripts/episode02-finale-cloud-movie.mjs",
     "episode2:local-full-review": "node scripts/episode02-local-full-review.mjs",
-    "episode2:review-existing": "node scripts/episode02-full-review.mjs"
+    "episode2:review-existing": "node scripts/episode02-full-review.mjs",
+    "episode2:preview-adam": "node scripts/produce-box.mjs build-preview",
+    "episode2:adam-edit-test": "node scripts/episode02-adam-edit-test.mjs",
+    "episode2:voice-count": "node scripts/episode02-voice-count.mjs",
+    "episode2:generate-adam": "node scripts/episode02-generate-voice.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "9.1.2",
