@@ -228,7 +228,13 @@ export function stateAt(frame:number,shots:EditShot[]):State{
     n===33?focus(mocha.position,2,40,1.1):
     cameraPreset([-6.5,1.55,8.0],[-9.15,.7,1.8],39);
  }
- if(n>=35&&n<=52){room='alley';essieBox=HOME.alleyBox;
+ if(n>=35&&n<=52){
+  room='alley';
+  // Mocha actually drags the SAME physical box toward himself in shot 42.
+  // Retain its displaced position through the rescue instead of snapping
+  // it back to the original footprint at the next cut.
+  essieBox=[HOME.alleyBox[0],0,HOME.alleyBox[2]+
+   (n===42?.18*ease((u-.20)/.60):n>42?.18:0)];
   // The blue shop facade begins at X=-8.35; preserve the original cat's
   // 0.67m half-width by keeping Mocha in the open corridor near X=-9.25.
   mocha.position=n===36?walk(HOME.alleyMouth,[-9.25,0,2.70],u):[-9.25,0,2.70];
@@ -255,7 +261,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   // never render his upright card directly in front of his own camera.
   if(n===45)mocha.visible=false;
   if(n===49){
-   mocha.position=walk([-9.25,0,2.70],HOME.alleyBox,u);
+   mocha.position=walk([-9.25,0,2.70],essieBox,u);
    mocha.position[1]=.70*Math.sin(Math.PI*ease(u)); // Clear the physical box rim.
    // Enter full-size, then tuck into a physically supported rest.
    // Limit the illustrated card's apparent shrink to a crouch-sized 22%.
@@ -265,7 +271,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
    // Mocha STAYS with Essie during the cure. The previous code made him
    // jump OUT simultaneously with her transformation, removing the visual
    // cause of the rescue and creating a floating size pop.
-   mocha.position=[HOME.alleyBox[0],.08,HOME.alleyBox[2]+.12];
+   mocha.position=[essieBox[0],.08,essieBox[2]+.12];
    mocha.walking=false;
    mocha.scale=.78;flap.essie=.95;
   }
@@ -277,12 +283,12 @@ export function stateAt(frame:number,shots:EditShot[]):State{
    // The front rim is at Y≈.60 and Z≈1.94. Lift paws BEFORE moving
    // across it, then plant both cats outside. The previous straight-line
    // exit would clip through opaque cardboard even with perfect cameras.
-   essie.position=[HOME.alleyBox[0]-.10,
+   essie.position=[essieBox[0]-.10,
     .10*(1-essieOut)+.80*Math.sin(Math.PI*essieOut),
-    lerp(HOME.alleyBox[2]+.10,2.70,essieOut)];
-   mocha.position=[HOME.alleyBox[0],
+    lerp(essieBox[2]+.10,2.70,essieOut)];
+   mocha.position=[essieBox[0],
     .08*(1-mochaOut)+.76*Math.sin(Math.PI*mochaOut),
-    lerp(HOME.alleyBox[2]+.12,2.43,mochaOut)];
+    lerp(essieBox[2]+.12,2.43,mochaOut)];
    essie.scale=lerp(.82,1,essieOut);
    mocha.scale=lerp(.78,1,mochaOut);
    essie.walking=u>.13&&u<.78;
@@ -420,7 +426,8 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  }
  if(n>=37&&n<=39){essie.position=[HOME.alleyBox[0],.12,HOME.alleyBox[2]];essie.scale=.78;}
  if(n===50){essie.position=[HOME.alleyBox[0],.16,HOME.alleyBox[2]];essie.scale=lerp(.60,.82,ease(u));}
- if(n===51){essie.position=[HOME.alleyBox[0],.10,HOME.alleyBox[2]+.28];essie.scale=lerp(.82,1,ease(u));}
+ // Preserve shot 51's real over-rim rescue arc; a later static rest pose
+ // previously overwrote the entire exit and made Essie phase through the wall.
  if(n===55){
   // The rescued cat launches above the striped box rim and lands forward,
   // rather than fading in as a static upright card.
