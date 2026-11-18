@@ -45,6 +45,8 @@ jobs:
         run: npm run inthis:next-test
       - name: TypeScript compilation check
         run: npm run typecheck
+      - name: Verify striped cardboard material geometry and four intact hinged flaps
+        run: node scripts/episode02-box-tests.mjs
       - name: Strict source presence for user's Episode 02 beats
         run: npm run episode2:director-audit
       - name: Enforce locked Episode 02 physical-action source checks (not artistic approval)
