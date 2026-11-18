@@ -304,7 +304,10 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  // The rule-cat remains the approved illustrated kitten, not a substitute
  // 3-D toy. Gently recline its real card inside the physical box so the
  // raised shot-02 angle sees a supported body/face rather than an edge-on slab.
- demoKitten.mesh.rotation.x=n===3?-.42-.26*demoFold:n===2?-.42:0;
+ // Keep the approved Shot 01 original kitten upright at the exact
+ // frame-83/84 seam; recline it only as its curled pose fades in.
+ demoKitten.mesh.rotation.x=n===3?-.42-.26*demoFold:
+  n===2?-.42*ease((s.u-.08)/.77):0;
  demoKitten.mesh.rotation.y=Math.atan2(cam.position.x-s.demoCat.position[0],
   cam.position.z-s.demoCat.position[2]);
  // Actual 21-frame proof showed a tiny upright kitten throughout Shot 02.
