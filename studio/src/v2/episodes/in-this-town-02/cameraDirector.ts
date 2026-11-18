@@ -41,15 +41,15 @@ function focusSet(s:State):Extents[]{
  };
  if(n===46&&s.room==='cafe')return s.heroBox==='latte'?
   [B('latte'),C('latte')]:[B('essie'),C('essie')];
- if(n===4)return [B('demo'),cat('guest-1',[.55,.03,6.45],.6),
-  cat('guest-2',[2.9,.03,6.2],.6),cat('guest-3',[3.8,.03,6.75],.6)];
+ if(n===4)return [B('demo'),C('demoCat')]; // Foreground subject; crowd is environmental, not mandatory safe-area focus.
  if(n<=3)return n<=2?[B('demo'),C('demoCat')]:[B('demo'),C('demoCat')];
  if(n===5)return [C('mocha'),B('demo')];
  if(n===5||n===8||n===11||n===14||n===17||n===23||n===24||n===25||n===27||n===28||n===29||n===30||n===33||n===36||n===43||n===48)return [C('mocha')];
  if(n===6)return [B('latte'),C('latte')];
  if(n===7)return [B('essie'),C('essie'),C('mocha')];
  if(n===9||n===15||n===16)return [C('mocha'),B('latte')];
- if(n===10||n===13)return [B('latte')];
+ if(n===10)return [B('latte')];
+ if(n===13)return [C('mocha')]; // Box-rim POV: frame the face being observed, not the box surrounding the lens.
  if(n===12)return [C('mocha'),B('latte')];
  if(n===18||n===20||n===22)return [C('mocha'),C('essie'),B('essie')];
  if(n===19)return [C('essie'),B('essie')]; // Mocha is hidden in this Essie-only insert.
