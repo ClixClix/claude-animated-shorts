@@ -157,24 +157,52 @@ export function createCurledSourceKitten(source:T.Texture){
  const mesh=new T.Mesh(geo,mat);
  mesh.name='episode02-original-kitten-curled-pose';
  mesh.castShadow=true;mesh.receiveShadow=true;
- const update=(_seconds:number,o:{progress?:number;morph?:number;[key:string]:unknown}={})=>{
+ const update=(_seconds:number,o:{progress?:number;morph?:number;beat?:number}={})=>{
   const src=source.image as HTMLCanvasElement|undefined;
   if(!src)return;
   const progress=Math.max(0,Math.min(1,o.progress??.18));
   const morph=Math.max(0,Math.min(1,o.morph??0));
+  const beat=Math.max(0,Math.min(1,o.beat??0));
+  const ease=(a:number)=>{const t=Math.max(0,Math.min(1,a));return t*t*(3-2*t);};
+  // Distinct real movement in 21 frames: one breath, head resettling, ear
+  // twitch, tail curl and planted-paw tuck. Original source art (including
+  // actual blink) is refreshed by demoKitten.update BEFORE this compositing.
+  const breathing=Math.sin(Math.PI*beat);
+  const settling=ease((beat-.20)/.62);
+  const earPulse=Math.exp(-Math.pow((beat-.63)/.095,2));
+  const tailPulse=Math.exp(-Math.pow((beat-.78)/.15,2));
+  const pawTuck=ease((beat-.72)/.24);
   g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,840,1040);
   g.save();g.scale(2,2);
-  // Real original tail: curl toward the rear instead of a disembodied oval.
-  g.drawImage(src,270*2,285*2,120*2,190*2,284,273,115,140);
-  // Compress the original kitten's drawn shoulders and both planted paws
-  // into a horizontal sleeping torso, retained within the .88m carton.
-  g.drawImage(src,109*2,287*2,216*2,195*2,128,288,259,137);
-  // Preserve the exact original kitten face/ears, with the painted chest
-  // connecting the head to the horizontal body rather than hovering above.
-  const headDown=16+progress*9;
-  g.drawImage(src,102*2,78*2,222*2,245*2,93,146+headDown,223,220);
-  // A subtle horizontal tuck reads "curled" in a .7-second close-up.
-  // Final paper-fold response is deliberately left to Shot 03.
+  // The tail curls toward the torso rather than reading as a second head.
+  g.save();g.translate(338,361);
+  g.rotate(-.115*tailPulse);
+  g.drawImage(src,270*2,285*2,120*2,190*2,
+    -54,-81,116,139);
+  g.restore();
+  // Visible horizontal body: fill the measured .88m x .77m carton without
+  // stretching box geometry. Breathing also raises the back and shoulders.
+  g.drawImage(src,109*2,287*2,216*2,195*2,
+    130+3*pawTuck,289-5*breathing+3*pawTuck,
+    264+7*breathing-4*pawTuck,139+6*breathing-3*pawTuck);
+  // Keep the EXACT original kitten's eyes, crown, ears, nose and whiskers.
+  // The small head slide makes it glance toward the box wall before the
+  // transformation instead of staring at camera as a still illustration.
+  const headX=91-7*settling;
+  const headY=158+progress*8-2*breathing+3*settling;
+  g.drawImage(src,102*2,78*2,222*2,245*2,
+    headX,headY,225,217);
+  // A quick right-ear flick uses the original painted ear itself. Overlay
+  // is intentionally tiny (no replacement limbs or foreign sprite parts).
+  if(earPulse>.06){
+   g.save();
+   g.globalAlpha=.34*earPulse;
+   g.translate(headX+183,headY+93);
+   g.rotate(-.085*earPulse);
+   g.drawImage(src,248*2,86*2,59*2,110*2,
+     -29,-91,59,109);
+   g.restore();
+  }
   if(morph>.03){
    g.globalAlpha=.38*morph;g.fillStyle='#c6ad87';
    g.beginPath();g.ellipse(250,345,122,65,0,0,Math.PI*2);g.fill();
