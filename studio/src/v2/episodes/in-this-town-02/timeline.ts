@@ -74,7 +74,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   Math.max(1,sourceShot.estimateEndFrame-sourceShot.estimateStartFrame-1));
  const t=sourceFrame/30;
  let day=n<=23||n>=56;
- let mocha=actor(HOME.cafeMocha,n>=5,'neutral'),essie=actor(closer(HOME.essie),n===7||(n>=18&&n<=23),'happy'),latte=actor(closer(HOME.latte),n===6,'happy');
+ let mocha=actor(HOME.cafeMocha,n>=4,'neutral'),essie=actor(closer(HOME.essie),n===7||(n>=18&&n<=23),'happy'),latte=actor(closer(HOME.latte),n===6,'happy');
  let demoCat=actor(closer(HOME.demo,.2,0),n<=3,'happy');
  const latteBox=[...HOME.latte] as V3,sharedBox=[...HOME.shared] as V3,demoBox=[...HOME.demo] as V3;
  let essieBox=[...HOME.essie] as V3;
@@ -509,6 +509,15 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  // Directed story-specific performance. Source-only geometry correctness
  // previously produced long inert poses; each beat must actually communicate
  // the narration through the approved Episode 01 expression rig.
+ if(n===4){
+  // Mocha must WITNESS the two distinct town cat-to-box transformations.
+  // A closeup of an empty carton with Mocha missing failed the user story.
+  mocha.position=walk([5.15,0,6.35],[4.45,0,6.35],ease(u));
+  mocha.walking=true;
+  mocha.headTurn=lerp(-.52,-.76,ease(u));
+  mocha.gazeY=-.15;
+  mocha.emotion='surprised';
+ }
  if(n===5){
   // Director lock: the camera follows Mocha WALKING along the street,
   // watching the third town cat jump into its box and become cardboard.
