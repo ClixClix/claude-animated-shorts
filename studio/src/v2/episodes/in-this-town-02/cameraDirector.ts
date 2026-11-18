@@ -405,9 +405,11 @@ export function directEpisodeCamera(s:State){
  // are composed from the sidewalk with curious townspeople behind them.
  if(n===4){
   const u=easeTrack(s.u);
-  const camera:V3=[2.46-.25*u,2.05-.11*u,9.30-.22*u];
-  const target:V3=[1.16-.20*u,.47,5.25];
-  const fov=66-2*u;
+  // Stay on the shop-side curb so traffic and a streetlight cannot wipe
+  // the frame. Wider reveal captures BOTH boxes and a guest reaction.
+  const camera:V3=[2.23-.12*u,1.85-.08*u,7.20-.07*u];
+  const target:V3=[1.05-.08*u,.50,5.22];
+  const fov=79-2*u;
   return {camera,target,fov,region:'town' as Region,
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:['demo','second-trapped-box','town-reaction']};
@@ -416,9 +418,11 @@ export function directEpisodeCamera(s:State){
  // swallowed by the cafe facade or treating a sign as the story subject.
  if(n===5){
   const u=easeTrack(s.u),p=s.demoBox;
-  const camera:V3=[3.85-.24*u,1.79-.14*u,8.42-.29*u];
-  const target:V3=[2.58-.13*u,.60,p[2]];
-  const fov=57;
+  // Keep carton and Mocha on screen while his recoil returns right:
+  // old portrait 57-degree shot cropped him completely at frame 242.
+  const camera:V3=[3.75+.03*u,1.89-.06*u,8.16-.06*u];
+  const target:V3=[2.65+.02*u,.58,p[2]];
+  const fov=73;
   return {camera,target,fov,region:'town' as Region,
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:['mocha','demo']};
@@ -431,21 +435,25 @@ export function directEpisodeCamera(s:State){
  if(n===6||n===7||n===19){
   const p=n===6?s.latteBox:s.essieBox;
   const camera:V3=n===6?[p[0]+.92,1.35,p[2]+1.72]:
-    [p[0]+1.48,1.44,p[2]+2.20];
+    n===7?[p[0]+.50,1.77,p[2]+3.05]:
+    [p[0]+.48,1.60,p[2]+2.80];
   const target:V3=n===6?[p[0],.57,p[2]]:
-    [p[0]+.18,.61,p[2]+.14];
-  const fov=n===6?56:n===7?64:66;
+    [p[0]+.20,.68,p[2]+.10];
+  const fov=n===6?56:n===7?70:65;
   return {camera,target,fov,region:(n===6?'latte':'essie') as Region,
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:[n===6?'latte':'essie','box']};
  }
  if([35,37,38,39].includes(n)){
   const p=s.essieBox;
-  const distance=n===35?2.30:n===37?1.94:n===38?1.84:1.90;
-  const height=n===35?1.36:n===37?1.23:n===38?1.20:1.21;
-  const camera:V3=[p[0]-.22,height,p[2]-distance];
-  const target:V3=[p[0],n===35?.61:.58,p[2]+.08];
-  const fov=n===35?61:n===37?54:n===38?54:58;
+  // The old camera was behind the NEGATIVE-z carton wall: only ears
+  // were visible in source frames 2295, 2355, 2422. Reverse to the
+  // open-front side from the alley mouth, a grounded 3/4 portrait view.
+  const distance=n===35?2.75:n===37?2.42:n===38?2.32:2.42;
+  const height=n===35?1.68:n===37?1.55:n===38?1.53:1.55;
+  const camera:V3=[p[0]+.58,height,p[2]+distance];
+  const target:V3=[p[0],.70,p[2]+.04];
+  const fov=n===35?63:n===37?60:n===38?59:62;
   return {camera,target,fov,region:'alley' as Region,
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:['essie','box']};
