@@ -59,7 +59,7 @@ const cards=manifest.shots.map(shot=>'<article><h3>Shot '+esc(shot.id)+' — '+e
  '<p>'+esc(shot.narrationAnchor)+'<br>'+esc(shot.cameraAndAction)+'</p>'+
  '<div class="trip">'+selected.filter(x=>x.shot===shot.id).map(s=>
  '<figure><img loading="lazy" src="'+s.image+'"><figcaption>'+s.percent+'% · frame '+s.frame+'</figcaption></figure>').join('')+
- '</div><small>Creative QA: NOT YET APPROVED</small></article>').join('\\n');
+ '</div><small>Creative QA: NOT YET APPROVED</small></article>').join('\n');
 const html='<!doctype html><html><head><meta charset="utf-8">'+
  '<meta name="viewport" content="width=device-width,initial-scale=1">'+
  '<title>Episode 02 — 60-shot actual frame review</title>'+
@@ -85,5 +85,5 @@ const report={
  noPublishing:true,noPaidMediaCalls:true,
  note:'Frame-level technical decode pass is NOT a creative review. Check all 60 moving shots, camera cuts, box/cat ratios, overhead scale and character acting.'
 };
-await fs.writeFile(path.join(review,'FULL_60_SHOT_QA.json'),JSON.stringify(report,null,2)+'\\n');
+await fs.writeFile(path.join(review,'FULL_60_SHOT_QA.json'),JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify(report,null,2));
