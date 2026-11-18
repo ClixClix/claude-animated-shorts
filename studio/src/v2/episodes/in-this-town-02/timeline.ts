@@ -271,11 +271,18 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   // never render his upright card directly in front of his own camera.
   if(n===45)mocha.visible=false;
   if(n===49){
-   mocha.position=walk([-9.25,0,2.70],essieBox,u);
-   mocha.position[1]=.70*Math.sin(Math.PI*ease(u)); // Clear the physical box rim.
-   // Enter full-size, then tuck into a physically supported rest.
-   // Limit the illustrated card's apparent shrink to a crouch-sized 22%.
-   mocha.scale=lerp(1,.78,ease(u));mocha.morph=0;flap.essie=.95;
+   // One continuous approach-jump-land: at the end of beat 49 the cat
+   // matches beat 50 EXACTLY in world position and character scale.
+   // Earlier footage jumped from (z=1.40,y=0) into (z=1.52,y=.08).
+   const step=ease(u);
+   mocha.position=[
+    lerp(-9.25,essieBox[0],step),
+    .08*step+.70*Math.sin(Math.PI*step),
+    lerp(2.70,essieBox[2]+.12,step)
+   ];
+   // Only tuck AFTER the cat clears the real rim; do not resize midair.
+   mocha.scale=lerp(1,.78,ease((u-.60)/.40));
+   mocha.morph=0;flap.essie=.95;
   }
   if(n===50){
    // Mocha STAYS with Essie during the cure. The previous code made him
@@ -503,19 +510,21 @@ export function stateAt(frame:number,shots:EditShot[]):State{
  // previously produced long inert poses; each beat must actually communicate
  // the narration through the approved Episode 01 expression rig.
  if(n===5){
-  // Walk toward the same box from the safe RIGHT sidewalk, sniff,
-  // visibly recoil, then step around. Keep the original cat body wholly
-  // outside the .88m carton (x=1.36..2.24), storefront and vehicle lanes.
-  const approach=ease(u/.40),recoil=ease((u-.48)/.40);
+  // Director lock: the camera follows Mocha WALKING along the street,
+  // watching the third town cat jump into its box and become cardboard.
+  // Only afterward does he approach the ordinary empty demo carton,
+  // sniff it, look inside, refuse it and walk away.
+  const observe=ease(u/.46),investigate=ease((u-.44)/.25);
+  const avoid=ease((u-.70)/.28);
   mocha.position=[
-   3.46-.50*approach+.37*recoil,
+   4.45-1.34*observe-.39*investigate+.57*avoid,
    0,
-   5.03+.10*approach+.07*recoil
+   6.35-.45*observe-.39*investigate+.36*avoid
   ];
-  mocha.walking=u<.42||(u>.52&&u<.89);
-  mocha.headTurn=-.46*approach+.88*recoil;
-  mocha.gazeY=-.23*approach+.16*recoil;
-  mocha.emotion=u>.20&&u<.77?'scared':'sad';
+  mocha.walking=(u>.03&&u<.48)||(u>.47&&u<.72)||(u>.72&&u<.97);
+  mocha.headTurn=-.22*observe-.22*investigate+.78*avoid;
+  mocha.gazeY=-.22*observe-.15*investigate+.18*avoid;
+  mocha.emotion=u>.73?'concerned':'surprised';
  }
  if(n===7){
   // Essie invites him with a hopeful glance; Mocha consciously refuses.
