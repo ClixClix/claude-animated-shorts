@@ -174,7 +174,10 @@ function fit(s:State){
  // the 59->60 cut; only push after the three cats have landed.
  if(s.shot.sequence>=59){
   const n=s.shot.sequence,u=clamp(s.u,0,1);
-  const recenter=n===59?easeTrack((u-.42)/.55):1;
+  // Hold Mocha's hesitation on the LEFT at 59, then track LEFT-to-RIGHT
+  // with the staggered jumps in 60. At the cut both lenses are identical;
+  // the pan starts only after Mocha launches and ends on the three-cat box.
+  const recenter=n===59?0:easeTrack((u-.08)/.55);
   const push=n===60?easeTrack((u-.62)/.37):0;
   const trackX=-2.95+1.50*recenter;
   const camera:V3=[trackX,1.98,4.12-.08*push];

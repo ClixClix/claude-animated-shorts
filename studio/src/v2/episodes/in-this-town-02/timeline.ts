@@ -463,11 +463,13 @@ export function stateAt(frame:number,shots:EditShot[]):State{
    essie.headTurn=-.12;
    latte.headTurn=.12;
   }else{
-   // Essie comes over the FRONT rim; Latte over the RIGHT rim; Mocha
-   // over the LEFT rim. Stagger takeoffs so three cards do not merge.
-   const e=ease((u-.04)/.50);
-   const l=ease((u-.18)/.50);
-   const m=ease((u-.32)/.50);
+   // Mocha commits first over the LEFT rim after hesitating in 59.
+   // Essie follows over the FRONT, then Latte over the RIGHT. This
+   // left-to-right order gives each real Episode01 cat its own readable
+   // takeoff while the single motivated camera pan follows the action.
+   const m=ease((u-.04)/.50);
+   const e=ease((u-.18)/.50);
+   const l=ease((u-.32)/.50);
    essie.position=[-1.45,
     .12*e+.92*Math.sin(Math.PI*e),
     lerp(3.32,2.01,e)];
