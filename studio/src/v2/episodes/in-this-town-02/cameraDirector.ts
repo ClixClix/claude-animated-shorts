@@ -492,12 +492,12 @@ export function directEpisodeCamera(s:State){
  // Director lock: shot 04 TRACKS across TWO separate living cats
  // leaping into their own boxes and becoming cardboard.
  if(n===4){
-  // Wider motivated street track allows Mocha to remain visible at x=5.15
-  // while the two different cats visibly jump/fold in their cartons.
+  // Fit both visibly transforming cats AND Mocha's uninterrupted walk
+  // inside 9:16 safety margins, instead of clipping Mocha at frame-right.
   const move=easeTrack(s.u);
-  const camera:V3=[3.00-.18*move,2.35,11.10-.25*move];
-  const target:V3=[2.34-.28*move,.72,5.58];
-  const fov=87;
+  const camera:V3=[2.80-.10*move,2.30,11.90-.20*move];
+  const target:V3=[2.45-.18*move,.72,5.58];
+  const fov=91;
   return {camera,target,fov,region:'town' as Region,
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:['mocha','town-cat-hazel','town-cat-slate','distinct-town-boxes']};
