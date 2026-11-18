@@ -232,6 +232,24 @@ export function stateAt(frame:number,shots:EditShot[]):State{
     n===58?cameraPreset([2.6,1.65,4.4],[-1.4,.6,2.7],56):
     cameraPreset([.9,1.45,4.5-(n===60?u*.55:0)],[-1.45,.6,2.5],n===60?49:55);
  }
+ // Show the cure as physical action, not a giant instructional billboard:
+ // Mocha approaches the real rule carton; the original Episode01 kitten
+ // visibly re-emerges while the two rescued friends watch from the sidewalk.
+ if(n===56||n===57){
+  show.demo=true;
+  flap.demo=n===56?.90:.90-.18*ease(u/.28)+.22*ease((u-.48)/.28);
+  demoCat.visible=n===57;
+  demoCat.position=[HOME.demo[0],.01+.15*ease((u-.35)/.45),HOME.demo[2]];
+  demoCat.scale=.88;
+  demoCat.emotion='happy';
+  demoCat.headTurn=.08*Math.sin(Math.PI*u);
+  if(n===57){
+   mocha.position=walk([1.1,0,6.4],[1.50,0,5.98],ease(u));
+   mocha.walking=true;
+   essie.headTurn=.12*Math.sin(Math.PI*u);
+   latte.headTurn=-.10*Math.sin(Math.PI*u);
+  }
+ }
  if(n===52){essie.visible=true;essie.position=[-9.2,0,1.4];}
  if(n===1){
   // The opening kitten peeks above the real box rim instead of holding still.
