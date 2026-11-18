@@ -363,7 +363,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
   {box:afflictedBox,cat:streetTransformationCats[0],
    pos:[.40,.04,5.14],p:n===4?clamp(s.u/.59):1,active:n===4||n===5},
   {box:streetBoxes[0],cat:streetTransformationCats[1],
-   pos:[-1.45,.04,5.20],p:n===4?clamp((s.u-.35)/.63):1,active:n===4||n===5},
+   pos:[2.10,.04,5.20],p:n===4?clamp((s.u-.35)/.63):1,active:n===4||n===5},
   {box:streetBoxes[1],cat:streetTransformationCats[2],
    pos:[3.75,.04,5.20],p:n===5?clamp(s.u/.58):0,active:n===5},
  ];
@@ -547,7 +547,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,previewScale=1,optimize=true})=>{
  const walkB=6-wrap(s.t*.31,10);
  const announcementTime=Math.max(0,(s.frame-3483)/30);
  const streetSpots:V3[]=audienceOn?
-  (n===4?[[-3.60,.02,5.25],[-2.70,.03,5.05],[4.80,.03,5.08]]:
+  (n===4?[[-3.60,.02,5.25],[-2.70,.03,5.05],[-4.80,.03,5.08]]:
    // Daytime cure announcement: shoppers walk near shops, not through the
    // sign or the three leads. Night alley shots retain NO crowd.
    [[-2.15+.11*announcementTime,.03,5.55],
