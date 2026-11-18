@@ -183,14 +183,36 @@ export function stateAt(frame:number,shots:EditShot[]):State{
   if(n===49){
    mocha.position=walk([-9.25,0,2.70],HOME.alleyBox,u);
    mocha.position[1]=.70*Math.sin(Math.PI*ease(u)); // Clear the physical box rim.
-   mocha.scale=lerp(1,.63,ease(u));mocha.morph=0;flap.essie=.95;
+   // Enter full-size, then tuck into a physically supported rest.
+   // Limit the illustrated card's apparent shrink to a crouch-sized 22%.
+   mocha.scale=lerp(1,.78,ease(u));mocha.morph=0;flap.essie=.95;
   }
   if(n===50){
-   mocha.position=walk(HOME.alleyBox,[-9.25,0,2.70],u);
-   mocha.position[1]=.70*Math.sin(Math.PI*ease(u));
-   mocha.scale=lerp(.63,1,ease(u));flap.essie=.95;
+   // Mocha STAYS with Essie during the cure. The previous code made him
+   // jump OUT simultaneously with her transformation, removing the visual
+   // cause of the rescue and creating a floating size pop.
+   mocha.position=[HOME.alleyBox[0],.08,HOME.alleyBox[2]+.12];
+   mocha.walking=false;
+   mocha.scale=.78;flap.essie=.95;
   }
-  if(n>=51)mocha.position=[-9.25,0,2.70];
+  if(n===51){
+   // Rescue completion: Essie steps out FIRST, Mocha follows. They occupy
+   // the same narrow alley lane but do not teleport at the cut.
+   const essieOut=ease((u-.10)/.60);
+   const mochaOut=ease((u-.34)/.58);
+   essie.position=[HOME.alleyBox[0]-.10,.10*(1-essieOut),
+    lerp(HOME.alleyBox[2]+.10,2.70,essieOut)];
+   mocha.position=[HOME.alleyBox[0],.08*(1-mochaOut),
+    lerp(HOME.alleyBox[2]+.12,2.43,mochaOut)];
+   essie.scale=lerp(.82,1,essieOut);
+   mocha.scale=lerp(.78,1,mochaOut);
+   essie.walking=u>.13&&u<.78;
+   mocha.walking=u>.38&&u<.94;
+  }
+  if(n===52){
+   mocha.position=[HOME.alleyBox[0],0,2.43];
+   essie.position=[HOME.alleyBox[0]-.10,0,2.70];
+  }
   cam=(n===35||n===37||n===38)?focus(HOME.alleyBox,2.25,42,1.05):
     (n===39||n===50||n===51)?cameraPreset([-7.0,1.75,3.7],[-9,.65,1.6],44):
     n===41||n===45?cameraPreset([-8.2,2.9,2.1],[-9.15,.3,1.4],42):
@@ -257,7 +279,7 @@ export function stateAt(frame:number,shots:EditShot[]):State{
    latte.headTurn=-.10*Math.sin(Math.PI*u);
   }
  }
- if(n===52){essie.visible=true;essie.position=[-9.2,0,1.4];}
+ if(n===52){essie.visible=true;} // Keep the actual end-of-51 exit position.
  if(n===1){
   // The opening kitten peeks above the real box rim instead of holding still.
   demoCat.position=[HOME.demo[0],.04+.06*Math.sin(Math.PI*u),HOME.demo[2]];
