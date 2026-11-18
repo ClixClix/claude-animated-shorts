@@ -458,6 +458,28 @@ export function directEpisodeCamera(s:State){
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:['essie','box']};
  }
+ // Physical box-contact coverage: the previous automatic tight crop
+ // cut off Mocha's muzzle in the paw/box POV (12–13) and partly cropped the
+ // rescue two-shot (20). Keep the camera on its proven ray, pull back a
+ // little, and bias the look-at toward his acting rather than empty carton.
+ // This is a locked per-shot frame, never a frame-by-frame auto-fit zoom.
+ if(n===12||n===13||n===20){
+  const mid=Math.floor((s.shot.start+s.shot.end-1)/2);
+  const midState=sampleShotState(mid,[s.shot]);
+  const fitted=fit(midState);
+  const favor=n===13?.25:n===12?.17:.12;
+  const target:V3=blend3(fitted.target,
+   [midState.mocha.position[0],.68,midState.mocha.position[2]],favor);
+  const pull=n===13?1.27:n===12?1.20:1.15;
+  const camera:V3=[
+   target[0]+(fitted.camera[0]-fitted.target[0])*pull,
+   target[1]+(fitted.camera[1]-fitted.target[1])*pull,
+   target[2]+(fitted.camera[2]-fitted.target[2])*pull
+  ];
+  const fov=Math.min(82,fitted.fov+(n===13?13:10));
+  return {...fitted,camera,target,fov,
+   framing:projections(corners(focusSet(s)),target,camera,fov)};
+ }
  // 46 deliberately cuts inside the shot to two brief café memories.
  // 58–60 have a single explicitly choreographed, cut-continuous finale.
  if(n===46||n>=58)return fit(s);
