@@ -1,5 +1,12 @@
 # Episode 02 — visual QA error ledger
 
+### 18 Nov 2026 — repeated local extraction failure, FFmpeg root cause proven
+
+- **HIGH TECHNICAL / all 60 shots' visual QA sampling only — FIXED IN CODE; LOCAL RECHECK PENDING.** The user's local full review completed frame rendering + assembly but failed the final `episode02-full-review.mjs` step. Uploaded `EP02_540p_Visual.mp4` is valid H.264 540×960/30fps and `ffprobe -count_frames` reports exactly **3876 frames**. The batch script generated `eq(n\\\\,frame)` as an FFmpeg filter argument (two literal backslashes), rather than `eq(n\\,frame)` (one literal escape). Reproduced on the user MP4: the doubled form exits status 8 with `No such filter: '0)+eq(n\\'`; the single-escaped form exits 0 and extracted all 20 images in the test batch. Corrected in commit `ddbc87d`. Prior batching commit `45761d5` unintentionally introduced the doubling; not a GPU, Remotion, or animation failure.
+- **Safe recovery:** pull `v2-local-render` then run `npm.cmd run episode2:review-existing` from `C:\\V2\\ep02-local-render\\studio`; this reads the **already assembled** MP4 and writes `full-timeline-review/ALL_60_SHOTS.html` plus 180 exact source-frame JPGs, without running `episode02-render.mjs`. No need to rerender 3876 frames. User-PC verification of the entire 180-frame extraction is pending.
+- **Artistic status unchanged:** all prior observed visual issues remain open until actual new-source video review. Silent scratch only; no Episode01 side-by-side was available.
+
+
 
 ### 17 Nov 2026, 22:03 ET — source-camera focus regression corrected; local full movie remains artistic reject
 
