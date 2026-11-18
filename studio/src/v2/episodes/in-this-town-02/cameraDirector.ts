@@ -67,7 +67,7 @@ function focusSet(s:State):Extents[]{
  if(n===54)return [C('mocha'),C('essie'),B('latte')];
  if(n===55)return [C('mocha'),C('essie'),C('latte'),B('latte')];
  if(n===56)return [C('mocha'),C('essie'),C('latte')];
- if(n===57)return [C('mocha'),{id:'town-cure-sign',center:[.1,2.0,6.1],half:[1.60,1.0,.1]}];
+ if(n===57)return [C('mocha'),B('demo'),C('demoCat')]; // Actual cure action, no instructional billboard.
  if(n>=58)return [C('mocha'),C('essie'),C('latte'),B('shared')];
  return [C('mocha')];
 }
