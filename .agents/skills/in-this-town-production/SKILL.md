@@ -29,8 +29,9 @@ From the repository's `studio/` directory on Windows:
 
 1. `npm.cmd run episode2:director-audit` — inspect any unresolved physical action/prop/location blockers.
 2. `npm.cmd run episode2:code-audit` and `npm.cmd run episode2:action-audit-strict` — source/physical-action checks; these are NOT image approval.
-3. `npm.cmd run episode2:style-check` — check locked Episode 01 source. If the real approved Episode 01 MP4 is available, additionally verify it via `node scripts/episode02-style-preflight.mjs --reference "C:\\path\\to\\approved-episode01.mp4"`. `NOT_SUPPLIED` is not a verified film comparison.
-4. **Render three actual low-resolution PNGs per changed shot, or per every shot before an all-segment render:**
+3. `node src/v2/episodes/in-this-town-02/tools/locked-edit-gate.mjs` — **must pass before stills**. Reject story/action/camera substitutions, missing beats, changed narration, stale scratch timelines, wrong sub-shot IDs, disjoint frames or missing Adam provenance. It writes `EP02_LOCKED_EDIT_GATE.json` under the existing episode output folder. Its pass only proves metadata consistency, never physical acting.
+4. `npm.cmd run episode2:style-check` — check locked Episode 01 source. If the real approved Episode 01 MP4 is available, additionally verify it via `node scripts/episode02-style-preflight.mjs --reference "C:\\path\\to\\approved-episode01.mp4"`. `NOT_SUPPLIED` is not a verified film comparison.
+5. **Render three actual low-resolution PNGs per changed shot, or per every shot before an all-segment render:**
 
    `node src/v2/episodes/in-this-town-02/tools/three-frame-gate.mjs --shots 06,07B,51`
 
@@ -39,10 +40,10 @@ From the repository's `studio/` directory on Windows:
    `node src/v2/episodes/in-this-town-02/tools/three-frame-gate.mjs`
 
    Outputs are `studio/out/v2-episodes/in-this-town-02/three-frame-review/`, with start/middle/end PNGs and `THREE_FRAME_REVIEW.json`.
-5. **Directly open and inspect the PNGs**, not just filenames and tests. Verify true 2D-in-3D depth layering, billboard/card occlusion, correct characters and box identities, camera framing and visibility, ground contacts, prop scaling, and zero box/character clipping. If anything fails, correct only the scene-local source, rerun steps 1–4, and inspect again. Do not call the PNGs approved from a zero exit status.
-6. PNGs alone cannot catch all motion faults. Render affected **moving** previews and inspect the beginning, contacts, transformations, and ending at normal speed. Example: `node scripts/episode02-render.mjs preview --shots 06,07B,51 --force`. Follow the existing visual-approval queue and preserve original locked story actions.
-7. Once every changed shot and every live manifest shot is visually approved, proceed through the existing Episode 02 assembler and finishing workflow; check narration, SFX hits, licensed music, caption timing, and rights. Avoid regenerating paid narration.
-8. Run native 1080×1920, 30fps output only after actual moving-image approval, then run `npm.cmd run episode2:check` and the exact-file `studio/scripts/release_quality_gate.py` with the real approved frame count and `--series in_this_town`; require creative/rights signoff before publication.
+6. **Directly open and inspect the PNGs**, not just filenames and tests. Verify true 2D-in-3D depth layering, billboard/card occlusion, correct characters and box identities, camera framing and visibility, ground contacts, prop scaling, and zero box/character clipping. If anything fails, correct only the scene-local source, rerun all prior gates and the still renders, and inspect again. Do not call the PNGs approved from a zero exit status.
+7. PNGs alone cannot catch all motion faults. Render affected **moving** previews and inspect the beginning, contacts, transformations, and ending at normal speed. Example: `node scripts/episode02-render.mjs preview --shots 06,07B,51 --force`. Follow the existing visual-approval queue and preserve original locked story actions.
+8. Once every changed shot and every live manifest shot is visually approved, proceed through the existing Episode 02 assembler and finishing workflow; check narration, SFX hits, licensed music, caption timing, and rights. Avoid regenerating paid narration.
+9. Run native 1080×1920, 30fps output only after actual moving-image approval, then run `npm.cmd run episode2:check` and the exact-file `studio/scripts/release_quality_gate.py` with the real approved frame count and `--series in_this_town`; require creative/rights signoff before publication.
 
 ## Nonnegotiable reporting
 
