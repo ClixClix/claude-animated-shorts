@@ -78,6 +78,10 @@ by_number={}
 for item in manifest['shots']:
     by_number.setdefault(int(item['sequence']),[]).append(item)
 seen_beats=set()
+# Prevent duplicate magic hits: a narration beat may already emit a special
+# magic/pop effect from its text cue. The fallback motif below applies ONLY
+# when no effect was scheduled for that beat.
+beats_with_magic=set()
 for i,shot in enumerate(manifest['shots']):
     start=shot['start']/FPS;end=shot['end']/FPS;span=end-start
     n=int(shot['sequence']);cue=shot['soundCue'].lower()
@@ -98,17 +102,25 @@ for i,shot in enumerate(manifest['shots']):
     if 'knock' in cue or 'tap' in cue or 'thump' in cue:
         tick(at,.32,-.2);tick(at+.20,.29,.2)
     if 'magical' in cue or 'transformation' in cue or 'magic' in cue:
+        beats_with_magic.add(n)
         moment=start+span*(.82 if n in (3,39,55) else .50)
         magic(moment-.16,gain=.62 if n in (3,39,55) else .43,reverse=n in (50,55))
         box(moment-.06,gain=.55 if n in (3,39) else .36)
-    if 'pop' in cue:magic(start+span*.52,gain=.73,reverse=True)
+    if 'pop' in cue:
+        # A POP is its own reverse-magic hit, not two layered whistles.
+        if n not in beats_with_magic:
+            magic(start+span*.52,gain=.73,reverse=True)
+        beats_with_magic.add(n)
     if 'happy' in cue:meow(at+.24,gain=.3)
-    if 'music' in cue or 'chord' in cue:tick(at,.11)
+    # Music and chords belong to the licensed music stem. Never generate
+    # a disconnected metronome-like tick from the words 'music'/'chord'.
     events.append({'shot':shot['id'],'start_seconds':start,'end_seconds':end,'description':shot['soundCue'],
       'suggested_sync_seconds':at,'source':'original deterministic procedural synthesis'})
 
 # Distinct shared motifs: small rising chord into cure, release stingers at both rescues.
 for number,reverse in [(3,False),(39,False),(50,True),(51,True),(55,True)]:
+    if number in beats_with_magic:
+        continue
     pieces=by_number[number]
     first,last=pieces[0],pieces[-1]
     t=first['start']/FPS+(last['end']-first['start'])/FPS*.6
@@ -128,6 +140,8 @@ def write(name,arr):
     return {'file':str(OUT/name),'samples':N,'peak_before_safety':peak}
 report={'original':True,'sourceSFXLicense':'original deterministic procedural synthesis','paidRequests':0,
         'durationSeconds':duration,'cueCount':len(events),
+        'deduplicatedMagicBeats':sorted(beats_with_magic),
+        'musicalTicksRemoved':True,
         'sfx':write('SFX_Stem.wav',sfx),
         'music':None,
         'note':'Foley only. Episode 01 music requires the real user-supplied source via episode02-series-music.mjs.'}
