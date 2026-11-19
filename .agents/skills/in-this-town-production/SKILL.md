@@ -59,6 +59,21 @@ For every attempted repair: report changed file paths, target shot IDs, exact co
 
 The connected GitHub branch already contains `AGENTS.md`, `SKILL.md`, `QUALITY_BASELINE.md`, `ONE_PROMPT_IN_THIS_TOWN.md` and exact `studio/package.json` commands. No Claude-specific skills/commands/hooks were present to migrate **in that remote branch**. If newer `CLAUDE.md` or `.claude/` files exist on the user's unsynced Windows machine, read and reconcile them explicitly before claiming full migration.
 
+## Phase 4 — V9 rescue source repair (source-only until rendered)
+
+A V9-hash-guarded scene-only source repair is committed, but it has NOT been applied to the user's local Windows project or visually approved. Never overwrite newer local code.
+
+From the existing studio working directory, execute strictly sequentially:
+
+1. DRY RUN: node src/v2/episodes/in-this-town-02/tools/apply-v9-rescue.mjs
+2. Only if the five local V9 source hashes match: node src/v2/episodes/in-this-town-02/tools/apply-v9-rescue.mjs --apply. This backs up and edits ONLY Episode.tsx, boxProps.ts, timeline.ts and episode1Cast.ts in the target scene folder, retaining the existing V9 cameraDirector.ts.
+3. OFFLINE spatial QA: node src/v2/episodes/in-this-town-02/tools/rescue-continuity-test.mjs
+4. Run the original pipeline checks: npm.cmd run episode2:director-audit ; npm.cmd run episode2:code-audit ; npm.cmd run episode2:style-check. If any fails, stop rather than hiding its failure.
+5. THREE-FRAME GATE: node src/v2/episodes/in-this-town-02/tools/three-frame-gate.mjs --shots 49,50,51,52. Open ALL actual PNGs and verify 2D-in-3D layering, full box walls, no clipping, grounded tip, correct character sizes and intact composition.
+6. MOVING CLIPS: node scripts/episode02-render.mjs preview --shots 49,50,51,52 --force. Review the actual animated cure, tip, fall and embrace at normal speed and compare against Episode 01. Correct any real failures in-scene, then repeat gates. Source-only code checks cannot authorize the full master render.
+
+Do not mark the rescue defect resolved or call Episode 2 complete until actual moving visual proof and audio/rights review exist. Other V9 defects still need separate fixes.
+
 ## Phase 3 repair order (current rejected Episode 02)
 
 1. First reconcile local V9 hashes and preserve the installed source + finished Adam narration and stems. The GitHub scene on `v2-local-render` is older; **never merge its older `Episode.tsx`, `boxProps.ts`, `timeline.ts`, `episode1Cast.ts`, or `cameraDirector.ts` over V9**.
