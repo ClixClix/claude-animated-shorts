@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "status": "CLOUD_RENDER_COMPLETED__VISUAL_REVIEW_FAILED",
+  "runId": 44557920375,
+  "runUrl": "https://github.com/ClixClix/claude-animated-shorts/actions/runs/44557920375",
+  "artifactId": 14550506987,
+  "artifactName": "episode02-targeted-shots-3",
+  "commit": "caf3f571b9a5fb9d70b9bc3b8079d85d64c0af2d",
+  "source": "OLDER_GITHUB_SCENE__NOT_LOCAL_V9",
+  "cut": "SILENT_SCRATCH_TIMING__NOT_APPROVED_ADAM_AUDIO",
+  "evidence": "24 native Remotion PNGs (start/middle/end across 8 beats), 8 H.264 cloud moving previews, sampled 8 progressive frames for beats 06,51,52",
+  "observedDefects": [
+    {
+      "beat": 4,
+      "status": "FAILED",
+      "observation": "Two unconnected cat-ear artworks visibly float above a building through start/middle/end; street transformation sequence is not visibly demonstrated",
+      "severity": "critical"
+    },
+    {
+      "beat": 6,
+      "status": "FAILED",
+      "observation": "Latte is outside the box at shot start, grows to oversized upright card over box, then suddenly becomes tiny flat art inside box. No physically continuous jump, landing or stable scale is shown",
+      "severity": "critical"
+    },
+    {
+      "beat": 7,
+      "status": "FAILED",
+      "observation": "Essie is drawn flattened/low in box; Mocha is mostly concealed by the right box flap at start/middle and appears behind the panel at end. The invitation and refusal are not clearly acted",
+      "severity": "high"
+    },
+    {
+      "beat": 49,
+      "status": "FAILED",
+      "observation": "Mocha starts on the ground, grows as a full upright card over the rim, then disappears almost entirely into the box by end. Entry lacks grounded jump/contact geometry",
+      "severity": "critical"
+    },
+    {
+      "beat": 50,
+      "status": "FAILED",
+      "observation": "Black-and-white Essie art rises over the gray Mocha resting sprite, but the ear emergence and interaction do not establish clear readable magical causal action",
+      "severity": "critical"
+    },
+    {
+      "beat": 51,
+      "status": "FAILED",
+      "observation": "Box remains upright throughout 8 sampled progress frames; Essie moves to foreground and Mocha rises inside then slips back behind. No box tip, physically supported tumble, or clear embrace. Contradicts locked director beat",
+      "severity": "critical"
+    },
+    {
+      "beat": 52,
+      "status": "FAILED",
+      "observation": "Nearly identical static framing throughout sampled 1.8 seconds; Essie obscures Mocha near box, with no visible relief/reunion acting",
+      "severity": "high"
+    }
+  ],
+  "passedInfrastructure": [
+    "GitHub Actions job completed all steps successfully",
+    "Compiled original Remotion scene and TypeScript source",
+    "PNG stills rendered and saved before 8 moving clips",
+    "Evidence artifact uploaded successfully"
+  ],
+  "productionLimitations": [
+    "These observations refer only to the older GitHub commit, not the newer local V9 repair tool or an approved narrated master",
+    "Source tests and job success cannot approve acting or camera geometry",
+    "No final audio, music, licensed-source rights, or 1080x1920 master checked",
+    "The V9 rescue patch has not yet been rendered in this cloud run",
+    "Do not replace newer Windows V9 scene source with the older cloud test scene"
+  ],
+  "nextAction": "Render and inspect the exact V9 corrected source via the existing pipeline, with source-hash verification, real approved Adam timings where available, and no claims of visual approval until footage passes",
+  "creativeApproval": false,
+  "publishingAllowed": false
+}
