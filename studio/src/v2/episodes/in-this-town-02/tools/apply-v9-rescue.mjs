@@ -138,13 +138,8 @@ episode=between(episode,
     ' // No box wall or front flap disappears during the rescue.',
     ' boxes.essie.flaps.front.visible=true;'
   ]),'rotate intact box instead of opening a door');
-episode=once(episode,'const w=new EpisodeWorld(false);',
-  'const w=new EpisodeWorld(optimize);',
-  'honor unchanged external style check');
-episode=once(episode,
-  'const useBatch=(props.optimize??true)&&stateAt(frame,props.shots).shot.sequence<58;',
-  'const useBatch=false; // Keep V9 individually editable furniture meshes.',
-  'preserve V9 unbatched scene behavior');
+// Preserve V9's existing environment batching and scene optimization policy.
+// The rescue repair must NOT modify the world constructor or global/shot batching.
 updated['Episode.tsx']=episode;
 if(!process.argv.includes('--apply')){
   console.log(JSON.stringify({status:'DRY_RUN',source:'exact V9 only',
