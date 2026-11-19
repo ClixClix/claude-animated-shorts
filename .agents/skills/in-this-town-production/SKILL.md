@@ -11,8 +11,9 @@ description: Safely edit and produce What If Cats / In This Town scenes in the e
 2. `PRODUCTION_DIRECTOR_LOCK.json` in the target episode folder. For Episode 02 the exact path is `studio/src/v2/episodes/in-this-town-02/PRODUCTION_DIRECTOR_LOCK.json`.
 3. `studio/src/v2/series/IN_THIS_TOWN_STYLE_LOCK.json`, `studio/src/v2/series/episode1Style.ts`, `QUALITY_BASELINE.md` and `ONE_PROMPT_IN_THIS_TOWN.md`.
 4. The live narration manifest `studio/out/v2-episodes/in-this-town-02/render-props.json`; respect its actual shot start/end frames and approved Adam word timings. Historical scratch 3,876-frame plans are NOT the live source.
-5. `studio/src/v2/episodes/in-this-town-02/V9_REJECTED_VISUAL_QA.json`: the creator rejected V9, with specific unresolved character, geometry, camera, rescue, audio and framing defects. Do not mark those defects fixed without inspecting new footage.
-6. Existing local `CLAUDE.md` files if present on the working machine. They are supplementary; don't invent or silently override undocumented conventions. No `CLAUDE.md` or `.claude/` was present in the connected GitHub `v2-local-render` branch when this skill was created.
+5. `studio/src/v2/episodes/in-this-town-02/V9_SOURCE_RECONCILIATION.json` and `studio/src/v2/episodes/in-this-town-02/tools/v9-source-check.mjs`: exact installed V9 file hashes and director-conflict diagnosis. Compare the local working copy before editing; do not import older remote scene files.
+6. `studio/src/v2/episodes/in-this-town-02/V9_REJECTED_VISUAL_QA.json`: the creator rejected V9, with specific unresolved character, geometry, camera, rescue, audio and framing defects. Do not mark those defects fixed without inspecting new footage.
+7. Existing local `CLAUDE.md` files if present on the working machine. They are supplementary; don't invent or silently override undocumented conventions. No `CLAUDE.md` or `.claude/` was present in the connected GitHub `v2-local-render` branch when this skill was created.
 
 ## Scope lock — mandatory
 
@@ -30,7 +31,8 @@ Execute these as plain terminal steps in the same working tree, stopping immedia
 
 From the repository's `studio/` directory on Windows:
 
-0. Run `node --test src/v2/episodes/in-this-town-02/tools/locked-edit-gate.test.mjs` to verify the manifest guard, then inspect any failures rather than bypassing them.
+0. Before editing V9, run `node src/v2/episodes/in-this-town-02/tools/v9-source-check.mjs` and inspect `EP02_PHASE3_SOURCE_AUDIT.json`. An exit status of 2 on the currently rejected V9 is EXPECTED: it documents the unauthorized hinge/walk-out. Keep the project blocked until the original director-locked rescue is restored. After repairs, capture the new SHA-256 values and review the changed source, never treat a different hash as automatically correct.
+0a. Run `node --test src/v2/episodes/in-this-town-02/tools/locked-edit-gate.test.mjs` to verify the manifest guard, then inspect any failures rather than bypassing them.
 1. `npm.cmd run episode2:director-audit` — inspect any unresolved physical action/prop/location blockers.
 2. `npm.cmd run episode2:code-audit` and `npm.cmd run episode2:action-audit-strict` — source/physical-action checks; these are NOT image approval.
 3. `node src/v2/episodes/in-this-town-02/tools/locked-edit-gate.mjs` — **must pass before stills**. Reject story/action/camera substitutions, missing beats, changed narration, stale scratch timelines, wrong sub-shot IDs, disjoint frames or missing Adam provenance. It writes `EP02_LOCKED_EDIT_GATE.json` under the existing episode output folder. Its pass only proves metadata consistency, never physical acting.
@@ -56,3 +58,13 @@ For every attempted repair: report changed file paths, target shot IDs, exact co
 ## Source references and portability
 
 The connected GitHub branch already contains `AGENTS.md`, `SKILL.md`, `QUALITY_BASELINE.md`, `ONE_PROMPT_IN_THIS_TOWN.md` and exact `studio/package.json` commands. No Claude-specific skills/commands/hooks were present to migrate **in that remote branch**. If newer `CLAUDE.md` or `.claude/` files exist on the user's unsynced Windows machine, read and reconcile them explicitly before claiming full migration.
+
+## Phase 3 repair order (current rejected Episode 02)
+
+1. First reconcile local V9 hashes and preserve the installed source + finished Adam narration and stems. The GitHub scene on `v2-local-render` is older; **never merge its older `Episode.tsx`, `boxProps.ts`, `timeline.ts`, `episode1Cast.ts`, or `cameraDirector.ts` over V9**.
+2. Fix the locked Shot 49–52 rescue first. The V9 hinged front panel and `gateWalk` are explicitly wrong; locked Shot 51 requires the actual box to tip, Essie to tumble onto Mocha, and the embrace/grounded landing. Do not accomplish this by hiding the rigid box walls, swapping the story, or teleporting either cat. Reuse the original rig and physical box. Verify first, middle, last, contact, and moving clip before proceeding.
+3. Repair Shot 06 Latte scale and striped-box jump; Shot 07 Essie invitation and Mocha's actual passing/refusal. Use real cat/card dimensions against physical box geometry, not per-shot scale hacks. Check moving clips and the camera's actual final ray through scene geometry.
+4. Repeat for the other critical transformation, cure, and finale beats in `V9_REJECTED_VISUAL_QA.json`. Keep the existing 60 director beats and actual narration-driven segmented edit. No further full MP4 until the entire visual review queue passes.
+5. SFX, licensed music, captions, and final native encode use the existing finishing and release QA. A 720p no-music review export is not proof the 1080p music master has errors or passes.
+
+A code patch that has not been rendered is **NOT FIXED**. A rejected shot whose source is corrected but whose video has not been watched remains `VISUAL_REVIEW_PENDING`.
