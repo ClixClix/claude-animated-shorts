@@ -11,7 +11,8 @@ description: Safely edit and produce What If Cats / In This Town scenes in the e
 2. `PRODUCTION_DIRECTOR_LOCK.json` in the target episode folder. For Episode 02 the exact path is `studio/src/v2/episodes/in-this-town-02/PRODUCTION_DIRECTOR_LOCK.json`.
 3. `studio/src/v2/series/IN_THIS_TOWN_STYLE_LOCK.json`, `studio/src/v2/series/episode1Style.ts`, `QUALITY_BASELINE.md` and `ONE_PROMPT_IN_THIS_TOWN.md`.
 4. The live narration manifest `studio/out/v2-episodes/in-this-town-02/render-props.json`; respect its actual shot start/end frames and approved Adam word timings. Historical scratch 3,876-frame plans are NOT the live source.
-5. Existing local `CLAUDE.md` files if present on the working machine. They are supplementary; don't invent or silently override undocumented conventions. No `CLAUDE.md` or `.claude/` was present in the connected GitHub `v2-local-render` branch when this skill was created.
+5. `studio/src/v2/episodes/in-this-town-02/V9_REJECTED_VISUAL_QA.json`: the creator rejected V9, with specific unresolved character, geometry, camera, rescue, audio and framing defects. Do not mark those defects fixed without inspecting new footage.
+6. Existing local `CLAUDE.md` files if present on the working machine. They are supplementary; don't invent or silently override undocumented conventions. No `CLAUDE.md` or `.claude/` was present in the connected GitHub `v2-local-render` branch when this skill was created.
 
 ## Scope lock — mandatory
 
@@ -23,10 +24,13 @@ description: Safely edit and produce What If Cats / In This Town scenes in the e
 
 ## Sequential execution — no Claude hook or sub-agent assumptions
 
+**Before syncing this GitHub branch to the user's Windows clone:** V9 scene source on the local PC may be newer than the remote branch. First inspect `git status` and compare relevant scene-file hashes. Never overwrite local episode code, assets, approved audio, render props or the local V9 work with older remote files. The only intended Phase 1/2 additions are the Codex instruction/skill files and scene-local QA tools/register.
+
 Execute these as plain terminal steps in the same working tree, stopping immediately on nonzero exit. Do not assume a Claude hook, parallel agent, or a background run has completed any prerequisite.
 
 From the repository's `studio/` directory on Windows:
 
+0. Run `node --test src/v2/episodes/in-this-town-02/tools/locked-edit-gate.test.mjs` to verify the manifest guard, then inspect any failures rather than bypassing them.
 1. `npm.cmd run episode2:director-audit` — inspect any unresolved physical action/prop/location blockers.
 2. `npm.cmd run episode2:code-audit` and `npm.cmd run episode2:action-audit-strict` — source/physical-action checks; these are NOT image approval.
 3. `node src/v2/episodes/in-this-town-02/tools/locked-edit-gate.mjs` — **must pass before stills**. Reject story/action/camera substitutions, missing beats, changed narration, stale scratch timelines, wrong sub-shot IDs, disjoint frames or missing Adam provenance. It writes `EP02_LOCKED_EDIT_GATE.json` under the existing episode output folder. Its pass only proves metadata consistency, never physical acting.
