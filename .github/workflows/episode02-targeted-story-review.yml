@@ -1,11 +1,8 @@
 name: Episode 02 targeted story-shot review (no paid requests)
 
+# Local rendering is primary. Cloud video runs only by explicit manual dispatch.
 on:
   workflow_dispatch:
-  push:
-    branches: [v2-local-render]
-    paths:
-      - ".github/workflows/episode02-targeted-story-review.yml"
 
 permissions:
   contents: read
