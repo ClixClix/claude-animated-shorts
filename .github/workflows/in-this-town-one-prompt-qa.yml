@@ -13,6 +13,7 @@ on:
       - "studio/scripts/episode02-series-music.mjs"
       - "studio/scripts/episode02-prepare.mjs"
       - "studio/scripts/episode02-finish.mjs"
+      - "studio/scripts/episode02-audio.py"
       - "studio/src/v2/episodes/in-this-town-02/**"
       - "studio/package.json"
       - "studio/package-lock.json"
@@ -43,6 +44,8 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Unit test one-prompt story-to-visual-beat planner
         run: npm run inthis:next-test
+      - name: Check Episode 02 Foley generator Python syntax
+        run: python3 -m py_compile scripts/episode02-audio.py
       - name: TypeScript compilation check
         run: npm run typecheck
       - name: Verify striped cardboard material geometry and four intact hinged flaps
