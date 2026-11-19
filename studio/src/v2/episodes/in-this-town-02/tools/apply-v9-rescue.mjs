@@ -111,6 +111,14 @@ timeline=between(timeline,
   ]),'restore locked rescue');
 updated['timeline.ts']=timeline;
 let cast=original['episode1Cast.ts'];
+// Episode 02 Shot 07 expressly says Essie is curled inside her box.
+// V9 instead forced her upright at n===7, placing a full-height 1.52m
+// standing drawing inside a 0.56m rigid cardboard wall. Correct the
+// scene-local acting state without modifying the approved Episode 01 rig.
+cast=once(cast,
+  "id==='essie'?(n===7?0:",
+  "id==='essie'?(n===7?1:",
+  'Essie must use the existing curled Episode01-art pose in Shot 07');
 cast=once(cast,
   '       n===50?1-smooth((s.u-.42)/.55):\n       n===51?1-smooth((s.u-.32)/.22):',
   '       n===50?1:\n       n===51?1-smooth((s.u-.71)/.16):',
