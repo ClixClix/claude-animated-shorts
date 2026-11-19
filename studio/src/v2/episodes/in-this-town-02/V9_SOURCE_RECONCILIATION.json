@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "stage": "PHASE3_V9_SOURCE_RECOVERY_NO_ENGINE_CHANGE",
+  "episode": "The Cat Who Became a Box",
+  "baseline": "EP02_GEOMETRY_FIRST_V9.zip installed on user's Windows clone",
+  "files": [
+    {
+      "path": "src/v2/episodes/in-this-town-02/Episode.tsx",
+      "sha256": "9fa8bc1e480e49dc76fe5dea080eaec9b33cbb85c0353a20851294be4c08545f"
+    },
+    {
+      "path": "src/v2/episodes/in-this-town-02/boxProps.ts",
+      "sha256": "67c1dc99ab62afb9975f86f4d262f331d638d057cb8c59f7df8e28788e773976"
+    },
+    {
+      "path": "src/v2/episodes/in-this-town-02/cameraDirector.ts",
+      "sha256": "81db2f6d0c005e62daea979aa221776ffd8af49c5e8144ff096bc9ea0b81964d"
+    },
+    {
+      "path": "src/v2/episodes/in-this-town-02/episode1Cast.ts",
+      "sha256": "4da7103dd65ed4c19e162bbc07c2a9b9e674859cc763cd83bbcfeb7976a9348f"
+    },
+    {
+      "path": "src/v2/episodes/in-this-town-02/timeline.ts",
+      "sha256": "fc2933e1a28b87abcbe4145579ec895c63b8fe5d9f6a87219ba90d3d13b27e1a"
+    }
+  ],
+  "sourceObservations": [
+    {
+      "issue": "DIRECTOR_LOCK_51_VIOLATED",
+      "file": "timeline.ts",
+      "evidence": "Shot 51 uses gateWalk and a front panel that folds out, rather than the original box-topple/Essie-tumble-onto-Mocha/embrace action.",
+      "requiredAction": "Restore locked beat 51 in physically coherent steps; keep box identity, continuous contact and grounded collision-free landing; never move actors through a rigid wall.",
+      "renderProof": "Moving beat 49-52 with three-frame stills for each narration split segment and continuous contact review."
+    },
+    {
+      "issue": "FRONT_BOX_WALL_BREAKS_MODEL",
+      "file": "boxProps.ts",
+      "evidence": "setExitOpening rotates a hinged front wall for V9 rescue.",
+      "requiredAction": "Keep an intact 4-sided Essie box through rescue. Tipping/magic transformation cannot be replaced by a sliding wall."
+    },
+    {
+      "issue": "SIMULATED_HIDDEN_FLAPS",
+      "file": "Episode.tsx",
+      "evidence": "sets flaps.front.visible=false in shots 49-52 and flaps.right.visible=false in shot 07",
+      "requiredAction": "Recompose camera and flap rotation without deleting box components to hide overlap."
+    },
+    {
+      "issue": "REST_ART_BOUNDING_INCONSISTENCY",
+      "file": "episode1Cast.ts",
+      "evidence": "The texture switches between full-height original art and composited curled art, with simultaneous scale, position, pitch, and opacity changes.",
+      "requiredAction": "Keep continuous visible outer silhouette and grounded contact through transitions; validate in 3D world-space and actual projected pixels."
+    },
+    {
+      "issue": "CAMERA_OVERRIDES_AND_STALE_FIT",
+      "file": "cameraDirector.ts",
+      "evidence": "Contains separate fitted and directed camera definitions; V9 had earlier blind-wall failures.",
+      "requiredAction": "Audit final camera actually applied per shot rather than static calculations; check scene wall occlusion before each render."
+    }
+  ],
+  "notes": [
+    "This file records exact V9 source hashes extracted from the original installable V9 package, not from the older remote branch.",
+    "V9 is a known rejected film. Matching these hashes establishes a source baseline, not artistic approval.",
+    "Do NOT use git checkout -- . or git reset --hard to bring the user's local newer V9 scene back to the stale remote version.",
+    "Run Phase 3 audit on the installed local scene before editing it. If source hash differs, stop and inspect; do not silently assume these observations remain current.",
+    "No source, narration, engine, camera rig, or source music is modified by this manifest."
+  ]
+}
