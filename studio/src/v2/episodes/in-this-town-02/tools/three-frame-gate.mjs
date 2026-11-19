@@ -51,6 +51,10 @@ for(const shot of shots){
     shot.start<0||shot.end<=shot.start)
     throw Error('Invalid start/end frame for '+String(shot.id));
 }
+// Confirm the 60 user-directed beats and the actual Adam-driven split edit
+// agree before spending time rendering even the three-frame proofs.
+execFileSync(process.execPath,[path.join(here,'locked-edit-gate.mjs')],
+  {cwd:studioRoot,stdio:'inherit'});
 // Never bypass style preflight to get a picture.
 execFileSync(process.execPath,[path.join(studioRoot,'scripts/episode02-style-preflight.mjs')],
   {cwd:studioRoot,stdio:'inherit'});
