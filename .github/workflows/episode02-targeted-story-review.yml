@@ -49,15 +49,17 @@ jobs:
           ffmpeg -version | head -n 1
       - name: Prepare silent scratch timing, never pay for or regenerate narration
         run: node scripts/episode02-prepare.mjs --force-silent-scratch --allow-scratch
+      - name: Start-middle-end genuine Remotion PNGs before any shot MP4
+        run: node src/v2/episodes/in-this-town-02/tools/cloud-scratch-stills.mjs --shots 04,05,06,07,49,50,51,52
       - name: Render actual moving footage for targeted rejected shots
-        run: node scripts/episode02-render.mjs preview --shots 04,05,06,07,49,50,51
+        run: node scripts/episode02-render.mjs preview --shots 04,05,06,07,49,50,51,52
       - name: Extract first-middle-last real frames for contact evidence
         shell: bash
         run: |
           set -euo pipefail
           OUT="out/v2-episodes/in-this-town-02/preview-segments"
           mkdir -p "$OUT/evidence"
-          for SHOT in 04 05 06 07 49 50 51; do
+          for SHOT in 04 05 06 07 49 50 51 52; do
             for SEC in 0.1 0.6 1.2; do
               ffmpeg -v error -y -ss "$SEC" -i "$OUT/$SHOT.mp4" -frames:v 1 "$OUT/evidence/${SHOT}_${SEC}.png" || true
             done
@@ -69,6 +71,7 @@ jobs:
           name: episode02-targeted-shots-${{ github.run_number }}
           path: |
             studio/out/v2-episodes/in-this-town-02/preview-segments
+            studio/out/v2-episodes/in-this-town-02/cloud-three-frame-proof
             studio/out/v2-episodes/in-this-town-02/EP02_DIRECTOR_PREFLIGHT.json
             studio/out/v2-episodes/in-this-town-02/EP02_ACTION_EVIDENCE.json
           if-no-files-found: warn
