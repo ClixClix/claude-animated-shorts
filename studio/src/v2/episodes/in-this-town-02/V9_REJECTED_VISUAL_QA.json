@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "status": "REJECTED_BY_CREATOR__VISUAL_AND_AUDIO_QA_PENDING",
+  "episode": "The Cat Who Became a Box",
+  "sourceReview": "EP02_V9_FULL_REVIEW.mp4",
+  "sourceReviewCaveat": "720p compressed no-music review copy. Original local master was assembled at 1080x1920; no assertion that the local music master was reviewed.",
+  "fullCut": {
+    "durationSeconds": 124.5667,
+    "frames": 3737,
+    "renderedSegments": 62,
+    "lockedStoryBeats": 60
+  },
+  "sourceOfTruth": [
+    "PRODUCTION_DIRECTOR_LOCK.json (all 60 visible actions, character identity, prop continuity and camera intention)",
+    "DRAFT_BOX_NARRATION.txt + NARRATION_SHOT_ALIGNMENT_PLAN.json + approved local Adam word times (spoken timing)",
+    "studio/src/v2/series/IN_THIS_TOWN_STYLE_LOCK.json and the approved Episode 01 actual rendered movie (visual reference)"
+  ],
+  "defects": [
+    {
+      "id": "EP02-001",
+      "severity": "critical",
+      "shots": [
+        4,
+        5
+      ],
+      "problem": "Several street cats do not each visibly enter distinct boxes, transform, and trigger other cat reactions as directed.",
+      "requiredProof": "Different visible street cats complete uninterrupted box entries and changes; Mocha visibly observes and reacts."
+    },
+    {
+      "id": "EP02-002",
+      "severity": "critical",
+      "shots": [
+        6
+      ],
+      "problem": "Latte's striped box sequence has wrong-size/incorrect-character imagery, cat/box intersections and unclear jump/landing.",
+      "requiredProof": "Recognizable Latte approaches the same striped box under the cafe window, clears the lip and lands inside without scale pops."
+    },
+    {
+      "id": "EP02-003",
+      "severity": "critical",
+      "shots": [
+        7
+      ],
+      "problem": "Obstructed Mocha/Essie framing and inadequate physical walking past Essie's intact box.",
+      "requiredProof": "Intact four walls are present, Essie makes space, Mocha actually passes; camera sees both actions."
+    },
+    {
+      "id": "EP02-004",
+      "severity": "critical",
+      "shots": [
+        19,
+        20
+      ],
+      "problem": "Essie's entrance and Mocha's floof-contact rescue are not reliably shown without clipping.",
+      "requiredProof": "Full box visible and physically continuous cat paws, mouth/floof contact and extraction."
+    },
+    {
+      "id": "EP02-005",
+      "severity": "critical",
+      "shots": [
+        32,
+        37,
+        38,
+        39
+      ],
+      "problem": "Box-dragging and transformation lack consistent prop identity and convincing physically continuous card-to-box sequence.",
+      "requiredProof": "Essie's SAME box stays correct size and location, dragging/contact and transformation are actually visible."
+    },
+    {
+      "id": "EP02-006",
+      "severity": "critical",
+      "shots": [
+        49,
+        50,
+        51,
+        52
+      ],
+      "problem": "Box rescue shows scale changes, unsupported movement, intersection through walls and unauthorized hinged-door/walk-out staging.",
+      "requiredProof": "Locked action: Mocha genuinely climbs in; ears emerge; box tips; Essie tumbles onto Mocha; they embrace on the ground; reaction follows. No new hinge workaround."
+    },
+    {
+      "id": "EP02-007",
+      "severity": "critical",
+      "shots": [
+        53,
+        54,
+        55
+      ],
+      "problem": "Run-to-cafe, flap opening, Mocha's entry, and Latte's sprung three-cat tumble need continuous geometry, timing and identity.",
+      "requiredProof": "All characters track consistently between alley and cafe, with physically readable contact and three-cat tumble."
+    },
+    {
+      "id": "EP02-008",
+      "severity": "critical",
+      "shots": [
+        59,
+        60
+      ],
+      "problem": "Final shared box hero shot lacks reliably demonstrated all-three-cat independent entries, proportions and emotional clarity.",
+      "requiredProof": "Same correct shared box fits all three; each jumps in; faces and cozy final composition visible."
+    },
+    {
+      "id": "EP02-009",
+      "severity": "high",
+      "shots": [],
+      "problem": "Multiple shots have poorly framed cats, occluding foreground props, empty views, static holds or discontinuous staging.",
+      "requiredProof": "Start/middle/end PNGs for every render segment plus moving previews reviewed for unblocked actions, motivated tracking and no clipping."
+    },
+    {
+      "id": "EP02-010",
+      "severity": "critical",
+      "shots": [],
+      "problem": "Creator reported mismatched SFX. No-music review cannot prove music presence, timing, mixing or rights.",
+      "requiredProof": "Compare SFX cue hits to frame-accurate actions, review actual music master, verify speech ducking and music rights."
+    },
+    {
+      "id": "EP02-011",
+      "severity": "high",
+      "shots": [],
+      "problem": "Review encode was 720p and is not proof of full native master correctness or 11:11 style parity.",
+      "requiredProof": "Verify actual native encoded 1080x1920/30 master, watch on phone with headphones against approved Episode 01."
+    }
+  ],
+  "resolutionPolicy": {
+    "noFalseApproval": true,
+    "noUnauthorizedStoryboardChanges": true,
+    "noCoreEngineChangesWithoutExplicitUserPermission": true,
+    "noFullResolutionUntilStillsAndMovingShotsApproved": true,
+    "onlyCloseWhen": "Issue-specific frames/preview clip were actually opened and inspected; full final encoded video independently reviewed.",
+    "note": "This is the rejected V9 issue register, not proof V9 repairs were implemented. Source-only tests and successful FFmpeg assembly never resolve these issues."
+  }
+}
