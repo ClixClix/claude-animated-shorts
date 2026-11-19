@@ -1,3 +1,15 @@
+# Mandatory Codex safety rules — apply before all other production steps
+
+> **Scope Lock (user requirement).** Never modify core engine files, shared camera rigs, global wrappers/compositions, Episode 01 sources, shared shaders or locked series assets unless the user explicitly instructs it. For normal production/repair work, create or edit source **only inside the target scene folder** (for Episode 02: `studio/src/v2/episodes/in-this-town-02/`) and rendered/QA output **only inside its episode output folder** (`studio/out/v2-episodes/in-this-town-02/`). Updating `AGENTS.md` and `.agents/skills/` is an explicit agent-instruction migration exception, not permission to rewrite the renderer. The target scene's own camera path may be fixed, but global camera conventions may not.
+
+> **Stills-First Verification (user requirement).** BEFORE rendering or stitching any full MP4, render **three real low-resolution PNGs for each relevant shot: START, MIDDLE and END**, using the live narration-driven shot manifest. For Episode 02 run from `studio/`: `node src/v2/episodes/in-this-town-02/tools/three-frame-gate.mjs` (all shots), or `node src/v2/episodes/in-this-town-02/tools/three-frame-gate.mjs --shots 06,07B,51` (affected-shot iteration). Open and **visually inspect** every PNG for 2D artwork in 3D depth/occlusion, correct character and box scale, grounded geometry, camera framing, visible actions and zero body/prop/furniture clipping. Fix coordinates **in the target scene** and repeat until those frames are genuinely correct. Rendering PNGs or passing source tests does not count as inspecting them. THEN review moving clips of interactions, cuts, and entrances before full video assembly. Do not run the full render while a gate is unreviewed or failing.
+
+> **Existing Pipeline Only.** Use the original repository's director lock, Episode 01 reference, actual Adam word timings, established render/assemble/audio/QA scripts and `inthis:next` workflow. Do not create stand-alone replacement render systems, bypass failed checks, invent scene beats, substitute an easier physical action, silently edit the storyboard or claim 99% visual confidence from code tests. Keep all hooks and sub-agent work sequential and explicitly invoked in terminal; no hidden Claude hook or background agent is assumed.
+
+> **Source-of-truth migration limit.** This remote `v2-local-render` branch already had `AGENTS.md` but no root `CLAUDE.md` or `.claude/` tree. Preserve all existing instructions below. Read any extra `CLAUDE.md` files present on a local working copy before copying their coordinate systems or commands; never invent unavailable architecture rules. The repository's Codex workflow is documented in `.agents/skills/in-this-town-production/SKILL.md`.
+
+---
+
 # In This Town / What If Cats — repository production instructions
 
 **Use this file automatically whenever a coding/production agent is asked to make or fix an In This Town episode. The goal is ONE creative prompt, not a user-written 60-shot technical specification.**
