@@ -18,7 +18,8 @@ const dest=path.join(out,'phase4-rescue-regression-bundle.mjs');
 await build({stdin:{
   contents:[
     "export {SCRATCH_EDIT,stateAt,rescueTipAngle,tippedEssieRoot,tippedEssieInterior} from './src/v2/episodes/in-this-town-02/timeline.ts';",
-    "export {BOX_SPECS,createEpisodeBox} from './src/v2/episodes/in-this-town-02/boxProps.ts';"
+    "export {BOX_SPECS,createEpisodeBox} from './src/v2/episodes/in-this-town-02/boxProps.ts';",
+    "export {directEpisodeCamera} from './src/v2/episodes/in-this-town-02/cameraDirector.ts';"
   ].join('\n'),resolveDir:studio,loader:'ts'},
   outfile:dest,bundle:true,format:'esm',platform:'node',target:'node24',
   external:['three']
@@ -77,9 +78,52 @@ check(source.includes('boxes.essie.flaps.front.visible=true;'),
  'The physical rescue flap is being hidden');
 check(source.includes('new EpisodeWorld(optimize)'),
  'Original style check is not wired to the scene');
+
+const norm=v=>{const size=Math.hypot(...v)||1;return v.map(x=>x/size)};
+const minus=(a,b)=>a.map((x,i)=>x-b[i]);
+const dot=(a,b)=>a.reduce((n,x,i)=>n+x*b[i],0);
+const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+const project=(point,camera)=>{
+ const forward=norm(minus(camera.target,camera.camera));
+ const right=norm(cross(forward,[0,1,0]));
+ const up=cross(right,forward);
+ const delta=minus(point,camera.camera);
+ const depth=dot(delta,forward);
+ const tangent=Math.tan(camera.fov*Math.PI/360);
+ return {x:dot(delta,right)/(depth*tangent*1080/1920),
+  y:dot(delta,up)/(depth*tangent),depth};
+};
+const framing={};
+for(const n of [49,50,51,52]){
+ let maxNormalizedHorizontal=0;
+ let maxNormalizedVertical=0;
+ let frontOrBehindCamera=0;
+ for(let j=0;j<=20;j++){
+  const st=at(n,j/20),camera=mod.directEpisodeCamera(st);
+  for(const id of ['mocha','essie']){
+   if(!st[id].visible)continue;
+   const cat=st[id];
+   // Conservative source-space card rectangle; real curled art can be smaller.
+   for(const x of [-.67,.67])for(const y of [-.16,1.35]){
+    const pixel=project([cat.position[0]+x*cat.scale,
+      cat.position[1]+y*cat.scale,cat.position[2]],camera);
+    if(pixel.depth<=0){frontOrBehindCamera++;continue;}
+    maxNormalizedHorizontal=Math.max(maxNormalizedHorizontal,Math.abs(pixel.x));
+    maxNormalizedVertical=Math.max(maxNormalizedVertical,Math.abs(pixel.y));
+   }
+  }
+ }
+ framing[String(n)]={maxNormalizedHorizontal:+maxNormalizedHorizontal.toFixed(3),
+  maxNormalizedVertical:+maxNormalizedVertical.toFixed(3),behindCamera:frontOrBehindCamera,
+  warning:maxNormalizedHorizontal>.92?'DIRECT_PNG_REVIEW_REQUIRED__TIGHT_HORIZONTAL_FRAME':null};
+ check(frontOrBehindCamera===0,'A lead actor is behind the rendering camera in '+n);
+ check(maxNormalizedHorizontal<1.10,'Major predicted horizontal crop in '+n);
+}
+const framingWarnings=Object.entries(framing).filter(([,x])=>x.warning)
+ .map(([shot,x])=>({shot,...x}));
 const report={
  stage:'SOURCE_SPATIAL_REGRESSION_PASSED__MOVING_VISUAL_REVIEW_REQUIRED',
- checks:checked,shotRange:[49,50,51,52],
+ checks:checked,shotRange:[49,50,51,52],framing,framingWarnings,
  evidence:'rigid box pivot, actor transition poses, scene source and grounded end',
  artisticApproved:false,musicRightsApproved:false,publishingAllowed:false,
  note:'These source-space tests cannot establish screen-visible action, camera occlusion, or animation quality.'
