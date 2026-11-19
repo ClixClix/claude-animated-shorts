@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "episode": "The Cat Who Became a Box",
+  "phase": "PHASE4_LOCAL_RECONSTRUCTED_V9_RESCUE_QA",
+  "status": "SOURCE_CHECKED__NOT_RENDERED__NOT_VISUALLY_APPROVED",
+  "baseline": {
+    "package": "EP02_GEOMETRY_FIRST_V9.zip",
+    "sourceHashes": {
+      "Episode.tsx": "9fa8bc1e480e49dc76fe5dea080eaec9b33cbb85c0353a20851294be4c08545f",
+      "boxProps.ts": "67c1dc99ab62afb9975f86f4d262f331d638d057cb8c59f7df8e28788e773976",
+      "cameraDirector.ts": "81db2f6d0c005e62daea979aa221776ffd8af49c5e8144ff096bc9ea0b81964d",
+      "episode1Cast.ts": "4da7103dd65ed4c19e162bbc07c2a9b9e674859cc763cd83bbcfeb7976a9348f",
+      "timeline.ts": "fc2933e1a28b87abcbe4145579ec895c63b8fe5d9f6a87219ba90d3d13b27e1a"
+    }
+  },
+  "offlineReview": {
+    "environment": "Container with verified V9 sources extracted from archive, TypeScript transpileModule/vm, real stateAt and directEpisodeCamera; NO Three.js browser/Remotion render.",
+    "sourceSpaceChecks": 1034,
+    "sourceSpaceFailed": 0,
+    "tested": [
+      "Shot 49→50, 50→51 and 51→52 position and scale continuity",
+      "101 samples of source-space box tip pivot and fixed front-bottom lip",
+      "Finite actor positions, legitimate scale range and camera FOV",
+      "Both actors visible on their ending grounded positions",
+      "Four box walls specified and hinged exit references removed"
+    ],
+    "predictedFraming": {
+      "49": {
+        "maxNormalizedHorizontal": 0.99,
+        "warning": "Only approximately 1% edge margin at jump; risk of crop and obstruction"
+      },
+      "50": {
+        "maxNormalizedHorizontal": 0.86
+      },
+      "51": {
+        "maxNormalizedHorizontal": 0.98,
+        "warning": "Only approximately 2% edge margin near end; not enough to approve without direct PNG and moving-video review"
+      },
+      "52": {
+        "maxNormalizedHorizontal": 0.72
+      },
+      "coordinateNote": "1.00 represents the visible frame edge. Predicted projection uses full approximate 2D cat cards and original scene-directed camera, not a rendered pixel mask."
+    },
+    "knownBlindSpots": [
+      "No actual rendered image inspected for this repaired source",
+      "Camera may intersect walls or props even when actor projections are within NDC bounds",
+      "Sidewall / cat sprite intersection and resting silhouette cannot be conclusively checked from source geometry",
+      "Box transformation, tumble, facial acting, timing and physics cannot be approved from still numerical checks",
+      "Windows V9 clone and newest local file hashes not verified",
+      "Original finishing SFX and music not mixed or reviewed"
+    ]
+  },
+  "requiredNextGate": [
+    "Sync Phase4 source repair tools without replacing newer Windows episode source",
+    "Dry-run then apply only if exact five V9 SHA-256 hashes match",
+    "Run original director/style/box and shot continuity tests",
+    "Run real 3 PNG stills per affected segment, inspect directly and note any framing clipping",
+    "Only then render 49–52 moving previews and inspect complete tip, tumble and embrace",
+    "Do not label any scene approved or start full episode encode until these gates pass"
+  ],
+  "publishingAllowed": false,
+  "creativeApproval": false
+}
