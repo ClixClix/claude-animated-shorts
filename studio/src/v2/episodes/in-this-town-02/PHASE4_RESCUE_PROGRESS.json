@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "phase": "PHASE4_DIRECTOR_RESCUE_SOURCE_REPAIR",
+  "status": "CODE_PREPARED_COMMITTED__NOT_APPLIED_OR_VISUALLY_APPROVED",
+  "episode": "The Cat Who Became a Box",
+  "beats": [
+    49,
+    50,
+    51,
+    52
+  ],
+  "installedV9Preserved": true,
+  "engineFilesChanged": false,
+  "audioChanged": false,
+  "codeArtifacts": [
+    "tools/apply-v9-rescue.mjs",
+    "tools/rescue-continuity-test.mjs"
+  ],
+  "implementation": [
+    "Essie box keeps four rigid physical walls and complete hinged flaps",
+    "The entire rigid box tips around its front-bottom edge with floor-contact-preserving rotation",
+    "Mocha and Essie start in their exact beat 50 end poses, follow the tilted interior, emerge from its open top, then land together",
+    "Beat 52 begins exactly where both actors ended beat 51",
+    "Episode 01 actor art retained; compact box-rest art transitions after exiting",
+    "Unbatched V9 fixtures preserved while using the existing style-check constructor contract"
+  ],
+  "offlineReconstructedSourceChecks": {
+    "ran": true,
+    "environment": "Reconstructed V9 scene sources from exact V9 source ZIP, local TS 5.8 transpile; no Three.js/Remotion browser render",
+    "shotBoundaryPositionDistancesMeters": {
+      "49to50Mocha": 0,
+      "50to51Mocha": 0,
+      "50to51Essie": 0,
+      "51to52Mocha": 0,
+      "51to52Essie": 0
+    },
+    "tipSamples": 101,
+    "frontLowerEdgeGrounded": true,
+    "unknownSourceOverwriteProtection": true,
+    "tsTranspileDiagnostics": {
+      "Episode": 0,
+      "boxProps": 0,
+      "timeline": 0,
+      "episode1Cast": 0
+    },
+    "caveat": "Typechecking/build, 3D mesh intersections, camera visibility, visual acting, and full encoded video not verified"
+  },
+  "blockedUntil": [
+    "Sync GitHub QA tools to local Windows directory without overwriting its existing newer V9 scene",
+    "Run dry-run hash guarded apply, inspect backup, then apply",
+    "Run original director/style/box/type checks on local studio",
+    "Run three-frame gate on shots 49-52 and directly inspect all images",
+    "Review moving local previews for actual tip, tumble and embrace before marking scene passed",
+    "Continue other defect fixes and final sound/release QA"
+  ],
+  "publishingAllowed": false,
+  "creativeReviewComplete": false
+}
