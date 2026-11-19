@@ -5,6 +5,12 @@ description: Safely edit and produce What If Cats / In This Town scenes in the e
 
 # In This Town — Codex production skill
 
+## Production mode — WINDOWS LOCAL FIRST (November 19, 2026)
+
+The creator explicitly switched back to local rendering. Use the latest actual V9 Windows studio scene and its approved local Adam narration/timing as authoritative. GitHub cloud render shots came from older scene source; **do not treat them as V9 approval**. Cloud video workflows are manual-only and must never be started unless the creator explicitly asks to resume cloud rendering.
+
+Before changing files or rendering, follow `studio/src/v2/episodes/in-this-town-02/LOCAL_RENDERING_NEXT_PASS.md` and the read-only Status stage of `Local-Episode02-Review.ps1`. Protect all local V9 scene and audio changes. Do not do a wholesale git pull/checkout/reset to receive QA tools. Use scene-local offline checks -> start/middle/end real PNGs -> directly inspect -> local short MP4 clips -> directly inspect -> correct and repeat. Full-film encode is last, not the default.
+
 ## Read before changing anything
 
 1. Repository root `AGENTS.md` (highest-priority local operating requirements).
