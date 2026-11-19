@@ -1,10 +1,8 @@
 name: Episode 02 direct Remotion visual proof (no FFmpeg install)
 
+# Local rendering is primary. Cloud video runs only by explicit manual dispatch.
 on:
   workflow_dispatch:
-  push:
-    branches: [v2-local-render]
-    paths: [".github/workflows/episode02-direct-remotion-proof.yml"]
 
 permissions:
   contents: read
