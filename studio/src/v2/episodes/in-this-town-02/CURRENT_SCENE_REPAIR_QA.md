@@ -43,3 +43,7 @@ Move Mocha's shot07B path clear of the complete front flap, including the camera
 ## Alley side-flap clearance
 
 The outstretched side flaps extend beyond the narrow alley. The scene-local correction keeps both real side-flap hinges upright during alley beats32–52, retaining every panel and the existing box size. Front/back rescue hinge compensation, actor paths, cameras and café shots are unchanged. TypeScript, spatial regression and guarded-install fixture pass. Alley start/middle/end PNGs and moving tip review remain pending. The submitted JSON lists only07B, so it does not document fresh alley renders.
+
+## Native-build action gate
+
+The submitted Windows log stops at strict action evidence: Essie shifts only .10m against a .14m minimum, and the finale .62m arcs can miss the .65m sampled vertical requirement. Increase the supported in-box shift to .16m and only the three finale arcs to .70m, retaining timings and landing coordinates. TypeScript, the connected strict action audit (29 checks) and source spatial regression pass; the Windows log uses an older 25-check audit. Installer fixture passes. Visual review of07A/07B and60 remains pending. This does not resolve the separately documented legacy box-count audit mismatch.
