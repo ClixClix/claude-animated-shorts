@@ -39,3 +39,7 @@ Attachments appear in end/middle/start order; do not infer backwards motion or c
 ## Clipping-only walk-by correction
 
 Move Mocha's shot07B path clear of the complete front flap, including the camera-facing card's lateral depth. Limit its endpoint to keep the existing camera framing. No other shot or camera changes. 101 sampled walk-by states now check full-card clearance; source regression and TypeScript pass. Guarded installer backed up and applied successfully to the preceding exact source in a fixture. Local shot07B start/middle/end PNGs and moving preview remain required.
+
+## Alley side-flap clearance
+
+The outstretched side flaps extend beyond the narrow alley. The scene-local correction keeps both real side-flap hinges upright during alley beats32–52, retaining every panel and the existing box size. Front/back rescue hinge compensation, actor paths, cameras and café shots are unchanged. TypeScript, spatial regression and guarded-install fixture pass. Alley start/middle/end PNGs and moving tip review remain pending. The submitted JSON lists only07B, so it does not document fresh alley renders.
