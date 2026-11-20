@@ -31,3 +31,7 @@ No cloud scene rendering, paid voice calls, audio edits or full-film rendering w
 Run tools/apply-current-scene-fixes.mjs from your actual studio. Without --apply it checks exact uploaded-file hashes and writes nothing. With --apply it backs up the five changed source/tool files beneath this episode output directory, verifies all known before/after hashes, and installs the repair. It refuses newer/unrecognized source. It never overwrites narration, props, artwork, existing renders or box geometry. CURRENT_SCENE_VISUAL_FIXES.patch documents the exact changes against the uploaded baseline.
 
 Use the existing three-frame-gate.mjs --shots 06,07,49,50,51,52, then inspect every PNG. Use the existing review runner Clips stage only after that review. Do not run its legacy Repair stage; that targets the earlier unpatched V9 baseline.
+
+## Follow-up on submitted PNGs
+
+Attachments appear in end/middle/start order; do not infer backwards motion or cure disappearance from that ordering. The confirmed shot51 middle-image flaw is the flap crossing the cats. apply-rescue-clearance-fix.mjs advances their forward clearance before the rear flap rises across the upright artwork. Only timeline.ts changes, with the same final positions and constant scale. Exact-prior-source install and TypeScript/spatial checks pass. New shot51 PNGs and moving review are pending.
