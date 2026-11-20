@@ -98,6 +98,18 @@ const project=(point,camera)=>{
  return {x:dot(delta,right)/(depth*tangent*1080/1920),
   y:dot(delta,up)/(depth*tangent),depth};
 };
+// The walk-by billboard must clear the entire front flap at every sample.
+// A clear actor center alone does not protect the illustrated face/shoulders.
+for(let j=0;j<=100;j++){
+ const s=at(7,j/100);if(!s.mocha.visible)continue;
+ const camera=mod.directEpisodeCamera(s);
+ const dx=camera.camera[0]-s.mocha.position[0];
+ const dz=camera.camera[2]-s.mocha.position[2];
+ const cardDepth=.67*Math.abs(dx)/Math.hypot(dx,dz);
+ const flapFront=s.essieBox[2]+mod.BOX_SPECS.essie.depth*(.5+.47);
+ check(s.mocha.position[2]-cardDepth>flapFront+.02,
+  'Mocha walk-by card intersects open box flap');
+}
 const framing={};
 for(const n of [6,7,49,50,51,52]){
  let maxNormalizedHorizontal=0;

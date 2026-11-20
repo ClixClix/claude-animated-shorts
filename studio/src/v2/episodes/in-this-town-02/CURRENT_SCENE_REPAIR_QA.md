@@ -35,3 +35,7 @@ Use the existing three-frame-gate.mjs --shots 06,07,49,50,51,52, then inspect ev
 ## Follow-up on submitted PNGs
 
 Attachments appear in end/middle/start order; do not infer backwards motion or cure disappearance from that ordering. The confirmed shot51 middle-image flaw is the flap crossing the cats. apply-rescue-clearance-fix.mjs advances their forward clearance before the rear flap rises across the upright artwork. Only timeline.ts changes, with the same final positions and constant scale. Exact-prior-source install and TypeScript/spatial checks pass. New shot51 PNGs and moving review are pending.
+
+## Clipping-only walk-by correction
+
+Move Mocha's shot07B path clear of the complete front flap, including the camera-facing card's lateral depth. Limit its endpoint to keep the existing camera framing. No other shot or camera changes. 101 sampled walk-by states now check full-card clearance; source regression and TypeScript pass. Guarded installer backed up and applied successfully to the preceding exact source in a fixture. Local shot07B start/middle/end PNGs and moving preview remain required.
