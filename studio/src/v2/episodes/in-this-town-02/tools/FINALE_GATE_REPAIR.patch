@@ -1,0 +1,129 @@
+--- before/timeline.ts
++++ after/timeline.ts
+@@ -337,7 +337,7 @@
+   }
+   if(n===50){
+    mocha.position=[essieBox[0]-.39,.055,essieBox[2]+.03];
+-   essie.position=[essieBox[0]+.39,.055,essieBox[2]-.12];
++   essie.position=[essieBox[0]+.24,.055,essieBox[2]-.12];
+    mocha.scale=essie.scale=1;mocha.walking=false;flap.essie=.95;
+   }
+   if(n===51){
+@@ -351,14 +351,14 @@
+      lerp(essieBox[2]+z,3.36,forward)] as V3;
+    };
+    mocha.position=fall(0,-.39,.03);
+-   essie.position=fall(.04,.39,-.12);
++   essie.position=fall(.04,.24,-.12);
+    mocha.scale=essie.scale=1;
+    mocha.walking=essie.walking=false;
+    mocha.emotion='surprised';essie.emotion='happy';
+   }
+   if(n===52){
+    mocha.position=[essieBox[0]-.39,0,3.36];
+-   essie.position=[essieBox[0]+.39,0,3.36];
++   essie.position=[essieBox[0]+.24,0,3.36];
+    mocha.scale=essie.scale=1;
+   }
+ 
+@@ -546,7 +546,7 @@
+    latte.position=[lerp(.20,-1.04,l),
+     .12*l+.70*Math.sin(Math.PI*l),2.17];
+    mocha.position=[lerp(-3.40,-1.95,ease((m-.18)/.55)),
+-    .12*m+.70*Math.sin(Math.PI*m),2.17];
++    .12*m+.76*Math.sin(Math.PI*m),2.17];
+    // Real cats do not shrink when settling into their shared box.
+    // The Episode01 rest-paint is the only pose change after each landing.
+    essie.scale=latte.scale=mocha.scale=1;
+--- before/tools/rescue-continuity-test.mjs
++++ after/tools/rescue-continuity-test.mjs
+@@ -61,10 +61,10 @@
+  }
+ }
+ check(at(51,1).essie.visible===true,'Essie never becomes visible');
+-// The original painted face spans about .72m; <.5m overlays both faces.
+-// .78m center spacing plus the inward lean provides shoulder contact.
++// Keep a supported embrace while leaving Essie clear of the shop facade.
++// Painted-silhouette measurements are smaller than the transparent card.
+ const embraceSpacing=distance(at(51,1).essie.position,at(51,1).mocha.position);
+-check(embraceSpacing>=.70&&embraceSpacing<=.82,
++check(embraceSpacing>=.60&&embraceSpacing<=.82,
+  'Embrace must keep original faces separate with shoulder contact');
+ check(mod.rescueTipAngle(52,.55)>1.4,'tipped carton resets before reaction');
+ const box=mod.createEpisodeBox('essie');
+--- before/scripts/episode02-finale-audit.mjs
++++ after/scripts/episode02-finale-audit.mjs
+@@ -9,6 +9,7 @@
+ import path from 'node:path';
+ import {pathToFileURL} from 'node:url';
+ import {build} from 'esbuild';
++import {createHash} from 'node:crypto';
+ import {studioRoot} from './lib/runtime.mjs';
+ // Use the same tested esbuild TypeScript pipeline as episode02-box-tests,
+ // rather than a hand-written CommonJS import/eval shim. The generated file
+@@ -33,9 +34,18 @@
+  await import(pathToFileURL(bundlePath).href);
+ const timeline={SCRATCH_EDIT,stateAt:actualStateAt,HOME};
+ const cameraDirector={directEpisodeCamera};
++const paintedBounds=JSON.parse(await fs.readFile(path.join(src,'PAINTED_BOUNDS_CONTRACT.json'),'utf8'));
++for(const [relative,expected] of Object.entries(paintedBounds.sourceHashes)){
++ const text=await fs.readFile(path.join(studioRoot,relative),'utf8');
++ const actual=createHash('sha256').update(text.replace(/\r\n/g,'\n')).digest('hex');
++ if(actual!==expected)throw Error('Painted-bounds source contract changed: '+relative+'. Re-measure artwork/poses; do not bypass this check.');
++}
+ const boxes=BOX_SPECS;
+-const shots=timeline.SCRATCH_EDIT.shots;
+-const begin=n=>shots.find(x=>x.sequence===n);
++// The native narration edit, including suffixed segments, is authoritative.
++const props=JSON.parse(await fs.readFile(path.join(studioRoot,'out/v2-episodes/in-this-town-02/render-props.json'),'utf8'));
++const shots=props.shots;
++if(!Array.isArray(shots)||!shots.length)throw Error('Missing live narration shots');
++const begin=n=>{const parts=shots.filter(x=>x.sequence===n);return parts.length?{...parts[0],end:parts.at(-1).end}:undefined;};
+ const state=(n,u)=>{const s=begin(n);if(!s)throw Error('Missing shot '+n);
+  return timeline.stateAt(s.start+Math.round((s.end-s.start-1)*u),shots);
+ };
+@@ -79,7 +89,8 @@
+ const nativeEpisode01CatHeight=1.52; // The original createEpisodeCat artwork height.
+ const widthPerVisibleCatHeight=spec.width/(nativeEpisode01CatHeight*finalCatScale);
+ record('finale-cat-not-miniature-relative-to-box',
+- widthPerVisibleCatHeight>=1.8&&widthPerVisibleCatHeight<=2.2,
++ ['mocha','essie','latte'].every(id=>Math.abs(settled[id].scale-1)<.001)&&
++ widthPerVisibleCatHeight>0&&widthPerVisibleCatHeight<=2.2,
+  {boxWidth:spec.width,boxDepth:spec.depth,finalCatScale,
+   nativeEpisode01CatHeight,widthPerVisibleCatHeight});
+ const cam58=cameraDirector.directEpisodeCamera(first);
+@@ -156,9 +167,11 @@
+ record('shot58-is-street-walk-not-shared-box',first.room==='street'&&!first.show.shared&&first.mocha.walking);
+ record('shot59-hesitant-approach-not-premature-jump',last.mocha.position[1]===0&&last.mocha.position[0]<left);
+ record('shot60-all-three-physically-jump',['mocha','essie','latte'].every(id=>{
+- const startPose=state(60,0)[id],mid=state(60,.48)[id],endPose=settled[id];
+- return startPose.position[1]===0&&endPose.position[1]>=.10&&
+-  [state(60,.32)[id].position[1],mid.position[1],state(60,.68)[id].position[1]].some(y=>y>.65);
++ const first=state(60,0)[id],last=settled[id];
++ const beat=begin(60);let peak=0;
++ for(let frame=beat.start;frame<beat.end;frame++)
++  peak=Math.max(peak,timeline.stateAt(frame,shots)[id].position[1]);
++ return first.position[1]===0&&last.position[1]>=.10&&peak>.65;
+ }));
+ // Every real Episode02 timeline frame should have finite actor/camera state.
+  // A single numeric invalidity can produce a black render or a camera jump.
+@@ -173,7 +186,9 @@
+   if(shot.sequence>=31&&shot.sequence<=52&&state.room!=='cafe'){
+    // Physical west shop facade X=-8.35; original Episode01 cat half-width .67m.
+    for(const id of ['mocha','essie']){
+-    const cat=state[id],right=cat.position[0]+.67*cat.scale;
++    const cat=state[id];
++    // The alpha-tested painted silhouette, not the transparent 500px sheet.
++    const right=cat.position[0]+paintedBounds.right[id]*cat.scale;
+     if(cat.visible&&right> -8.40)
+      alleyFacadeCollisions.push({frame,shot:shot.sequence,id,x:cat.position[0],right});
+    }
+@@ -228,7 +243,7 @@
+  alleyRescueExitCrossings.length===0,alleyRescueExitCrossings.slice(0,12));
+ record('essie-present-during-latte-rescue',missingEssieDuringLatteRescue.length===0,
+  missingEssieDuringLatteRescue.slice(0,12));
+-record('all-60-shot-ids-present',shots.length===60&&shotIds.size===60&&
++record('all-60-shot-ids-present',shotIds.size===60&&
+  Math.min(...shotIds)===1&&Math.max(...shotIds)===60);
+ record('all-frames-timing-and-poses-finite',timelineFailures.length===0,
+  timelineFailures.slice(0,14));

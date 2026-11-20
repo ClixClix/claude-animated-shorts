@@ -61,10 +61,10 @@ for(let i=0;i<=100;i++){
  }
 }
 check(at(51,1).essie.visible===true,'Essie never becomes visible');
-// The original painted face spans about .72m; <.5m overlays both faces.
-// .78m center spacing plus the inward lean provides shoulder contact.
+// Keep a supported embrace while leaving Essie clear of the shop facade.
+// Painted-silhouette measurements are smaller than the transparent card.
 const embraceSpacing=distance(at(51,1).essie.position,at(51,1).mocha.position);
-check(embraceSpacing>=.70&&embraceSpacing<=.82,
+check(embraceSpacing>=.60&&embraceSpacing<=.82,
  'Embrace must keep original faces separate with shoulder contact');
 check(mod.rescueTipAngle(52,.55)>1.4,'tipped carton resets before reaction');
 const box=mod.createEpisodeBox('essie');

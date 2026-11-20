@@ -1,0 +1,21 @@
+{
+  "right": {
+    "mocha": 0.55,
+    "essie": 0.5
+  },
+  "sourceHashes": {
+    "src/v2/cats/drawCat.ts": "94215124d38e0e5e810105d15fde4468d9b83056ab6d57f4b0aa47443a0afb25",
+    "src/v2/cats/designs.ts": "1f6fd186f2aa0eefa15a1a97c507ef9ac105cf53d4f6b0bf30611f5f75375c1f",
+    "src/v2/cats/pose.ts": "883872d84ac89d14f03ac46f16914aa66968cb18be55bb0f1eadd8e0084dfb0e",
+    "src/v2/episodes/in-this-town-02/episode1Cast.ts": "45d765b699c544d561e9b5e329fc2dd79e0574e04f286935edd0fe407533284f",
+    "src/v2/episodes/in-this-town-02/catBehaviors.ts": "d218f5b2b1e3cc1f44207908618e0141e55340b5ec3da992c702528b0d78b02f",
+    "src/v2/episodes/in-this-town-02/timeline.ts": "33dcd587d2eb08eb3167ab8235788c1ccc8cb30a5a51e6bae3293abdad024260"
+  },
+  "measured": {
+    "mochaMoving": 0.5361454545454546,
+    "mochaStill": 0.5306181818181819,
+    "essieMoving": 0.4587636363636364,
+    "essieStill": 0.4808727272727273
+  },
+  "method": "Original drawCat, bridgeActor and actual narration-driven alley frames; Canvas alpha >= .25, 250x275 probe. Rounded outward with at least .013m margin. Upright original artwork; additional clipping still requires local renders. No scene/video rendered."
+}
