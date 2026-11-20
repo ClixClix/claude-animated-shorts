@@ -53,3 +53,7 @@ The submitted Windows log stops at strict action evidence: Essie shifts only .10
 The existing build test expects55 Latte meshes and42 stripe meshes from an older box implementation; the approved uploaded box has29 meshes (13 structural and16 printed stripe meshes). The explicit repair-box-test-contract.mjs command backs up only scripts/episode02-box-tests.mjs and adjusts the named geometry expectations to three bands per wall plus four floor bands. It preserves all structural, fixture, finite-vertex and hinge assertions and adds floor-stripe verification. The corrected existing test passes1467 assertions. Guarded install fixture passes. No visual assets change.
 
 Preflight of the following finale audit still reports four blockers in the connected checkout (relative-size predicate, premature rim crossing, sparse jump samples and facade clearance). This box-test repair does not change or bypass that audit. Verify the actual Windows version before claiming native build readiness.
+
+## Uploaded Windows test reconciliation
+
+The actual uploaded episode02-box-tests.mjs differs from the remote test: it expects132 total Latte meshes and119 stripe meshes. The revised guarded repair targets this exact uploaded file, changes those expectations to29 and16 for the unchanged approved box, retains every other assertion and adds per-wall/floor printed-band checks. Corrected test passes1470 assertions; exact-upload backup/apply fixture passes. Finale audit remains a separate unresolved gate; do not claim full native build readiness.
