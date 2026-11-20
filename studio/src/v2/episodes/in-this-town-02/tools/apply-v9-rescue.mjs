@@ -21,11 +21,13 @@ const hashes={
   'timeline.ts':'fc2933e1a28b87abcbe4145579ec895c63b8fe5d9f6a87219ba90d3d13b27e1a'
 };
 const sha=s=>createHash('sha256').update(s).digest('hex');
-const original={};
+const original={},sourceBytes={};
 for(const [name,expected] of Object.entries(hashes)){
-  const code=await fs.readFile(path.join(scene,name),'utf8');
-  if(sha(code)!==expected)throw Error('LOCAL_SOURCE_MISMATCH: '+name+
+  const raw=await fs.readFile(path.join(scene,name),'utf8');
+  const code=raw.replaceAll('\r\n','\n');
+  if(sha(raw)!==expected&&sha(code)!==expected)throw Error('LOCAL_SOURCE_MISMATCH: '+name+
     ' has newer/different content; refusing all writes. Local files preserved.');
+  sourceBytes[name]=raw;
   original[name]=code;
 }
 function once(code,oldText,newText,desc){
@@ -141,6 +143,9 @@ episode=between(episode,
 // Preserve V9's existing environment batching and scene optimization policy.
 // The rescue repair must NOT modify the world constructor or global/shot batching.
 updated['Episode.tsx']=episode;
+for(const name of Object.keys(updated)){
+  if(sourceBytes[name].includes('\r\n'))updated[name]=updated[name].replaceAll('\n','\r\n');
+}
 if(!process.argv.includes('--apply')){
   console.log(JSON.stringify({status:'DRY_RUN',source:'exact V9 only',
     files:Object.keys(updated),changedHashes:Object.fromEntries(
@@ -151,11 +156,32 @@ if(!process.argv.includes('--apply')){
   const backup=path.join(out,'phase4-backup-'+new Date().toISOString().replace(/[:.]/g,'-'));
   await fs.mkdir(backup,{recursive:true});
   for(const name of Object.keys(updated))
-    await fs.writeFile(path.join(backup,name),original[name],'utf8');
-  for(const [name,code] of Object.entries(updated)){
-    const target=path.join(scene,name),temp=target+'.phase4-pending';
-    await fs.writeFile(temp,code,'utf8');
-    await fs.rename(temp,target);
+    await fs.writeFile(path.join(backup,name),sourceBytes[name],'utf8');
+  const staged=new Map(),installed=[];
+  try{
+    for(const [name,code] of Object.entries(updated)){
+      const temp=path.join(scene,name+'.'+path.basename(backup)+'.pending');
+      await fs.writeFile(temp,code,{flag:'wx'});
+      staged.set(name,temp);
+    }
+    for(const name of Object.keys(sourceBytes)){
+      const live=await fs.readFile(path.join(scene,name),'utf8');
+      if(live!==sourceBytes[name])throw Error('Scene changed during repair: '+name);
+    }
+    for(const [name,temp] of staged){
+      const target=path.join(scene,name);
+      if(await fs.readFile(target,'utf8')!==sourceBytes[name])throw Error('Scene changed during repair: '+name);
+      await fs.rename(temp,target);
+      installed.push(name);
+    }
+  }catch(error){
+    for(const name of installed){
+      const target=path.join(scene,name);
+      if(await fs.readFile(target,'utf8')===updated[name])await fs.copyFile(path.join(backup,name),target);
+    }
+    throw new Error('Repair interrupted. Original files saved in '+backup,{cause:error});
+  }finally{
+    for(const temp of staged.values())await fs.rm(temp,{force:true});
   }
   const report={
     status:'SOURCE_CHANGED__VISUAL_REVIEW_PENDING',

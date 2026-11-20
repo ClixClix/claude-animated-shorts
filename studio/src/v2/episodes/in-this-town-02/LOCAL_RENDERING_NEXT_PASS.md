@@ -1,5 +1,15 @@
 # Episode 02 — Windows local-first rendering (November 19, 2026)
 
+## November 20 review
+
+The tool review used GitHub source `dbaf61f`. Its TypeScript, director, 25 style, 2,114 box and 27 finale checks passed. Its scene hashes differ from the documented installed V9 package. V9 and its approved Adam render manifest are needed for the guarded rescue repair and the actual picture checks.
+
+`tools/Install-Episode02-Review.ps1` copies the selected review tools into an existing V9 studio folder and backs up replaced tools. Supply the full Git revision with `-Revision`. From that studio folder, run the local runner with `-Stage Status`. If all five files match the original V9 baseline, `-Stage Repair` checks the local Adam edit, dry-runs the repair, and backs up and applies the four scene file patches. If the repair is already installed, proceed to `-Stage Validate`. If the source differs and its repair status is unknown, review the local files before applying any patch.
+
+Run `-Stage Validate`, then `-Stage Stills -Shots "06,07,49,50,51,52"`. Stills and clips accept beat numbers, including all their split segments, and also accept specific IDs such as `07B`. Inspect the PNGs in `out/v2-episodes/in-this-town-02/three-frame-review`. Then run `-Stage Clips` with the same shot list. The clip step verifies that the selected PNGs match the current source/edit and renders through the existing preview command. Clips are in `out/v2-episodes/in-this-town-02/preview-segments`.
+
+The reviewed repair targets the Shot 49–52 rescue. V9-specific repairs, local render verification and the other issues in `V9_REJECTED_VISUAL_QA.json` remain open pending the installed source and footage. The next render is a targeted local review.
+
 **Primary working source:** the user's latest installed Episode 02 V9 scene on Windows. The v2-local-render GitHub branch currently contains older scene files; old cloud renders do not approve the latest V9. Never overwrite newer local code with the older remote version.
 
 **Cloud preview policy:** GitHub Actions episode video workflows are manual-only. The non-video source/unit CI remains enabled.

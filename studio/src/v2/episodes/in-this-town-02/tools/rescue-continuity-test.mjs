@@ -10,6 +10,7 @@ import path from 'node:path';
 import {pathToFileURL,fileURLToPath} from 'node:url';
 import {build} from 'esbuild';
 import * as T from 'three';
+import {readProps,selectReviewShots} from './review-inputs.mjs';
 const scene=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const studio=path.resolve(scene,'../../../..');
 const out=path.join(studio,'out/v2-episodes/in-this-town-02');
@@ -17,7 +18,7 @@ await fs.mkdir(out,{recursive:true});
 const dest=path.join(out,'phase4-rescue-regression-bundle.mjs');
 await build({stdin:{
   contents:[
-    "export {SCRATCH_EDIT,stateAt,rescueTipAngle,tippedEssieRoot,tippedEssieInterior} from './src/v2/episodes/in-this-town-02/timeline.ts';",
+    "export {stateAt,rescueTipAngle,tippedEssieRoot,tippedEssieInterior} from './src/v2/episodes/in-this-town-02/timeline.ts';",
     "export {BOX_SPECS,createEpisodeBox} from './src/v2/episodes/in-this-town-02/boxProps.ts';",
     "export {directEpisodeCamera} from './src/v2/episodes/in-this-town-02/cameraDirector.ts';"
   ].join('\n'),resolveDir:studio,loader:'ts'},
@@ -27,10 +28,11 @@ await build({stdin:{
 const mod=await import(pathToFileURL(dest).href);
 let checked=0;
 const check=(cond,label)=>{assert.ok(cond,label);checked++;};
-const cuts=new Map(mod.SCRATCH_EDIT.shots.map(x=>[x.sequence,x]));
+const {shots}=await readProps();
+const cuts=new Map([49,50,51,52].map(beat=>[beat,selectReviewShots(shots,String(beat))]));
 const at=(n,u)=>{
-  const sh=cuts.get(n);
-  return mod.stateAt(sh.start+Math.floor((sh.end-sh.start-1)*u),mod.SCRATCH_EDIT.shots);
+  const segments=cuts.get(n),first=segments[0],last=segments.at(-1);
+  return mod.stateAt(first.start+Math.floor((last.end-first.start-1)*u),shots);
 };
 const distance=(a,b)=>Math.hypot(...a.map((x,i)=>x-b[i]));
 for(const [a,b,names] of [
@@ -123,7 +125,7 @@ const framingWarnings=Object.entries(framing).filter(([,x])=>x.warning)
  .map(([shot,x])=>({shot,...x}));
 const report={
  stage:'SOURCE_SPATIAL_REGRESSION_PASSED__MOVING_VISUAL_REVIEW_REQUIRED',
- checks:checked,shotRange:[49,50,51,52],framing,framingWarnings,
+ checks:checked,shotRange:[49,50,51,52],liveSegments:[...cuts.values()].flat().map(x=>x.id),framing,framingWarnings,
  evidence:'rigid box pivot, actor transition poses, scene source and grounded end',
  artisticApproved:false,musicRightsApproved:false,publishingAllowed:false,
  note:'These source-space tests cannot establish screen-visible action, camera occlusion, or animation quality.'

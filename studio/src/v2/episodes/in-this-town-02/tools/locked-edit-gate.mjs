@@ -8,6 +8,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
 
 const currentFile=fileURLToPath(import.meta.url);
 const studioRoot=path.resolve(path.dirname(currentFile),'../../../../..');
@@ -93,7 +94,8 @@ export function validateLockedEdit({lock,plan,narration,props,manifest=null,narr
         const m=narratedEdit.markers[seq-1], related=edit.filter(s=>s.sequence===seq);
         check(m?.sequence===seq&&m?.sourceId===String(seq).padStart(2,'0')&&
           m?.editStartFrame===related[0]?.start&&
-          m?.editEndFrame===related.at(-1)?.end,
+          m?.editEndFrame===related.at(-1)?.end&&
+          words(m?.spoken).join('|')===words(lines[seq-1]?.spoken).join('|'),
           'WORD_TIMING_BEAT_'+seq,'Adam marker does not bound the edited segments for beat '+seq+'.');
       }
     }
@@ -123,6 +125,26 @@ async function main(){
     catch(e){failures.push({id:'FILE_MISSING_'+key,detail:file+' ('+e.message+')'});}
   }
   const evaluated=failures.length?{errors:failures}:validateLockedEdit(data);
+  if(!failures.length){
+    const voice=data.narratedEdit.voice;
+    const scriptHash=createHash('sha256').update(data.narration.trim()).digest('hex');
+    const windowsScriptHash=createHash('sha256').update(data.narration.trim().replace(/\r?\n/g,'\r\n')).digest('hex');
+    const lfScriptHash=createHash('sha256').update(data.narration.trim().replaceAll('\r\n','\n')).digest('hex');
+    if(voice?.voiceId!=='pNInz6obpgDQGcFmaJgB'||voice?.modelId!=='eleven_multilingual_v2'||
+      voice?.playback?.speed!==1.35||voice?.playback?.mode!=='varispeed'||voice?.assumedTiming!==false||
+      ![scriptHash,windowsScriptHash,lfScriptHash].includes(voice?.sourceHash)){
+      evaluated.errors.push({id:'ADAM_PROVENANCE_MISMATCH',detail:'The existing narrated edit must identify the approved Adam take, preset and script.'});
+    }
+    const rendered=data.props.shots;
+    const aligned=data.narratedEdit.shots;
+    if(!Array.isArray(rendered)||!Array.isArray(aligned)||aligned.length!==rendered.length||
+      !aligned.every((shot,i)=>shot.id===rendered[i]?.id&&shot.sequence===rendered[i]?.sequence&&
+        shot.start===rendered[i]?.start&&shot.end===rendered[i]?.end&&
+        Number.isFinite(shot.sourceStart)&&shot.sourceEnd>shot.sourceStart&&
+        shot.sourceStart===rendered[i]?.sourceStart&&shot.sourceEnd===rendered[i]?.sourceEnd)){
+      evaluated.errors.push({id:'ADAM_SOURCE_RANGE_MISMATCH',detail:'Live render props and the approved narrated edit must use the same shot IDs, frame ranges and performance timing.'});
+    }
+  }
   const result={
     stage:evaluated.errors.length?'BLOCKED_LOCKED_EDIT_MISMATCH':'LOCKED_EDIT_RECONCILED__NOT_VISUALLY_APPROVED',
     passed:evaluated.errors.length===0,

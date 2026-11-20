@@ -1,6 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {validateLockedEdit} from './locked-edit-gate.mjs';
+import {selectReviewShots} from './review-inputs.mjs';
 
 function fixture(){
   const lock={shots:[]},plan={shots:[]},props={shots:[],audioApproved:true};
@@ -21,7 +22,7 @@ function fixture(){
     width:1080,height:1920,fps:30};
   const narratedEdit={durationInFrames:cursor,markers:plan.shots.map(s=>{
     const related=props.shots.filter(x=>x.sequence===s.sequence);
-    return {sequence:s.sequence,sourceId:s.id,
+    return {sequence:s.sequence,sourceId:s.id,spoken:s.spoken,
       editStartFrame:related[0].start,editEndFrame:related.at(-1).end};
   })};
   return {lock,plan,props,manifest,narratedEdit,
@@ -34,6 +35,12 @@ test('60 director beats and 62 narration-split segments are valid',()=>{
   assert.equal(r.beats,60);
   assert.equal(r.renderSegments,62);
   assert.equal(r.frames,1240);
+});
+test('local review selects every segment in a beat or an exact suffixed segment',()=>{
+  const shots=fixture().props.shots;
+  assert.deepEqual(selectReviewShots(shots,'06,07,49').map(s=>s.id),['06','07A','07B','49A','49B']);
+  assert.deepEqual(selectReviewShots(shots,'7b').map(s=>s.id),['07B']);
+  assert.throws(()=>selectReviewShots(shots,'06,07C'),/Shot not found/);
 });
 test('rejects unauthorized replacement of shot 51 action',()=>{
   const x=fixture();
