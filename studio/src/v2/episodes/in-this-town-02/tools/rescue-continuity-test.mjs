@@ -29,7 +29,7 @@ const mod=await import(pathToFileURL(dest).href);
 let checked=0;
 const check=(cond,label)=>{assert.ok(cond,label);checked++;};
 const {shots}=await readProps();
-const cuts=new Map([49,50,51,52].map(beat=>[beat,selectReviewShots(shots,String(beat))]));
+const cuts=new Map([6,7,49,50,51,52].map(beat=>[beat,selectReviewShots(shots,String(beat))]));
 const at=(n,u)=>{
   const segments=cuts.get(n),first=segments[0],last=segments.at(-1);
   return mod.stateAt(first.start+Math.floor((last.end-first.start-1)*u),shots);
@@ -61,8 +61,11 @@ for(let i=0;i<=100;i++){
  }
 }
 check(at(51,1).essie.visible===true,'Essie never becomes visible');
-check(distance(at(51,1).essie.position,at(51,1).mocha.position)<.5,
- 'Restored cats are too far apart for embrace landing');
+// The original painted face spans about .72m; <.5m overlays both faces.
+// .78m center spacing plus the inward lean provides shoulder contact.
+const embraceSpacing=distance(at(51,1).essie.position,at(51,1).mocha.position);
+check(embraceSpacing>=.70&&embraceSpacing<=.82,
+ 'Embrace must keep original faces separate with shoulder contact');
 check(mod.rescueTipAngle(52,.55)>1.4,'tipped carton resets before reaction');
 const box=mod.createEpisodeBox('essie');
 const names=[];
@@ -78,7 +81,7 @@ check(!/setExitOpening|gateWalk/.test(source+timeline+geom),
  'Prohibited hinged walk-out rescue remains');
 check(source.includes('boxes.essie.flaps.front.visible=true;'),
  'The physical rescue flap is being hidden');
-check(source.includes('new EpisodeWorld(optimize)'),
+check(/new\s+EpisodeWorld\s*\(\s*(?:optimize|false)\s*\)/.test(source),
  'Original style check is not wired to the scene');
 
 const norm=v=>{const size=Math.hypot(...v)||1;return v.map(x=>x/size)};
@@ -96,16 +99,16 @@ const project=(point,camera)=>{
   y:dot(delta,up)/(depth*tangent),depth};
 };
 const framing={};
-for(const n of [49,50,51,52]){
+for(const n of [6,7,49,50,51,52]){
  let maxNormalizedHorizontal=0;
  let maxNormalizedVertical=0;
  let frontOrBehindCamera=0;
  for(let j=0;j<=20;j++){
   const st=at(n,j/20),camera=mod.directEpisodeCamera(st);
-  for(const id of ['mocha','essie']){
+  for(const id of ['mocha','essie','latte']){
    if(!st[id].visible)continue;
    const cat=st[id];
-   // Conservative source-space card rectangle; real curled art can be smaller.
+   // Full original art rectangle: no miniature resting-image assumption.
    for(const x of [-.67,.67])for(const y of [-.16,1.35]){
     const pixel=project([cat.position[0]+x*cat.scale,
       cat.position[1]+y*cat.scale,cat.position[2]],camera);
@@ -125,7 +128,7 @@ const framingWarnings=Object.entries(framing).filter(([,x])=>x.warning)
  .map(([shot,x])=>({shot,...x}));
 const report={
  stage:'SOURCE_SPATIAL_REGRESSION_PASSED__MOVING_VISUAL_REVIEW_REQUIRED',
- checks:checked,shotRange:[49,50,51,52],liveSegments:[...cuts.values()].flat().map(x=>x.id),framing,framingWarnings,
+ checks:checked,shotRange:[6,7,49,50,51,52],liveSegments:[...cuts.values()].flat().map(x=>x.id),framing,framingWarnings,
  evidence:'rigid box pivot, actor transition poses, scene source and grounded end',
  artisticApproved:false,musicRightsApproved:false,publishingAllowed:false,
  note:'These source-space tests cannot establish screen-visible action, camera occlusion, or animation quality.'
