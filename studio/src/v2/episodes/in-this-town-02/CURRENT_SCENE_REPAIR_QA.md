@@ -47,3 +47,9 @@ The outstretched side flaps extend beyond the narrow alley. The scene-local corr
 ## Native-build action gate
 
 The submitted Windows log stops at strict action evidence: Essie shifts only .10m against a .14m minimum, and the finale .62m arcs can miss the .65m sampled vertical requirement. Increase the supported in-box shift to .16m and only the three finale arcs to .70m, retaining timings and landing coordinates. TypeScript, the connected strict action audit (29 checks) and source spatial regression pass; the Windows log uses an older 25-check audit. Installer fixture passes. Visual review of07A/07B and60 remains pending. This does not resolve the separately documented legacy box-count audit mismatch.
+
+## Production box-test compatibility
+
+The existing build test expects55 Latte meshes and42 stripe meshes from an older box implementation; the approved uploaded box has29 meshes (13 structural and16 printed stripe meshes). The explicit repair-box-test-contract.mjs command backs up only scripts/episode02-box-tests.mjs and adjusts the named geometry expectations to three bands per wall plus four floor bands. It preserves all structural, fixture, finite-vertex and hinge assertions and adds floor-stripe verification. The corrected existing test passes1467 assertions. Guarded install fixture passes. No visual assets change.
+
+Preflight of the following finale audit still reports four blockers in the connected checkout (relative-size predicate, premature rim crossing, sparse jump samples and facade clearance). This box-test repair does not change or bypass that audit. Verify the actual Windows version before claiming native build readiness.
