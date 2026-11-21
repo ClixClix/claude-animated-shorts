@@ -23,3 +23,7 @@ TypeScript PASS; strict action evidence29/29; director60 beats/zero source block
 ## Limits and next stage
 
 VISUAL_REVIEW_PENDING for modified source. No new Remotion scene rendered in the cloud. Review local04,05,12,13,21,32,48 start/middle/end PNGs and moving clips before full assembly. Other intentional story cuts, narration timing, cafés/houses and approved character drawings remain unchanged. The submitted51/55/60 samples still show stylized jump/rest transitions; this patch does not claim a fully re-authored animation system or verified final artistic approval. Stop after reviewing the local updated movie; no publishing or next episode.
+
+## Small follow-up from supplied PNGs
+
+Fold both Latte side flaps downward outside the box in the already-targeted close shots; each panel retains floor clearance. Move carrying Essie .28m forward of the alley flap. Move held alley Mocha poses .36m forward and match their scene-camera depth offset to preserve framing. Widen21 slightly to include both lead faces and suppress its obstructing foreground guest. No timing, voice, SFX policy or artwork changes. TypeScript, strict motion/style and27 finale checks pass; exact-source installer fixture passes. New local pixels remain unreviewed.
