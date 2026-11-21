@@ -42,6 +42,17 @@ test('local review selects every segment in a beat or an exact suffixed segment'
   assert.deepEqual(selectReviewShots(shots,'7b').map(s=>s.id),['07B']);
   assert.throws(()=>selectReviewShots(shots,'06,07C'),/Shot not found/);
 });
+test('accepts a coherent shot longer than four seconds with unchanged narration coverage',()=>{
+  const x=fixture();
+  x.props.shots.forEach((s,i)=>{if(i)s.start+=180;s.end+=180;});
+  x.manifest.shots=structuredClone(x.props.shots);
+  x.manifest.durationInFrames+=180;x.narratedEdit.durationInFrames+=180;
+  x.narratedEdit.markers.forEach(m=>{
+    const group=x.props.shots.filter(s=>s.sequence===m.sequence);
+    m.editStartFrame=group[0].start;m.editEndFrame=group.at(-1).end;
+  });
+  assert.deepEqual(validateLockedEdit(x).errors,[]);
+});
 test('rejects unauthorized replacement of shot 51 action',()=>{
   const x=fixture();
   x.props.shots.find(s=>s.sequence===51).cameraAndAction='Hinged box door and simple walk-out';

@@ -69,11 +69,11 @@ if(voiceExists){
  }));
 }
 const duration=cursor/30;
-if(shots.some((s,i)=>s.end<=s.start||s.end-s.start>120||
+if(shots.some((s,i)=>s.end<=s.start||
   s.start!==(i?shots[i-1].end:0))||
   shots.at(-1)?.end!==cursor||
   new Set(shots.map(s=>s.sequence)).size!==60)
- throw Error('Episode02 source-matched narrated edit has missing, overlapping, or oversized shots.');
+ throw Error('Episode02 source-matched narrated edit has missing or overlapping shots.');
 let captions=[];
 if(alignment){
  if(!Array.isArray(alignment)||alignment.length<words.length*.75)throw new Error('Word alignment file is incomplete.');

@@ -9,7 +9,7 @@
     "src/v2/cats/pose.ts": "883872d84ac89d14f03ac46f16914aa66968cb18be55bb0f1eadd8e0084dfb0e",
     "src/v2/episodes/in-this-town-02/episode1Cast.ts": "16ddc34517587f02d399ce2f9657c8ae813e3c19d5a5dd5b0320dbc5c8fcc91c",
     "src/v2/episodes/in-this-town-02/catBehaviors.ts": "d218f5b2b1e3cc1f44207908618e0141e55340b5ec3da992c702528b0d78b02f",
-    "src/v2/episodes/in-this-town-02/timeline.ts": "533c79909a281f0f98c442d253616547a9019c2f5cb5e7b132a4d280e5c2666c"
+    "src/v2/episodes/in-this-town-02/timeline.ts": "34301f0b3d66a35acc6f0ac2e7ccf41205293a9987a2356ecd276772e0ee207e"
   },
   "measured": {
     "mochaMoving": 0.5361454545454546,

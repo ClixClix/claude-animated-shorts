@@ -65,7 +65,6 @@ export function createRuleCat(variant:RuleCatVariant,height=1.22){
  const design=designs[variant];
  const update=(seconds:number, options:{
   pose?:'standing'|'curled';
-  curlBlend?:number; // 0=full standing, 1=fully curled; avoid instant pose pop
   expression?:CatPose['expression'];
   progress?:number;
   morph?:number;
@@ -83,9 +82,7 @@ export function createRuleCat(variant:RuleCatVariant,height=1.22){
    headTilt:options.headTilt??0,expression:options.expression??'neutral',
    ...(options.blink===undefined?{}:{blink:options.blink})
   };
-  const curl=clamp(options.curlBlend??(options.pose==='curled'?1:0));
-  if(curl>0){
-   g.save();g.globalAlpha*=curl;
+  if(options.pose==='curled'){
    // Curled torso is deliberately separate from the head. No upright,
    // full-length card behind the box pretending to be a seated cat.
    g.save();
@@ -121,12 +118,8 @@ export function createRuleCat(variant:RuleCatVariant,height=1.22){
     g.restore();
    }
    g.restore();
-   g.restore(); // end curled blend
-  }
-  if(curl<1){
-   g.save();g.globalAlpha*=1-curl;
+  }else{
    drawCat(g,'essie',pose,false,design);
-   g.restore();
   }
   texture.needsUpdate=true;
  };

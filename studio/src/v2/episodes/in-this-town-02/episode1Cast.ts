@@ -22,25 +22,26 @@ const clamp=(n:number)=>Math.max(0,Math.min(1,n));
 const vec=(x:number,y:number,z:number):V3=>[x,y,z];
 
 function bridgeActor(
- id:CatId,pose:ActorPose,next:ActorPose,s:State
+ id:CatId,pose:ActorPose,prior:ActorPose,next:ActorPose,s:State,
+ actualCamera:[number,number,number]
 ):Actor{
  const p=pose.position;
- const delta=vec(next.position[0]-p[0],0,next.position[2]-p[2]);
+ const delta=vec(next.position[0]-prior.position[0],0,next.position[2]-prior.position[2]);
  const length=Math.hypot(delta[0],delta[2]);
- const moving=pose.walking&&length>.00005;
- const dir:V3=length>.00005?vec(delta[0]/length,0,delta[2]/length):[1,0,0];
+ // Do not flicker the paw rig off during near-zero frame differences.
+ // Animation presence is authored explicitly by the episode timeline.
+ const moving=pose.walking&&!([49,50,51].includes(s.shot.sequence)&&s.u>.80);
+ const dir:V3=length>.0003?vec(delta[0]/length,0,delta[2]/length):
+   (s.shot.sequence===4?[-1,0,0]:[1,0,0]);
  const side:V3=[-dir[2],0,dir[0]];
  const seed=id==='latte'?0:id==='mocha'?1:2;
  // Tie foot cycles to actual travel in the 2-second Shot 05 avoidance:
  // previously the paws kept cycling at constant 2.6Hz while the body
  // eased to a stop, creating visible skating and treadmill motion.
- const smooth=(v:number)=>{const t=clamp(v);return t*t*(3-2*t);};
- const travel=s.shot.sequence===5?
-   .65*smooth(s.u/.40)+.56*smooth((s.u-.48)/.40):
-   s.t*.82;
+ const travel=s.t*([4,5,27,36,53].includes(s.shot.sequence)?.68:.44); // 1.4 Hz deliberate footfalls; no rapid vibration.
  const cycle=travel/.32*Math.PI*2;
- const stepIntensity=clamp(length*30/.62);
- const camOffset=vec(s.camera[0]-p[0],0,s.camera[2]-p[2]);
+ const stepIntensity=moving?.65*clamp(length/.20):0; // Fade toward a planted stance as Mocha pauses; no flickering rig.
+ const camOffset=vec(actualCamera[0]-p[0],0,actualCamera[2]-p[2]);
  const d=Math.hypot(camOffset[0],camOffset[2])||1;
  const camRight=vec(camOffset[2]/d,0,-camOffset[0]/d);
  const movingYaw=moving?Math.max(-.62,Math.min(.62,
@@ -56,8 +57,8 @@ function bridgeActor(
   const fore=i%2===0?-.18:.18;
   const lat=i<2?-HALF_WIDTH:HALF_WIDTH;
   const phase=cycle+(i===0||i===3?0:Math.PI);
-  const move=moving?.085*stepIntensity*Math.sin(phase):0;
-  const lift=moving?.045*stepIntensity*Math.max(0,Math.cos(phase)):0;
+  const move=moving?.055*stepIntensity*Math.sin(phase):0;
+  const lift=moving?.030*stepIntensity*Math.max(0,Math.cos(phase)):0;
   const x=p[0]+dir[0]*(fore+move)+side[0]*lat;
   const z=p[2]+dir[2]*(fore+move)+side[2]*lat;
   const surface=Math.max(
@@ -77,71 +78,27 @@ function bridgeActor(
    expression:expr,headTurn:pose.headTurn,gazeX:pose.headTurn,
    gazeY:pose.gazeY,
    headTilt:expr==='sad'?-.12:expr==='scared'?.09:expr==='concerned'?.13:expr==='happy'?-.035:0,
-   breath:Math.sin(s.t*1.8+seed)*.25,
-   tail:Math.sin(s.t*1.35+seed)*.26,
-   blink:Math.max(0,1-Math.abs(((s.t+seed*.41)%3.1)-2.78)/.11)
+   // Almost-still when resting: no oscillator competing with the box pose.
+   breath:Math.sin(s.t*.85+seed)*(id==='mocha'?.055:.12),
+   tail:Math.sin(s.t*.90+seed)*(id==='mocha'?.08:.13),
+   blink:pose.sleeping?1:Math.max(0,1-Math.abs(((s.t+seed*.41)%3.1)-2.78)/.11)
   }
  };
 }
 export function createEpisode1CastCat(id:CatId){
  const card:Episode1Cat=createEpisodeCat(id);
  const shadow=contactShadow();
+ const earReveal=new T.Plane(new T.Vector3(0,1,0),0);
  shadow.mesh.name='episode02-'+id+'-episode01-ground-shadow';
- // BOX-REST ART: Composite only existing Episode 01 illustrated anatomy
- // (source tail, horizontal torso, head, forepaws) into one tucked silhouette.
- // A pitched full-height 1.52m upright billboard never becomes a curled cat;
- // it protrudes through the .48–.56m carton rim from raised cameras.
- // Episode 01 original rig/texture and walking animation remain unchanged.
- const restCanvas=document.createElement('canvas');
- restCanvas.width=1000;restCanvas.height=1100;
- const restContext=restCanvas.getContext('2d')!;
- const restTexture=new T.CanvasTexture(restCanvas);
- restTexture.colorSpace=T.SRGBColorSpace;restTexture.anisotropy=8;
- const renderRest=(time:number,standingMix=0)=>{
-  const src=card.texture.image as HTMLCanvasElement;
-  const g=restContext;
-  g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,1000,1100);
-  g.save();g.scale(2,2);
-  // Episode 01 art must occupy the real carton, not a tiny portrait in the
-  // middle. Enlarge the ENTIRE curled illustration uniformly (not just its
-  // head) around its center, preserving its original proportions and coat.
-  // Does not alter any 3D box dimension or the standing/jumping rigs.
-  g.translate(250,320);
-  g.scale(1.22,1.22);
-  g.translate(-250,-320);
-  // Rear body/haunch stretches along the *bottom* of its carton,
-  // rather than standing above the flap as a flat vertical sticker.
-  g.drawImage(src,276*2,284*2,125*2,180*2,286,326,111,123);
-  const breathing=Math.sin(time*2.1);
-  g.drawImage(src,145*2,270*2,243*2,205*2,
-   131,329-4*breathing,272,116+5*breathing);
-  // Original Episode 01 eyes, ear shapes, markings, muzzle and whiskers.
-  // The face is lifted only enough to remain legible above the front rim.
-  const breath=4.2*Math.sin(time*2.1+.22);
-  g.drawImage(src,125*2,63*2,260*2,251*2,115,130+breath,267,211);
-  // Both actual painted forepaws tuck below the chin, touching the bed
-  // of the carton instead of extending out through its side walls.
-  g.drawImage(src,172*2,383*2,166*2,103*2,
-   178,402+1.6*Math.sin(time*1.9),155,65);
-  g.restore();
-  // Blend exactly the same Episode 01 character art between upright and
-  // tucked states. Switching the texture in one frame made Mocha visibly
-  // POP/GLITCH at box entry and rescue exit. This is a continuous mix.
-  if(standingMix>0){
-   g.save();g.setTransform(1,0,0,1,0,0);
-   g.globalAlpha=clamp(standingMix);
-   g.drawImage(src,0,0,restCanvas.width,restCanvas.height);
-   g.restore();
-  }
-  restTexture.needsUpdate=true;
- };
- const update=(pose:ActorPose,next:ActorPose,s:State,camera:T.PerspectiveCamera,behavior:CatBehavior|null=null)=>{
+ // Living/resting cats always retain the original Episode 01 texture.
+ const update=(pose:ActorPose,prior:ActorPose,next:ActorPose,s:State,camera:T.PerspectiveCamera,behavior:CatBehavior|null=null)=>{
   // Using a neutral Episode 01 state avoids executing its *story-specific*
   // 'door at 11:11' expressions, nose pushes, timed scares or head drops
   // while retaining every Episode 01 asset/rig, shade and toe/contact system.
   const ep1:EpisodeState={...BASE,shot:DRAFT_SHOTS[0],frame:0,t:0,u:0,
    camera:camera.position.toArray() as V3,
-   target:[...s.target] as V3};
+   // Match the camera that actually renders, not the unused scratch storyboard.
+   target:camera.position.clone().add(camera.getWorldDirection(new T.Vector3()).multiplyScalar(3)).toArray() as V3};
   // Head and body are the actual Episode 01 artwork. Express contact
   // through a subtle feline nose/muzzle lean — NEVER an extended arm.
   const toward=behavior?new T.Vector3(
@@ -157,26 +114,9 @@ export function createEpisode1CastCat(id:CatId){
    ...pose,headTurn:pose.headTurn+faceTurn,
    gazeY:pose.gazeY-.28*behavior.intensity
   }:pose;
-  const a=bridgeActor(id,actingPose,next,s);
+  const a=bridgeActor(id,actingPose,prior,next,s,camera.position.toArray() as [number,number,number]);
   const n=s.shot.sequence;
-  // A jumping cat must remain the FULL original Episode01 silhouette until
-  // its paws actually land. The old unconditional shot-06 rest texture made
-  // Latte appear as a giant detached head above an empty striped carton.
-  // The same problem recurred at the final three-cat jump: none of the cats
-  // ever switched to the supported tucked pose after landing.
-  const finaleLanded=n===60&&(
-    (id==='mocha'&&s.u>=.56)||
-    (id==='essie'&&s.u>=.70)||
-    (id==='latte'&&s.u>=.84));
-  const restingInBox=(id==='latte'&&n===6&&s.u>=.70)||
-    (id==='essie'&&(n===7||[19,35].includes(n)&&s.u>=.72||[37,38,39].includes(n)))||
-    (id==='mocha'&&((n===49&&s.u>=.80)||n===50||n===51))||finaleLanded;
-  // In the rescue close-up he must remain tucked *inside* the same
-  // physical carton. A standing 1.52m card cannot fit the 0.56m wall,
-  // and jumping out before Essie reforms made the visual rule unclear.
-  // Resting original art is built AFTER updateActor refreshes the source
-  // image, and before the next draw; no duplicated mesh/crossfade.
-
+  const smooth=(x:number)=>{const t=clamp(x);return t*t*(3-2*t);};
   if(id==='essie'&&s.shot.sequence===35)
    a.pose.blink=Math.max(a.pose.blink??0,clamp((s.u-.49)/.38));
   if(behavior){
@@ -185,13 +125,8 @@ export function createEpisode1CastCat(id:CatId){
     behavior.mode==='muzzle-comfort'?.46*behavior.intensity:0);
   }
   card.updateActor(a,ep1);
-  const standingMix=id==='mocha'&&n===49?
-   1-clamp((s.u-.80)/.20):
-   id==='mocha'&&n===51?clamp((s.u-.28)/.32):0;
-  if(restingInBox)renderRest(s.t,standingMix);
-  const activeTexture=restingInBox?restTexture:card.texture;
-  if(card.mesh.material.map!==activeTexture){
-   card.mesh.material.map=activeTexture;
+  if(card.mesh.material.map!==card.texture){
+   card.mesh.material.map=card.texture;
    card.mesh.material.needsUpdate=true;
   }
   if(behavior&&dist>.01){
@@ -217,39 +152,8 @@ export function createEpisode1CastCat(id:CatId){
    pose.scale*(1-.30*paper),
    pose.scale
   );
-  // The original illustrated cat stands about 1.52m tall, while the real
-  // carton wall is only ~0.5m. The rest-only artwork reuses Episode01's
-  // head, torso and paws but must occupy a compact, physically supported
-  // vertical silhouette. Do NOT scale the jumping/walking cat this way.
-  if(restingInBox)card.mesh.scale.y*=.57+.43*standingMix;
-  // In the actual source f9466b7 shot07 image, Essie's black resting
-  // silhouette is a tiny near-floor scribble, completely below the intact
-  // 0.56m front wall. Enlarge only the Episode02 shot07 tucked painting;
-  // never shrink/remove the real box wall or alter Episode01 source art.
-  if(restingInBox&&id==='essie'&&n===7){
-   card.mesh.scale.x*=1.15;
-   card.mesh.scale.y*=1.22;
-  }
-  // The paper edges settle toward the inside; preserve above-floor visibility
-  // while it shrinks. Clipping and perceived fold quality still need real frames.
   card.mesh.position.y+=.045*paper;
-  // The approved Episode 01 figures are upright illustrated cards. From
-  // high box angles they collapse to narrow, upright faces instead of reading
-  // as a cat curled on its side. Recline ONLY the resting box poses, retaining
-  // the original silhouette/artwork, measured scale and ground contact.
-  // Rest composition already curls the SAME Episode01 art in its painted
-  // canvas. Do not apply a second -0.38 pitch that turns the face edge-on,
-  // makes the paws hover and changes apparent size with camera height.
-  card.mesh.rotation.x=(restingInBox?-.08*(1-standingMix):0)-.18*paper;
-  if(restingInBox){
-   // Real box floors at y=.044; leave ~1cm above the cardboard bottom.
-   // Keep painted head/eyes above the front rim without scaling a full
-   // 1.52m cat down into a miniature.
-   // Raise the tucked shot07 head just above the original cardboard rim;
-   // the painted torso and paws remain inside the actual hollow carton.
-   card.mesh.position.y=Math.max(card.mesh.position.y,
-    id==='essie'&&n===7?.27:.13*(1-standingMix));
-  }
+  card.mesh.rotation.x=(pose.lean??0)-.18*paper;
   // Preserve the recognisable Episode 01 face and markings until the FINAL
   // fold. The previous aggressive pitch/alpha produced a melted pancake in
   // actual moving shot 38 (44146167639), not a readable paper transformation.
@@ -257,16 +161,13 @@ export function createEpisode1CastCat(id:CatId){
   card.mesh.material.transparent=finalFade>.01;
   card.mesh.material.depthWrite=finalFade<=.01;
   card.mesh.material.opacity=1-.38*finalFade;
-  // Feline crouch, nose-led airborne lean and compact body during the leap.
-  // Never add a human arm or replace the approved illustrated cat asset.
-  const hop=n===59?clamp((s.u-.24)/.50):s.u;
-  const airborne=id==='mocha'&&[49,59].includes(n)?
-   Math.sin(Math.PI*hop):0;
-  const crouch=id==='mocha'&&n===59?
-   Math.sin(Math.PI*clamp((s.u-.04)/.20)):0;
-  card.mesh.rotation.z=(n===50?.22:-.34)*airborne;
-  card.mesh.scale.x*=1+.10*airborne;
-  card.mesh.scale.y*=1-.12*airborne-.10*crouch;
+  // Restrained contact lean; living artwork has no per-shot size modifier.
+  const cuddle=[51,52].includes(n)?(n===52?1:smooth((s.u-.85)/.13)):0;
+  card.mesh.rotation.z=(id==='mocha'?-.07:id==='essie'?.07:0)*cuddle;
+  if(id==='essie'&&n===50){
+   earReveal.constant=-(.98-.93*smooth((s.u-.58)/.36));
+   if(!card.mesh.material.clippingPlanes?.length){card.mesh.material.clippingPlanes=[earReveal];card.mesh.material.needsUpdate=true;}
+  }else if(card.mesh.material.clippingPlanes?.length){card.mesh.material.clippingPlanes=[];card.mesh.material.needsUpdate=true;}
   card.legs.visible=card.mesh.visible&&a.moving;
   shadow.mesh.visible=card.mesh.visible;
   const supportY=supportHeight(pose.position,id==='latte'?0:id==='mocha'?1:2)+.008;
@@ -278,6 +179,6 @@ export function createEpisode1CastCat(id:CatId){
    pose.position[2]);
   shadow.mesh.scale.setScalar(pose.scale);
  };
- const dispose=()=>{card.dispose();shadow.dispose();restTexture.dispose();};
+ const dispose=()=>{card.dispose();shadow.dispose();};
  return {id,card,shadow,update,dispose};
 }

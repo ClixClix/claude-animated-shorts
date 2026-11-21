@@ -5,7 +5,9 @@ const words=s=>(String(s).match(/[\p{L}\p{N}]+(?:['’\-][\p{L}\p{N}]+)*/gu)||[]
  .map(w=>w.toLowerCase().replaceAll('’',"'"));
 const sha256=s=>createHash('sha256').update(s).digest('hex');
 const assert=(cond,msg)=>{if(!cond)throw Error('EP02 narration edit: '+msg);};
-const FPS=30,MAX=120;
+// A coherent narrated action may exceed four seconds (creator direction).
+// Keep each beat whole; scene-local choreography determines motivated cuts.
+const FPS=30,MAX=Number.MAX_SAFE_INTEGER;
 export function createNarratedEpisodeEdit({script,plan,draft,alignment,voiceSeconds,provenance}){
  assert(plan?.shots?.length===60&&draft?.shots?.length===60,'Exactly 60 story beats required');
  assert(plan.narrator?.provider==='ElevenLabs'&&plan.narrator.voiceName==='Adam'&&

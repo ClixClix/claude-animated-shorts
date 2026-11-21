@@ -53,8 +53,8 @@ export function validateLockedEdit({lock,plan,narration,props,manifest=null,narr
     check(id===expectedId||new RegExp('^'+expectedId+'[A-Z]+$').test(id),
       'SEGMENT_ID_'+i,'Render segment '+id+' does not map to locked beat '+seq+'.');
     const count=(seen.get(seq)||0)+1;seen.set(seq,count);
-    check(Number.isInteger(s.start)&&Number.isInteger(s.end)&&s.start===lastEnd&&s.end>s.start&&s.end-s.start<=120,
-      'FRAME_CONTINUITY_'+i,'Segment '+id+' must immediately follow the previous segment and be 1–120 frames.');
+    check(Number.isInteger(s.start)&&Number.isInteger(s.end)&&s.start===lastEnd&&s.end>s.start,
+      'FRAME_CONTINUITY_'+i,'Segment '+id+' must immediately follow the previous segment and have positive duration.');
     if(Number.isInteger(s.end))lastEnd=s.end;
     const d=director[seq-1];
     if(typeof s.cameraAndAction==='string'&&d){

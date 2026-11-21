@@ -21,17 +21,17 @@ export const BOX_SPECS:Readonly<Record<BoxIdentity,Readonly<BoxSpec>>> = Object.
     role:'One small physical cardboard box for the town-rule demonstration; same mesh persists after transformation',
   }),
   latte:Object.freeze({
-    id:'LATTE_BOX',width:1.10,depth:.94,height:.48,color:'#b98d60',
+    id:'LATTE_BOX',width:1.25,depth:1.03,height:.48,color:'#d7b087',
     tape:'striped',home:[-1.9,0,2.1] as [number,number,number],
     role:'Latte original box beneath the front cafe window',
   }),
   essie:Object.freeze({
-    id:'ESSIE_BOX',width:1.30,depth:1.08,height:.56,color:'#a8794e',
+    id:'ESSIE_BOX',width:1.76,depth:1.32,height:.50,color:'#a8794e',
     tape:'none',home:[.25,0,.3] as [number,number,number],
     role:'Essie original box in the cafe sleeping corner; moves to alley',
   }),
   shared:Object.freeze({
-    id:'SHARED_BOX',width:2.36,depth:1.12,height:.55,color:'#cca174',
+    id:'SHARED_BOX',width:2.60,depth:1.12,height:.55,color:'#cca174',
     tape:'none',home:[-1.45,0,2.1] as [number,number,number],
     role:'One proportionate end-scene cardboard box for all three Episode01 cats',
   }),
@@ -77,6 +77,7 @@ export function createEpisodeBox(identity:BoxIdentity) {
   // Episode02 resting paws/shadows are already anchored at Y≈.055;
   // unlike a fake foot platform this stays *inside* the original box.
   panel(root,spec.id+'-floor-liner',[w-.095,.006,d-.095],[0,.048,0],inner);
+  // The full four-sided box tips around its planted front-bottom edge.
   panel(root,spec.id+'-front',[w,h,thick],[0,h/2+.04,d/2-thick/2]);
   panel(root,spec.id+'-back',[w,h,thick],[0,h/2+.04,-d/2+thick/2]);
   panel(root,spec.id+'-left',[thick,h,d-2*thick],[-w/2+thick/2,h/2+.04,0]);
@@ -107,42 +108,27 @@ export function createEpisodeBox(identity:BoxIdentity) {
   panel(flaps.left,spec.id+'-left-flap',[w*.47,.024,d-.055],[w*.235,0,0]);
   panel(flaps.right,spec.id+'-right-flap',[w*.47,.024,d-.055],[-w*.235,0,0]);
   if(spec.tape==='striped'){
-    // SOURCE-LOCK: Latte's ORIGINAL carton is visibly striped on all sides.
-    // Earlier footage looked plain because only two tiny strips of tape existed.
-    // Never change its transform/identity between introduction and rescue.
-    const darkStripe=new T.MeshStandardMaterial({color:'#70472e',roughness:.96,metalness:0});
-    const lightStripe=new T.MeshStandardMaterial({color:'#efd2a6',roughness:.96,metalness:0});
-    materials.push(darkStripe,lightStripe);
-    const paint=(parent:T.Group,name:string,size:[number,number,number],
-      position:[number,number,number],mat:T.Material)=>{
-      const geo=new T.BoxGeometry(...size);
-      const mesh=new T.Mesh(geo,mat);
-      mesh.name=name;mesh.position.set(...position);
-      mesh.castShadow=false;mesh.receiveShadow=true;
-      resources.push(geo);parent.add(mesh);
+    // Bold horizontal printed bands: CARDBOARD, not wicker lattice.
+    const bandMat=new T.MeshStandardMaterial({color:'#5b3b36',roughness:.99,metalness:0,polygonOffset:true,polygonOffsetFactor:-2});
+    materials.push(bandMat);
+    const band=(name:string,size:[number,number,number],pos:[number,number,number])=>{
+      const geo=new T.BoxGeometry(...size);resources.push(geo);
+      const mesh=new T.Mesh(geo,bandMat);
+      mesh.name=spec.id+'-printed-stripe-'+name;
+      mesh.position.set(...pos);mesh.castShadow=false;
+      root.add(mesh);
     };
-    // Seven wraparound alternating bands, readable even in low-res preview.
-    const count=7,thickness=Math.min(.051,h/(count+2));
-    for(let i=0;i<count;i++){
-      const y=.04+h*(i+.72)/(count+1);
-      const mat=i%2?lightStripe:darkStripe;
-      paint(root,spec.id+'-stripe-front-'+i,[w+.009,thickness,.006],
-        [0,y,d/2+.005],mat);
-      paint(root,spec.id+'-stripe-back-'+i,[w+.009,thickness,.006],
-        [0,y,-d/2-.005],mat);
-      paint(root,spec.id+'-stripe-left-'+i,[.006,thickness,d+.009],
-        [-w/2-.005,y,0],mat);
-      paint(root,spec.id+'-stripe-right-'+i,[.006,thickness,d+.009],
-        [w/2+.005,y,0],mat);
+    for(let i=0;i<3;i++){
+      const y=.15+i*.135;
+      band('front-'+i,[w-.045,.067,.011],[0,y,d/2+.012]);
+      band('back-'+i,[w-.045,.067,.011],[0,y,-d/2-.012]);
+      band('left-'+i,[.011,.067,d-.045],[-w/2-.012,y,0]);
+      band('right-'+i,[.011,.067,d-.045],[w/2+.012,y,0]);
     }
-    // The real flaps hinge, so paint attached to each flap follows its motion.
-    for(let i=0;i<7;i++){
-      const x=-w*.39+i*w*.13;
-      const mat=i%2?darkStripe:lightStripe;
-      paint(flaps.front,spec.id+'-stripe-front-flap-'+i,[w*.075,.007,d*.41],
-        [x,.016,-d*.235],mat);
-      paint(flaps.back,spec.id+'-stripe-back-flap-'+i,[w*.075,.007,d*.41],
-        [x,.016,d*.235],mat);
+    // From the elevated shot the same identity remains visible on the bed.
+    for(let i=0;i<4;i++){
+      const x=w*(-.3+i*.2);
+      band('floor-'+i,[w*.115,.010,d-.10],[x,.064,0]);
     }
   }
   function setOpenAmount(input:number){

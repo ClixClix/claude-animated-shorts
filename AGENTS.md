@@ -1,3 +1,7 @@
+# Latest user editorial rule — story-polish revision
+
+A coherent shot may last longer than four seconds. Do not insert a camera cut solely to enforce four seconds; preserve the approved narration and let the visible action determine framing/holds. For active Episode02 the latest user revision is recorded in STUDIO source `studio/src/v2/episodes/in-this-town-02/STORY_POLISH_REQUEST.md` and its updated PRODUCTION_DIRECTOR_LOCK.json. Earlier shot-specific guidance yields to that explicit revision. Native full-film rendering still follows actual local still/motion review.
+
 # Mandatory Codex safety rules — apply before all other production steps
 
 > **Scope Lock (user requirement).** Never modify core engine files, shared camera rigs, global wrappers/compositions, Episode 01 sources, shared shaders or locked series assets unless the user explicitly instructs it. For normal production/repair work, create or edit source **only inside the target scene folder** (for Episode 02: `studio/src/v2/episodes/in-this-town-02/`) and rendered/QA output **only inside its episode output folder** (`studio/out/v2-episodes/in-this-town-02/`). Updating `AGENTS.md` and `.agents/skills/` is an explicit agent-instruction migration exception, not permission to rewrite the renderer. The target scene's own camera path may be fixed, but global camera conventions may not.

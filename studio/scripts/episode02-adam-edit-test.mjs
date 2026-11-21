@@ -34,8 +34,9 @@ assert.equal(edit.durationInFrames,Math.ceil(duration*30));
 assert.equal(edit.voice.wordCount,timing.length);
 assert.equal(edit.shots[0].sourceStart,0);
 assert.equal(edit.shots.filter(s=>s.sequence<=2).at(-1).sourceEnd,105);
-assert.ok(edit.shots.length>=60);
-assert.ok(edit.shots.every((s,i)=>s.end-s.start<=120&&
+assert.equal(edit.shots.length,60,'A long coherent beat must not be split at four seconds');
+assert.ok(edit.shots.some(s=>s.end-s.start>120),'Regression fixture must exercise a long beat');
+assert.ok(edit.shots.every((s,i)=>s.end>s.start&&
   (i===0?s.start===0:s.start===edit.shots[i-1].end)));
 for(const mark of edit.markers){
  const related=edit.shots.filter(s=>s.sequence===mark.sequence);

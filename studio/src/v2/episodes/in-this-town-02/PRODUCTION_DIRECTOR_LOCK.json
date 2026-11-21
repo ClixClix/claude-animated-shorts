@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "USER_DIRECTOR_LOCK__IMPLEMENTATION_PENDING",
+  "status": "USER_STORY_POLISH_REVISION__REQUIRES_LOCAL_VISUAL_APPROVAL",
   "episode": "The Cat Who Became a Box",
   "series": "In This Town / What If Cats",
   "referenceEpisode": "The Door at 11:11 (Episode 01)",
@@ -15,15 +15,15 @@
     "Show, do not tell: animate EVERY verb/physical consequence; avoid stationary box or cat portraits as a substitute for acting.",
     "All motions physically plausible: planted paws, cat mouth/nose grasps, valid jump arcs and flap hinge, no card/box clipping.",
     "Use cinematic crane, motivated POV, varied tracking, emotional reaction, depth of field; avoid repetitive alley frames.",
-    "Use established café with two counters and Episode 01 house, bus stop and street; furnish real market and three distinct alleys.",
-    "Objects keep identity, size, color and position: Latte striped box under café window, Essie intact four-sided box, genuine soft cat bed, final shared box.",
+    "Use established caf\u00e9 with two counters and Episode 01 house, bus stop and street; furnish real market and three distinct alleys.",
+    "Objects keep identity, size, color and position: Latte striped box under caf\u00e9 window, Essie intact four-sided box, genuine soft cat bed, final shared box.",
     "Acted town crowds and busy backgrounds in relevant shots, no static or explanatory cure billboard."
   ],
   "audio": {
     "voice": "LOCKED_APPROVED_ADAM",
     "sfx": "LOCKED_APPROVED_EP02_SFX",
     "musicPreset": "in_this_town",
-    "musicTitle": "Numbers — Instrumental Intro Loop",
+    "musicTitle": "Numbers \u2014 Instrumental Intro Loop",
     "musicArtist": "TEMPOREX",
     "source": "V2_MUSIC_FILE, else Episode 01 private-file preset",
     "introOnly": true,
@@ -69,8 +69,8 @@
       "location": [
         "town"
       ],
-      "visibleAction": "Several different street cats get into different boxes and transform; other cats react",
-      "camera": "Tracking montage with varied angles, not one twitching empty box",
+      "visibleAction": "Mocha runs farther along the street watching cats enter their own boxes",
+      "camera": "One continuous tracking axis into beat05; no arbitrary camera reset",
       "continuityAssets": [
         "otherBoxes"
       ]
@@ -80,8 +80,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Mocha walks down the street witnessing several different cats jumping into their own boxes and turning into boxes; then he approaches an ordinary box, sniffs, looks inside, disapproves and walks away",
-      "camera": "Cat-eye low tracking to reaction closeup",
+      "visibleAction": "Mocha stops at the ordinary box, sniffs it and walks away",
+      "camera": "Continue the preceding street camera; hold the sniff and departure",
       "continuityAssets": [
         "plainBox"
       ]
@@ -91,8 +91,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Latte jumps into striped-tape box under café window",
-      "camera": "Follow jump then pan to window framing",
+      "visibleAction": "Latte makes a smooth full-size jump into the striped box beside the visible cafe window",
+      "camera": "Interior reverse angle includes the window and outside town",
       "continuityAssets": [
         "latteBox"
       ]
@@ -102,8 +102,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Essie curls in intact plain box and shifts to leave space for Mocha; Mocha passes by",
-      "camera": "Slow push into full four-walled box, then Mocha walk-by",
+      "visibleAction": "Essie shifts aside inside her complete box; Mocha looks at the space and walks away",
+      "camera": "Hold one coherent two-cat composition through the refusal",
       "continuityAssets": [
         "essieBox"
       ]
@@ -114,8 +114,8 @@
         "town",
         "cafe"
       ],
-      "visibleAction": "Sun rises, wide crane enters café; Mocha opens door with mouth/nose and walks inside",
-      "camera": "Daybreak exterior-to-interior crane",
+      "visibleAction": "Mocha nose-opens the cafe door and visibly enters before the cut",
+      "camera": "Show the physical door and crossing from outside",
       "continuityAssets": [
         "door"
       ]
@@ -125,8 +125,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Mocha scans whole café and discovers Latte is absent",
-      "camera": "Motivated moving Mocha POV pan, no static hold",
+      "visibleAction": "Mocha looks around the cafe for the missing Latte",
+      "camera": "First-person cafe scan; hide the viewpoint actor",
       "continuityAssets": [
         "cafe"
       ]
@@ -136,8 +136,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Latte's identical striped box remains under window",
-      "camera": "Reveal/track to same window box position",
+      "visibleAction": "The striped box remains beneath the window",
+      "camera": "Continue Mocha POV toward the box",
       "continuityAssets": [
         "latteBox"
       ]
@@ -147,8 +147,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Mocha calls for Latte; expectant face",
-      "camera": "Reaction closeup eye-line to box",
+      "visibleAction": "Mocha calls Latte while looking at the box",
+      "camera": "Mocha POV; preserve the preceding eye line",
       "continuityAssets": [
         "mocha"
       ]
@@ -158,8 +158,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Mocha flips two real box flaps with nose/mouth, sequentially",
-      "camera": "Mocha POV close contact and reverse",
+      "visibleAction": "Mocha lifts the physical box flap with his nose",
+      "camera": "First-person flap view",
       "continuityAssets": [
         "latteBox"
       ]
@@ -169,8 +169,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Muffled Latte meow comes from box; Mocha gets happy then confused and worried",
-      "camera": "Match box POV and exact same Mocha reaction angle",
+      "visibleAction": "A familiar meow comes from the cardboard",
+      "camera": "Stay on the box POV; no cut to Mocha face",
       "continuityAssets": [
         "latteBox"
       ]
@@ -180,8 +180,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Mocha panics: Latte never left",
-      "camera": "Face reaction and uncertain glance to box",
+      "visibleAction": "The striped box remains instead of Latte",
+      "camera": "Hold the same POV",
       "continuityAssets": [
         "mocha"
       ]
@@ -191,8 +191,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Show striped box alone as transformed Latte",
-      "camera": "Isolated object closeup or transformation insert",
+      "visibleAction": "Only the striped box is shown as Mocha realizes the change",
+      "camera": "Slow pan of the box alone",
       "continuityAssets": [
         "latteBox"
       ]
@@ -202,8 +202,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Mocha brings cat food, places it by box, nose-shakes box; box visibly nudges",
-      "camera": "Two clear action inserts and restrained camera jiggle",
+      "visibleAction": "Mocha mouth-carries food to the box, deposits it inside, then gently shakes the real box",
+      "camera": "Readable contact, food landing, restrained camera shake",
       "continuityAssets": [
         "catFood",
         "latteBox"
@@ -214,8 +214,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Mocha begs box to move by small worried hops then becomes sad when it does not",
-      "camera": "Visible begging-to-sad performance closeup",
+      "visibleAction": "Mocha begs the box to move, then becomes sad when nothing works",
+      "camera": "Box-interior POV up at Mocha; retain this POV through the reaction",
       "continuityAssets": [
         "mocha"
       ]
@@ -237,8 +237,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Essie climbs into her intact four-walled favorite box",
-      "camera": "Low angle jump-in, preserve opaque front wall",
+      "visibleAction": "Essie enters her favorite box without a model-scale change",
+      "camera": "Smooth rim-clearing jump",
       "continuityAssets": [
         "essieBox"
       ]
@@ -248,8 +248,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Mocha gets partly inside then grips/pulls Essie out by floof without clipping",
-      "camera": "Continuous side tracking shot showing physical clearance",
+      "visibleAction": "Mocha gently mouth-grips and pulls Essie out; their bodies separate cleanly",
+      "camera": "Show the whole contact and grounded release",
       "continuityAssets": [
         "essieBox"
       ]
@@ -259,8 +259,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Essie stands beside box confused",
-      "camera": "Tight expressive face closeup",
+      "visibleAction": "Essie reacts with confusion",
+      "camera": "Essie-only close-up",
       "continuityAssets": [
         "essie",
         "essieBox"
@@ -271,8 +271,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Essie slowly walks to her actual soft cat bed in the café",
-      "camera": "Gentle follow to real fabric cat bed",
+      "visibleAction": "Essie rests on her proper cat bed",
+      "camera": "Slow push on bed and cat",
       "continuityAssets": [
         "essieCafeBed"
       ]
@@ -282,8 +282,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Mocha worries and watches Essie finally settling to sleep",
-      "camera": "Close on Mocha regret then Essie/bed",
+      "visibleAction": "Essie looks safe in her bed",
+      "camera": "Continue the same bed shot",
       "continuityAssets": [
         "essieCafeBed"
       ]
@@ -294,8 +294,8 @@
         "town",
         "cafe"
       ],
-      "visibleAction": "Sun sets over city; Mocha uses mouth to close cafe door from outside",
-      "camera": "Dusk wide-to-door follow showing physical mouth contact",
+      "visibleAction": "Inside the cafe, Mocha nose-switches the lights off and closes the door",
+      "camera": "Interior view follows both physical actions",
       "continuityAssets": [
         "door"
       ]
@@ -305,8 +305,8 @@
       "location": [
         "house"
       ],
-      "visibleAction": "Mocha searches familiar Episode 1 HOUSE, pans across Essie's usually occupied resting area",
-      "camera": "Moving Mocha POV inside exact house geometry",
+      "visibleAction": "Mocha searches the house and looks at Essie empty sleeping spot",
+      "camera": "First-person house POV, then only the empty bed",
       "continuityAssets": [
         "episode1House"
       ]
@@ -316,8 +316,8 @@
       "location": [
         "house"
       ],
-      "visibleAction": "Camera finds empty cat bed and missing Essie box's usual place",
-      "camera": "Slow motivation pan from bed to empty box footprint",
+      "visibleAction": "Her usual box spot is empty too",
+      "camera": "Slow push on the empty marked floor space, consistent with the narration",
       "continuityAssets": [
         "essieHomeBed",
         "essieBoxMissing"
@@ -364,8 +364,8 @@
         "alley2",
         "alley3"
       ],
-      "visibleAction": "Mocha checks THREE visually distinct alleys in rapid succession",
-      "camera": "Three motivated cuts with different geometry, signposting and obstacles",
+      "visibleAction": "Mocha searches multiple readable service alleys",
+      "camera": "Distinct long alley POVs with walls, windows, bins and clear walkways",
       "continuityAssets": [
         "alleys3"
       ]
@@ -375,8 +375,8 @@
       "location": [
         "streetlamp"
       ],
-      "visibleAction": "Mocha rounds corner and spots isolated streetlamp in the distance",
-      "camera": "Reveal shot with lamp as clear landmark",
+      "visibleAction": "Mocha sees distant Essie under a streetlamp from across the road",
+      "camera": "Establish the street-to-alley distance",
       "continuityAssets": [
         "streetlamp"
       ]
@@ -386,8 +386,8 @@
       "location": [
         "alley3"
       ],
-      "visibleAction": "Essie drags her SAME four-walled box with her mouth to a quiet corner",
-      "camera": "Side-tracking readable cardboard ground contact",
+      "visibleAction": "Essie mouth-drags her box toward a clear alley corner",
+      "camera": "Track real box and cat contact; no walls intersect the carton",
       "continuityAssets": [
         "essieBox"
       ]
@@ -397,8 +397,8 @@
       "location": [
         "alley3"
       ],
-      "visibleAction": "Mocha turns, jumps then sprints, calling Essie wait",
-      "camera": "Low rushing follow with worried closeup",
+      "visibleAction": "Mocha jumps in alarm and starts running toward Essie",
+      "camera": "Readable jump, small screen shake, start of run",
       "continuityAssets": [
         "mocha"
       ]
@@ -408,8 +408,8 @@
       "location": [
         "alley3"
       ],
-      "visibleAction": "Essie remains far away; distance visibly increases before jump",
-      "camera": "Long-lens depth-of-field pull showing separation",
+      "visibleAction": "Essie remains far away across the street and down the alley",
+      "camera": "Wide geography shot",
       "continuityAssets": [
         "essie"
       ]
@@ -419,8 +419,8 @@
       "location": [
         "alley3"
       ],
-      "visibleAction": "Essie jumps into intact box; overhead view as she curls up",
-      "camera": "Follow body jump then top-down intimate view",
+      "visibleAction": "Essie enters her box smoothly at unchanged scale",
+      "camera": "Show the complete jump",
       "continuityAssets": [
         "essieBox"
       ]
@@ -430,8 +430,8 @@
       "location": [
         "alley3"
       ],
-      "visibleAction": "Mocha races toward Essie but arrives too late",
-      "camera": "Fast grounded run shot, no teleport",
+      "visibleAction": "Mocha races down a genuinely long alley",
+      "camera": "Follow the long approach",
       "continuityAssets": [
         "mocha"
       ]
@@ -441,8 +441,8 @@
       "location": [
         "alley3"
       ],
-      "visibleAction": "Transformation begins slowly and visibly in stable same box geometry",
-      "camera": "Slow push from paw/whisker to cardboard",
+      "visibleAction": "The transformation starts as Mocha arrives",
+      "camera": "Continuous transformation camera across37\u201339",
       "continuityAssets": [
         "essieBox"
       ]
@@ -452,8 +452,8 @@
       "location": [
         "alley3"
       ],
-      "visibleAction": "Mocha's eyes widen as he watches her stiffen/fade",
-      "camera": "Shocked extreme closeup eye reaction",
+      "visibleAction": "Essie paws stiffen and whiskers fade",
+      "camera": "Continue the same transformation shot",
       "continuityAssets": [
         "mocha"
       ]
@@ -463,8 +463,8 @@
       "location": [
         "alley3"
       ],
-      "visibleAction": "Essie folds into same cardboard box; flaps close; slight impact shake",
-      "camera": "Hold consistent box scale, no sudden model substitution",
+      "visibleAction": "Essie finishes becoming her cardboard box",
+      "camera": "Continue the same camera; no arbitrary duration cuts",
       "continuityAssets": [
         "essieBox"
       ]
@@ -474,8 +474,8 @@
       "location": [
         "alley3"
       ],
-      "visibleAction": "Mocha freezes; visible short flashbacks of Latte then Essie transforming",
-      "camera": "Reaction closeup and two fast real flashback inserts",
+      "visibleAction": "Mocha freezes in fear; replay Latte entering his box and Essie becoming hers",
+      "camera": "Close reaction then motivated remembered images on the spoken names",
       "continuityAssets": [
         "latteBox",
         "essieBox"
@@ -486,8 +486,8 @@
       "location": [
         "alley3"
       ],
-      "visibleAction": "Mocha nose-taps Essie's box",
-      "camera": "Close physical contact",
+      "visibleAction": "Mocha nose-taps the box",
+      "camera": "Close-up of visible nose-to-box contact",
       "continuityAssets": [
         "essieBox"
       ]
@@ -497,8 +497,8 @@
       "location": [
         "alley3"
       ],
-      "visibleAction": "Mocha whispers Essie's name and pulls box nearer with mouth",
-      "camera": "Readably visible mouth grip and object movement",
+      "visibleAction": "Mocha whispers Essie name and stays close to her box",
+      "camera": "Close-up of Mocha in the alley",
       "continuityAssets": [
         "essieBox"
       ]
@@ -508,8 +508,8 @@
       "location": [
         "alley3"
       ],
-      "visibleAction": "From Mocha POV show box not responding",
-      "camera": "Silent fixed-axis POV, then devastated face",
+      "visibleAction": "The box still does not respond",
+      "camera": "Close-up of the box",
       "continuityAssets": [
         "essieBox"
       ]
@@ -530,8 +530,8 @@
       "location": [
         "alley3"
       ],
-      "visibleAction": "Mocha peers into intact box from his POV",
-      "camera": "Actual box interior POV with correct depth",
+      "visibleAction": "Mocha looks into the box",
+      "camera": "First box POV up at Mocha, then look inside",
       "continuityAssets": [
         "essieBox"
       ]
@@ -542,8 +542,8 @@
         "alley3",
         "town"
       ],
-      "visibleAction": "Mocha confused, remembers other cats entering boxes around city",
-      "camera": "Confused CU then several brief distinct cat-box insert shots",
+      "visibleAction": "Several friends are safely asleep in their own boxes",
+      "camera": "Show multiple sleeping supporting cats in physical boxes",
       "continuityAssets": [
         "otherBoxes"
       ]
@@ -553,8 +553,8 @@
       "location": [
         "alley3"
       ],
-      "visibleAction": "Center Essie's warm, dry box; Mocha slowly understands why it feels safe",
-      "camera": "Visual warmth/push-in and Mocha realization",
+      "visibleAction": "The box is warm and safe; Essie had left space for him",
+      "camera": "Interior box view, then replay Essie making room",
       "continuityAssets": [
         "essieBox"
       ]
@@ -565,8 +565,8 @@
         "cafe",
         "alley3"
       ],
-      "visibleAction": "Flashback: Essie moves aside inside café box to save space; Mocha recalls their cuddle",
-      "camera": "Actual café memory followed by affection closeup",
+      "visibleAction": "Mocha decides not to leave Essie alone",
+      "camera": "Hold box POV up at Mocha decision",
       "continuityAssets": [
         "essieBox"
       ]
@@ -576,8 +576,8 @@
       "location": [
         "alley3"
       ],
-      "visibleAction": "Mocha scares himself then voluntarily jumps into Essie's box",
-      "camera": "Jump arc above lip, no card phasing",
+      "visibleAction": "Mocha climbs inside",
+      "camera": "Box-interior POV up at his supported jump",
       "continuityAssets": [
         "essieBox"
       ]
@@ -587,8 +587,8 @@
       "location": [
         "alley3"
       ],
-      "visibleAction": "Cardboard shakes; two recognisable ears appear",
-      "camera": "Tight ears reveal with subtle camera tremor",
+      "visibleAction": "The real cardboard shakes; two ears appear and reveal Essie",
+      "camera": "Close on the shake and ears, slowly pull back to reveal her",
       "continuityAssets": [
         "essieBox"
       ]
@@ -598,8 +598,8 @@
       "location": [
         "alley3"
       ],
-      "visibleAction": "Box tips over, restored Essie tumbles onto Mocha and embraces him",
-      "camera": "Connected physical topple and grounded two-cat landing",
+      "visibleAction": "The box tips and Essie smoothly tumbles onto Mocha; she is back",
+      "camera": "Connected physical motion and grounded landing",
       "continuityAssets": [
         "essie",
         "mocha"
@@ -623,8 +623,8 @@
         "street",
         "cafe"
       ],
-      "visibleAction": "Mocha and Essie run together from alley through open café door to striped box",
-      "camera": "Continuous motivated follow/tracking; correct geography",
+      "visibleAction": "Both cats race along the alley and street, enter the cafe, then reach Latte box",
+      "camera": "Track the fast return and entrance before the interior cut",
       "continuityAssets": [
         "latteBox",
         "door"
@@ -635,8 +635,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Essie holds striped box flaps open with mouth; Mocha jumps fully inside",
-      "camera": "Contact closeup then full-size grounded jumping arc",
+      "visibleAction": "Essie mouth-holds the flaps while Mocha climbs in",
+      "camera": "Clear feline contact and smooth box entry",
       "continuityAssets": [
         "latteBox"
       ]
@@ -646,8 +646,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Box pops; Latte springs out and knocks Mocha and Essie over together",
-      "camera": "Sudden zoom, light shake, physically connected three-cat tumble",
+      "visibleAction": "Latte pops out and knocks both friends over",
+      "camera": "Small impact shake and quick motivated zoom",
       "continuityAssets": [
         "latteBox",
         "threeCats"
@@ -658,8 +658,8 @@
       "location": [
         "town"
       ],
-      "visibleAction": "Sun rises; Mocha stands on stool addressing LARGE gathered cat crowd in square",
-      "camera": "Dawn crane to a sizeable audience and raised stool",
+      "visibleAction": "Mocha addresses a large crowd from a stool in the town square",
+      "camera": "Slow pullback to reveal the full crowd",
       "continuityAssets": [
         "townSquare",
         "stool",
@@ -671,8 +671,8 @@
       "location": [
         "town"
       ],
-      "visibleAction": "A background cat visibly transforms into a box while Mocha demonstrates climbing in",
-      "camera": "Intercut true demo transformations, no billboard",
+      "visibleAction": "Demonstrate a cat becoming a box, then Mocha climbing inside",
+      "camera": "Transformation view then box POV",
       "continuityAssets": [
         "otherBoxes"
       ]
@@ -683,8 +683,8 @@
         "town",
         "street"
       ],
-      "visibleAction": "Essie reappearing knocks Mocha over; Mocha walks past boxes now smiling at other cats",
-      "camera": "Flashback rescue then friendly street tracking",
+      "visibleAction": "Demonstrate the friend returning; afterward Mocha pushes a box away",
+      "camera": "Finish the rescue demonstration before the new cafe reaction",
       "continuityAssets": [
         "essieBox"
       ]
@@ -694,8 +694,8 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "Show same large shared box beside café window as Mocha approaches hesitantly",
-      "camera": "Warm window reveal that proves box can fit all three",
+      "visibleAction": "Mocha mouth-drags a roomy box beside the cafe window",
+      "camera": "Show the actual grounded drag and visible window",
       "continuityAssets": [
         "sharedBox"
       ]
@@ -705,11 +705,15 @@
       "location": [
         "cafe"
       ],
-      "visibleAction": "All THREE cats jump into the large shared box, clearly visible and together",
-      "camera": "Full jump paths and final warm overhead/hero frame",
+      "visibleAction": "All three jump into that same roomy box at unchanged size",
+      "camera": "Smooth staggered jumps and a slow final push",
       "continuityAssets": [
         "sharedBox"
       ]
     }
-  ]
+  ],
+  "editingPolicy": {
+    "maximumShotSeconds": null,
+    "rule": "Hold a coherent action as long as it needs; narration anchors do not force camera cuts. Preserve actual voice timing."
+  }
 }

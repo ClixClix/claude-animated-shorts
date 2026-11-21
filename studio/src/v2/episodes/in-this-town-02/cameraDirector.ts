@@ -1,3 +1,4 @@
+import {STREET_BOX_CENTERS} from './timeline';
 import type {V3} from '../../cafe/config';
 import type {State} from './timeline';
 import {stateAt as sampleShotState,ease as easeTrack} from './timeline';
@@ -41,7 +42,7 @@ function focusSet(s:State):Extents[]{
  };
  if(n===46&&s.room==='cafe')return s.heroBox==='latte'?
   [B('latte'),C('latte')]:[B('essie'),C('essie')];
- if(n===4)return [B('demo'),C('demoCat')]; // Foreground subject; crowd is environmental, not mandatory safe-area focus.
+ if(n===4)return [box('street-box-A',STREET_BOX_CENTERS[0],'demo'),box('street-box-B',STREET_BOX_CENTERS[1],'demo'),C('mocha')]; // Tracking camera is handled explicitly below.
  if(n<=3)return n<=2?[B('demo'),C('demoCat')]:[B('demo'),C('demoCat')];
  if(n===5)return [C('mocha'),B('demo')];
  if(n===5||n===8||n===11||n===14||n===17||n===23||n===24||n===25||n===27||n===28||n===29||n===30||n===33||n===36||n===43||n===48)return [C('mocha')];
@@ -158,13 +159,57 @@ function preferredFov(s:State){
 }
 function fit(s:State){
  const focus=focusSet(s),center=boundsCenter(focus),r=region(s);
+ // Shot 04 is a continuous tracking shot: Mocha must cross BOTH street
+ // boxes while we see the two separate cats leap inside and fold.
+ if(s.shot.sequence===4){
+  const pan=easeTrack(s.u);
+  // Lower, closer, portrait-safe tracking view: both real boxes and
+  // Mocha occupy the visible street, not a tiny corner of the skyline.
+  // Each transformation occupies the center of this portrait frame in turn.
+  // Mocha is closer to the lens, still readable in the foreground.
+  const camera:V3=[1.55-2.14*pan,1.76,8.05];
+  const target:V3=[.67-1.42*pan,.62,5.37];
+  const fov=63;
+  return {camera,target,fov,region:'town' as Region,
+   framing:projections(corners(focus),target,camera,fov),
+   shot:4,selectedIds:['mocha','street-box-A','street-box-B']};
+ }
+ if(s.shot.sequence===5){
+  const pan=easeTrack(s.u);
+  // Center the character, not the empty cardboard. Both are in frame as
+  // he gets closer to the box; no more Mocha hidden beyond the left edge.
+  const x=s.mocha.position[0];
+  const camera:V3=[x+1.15,1.62,9.12];
+  const target:V3=[x+.33,.72,5.87];
+  return {camera,target,fov:66,region:'outside' as Region,
+   framing:projections(corners(focus),target,camera,66),
+   shot:5,selectedIds:['mocha','rule-demo']};
+ }
+ // A box close-up should show the *interior striped floor and flaps*,
+ // the jumping Latte, and a strip of the real cafe environment.
+ if(s.shot.sequence===6){
+  const camera:V3=[s.latteBox[0]+.33,1.55,s.latteBox[2]+2.55];
+  const target:V3=[s.latteBox[0]+.10,.64,s.latteBox[2]+.26];
+  return {camera,target,fov:73,region:'latte' as Region,
+   framing:projections(corners(focus),target,camera,80),
+   shot:6,selectedIds:['latte','latte-striped-box']};
+ }
+ // Essie visibly offers space to Mocha; hold both faces and the same box.
+ if(s.shot.sequence===7){
+  // Both Essie in her large box AND Mocha passing by must fit simultaneously.
+  const camera:V3=[s.essieBox[0]+2.15,1.90,s.essieBox[2]+4.70];
+  const target:V3=[s.essieBox[0]+1.10,.75,s.essieBox[2]+.70];
+  return {camera,target,fov:78,region:'essie' as Region,
+   framing:projections(corners(focus),target,camera,78),
+   shot:7,selectedIds:['essie','mocha','essie-box']};
+ }
  // Director beat 58 takes place OUTSIDE on the living town street.
  // The next shot is an intentional location cut to the café window.
  if(s.shot.sequence===58){
-  const camera:V3=[4.9,2.16,9.0],target:V3=[1.50,.8,5.95],fov=75;
+  const camera:V3=[3.65,2.20,9.15],target:V3=[.98,.80,5.74],fov=90;
   return {camera,target,fov,region:'town' as Region,
    framing:projections(corners(focus),target,camera,fov),
-   shot:58,selectedIds:['mocha','essie','latte','street-life']};
+   shot:58,selectedIds:['mocha','essie','latte','street-box-A','street-box-B']};
  }
  // Evidence-backed finale camera. In the 231-frame cloud QA preview
  // from run #44257023170, camera z=5.35 stared into the OPAQUE café
@@ -243,8 +288,8 @@ function fit(s:State){
   const n=s.shot.sequence,p=s.essieBox;
   const profile:Record<number,{camera:V3;target:V3;fov:number}>={
    // From Essie's side, follow the box DRAG without putting a cardboard\n   // wall between the camera and her face. Mocha is offscreen in this shot.
-   32:{camera:[p[0]-.20,1.95,p[2]+2.70],
-       target:[p[0],.70,p[2]+.43],fov:72},
+   32:{camera:[p[0]-.20,1.95,p[2]+2.98],
+       target:[p[0],.70,p[2]+.71],fov:72},
    // Stay behind the cardboard when Essie settles; Mocha is further up
    // the alley and must not stand between our camera and her face.
    35:{camera:[p[0]-.46,1.66,p[2]-1.66],
@@ -356,7 +401,7 @@ const DOLLY_TRACK_SHOTS=new Set([5,8,20,27,28,29,30,32,36,49,50,54,55]);
 const blend3=(a:V3,b:V3,u:number):V3=>[
  a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u,a[2]+(b[2]-a[2])*u
 ];
-export function directEpisodeCamera(s:State){
+function authoredEpisodeCamera(s:State){
  const n=s.shot.sequence;
  if(n===1||n===2){
   // ONE continuous 105-frame city-to-kitten crane across editorial shots 01/02.
@@ -403,24 +448,8 @@ export function directEpisodeCamera(s:State){
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:n===1?['city-establishing','demo','demoCat']:['demo','demoCat']};
  }
- // Source 0cab445 complete 60-shot render, frames 243-395:
- // The automatic focus fitter zooms dynamically onto the airborne Latte
- // and makes his Episode01 card gigantic (shot 06), then leaves Essie's
- // face hidden by the intact front wall (shot 07). Use two stable, elevated
- // 3/4 interior axes with room for the REAL box and jumping silhouette.
- // No box geometry, original art, or approved opening shots are altered.
- if(n===6){
-  const camera:V3=[-.55,2.18,3.28],target:V3=[-1.90,.82,2.10],fov=82;
-  return {camera,target,fov,region:'latte' as Region,
-   framing:projections(corners(focusSet(s)),target,camera,fov),
-   shot:6,selectedIds:['latte','latte-box']};
- }
- if(n===7){
-  const camera:V3=[.18,2.46,2.93],target:V3=[.48,.60,.35],fov=78;
-  return {camera,target,fov,region:'essie' as Region,
-   framing:projections(corners(focusSet(s)),target,camera,fov),
-   shot:7,selectedIds:['essie','essie-box','mocha']};
- }
+ // 06/07 are deliberately authored ONCE in the dedicated camera block
+ // below; earlier duplicate returns silently bypassed every later fix.
  // Closing time is a two-subject shot: Mocha's real muzzle AND the hinged
  // Episode 01 café door. Mocha-only framing omitted the closing action.
  if(n===24){
@@ -489,54 +518,63 @@ export function directEpisodeCamera(s:State){
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:['demo','demoCat']};
  }
- // Director lock: shot 04 TRACKS across TWO separate living cats
- // leaping into their own boxes and becoming cardboard.
- if(n===4){
-  // Fit both visibly transforming cats AND Mocha's uninterrupted walk
-  // inside 9:16 safety margins, instead of clipping Mocha at frame-right.
-  const move=easeTrack(s.u);
-  const camera:V3=[2.80-.10*move,2.30,11.90-.20*move];
-  const target:V3=[2.45-.18*move,.72,5.58];
-  const fov=91;
+ // Shot04 now really contains THREE different physical cartons, TWO
+ // independent cat-to-box jumps, and Mocha's continuous walk as witness.
+ if(n===4||n===5){
+  // One continuous run along multiple storefronts: no hidden midpoint cut
+  // and no camera reset when the ordinary-box beat starts.
+  const x=s.mocha.position[0]+.55;
+  const camera:V3=[x,1.80,9.20],target:V3=[x,.75,5.75],fov=78;
   return {camera,target,fov,region:'town' as Region,
    framing:projections(corners(focusSet(s)),target,camera,fov),
-   shot:n,selectedIds:['mocha','town-cat-hazel','town-cat-slate','distinct-town-boxes']};
- }
- // 05 follows Mocha walking and seeing the THIRD cat enter and transform,
- // then investigates the ordinary box, refuses it and walks away.
- if(n===5){
-  const observe=easeTrack(s.u/.56);
-  const camera:V3=[5.90-1.20*observe,1.95,8.48-.18*observe];
-  const target:V3=[3.67-1.14*observe,.64,5.46];
-  const fov=82;
-  return {camera,target,fov,region:'town' as Region,
-   framing:projections(corners(focusSet(s)),target,camera,fov),
-   shot:n,selectedIds:['mocha','town-cat-honey','demo-box']};
+   shot:n,selectedIds:n===4?['mocha','street-box-A','street-box-B']:['mocha','ordinary-box']};
  }
  // LOCK RESTING-CAT PERSPECTIVE: Episode 01 cats are illustrated,
  // not full volumetric anatomy. Automatic fit and overhead cameras showed
  // them as narrow billboards in huge empty boxes. Aim along each box's
  // physical floor plane, keeping face + shoulders readable above the rim.
  // Leave approved Shot 01/02 crane and all unrelated cuts untouched.
- if(n===6||n===7||n===19){
-  const p=n===6?s.latteBox:s.essieBox;
-  // Quiet, visible push toward the resting face. The original source
-  // held every frame on an identical billboard for 2–3 seconds.
-  const advance=.15*easeTrack(s.u);
-  // Actual full 60-shot render 44264714488: shot06 cropped the airborne
-  // original Episode01 cat at the top and left its striped box below.
-  // Widen the whole jump axis and keep the lens INSIDE the cafe facade.
-  // Shot07 needs a moderately raised 3/4 view into all four box walls,
-  // rather than the previous low view that concealed Essie's face.
-  const camera:V3=n===6?[p[0]+1.05,1.65,Math.min(3.40,p[2]+1.48)-.08*easeTrack(s.u)]:
-    n===7?[p[0]+.58,2.05,p[2]+2.65-advance]:
-    [p[0]+.48,1.60,p[2]+2.80-advance];
-  const target:V3=n===6?[p[0]+.10,.75,p[2]+.20]:
-    [p[0]+.20,.68,p[2]+.10];
-  const fov=n===6?72:n===7?72:65;
-  return {camera,target,fov,region:(n===6?'latte':'essie') as Region,
+ if(n===6){
+  // V7: The V6 camera at Z=4.66 was OUTSIDE the solid cafe front wall
+  // (Z=4.2). Actual V6 footage therefore showed 88 blank wall frames.
+  // Use a portrait-safe three-quarter camera INSIDE the room, closer than
+  // the front wall but far enough to show Latte's full jump and box stripes.
+  // Portrait width must hold a side-approach cat AND the striped box.
+  // Position stays inside the café façade (z<4.2); the entire travel
+  // occurs at almost constant depth, eliminating perspective size pops.
+  const pan=easeTrack((s.u-.35)/.26);
+  const camera:V3=[-.95-.85*pan,2.35,4.07];
+  const target:V3=[-.90-.85*pan,.90,2.10];
+  const fov=112;
+  return {camera,target,fov,region:'latte' as Region,
    framing:projections(corners(focusSet(s)),target,camera,fov),
-   shot:n,selectedIds:[n===6?'latte':'essie','box']};
+   shot:n,selectedIds:['latte','striped-cardboard-box']};
+ }
+ if(n===7){
+  // Left-side camera avoids the table/chair which previously blocked Mocha.
+  // 07A closer Essie invitation, 07B both figures and actual refusal walk.
+  const invite=s.shot.id==='07A';
+  const pan=invite?0:easeTrack(s.u)*.16;
+  const camera:V3=invite?[-.53,1.62,2.45]:[1.00+pan,1.85,3.90];
+  const target:V3=invite?[.10,.80,.12]:[1.00+pan,.78,.64];
+  const fov=invite?72:106;
+  return {camera,target,fov,region:'essie' as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:n,selectedIds:invite?['essie','box-space']:['essie','mocha','refusal']};
+ }
+ if(n===21){
+  // Keep both lead faces inside the frame instead of cropping Mocha at right.
+  const camera:V3=[.80,1.90,3.60],target:V3=[.65,.73,.65],fov=80;
+  return {camera,target,fov,region:'essie' as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:n,selectedIds:['essie','mocha','essie-box']};
+ }
+ if(n===19){
+  const p=s.essieBox,camera:V3=[p[0]+.48,1.60,p[2]+2.80-.15*easeTrack(s.u)];
+  const target:V3=[p[0]+.20,.68,p[2]+.10],fov=65;
+  return {camera,target,fov,region:'essie' as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:n,selectedIds:['essie','box']};
  }
  if([35,37,38,39].includes(n)){
   const p=s.essieBox;
@@ -552,6 +590,19 @@ export function directEpisodeCamera(s:State){
   return {camera,target,fov,region:'alley' as Region,
    framing:projections(corners(focusSet(s)),target,camera,fov),
    shot:n,selectedIds:['essie','box']};
+ }
+ // Rescue is one connected spatial action. The same camera axis holds
+ // across 49/50/51 instead of orbiting behind the carton or framing empty lane.
+ if(n===49||n===50||n===51||n===52){
+  // Hold the same side of the alley throughout the cure and physical tumble.
+  // Higher sightline sees the intact rim; no wall shortening or card resizing.
+  const intimate=n===52?easeTrack(s.u):0;
+  const camera:V3=[-9.15,2.25-.60*intimate,6.35-.18*intimate];
+  const target:V3=[-9.15,.95,2.30+.55*intimate];
+  const fov=74-2*intimate;
+  return {camera,target,fov,region:'alley' as Region,
+   framing:projections(corners(focusSet(s)),target,camera,fov),
+   shot:n,selectedIds:['mocha','essie','rescue-box']};
  }
  // Physical box-contact coverage: the previous automatic tight crop
  // cut off Mocha's muzzle in the paw/box POV (12–13) and partly cropped the
@@ -625,4 +676,14 @@ export function directEpisodeCamera(s:State){
  }
  return {...held,
   framing:projections(corners(focusSet(s)),held.target,held.camera,held.fov)};
+}
+
+export function directEpisodeCamera(s:State){
+ if(s.story?.camera)return {...s.story.camera,region:region(s),shot:s.shot.sequence,selectedIds:focusSet(s).map(f=>f.id),framing:projections(corners(focusSet(s)),s.story.camera.target,s.story.camera.camera,s.story.camera.fov)};
+ const base=authoredEpisodeCamera(s);
+ if(![40,41,42,44,47,48].includes(s.shot.sequence))return base;
+ // Match the small foreground clearance move, preserving subject/lens scale.
+ const camera:V3=[base.camera[0],base.camera[1],base.camera[2]+.36];
+ const target:V3=[base.target[0],base.target[1],base.target[2]+.36];
+ return {...base,camera,target,framing:projections(corners(focusSet(s)),target,camera,base.fov)};
 }
