@@ -40,8 +40,8 @@
     "episode2:remix-master": "node scripts/episode02-series-music.mjs && node scripts/episode02-finish.mjs",
     "inthis:next": "node scripts/series-one-prompt.mjs",
     "inthis:next-test": "node --test scripts/series-one-prompt.test.mjs",
-    "episode2:action-audit": "node scripts/episode02-action-evidence.mjs",
-    "episode2:action-audit-strict": "node scripts/episode02-action-evidence.mjs --strict",
+    "episode2:action-audit": "node scripts/episode02-live-action-evidence.mjs",
+    "episode2:action-audit-strict": "node scripts/episode02-live-action-evidence.mjs --strict",
     "episode2:review": "node scripts/produce-box.mjs review",
     "episode2:doctor": "node scripts/produce-box.mjs doctor",
     "episode2:workflow-test": "node --test scripts/episode02-render-inputs.test.mjs scripts/episode02-review-workflow.test.mjs"

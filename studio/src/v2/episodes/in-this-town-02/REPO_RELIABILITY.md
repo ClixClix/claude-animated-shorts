@@ -10,6 +10,8 @@ The uploaded Updated Full Review is a full 540x960, 30fps, 3,737-frame film. Its
 - The old local-full-review command explicitly prepared a silent scratch. The replacement never prepares an edit or audio: it checks existing inputs together, runs one shared source-check list, resumes the existing renderer, assembles, adds the unchanged full mixed soundtrack and validates the resulting movie. Previous review movies are retained with timestamped names.
 - Multiple contradictory instructions and commands encouraged repeated handoffs. Root instructions now identify the current review entry point and the creator's full-video review choice.
 
+The installer preserves an existing local `scripts/episode02-action-evidence.mjs` byte for byte. Canonical review/build checks and npm action-audit aliases use `scripts/episode02-live-action-evidence.mjs`, which contains the current 30 narration-aligned checks. A mismatch in the historical audit no longer blocks installation or overwrites local changes. Other executable source guards remain strict.
+
 ## Local use
 
 From `C:\V2\ep02-local-render\studio`:
