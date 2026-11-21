@@ -165,7 +165,7 @@ export function createEpisode1CastCat(id:CatId){
   const cuddle=[51,52].includes(n)?(n===52?1:smooth((s.u-.85)/.13)):0;
   card.mesh.rotation.z=(id==='mocha'?-.07:id==='essie'?.07:0)*cuddle;
   if(id==='essie'&&n===50){
-   earReveal.constant=-(.98-.93*smooth((s.u-.58)/.36));
+   earReveal.constant=-(1.15-1.10*(s.story?.ears??smooth((s.u-.58)/.36)));
    if(!card.mesh.material.clippingPlanes?.length){card.mesh.material.clippingPlanes=[earReveal];card.mesh.material.needsUpdate=true;}
   }else if(card.mesh.material.clippingPlanes?.length){card.mesh.material.clippingPlanes=[];card.mesh.material.needsUpdate=true;}
   card.legs.visible=card.mesh.visible&&a.moving;

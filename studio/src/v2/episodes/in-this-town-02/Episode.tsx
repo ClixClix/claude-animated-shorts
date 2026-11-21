@@ -1,5 +1,7 @@
 import {createDirectedSet} from './directedSet';
-import {BOX_SPECS} from './boxProps';
+import {stageEpisodeBox,demoIdentity} from './boxStaging';
+import {stageEpisodeWorld} from './worldStaging';
+import {FRIEND_NAPS,CAFE_BED} from './storyDirection';
 import {STREET_BOX_CENTERS} from './timeline';
 import React,{useEffect,useMemo} from 'react';
 import * as T from 'three';
@@ -25,7 +27,7 @@ import {catBehaviorFor} from './catBehaviors';
 import {stateAt as previousEpisodeState,DRAFT_SHOTS} from '../door-at-1111-polish/timeline';
 import {createEpisodeBox} from './boxProps';
 import {directEpisodeCamera} from './cameraDirector';
-import {SCRATCH_EDIT,stateAt,clamp,ease,rescueTipAngle,tippedEssieRoot,type EpisodeEdit,type ActorPose,type State} from './timeline';
+import {SCRATCH_EDIT,stateAt,clamp,ease,type EpisodeEdit,type ActorPose,type State} from './timeline';
 
 export type BoxEpisodeProps=EpisodeEdit&{previewScale?:number;optimize?:boolean;audioApproved?:boolean};
 
@@ -114,7 +116,7 @@ function createStoryProps(){
    const rim=new T.Mesh(rimGeo,propMat('#9d7a81'));rim.rotation.x=Math.PI/2;rim.position.y=.19;bed.add(rim);
    root.add(bed);return bed;
  };
- const cafeBed=softBed('episode02-essie-cafe-bed',[2.68,.02,-1.84]);
+ const cafeBed=softBed('episode02-essie-cafe-bed',[CAFE_BED[0],.02,CAFE_BED[2]]);
  const homeBed=softBed('episode02-essie-home-bed',[1.38,.20,13.70]);
 
  // Distinct physical market: three stalls, awnings, real product crates.
@@ -200,7 +202,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,captions=[],previewScale=1,optimiz
  },[optimize]);
  const boxes=useMemo(()=>({
   latte:createEpisodeBox('latte'),essie:createEpisodeBox('essie'),shared:createEpisodeBox('shared'),
-  demo:createEpisodeBox('demo')
+  demo:createEpisodeBox('demo'),lesson:createEpisodeBox('lesson')
  }),[]);
  boxes.demo.root.name='EPISODE02_RULE_DEMO_BOX';
  // Secondary trapped carton uses the same physical cardboard kit.
@@ -290,121 +292,34 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,captions=[],previewScale=1,optimiz
  atmosphere.sun.intensity=s.daylight?2.9:.3;
  atmosphere.night.intensity=s.room==='alley'?26:s.daylight?0:9;
  atmosphere.night.position.set(s.story?.alley?-18:-8.7,3.1,s.story?.alley?-3:1.8);
- atmosphere.comfort.position.set(s.essieBox[0],.23,s.essieBox[2]);
+ atmosphere.comfort.position.set(s.essieBox[0],.85,s.essieBox[2]);
  // First the box is merely eerie, then its warmth becomes visible as
  // Mocha approaches, and finally it fades into the actual rescue.
  atmosphere.comfort.intensity=s.shot.sequence>=45&&
   s.shot.sequence<=50&&s.room==='alley'?
-    (s.shot.sequence===45?2+9*ease((s.u-.20)/.67):11):0;
+    (s.shot.sequence===45?1.5+1.5*ease((s.u-.20)/.67):3):0;
  CHAR.uCharTint.value.set(...EPISODE1_STYLE.character.tint);
  CHAR.uCharShade.value=EPISODE1_STYLE.character.shade;
  CHAR.uGrad.value=EPISODE1_STYLE.character.gradient;
  CHAR.uBodyGrad.value=EPISODE1_STYLE.character.bodyGradient;
  CHAR.uSideTint.value.set(...EPISODE1_STYLE.character.sideTint);
  CARD_K.uPx.value=previewScale;
- // Open the existing hinged door fully against the wall for the return
- // sprint, rather than letting its leaf cut through Mocha and Essie.
- // In shot 24 the physical Episode 01 café door swings from OPEN to CLOSED
-  // only after Mocha reaches its nose plate. A stationary CLOSED sign is not
-  // the action; leave the original hinged leaf and frame intact.
-  const closingDoor=n===24?ease((s.u-.43)/.44):0;
-  world.door.rotation.y=n===24?-1.10*(1-closingDoor):n===27?-1.18:n>=53?-Math.PI/2:0;
- // Shot 27 is the actual Episode01 HOUSE exit, not the cafe door. The
- // inherited Episode01 frame-zero house door was shut while Mocha ran
- // through its opaque leaf. Open only during the house entrance/exit beats.
- world.homeDoor.rotation.y=(n===25||n===27)?-Math.PI/2:0;
- // The return shot tracks through the already-open entrance. Mask only
- // its swung-open leaf, which still cut across both cats in real 540p footage.
- world.door.visible=true;
- if(s.story?.cafeDoor!==undefined)world.door.rotation.y=s.story.cafeDoor;
- if(s.story?.houseDoor!==undefined)world.homeDoor.rotation.y=s.story.houseDoor;
- // Shot 29 is already past the shelter, looking back toward the market.
- // The Episode01 bus-stop glass and poles otherwise occupy almost the
- // entire frame and erase Mocha for 30+ actual decoded frames. Preserve
- // the real shelter in establishing shot 28; exclude it from this cut.
- const shelter=world.props.get('bus-stop');
- if(shelter)shelter.visible=s.shot.sequence!==29;
- // The remaining dark pole in real shot29 (frames 1764–1817) is NOT the
- // shelter: it is Episode01's original lamp at x=-6,z=6.05. Those lamp
- // pieces are direct night-town children, not a named streetlight group.
- // Mask only this one foreground lamp during the walking cut; retain the
- // approved fixture everywhere else, including the shot28 establishing view.
- const nightTown=world.cafe.root.getObjectByName('night-town');
- for(const part of nightTown?.children??[]){
-  if(Math.abs(part.position.x+6)<.01&&Math.abs(part.position.z-6.05)<.01)
-   part.visible=n!==29;
- }
- // Episode01 streetlight-3 stands at x=0,z=6.05, physically inside the
- // Episode02 cure board at x=.1,z=6.1. Actual full-render shot 57 showed
- // its pole slicing through the instruction text and Essie's face; shot 56
- // also lost a lead silhouette behind it. Mask only these announcement cuts.
- // This does not modify the approved Episode01 lamp source or other shots.
- const announcementLamp=world.root.getObjectByName('streetlight-3');
- if(announcementLamp)announcementLamp.visible=![4,5,56,57].includes(n); // episode02-announcement-lamp
- // Episode01's permanent plant is retained everywhere except the close-up
- // jump/cuddle, where real 25-frame cloud QA proved its leaves block Mocha.
- // Cinematic foreground masking changes shot visibility, not original assets.
- const foregroundPlant=world.cafe.fixtures.get('entrance-plant');
- if(foregroundPlant)foregroundPlant.visible=!(s.shot.sequence>=58&&s.shot.sequence<=60);
- // V8: With batching disabled, masking these source fixtures now truly works.
- // Foreground chair/table intruded across Essie and Mocha in V5 07A/B.
- // As with Episode01 shot masking, only remove camera-blocking foreground
- // furniture for these two close-ups; other café shots remain untouched.
- for(const id of ['chair-front-west','chair-front-east','table-window-front','window-table-mug-front']){
-  const fixture=world.cafe.fixtures.get(id);
-  if(fixture)fixture.visible=n!==7;
- }
- // episode02-house-visible: restore Episode 01's exact house for Mocha's search.
- const atHouse=n===25||n===26;
- for(const id of ['latte-home','home-interior-finish','home-low-bookcase',
-   'latte-cat-bed','home-food','home-water','home-moonlight']){
-  const item=world.root.getObjectByName(id);if(item)item.visible=atHouse;
- }
+ stageEpisodeWorld(world,s,n);
  // Physical scene assets only appear in their actual story beats.
  props.market.visible=n===29;
  props.alleys.forEach(a=>{a.visible=false;});
  props.cafeBed.visible=n===22||n===23;
- props.homeBed.visible=atHouse;
+ props.homeBed.visible=n===25||n===26;
  props.stool.visible=n===56;
  if(n===56)props.stool.position.set(0,.20,6.0);
  const boxArray=[
   {key:'latte',obj:boxes.latte,pos:s.latteBox,visible:s.show.latte,flap:s.flap.latte},
   {key:'essie',obj:boxes.essie,pos:s.essieBox,visible:s.show.essie,flap:s.flap.essie},
   {key:'shared',obj:boxes.shared,pos:s.sharedBox,visible:s.show.shared,flap:s.flap.shared},
-  {key:'demo',obj:boxes.demo,pos:s.demoBox,visible:s.show.demo,flap:s.flap.demo},
+  {key:'demo',obj:boxes[demoIdentity(s)],pos:s.demoBox,visible:s.show.demo,flap:s.flap.demo},
  ] as const;
- for(const b of boxArray){
-  const tip=b.key==='essie'?rescueTipAngle(n,s.u):0;
-  const planted=b.key==='essie'?tippedEssieRoot(b.pos,tip):b.pos;
-  b.obj.root.position.set(...planted);
-  b.obj.root.rotation.x=tip;
-  b.obj.root.rotation.y=(n===50&&b.key==='essie'||n===12&&b.key==='latte')?(s.story?.boxShake??0):0;
-  b.obj.root.visible=b.visible;
-  b.obj.setOpenAmount(b.flap);
-  if(b.key==='essie'&&n>=32&&n<=52){
-   // The alley cannot accommodate fully outstretched side flaps. Keep
-   // both real hinges upright, within the original box footprint.
-   b.obj.flaps.left.rotation.z=Math.PI/2;
-   b.obj.flaps.right.rotation.z=-Math.PI/2;
-  }
-  if(b.key==='essie'&&[49,50,51,52].includes(n)){
-   // Flat side flaps stay clear of the actors. During the tip the front
-   // flap remains level in world space instead of rotating underground.
-   b.obj.flaps.front.rotation.x=Math.PI-tip;
-   b.obj.flaps.back.rotation.x=-Math.PI-tip;
-  }
- }
- // No box wall or front flap disappears during the rescue.
- boxes.essie.flaps.front.visible=true;
- if(s.room==='cafe')boxes.essie.flaps.back.rotation.x=-Math.PI/2;
- // The long right-hand flap (not a café chair!) is the tan plank slicing
- // directly across Mocha's head in actual V8 shot 07B. Fold it away for
- // the invitation and refusal, leaving every box wall intact.
- boxes.essie.flaps.right.visible=true;
- if(n===7)boxes.essie.flaps.right.rotation.z=-Math.PI;
- // Keep complete four-sided cardboard geometry in ALL shots. Camera staging
- // must reveal the cat naturally; never shorten/erase box walls for a portrait.
- // Front wall and flap shape stay identical throughout café and alley scenes.
+ boxes.demo.root.visible=false;boxes.lesson.root.visible=false;
+ for(const b of boxArray)stageEpisodeBox(b.obj,b.key,s,n);
  // SHOT 04: Mocha walks down the curb, actually WATCHING TWO different
  // street cats enter TWO different cartons and become them. Independently
  // hinged lids and paper-folds occur IN the shot, not in narration only.
@@ -413,7 +328,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,captions=[],previewScale=1,optimiz
  const streetCenters=STREET_BOX_CENTERS;
  for(let i=0;i<streetBoxes.length;i++){
   const b=streetBoxes[i];
-  const active=n===4||n===58;
+  const active=n===4;
   b.root.visible=active;
   b.root.position.set(...streetCenters[i]);
   b.root.scale.setScalar(i===0?.94:1.08);
@@ -422,62 +337,6 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,captions=[],previewScale=1,optimiz
   b.setOpenAmount(n===4?.96-.86*ease((s.u-closeAt)/.085):.90);
   b.root.rotation.z=0; // No jittering rigid boxes: folds are in the hinged flaps.
  }
- // Shot 02: tiny side flap reaction when the living kitten resettles.
- // Keep the same carton and clear face; never lift a wall into the lens.
- if(n===2){
-  const wobble=Math.sin(Math.PI*s.u)*Math.sin(2*Math.PI*s.u);
-  boxes.demo.flaps.right.rotation.z-=.065*wobble;
- }
- // The striped box must twitch visibly in shot 10, not remain frozen.
- if(s.shot.sequence===10){
-  const twitch=ease((s.u-.46)/.12)*(1-ease((s.u-.60)/.15));
-  boxes.latte.flaps.front.rotation.x+=.30*twitch;
- }
- // The empty alley box must RESPOND during the long silent decision.
- // A small flap twitch and the warm floor light create a visual beat without
- // fake hands, new cat assets or narration. Never tip the entire carton.
- if(n===41||n===44||n===47||n===48){
-  const tap=ease((s.u-.25)/.15)*(1-ease((s.u-.55)/.22));
-  const breeze=n===44?.07:n===47?.045:.035;
-  boxes.essie.flaps.back.rotation.x-=breeze*tap;
- }
- // Mocha nudges two REAL flaps sequentially while his original Episode01
- // muzzle approaches the rim; no human-like paws or floating flap opening.
- if(s.shot.sequence===12){
-  const first=ease((s.u-.18)/.30),second=ease((s.u-.55)/.30);
-  const angle=Math.PI*.92;
-  boxes.latte.flaps.front.rotation.x=angle*(.80+.17*first);
-  boxes.latte.flaps.left.rotation.z=angle*(.80+.17*second);
- }
-  // The shared box's left flap folds DOWN along the outside wall, rather
-  // than extending into Mocha's hesitant approach and masking his face.
-  // Keep the same physical flap and original Episode01 scene assets.
-  if(s.shot.sequence>=59&&s.shot.sequence<=60){
-   boxes.shared.flaps.left.rotation.z=Math.PI;
-   boxes.shared.flaps.right.rotation.z=-Math.PI/2;
-  }
- // Full-video review: outward/upward front flaps crossed painted faces.
- // Fold the SAME panels downward outside the carton, leaving floor clearance.
- const foldFront=(kind:'latte'|'essie')=>{
-  const spec=BOX_SPECS[kind],length=spec.depth*.47;
-  const drop=Math.min(length,spec.height+.04-.07);
-  return Math.PI+Math.asin(drop/length);
- };
- if((n>=9&&n<=17)||(n>=54&&n<=55)){
-  const nudge=n===12?.18*Math.sin(Math.PI*ease(s.u)):n===10?.035*Math.sin(Math.PI*s.u):0;
-  boxes.latte.flaps.front.rotation.x=foldFront('latte')-nudge;
-  const sideLength=BOX_SPECS.latte.width*.47;
-  const sideDrop=Math.min(sideLength,BOX_SPECS.latte.height+.04-.07);
-  const sideAngle=Math.PI+Math.asin(sideDrop/sideLength);
-  boxes.latte.flaps.left.rotation.z=sideAngle;
-  boxes.latte.flaps.right.rotation.z=-sideAngle;
- }
- if((n>=18&&n<=23)||(n>=31&&n<=48))
-  boxes.essie.flaps.front.rotation.x=foldFront('essie');
- // Mouth-contact beats use the real outer flap edge as the grip point.
- if(n===16)boxes.latte.flaps.front.rotation.x=Math.PI-.10;
- if(n===32||n===41)boxes.essie.flaps.front.rotation.x=Math.PI-.08;
- if(n===59)boxes.shared.flaps.front.rotation.x=Math.PI-.114;
  // Drive the EXACT Episode 01 actor/cards from Episode 02's approved story
  // timing. Their silhouettes, whiskers, tail and separate foot drawings never
  // get replaced by the failed Episode 02 "oval body / stick legs" renderer.
@@ -580,7 +439,7 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,captions=[],previewScale=1,optimiz
   const id=j+2;
   group.update({...ep1CrowdState,t:4.2-id*.8});
   group.root.visible=!!s.story?.friendNap;
-  const positions:V3[]=[[-3.2,.055,5.18],[-1.1,.055,5.19],[1.8,.055,5.35]];
+  const positions=FRIEND_NAPS;
   group.actors.forEach((a,i)=>{a.mesh.visible=i===id;if(i===id){a.mesh.position.set(...positions[j]);a.mesh.scale.setScalar(1);a.mesh.rotation.y=Math.atan2(cam.position.x-positions[j][0],cam.position.z-positions[j][2]);}});
   group.root.children.forEach(c=>{if(c.name.includes('shadow'))c.visible=false;});
  });
@@ -602,11 +461,11 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,captions=[],previewScale=1,optimiz
  });
  // Give Shot 05 Mocha his own readable reaction, not a guest blocking
  // his face at the door. The busy living town remains visible in Shots 01-04.
- const outsideBusy=n<=4||n===8||n===56||n===57||n===58;
+ const outsideBusy=n<=4||n===8||n===56;
  // Preserve daytime patrons in wide shots; the foreground guest in 11/14
  // otherwise covers half of Mocha's face in the real tight reaction frames.
  // Keep guests in wide cafe shots; close box faces need a clear lens.
- const cafeBusy=[6,8,9,18,22,23].includes(n);
+ const cafeBusy=[6,8,18].includes(n);
  const audienceOn=n===4||n===56||n===57;
  // Deterministic sidewalk motion, not random positions on each render frame.
  // Keep everyone off the road and away from the hero's box contact.
@@ -669,27 +528,6 @@ const Inner:React.FC<BoxEpisodeProps>=({shots,captions=[],previewScale=1,optimiz
     cam.position.z-p[2]);
   }
  });
- // Reuse ORIGINAL Episode 01 car meshes throughout the connected district.
- // Their prior fixed t=0 update froze them in place in Episode 02.
- // Main-road lanes are at z=7.45 and z=9.45, clear of cat sidewalks.
- const roadLife=n<=3||n===8||n===28||n===56||n===57; // No foreground car masking Mocha in shot 58.
- for(let i=0;i<2;i++){
-  const car=world.root.getObjectByName('passing-car-'+i);
-  if(!car)continue;
-  car.visible=roadLife;
-  const x=i===0?-18+wrap(s.t*1.9,36):18-wrap(s.t*1.65+9,36);
-  car.position.set(x,.03,i===0?9.45:7.45);
-  car.rotation.y=i===0?Math.PI:0;
- }
- for(let i=0;i<6;i++){
-  const car=world.root.getObjectByName('district-moving-car-'+i);
-  if(!car)continue;
-  car.visible=roadLife;
-  const lane=[18,30,42,-18,-30,-42][i];
-  const z=-68+wrap(s.t*(1.65+i*.12)+i*19,136);
-  car.position.set(lane,.03,z);
-  car.rotation.y=Math.PI/2;
- }
  props.treat.visible=false;
  props.board.visible=false; // The cure is acted out in shot 57, never explained by a billboard.
  props.sign.visible=n===24;

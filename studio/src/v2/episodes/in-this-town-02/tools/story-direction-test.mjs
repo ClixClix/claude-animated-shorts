@@ -27,7 +27,7 @@ check(at(16,.25).story.food&&at(16,.8).story.food[1]<.15,'Food never deposited')
 check(at(16,.75).story.shake>0,'Box shake missing');
 check(at(17,.9).mocha.emotion==='sad','Nothing worked has no sad reaction');
 check(!at(21,.5).mocha.visible&&at(21,.5).essie.emotion==='concerned','Confused Essie reaction is obstructed');
-check(at(23,.5).essie.position[2]<-1,'Essie not on cafe bed');
+check(at(23,.5).essie.sleeping===true&&at(23,.5).room==='cafe','Essie not resting on cafe bed');
 check(at(24,.7).story.light===0,'Closing lights do not switch off');
 check(at(31,.5).mocha.position[2]-at(31,.5).essieBox[2]>10,'No distance across road');
 check(at(36,0).mocha.position[2]-at(36,1).mocha.position[2]>10,'Alley run is too short');

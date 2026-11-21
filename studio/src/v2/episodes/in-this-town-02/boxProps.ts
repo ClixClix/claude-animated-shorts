@@ -9,12 +9,17 @@ import * as T from 'three';
  * stylized cat artwork. Low sidewalls keep ears/faces readable in the boxes;
  * values remain subject to actual frame review.
  */
-export type BoxIdentity='latte'|'essie'|'shared'|'demo';
+export type BoxIdentity='latte'|'essie'|'shared'|'demo'|'lesson';
 export type BoxSpec={
   id:string; width:number; depth:number; height:number; color:string;
   tape:'striped'|'none'; home:[number,number,number]; role:string;
 };
 export const BOX_SPECS:Readonly<Record<BoxIdentity,Readonly<BoxSpec>>> = Object.freeze({
+  lesson:Object.freeze({
+    id:'TOWN_LESSON_BOX',width:2.1,depth:1.45,height:.50,color:'#bb926c',
+    tape:'none',home:[0,0,6.3] as [number,number,number],
+    role:'Separate town demonstration carton with room for Mocha and the original kitten',
+  }),
   demo:Object.freeze({
     id:'RULE_DEMO_BOX',width:.88,depth:.77,height:.40,color:'#bb926c',
     tape:'none',home:[1.8,.04,5.35] as [number,number,number],

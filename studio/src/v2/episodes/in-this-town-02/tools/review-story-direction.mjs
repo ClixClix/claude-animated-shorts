@@ -5,6 +5,8 @@ import {spawnSync} from 'node:child_process';
 const here=path.dirname(fileURLToPath(import.meta.url)),studio=path.resolve(here,'../../../../..');
 const run=(exe,args)=>{const p=spawnSync(exe,args,{cwd:studio,stdio:'inherit'});if(p.error)throw p.error;if(p.status!==0)throw Error('Review stopped: '+args.join(' '));};
 const out=path.join(studio,'out/v2-episodes/in-this-town-02');
+const index=process.argv.indexOf('--shots'),requested=index<0?null:process.argv[index+1];
+if(index>=0&&(!requested||requested.startsWith('--')))throw Error('Supply shot IDs after --shots');
 const status=JSON.parse(await fs.readFile(path.join(out,'STORY_DIRECTION_INSTALL.json'),'utf8'));
 if(status.visualApproval!==false)throw Error('Missing story-revision installation record');
 const candidates=[process.env.V2_PYTHON,path.join(studio,'../.venv',process.platform==='win32'?'Scripts/python.exe':'bin/python'),...(process.platform==='win32'?['C:/V2/.venv/Scripts/python.exe']:[]),'python'].filter(Boolean);
@@ -16,6 +18,6 @@ run(process.execPath,['--test',path.join(here,'story-edit-metadata.test.mjs')]);
 run(process.execPath,['--test',path.join(here,'locked-edit-gate.test.mjs')]);
 run(process.execPath,[path.join(here,'locked-edit-gate.mjs')]);
 // Existing stills renderer also enforces the Episode01 style preflight.
-run(process.execPath,[path.join(here,'three-frame-gate.mjs')]);
+run(process.execPath,[path.join(here,'three-frame-gate.mjs'),...(requested?['--shots',requested]:[])]);
 run(python,[path.join(here,'story-review-sheets.py')]);
 console.log('Upload out/v2-episodes/in-this-town-02/EP02_New_Story_Review.zip for inspection. Keep the native PNGs for close clipping checks. Moving interactions are reviewed after these stills.');

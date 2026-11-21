@@ -1,4 +1,5 @@
 import {createEpisodeBox} from './boxProps';
+import {FRIEND_NAPS} from './storyDirection';
 import * as T from 'three';
 import type {State} from './timeline';
 /** Persistent episode-local alley/plaza kit. Approved cafe/world assets are untouched. */
@@ -19,15 +20,15 @@ export function createDirectedSet(){
    box(alley,'warm-service-window',[.075,.90,.69],[side*2.20,y,z],glass);
   }
   for(const z of [-8.8,-2.1,3.8]){
-   box(alley,'service-bin',[.55,.72,.60],[side*1.78,.36,z],dark);
-   box(alley,'bin-lid',[.60,.06,.65],[side*1.78,.75,z],stone);
+   box(alley,'service-bin',[.34,.72,.60],[side*2.0,.51,z],dark);
+   box(alley,'bin-lid',[.40,.06,.65],[side*2.0,.90,z],stone);
   }
  }
  box(alley,'alley-end-wall',[4.9,6.8,.30],[0,3.4,-11.35],brick);
  const light=new T.PointLight('#f4d4a0',30,15,2);light.position.set(1.6,4,-4.5);alley.add(light);
  const searchEast=alley.clone(true);searchEast.position.set(18,0,0);root.add(searchEast);
  const searchNorth=alley.clone(true);searchNorth.position.set(-18,0,-26);root.add(searchNorth);
- const naps=[[-3.2,0,5.18],[-1.1,0,5.19],[1.8,0,5.35]].map(p=>{const b=createEpisodeBox('demo');b.root.position.set(...p as [number,number,number]);b.setOpenAmount(1);root.add(b.root);return b;});
+ const naps=FRIEND_NAPS.map(p=>{const b=createEpisodeBox('demo');b.root.position.set(p[0],0,p[2]);b.setOpenAmount(1);root.add(b.root);return b;});
  const plaza=new T.Group();plaza.name='episode02-town-square';root.add(plaza);
  box(plaza,'plaza-paving',[12,.16,7],[0,.07,8.8],paving);
  box(plaza,'small-speaking-platform',[2.3,.20,1.35],[0,.19,6.0],trim);
