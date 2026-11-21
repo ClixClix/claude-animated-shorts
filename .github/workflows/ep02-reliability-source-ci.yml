@@ -1,0 +1,65 @@
+name: Episode 02 reliability source-only verification
+
+# This never renders footage or generates voice/audio. Local Windows assets stay private.
+on:
+  workflow_dispatch:
+  push:
+    branches: [ep02-reliability]
+    paths:
+      - ".github/workflows/ep02-reliability-source-ci.yml"
+      - "studio/scripts/**"
+      - "studio/src/v2/episodes/in-this-town-02/**"
+      - "studio/package.json"
+      - "studio/package-lock.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ep02-reliability-source-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  code-and-workflow:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: studio
+    env:
+      CI: "true"
+      REMOTION_SKIP_NEW_VERSION_NOTIFICATION: "1"
+    steps:
+      - name: Checkout exact reliability source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Verify TypeScript
+        run: npm run typecheck
+      - name: Verify 25 original-series style rules
+        run: npm run episode2:style-check
+      - name: Check 60 director requirements
+        run: npm run episode2:director-audit
+      - name: Verify physical box geometry
+        run: node scripts/episode02-box-tests.mjs
+      - name: Test cache source signatures, actual mux, and guarded installation
+        run: node --test scripts/episode02-render-inputs.test.mjs scripts/episode02-review-workflow.test.mjs scripts/episode02-workflow-installer.test.mjs
+      - name: Upload technical QA (not creative approval)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ep02-reliability-source-${{ github.run_number }}
+          path: |
+            studio/out/v2-episodes/in-this-town-02/EP02_DIRECTOR_PREFLIGHT.json
+            studio/out/v2-episodes/in-this-town-02/EP02_REMAINING_WORK.md
+            studio/out/v2-episodes/in-this-town-02/series-style-qa/EP2_SERIES_STYLE_QA.json
+          if-no-files-found: warn
+          retention-days: 7
