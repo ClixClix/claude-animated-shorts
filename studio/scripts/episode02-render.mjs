@@ -4,51 +4,30 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {bundle} from '@remotion/bundler';
+import {renderInputs,renderProps,requireUnchangedInputs,segmentMatches} from './lib/episode02-render-inputs.mjs';
 import {openBrowser,selectComposition,renderMedia} from '@remotion/renderer';
 
 // A final visual-asset source mismatch must stop rendering before any video work.
 execFileSync(process.execPath,[path.join(studioRoot,'scripts/episode02-style-preflight.mjs')],
  {cwd:studioRoot,stdio:'inherit'});
 const out=path.join(studioRoot,'out/v2-episodes/in-this-town-02');
-const props=JSON.parse(await fs.readFile(path.join(out,'render-props.json'),'utf8'));
+const rawProps=JSON.parse(await fs.readFile(path.join(out,'render-props.json'),'utf8'));
 const mode=process.argv[2]??'render',preview=mode==='preview';
 if(!['render','preview'].includes(mode))throw Error('Use render or preview.');
-const selected=(()=>{const i=process.argv.indexOf('--shots');return i<0?null:new Set(process.argv[i+1].split(','));})();
+const selected=(()=>{const i=process.argv.indexOf('--shots');if(i<0)return null;if(!process.argv[i+1]||process.argv[i+1].startsWith('--'))throw Error('Supply shot IDs after --shots.');return new Set(process.argv[i+1].split(',').map(s=>s.trim()));})();
 const force=process.argv.includes('--force');
-props.previewScale=preview?.5:1;
-props.optimize=true;
-const sourceFiles=[
- 'src/v2/episodes/in-this-town-02/Episode.tsx',
- 'src/v2/series/episode1Style.ts',
- 'src/v2/series/IN_THIS_TOWN_STYLE_LOCK.json',
- 'src/v2/episodes/in-this-town-02/episode1Cast.ts',
- 'src/v2/episodes/in-this-town-02/ruleCats.ts',
- 'src/v2/episodes/in-this-town-02/catBehaviors.ts',
- 'src/v2/episodes/door-at-1111-polish/walkingLegs.ts',
- 'src/v2/episodes/door-at-1111-polish/population.ts',
- 'src/v2/animation/kitten.ts',
- 'src/v2/animation/timeline.ts',
- 'src/videos/bridge/lensblur.ts',
- 'src/v2/episodes/in-this-town-02/timeline.ts',
- 'src/v2/episodes/in-this-town-02/boxProps.ts',
- 'src/v2/episodes/in-this-town-02/cameraDirector.ts',
- 'src/v2/episodes/in-this-town-02/EDITORIAL_SCRATCH_PLAN.json',
- 'src/v2/episodes/door-at-1111-polish/world.ts',
- 'src/v2/episodes/door-at-1111-polish/city.ts',
- 'src/v2/episodes/door-at-1111-polish/cityConfig.ts',
- 'src/v2/episodes/door-at-1111-polish/actors.ts',
- 'src/v2/cafe/config.ts','src/v2/cafe/environment.ts',
- 'src/v2/cats/Cat.tsx','src/v2/cats/drawCat.ts','src/v2/cats/designs.ts',
- 'src/videos/bridge/cardshade.ts','src/videos/bridge/ink.ts',
- 'src/videos/bridge/grade.ts','src/videos/bridge/shade.ts',
- 'src/v2/cats/pose.ts',
-];
+const props=renderProps(rawProps,preview);
+if(selected){const unknown=[...selected].filter(id=>!props.shots.some(s=>s.id===id||String(s.sequence)===id));if(unknown.length)throw Error('Unknown shot IDs: '+unknown.join(', '));}
+console.log('Inspecting composition dependencies and render inputs...');
+const inputs=await renderInputs(studioRoot,rawProps,preview);
+const {sourceHash,propsHash,signatureVersion}=inputs;
 const hash=x=>createHash('sha256').update(x).digest('hex');
-const sourceHash=hash((await Promise.all(sourceFiles.map(f=>fs.readFile(path.join(studioRoot,f))))).map(b=>hash(b)).join(':'));
-const propsHash=hash(JSON.stringify(props));
 const target=path.join(out,preview?'preview-segments':'segments');
 await fs.mkdir(target,{recursive:true});
+console.log('Bundling current scene '+sourceHash.slice(0,12)+'...');
 const serveUrl=await bundle({entryPoint:path.join(studioRoot,'src/index.ts')});
+await requireUnchangedInputs(studioRoot,inputs);
+console.log('Launching browser for '+(preview?'540p review':'1080p native')+' render...');
 const browser=await openBrowser('chrome',{browserExecutable,chromiumOptions});
 const composition=await selectComposition({serveUrl,id:'InThisTownEpisode02Box',inputProps:props,
  puppeteerInstance:browser,logLevel:'error'});
@@ -59,10 +38,11 @@ try{
   const file=path.join(target,shot.id+'.mp4');
   const meta=file.replace(/\.mp4$/,'.json');
   let cached=null;try{cached=JSON.parse(await fs.readFile(meta,'utf8'));}catch{}
-  if(!force&&cached&&cached.sourceHash===sourceHash&&cached.propsHash===propsHash&&
-    cached.start===shot.start&&cached.end===shot.end&&await fs.access(file).then(()=>true,()=>false)){
+  await requireUnchangedInputs(studioRoot,inputs);
+  if(!force&&await segmentMatches({file,metadata:cached,shot,inputs,preview})){
    console.log('Cached shot '+shot.id);skipped++;continue;
   }
+  console.log('Rendering shot '+shot.id+'; frames '+shot.start+'-'+(shot.end-1)+'...');
   const start=Date.now();
   const partial=file+'.partial.mp4';
   await renderMedia({overwrite:true,serveUrl,composition,inputProps:props,
@@ -71,15 +51,16 @@ try{
    scale:preview?.5:1,
    concurrency:renderConcurrency(),puppeteerInstance:browser,chromiumOptions,
    logLevel:'error',timeoutInMilliseconds:240000});
+  await requireUnchangedInputs(studioRoot,inputs);
   await fs.rename(partial,file);
   const sha=hash(await fs.readFile(file));
   await fs.writeFile(meta,JSON.stringify({id:shot.id,start:shot.start,end:shot.end,
-   sourceHash,propsHash,sha256:sha,preview,seconds:(Date.now()-start)/1000},null,2)+'\n');
+   signatureVersion,sourceHash,propsHash,sha256:sha,preview,seconds:(Date.now()-start)/1000},null,2)+'\n');
   completed++;console.log('Rendered '+shot.id+' ('+completed+' new, '+skipped+' cached)');
  }
 }finally{await browser.close({silent:true});}
 await fs.writeFile(path.join(out,preview?'PREVIEW_RENDER_STATUS.json':'FINAL_RENDER_STATUS.json'),
- JSON.stringify({sourceHash,propsHash,completed,skipped,requestedShots:selected?[...selected]:null,
+ JSON.stringify({signatureVersion,sourceHash,propsHash,sources:inputs.sources,completed,skipped,requestedShots:selected?[...selected]:null,
   allSegmentsRequested:!selected,stage:'RENDERED_NOT_QA_VERIFIED',
   paidGenerationRequests:0},null,2)+'\n');
 console.log(JSON.stringify({stage:'rendered',mode,completed,skipped,allSegments:!selected}));

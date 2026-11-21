@@ -94,7 +94,7 @@ export function directStory(s:State,frame:number,shots:EditShot[],sample:(frame:
   setCam(cam([.5,1.65,3.65],[.65,.85,.80],76));
  }
  if(n===21){s.mocha.visible=false;s.essie.position=[1.45,0,1.5];s.essie.emotion='concerned';s.essie.headTurn=.2*Math.sin(u*5);setCam(cam([-.6,1.15,1.5],[1.45,.80,1.5],45));}
- if(n===22||n===23){const p=((n-22)+u)/2;s.mocha.visible=false;s.show.essie=false;s.essie.position=[...CAFE_BED];s.essie.walking=false;s.essie.emotion='happy';s.essie.sleeping=true;setCam(cam([3.2,1.35,2.70-.12*p],[3.25,.72,.75],60));}
+ if(n===22||n===23){const p=((n-22)+u)/2;s.mocha.visible=false;s.show.essie=false;s.essie.position=[...CAFE_BED];s.essie.walking=false;s.essie.emotion='happy';s.essie.sleeping=true;setCam(cam([1.0+.12*p,1.25,.9],[3.25,.72,.75],57));}
  if(n===24){
   // Clear west/front aisles; the camera pans from one stationary safe point.
   s.mocha.position=u<.30?[-3.75,0,1.25]:u<.49?mix([-3.75,0,1.25],[-3.75,0,3.90],e((u-.30)/.19)):u<.76?mix([-3.75,0,3.90],[2.25,0,3.90],e((u-.49)/.27)):[2.25,0,3.90];s.mocha.walking=u>.30&&u<.76;

@@ -5,6 +5,13 @@ import {spawnSync} from 'node:child_process';
 import {existsSync} from 'node:fs';
 import os from 'node:os';
 const mode=(process.argv[2]??'status').toLowerCase();
+// The current review path preserves the existing approved edit/audio. No Python,
+// scratch prepare, voice call, or old independent QA sequence is involved.
+if(mode==='review'||mode==='doctor'||(mode==='build-preview'&&!process.argv.includes('--allow-scratch'))){
+ const args=[path.join(studioRoot,'scripts/episode02-local-full-review.mjs'),...(mode==='doctor'?['--check-only']:[]),...process.argv.slice(3)];
+ const r=spawnSync(process.execPath,args,{cwd:studioRoot,stdio:'inherit',env:process.env});
+ if(r.error)throw r.error;process.exit(r.status??1);
+}
 const out=path.join(studioRoot,'out/v2-episodes/in-this-town-02');
 // Episode01 accepted V2_PYTHON; the user's new Windows clone is now
 // C:\\V2\\ep02-local-render\\studio, but the shared venv may remain at
@@ -59,7 +66,10 @@ if(mode==='status'){
    '. Generate ONE approved ElevenLabs Adam recording first. Run npm.cmd run episode2:voice-count to inspect character count / required provider approval. Do not run preview/build/check until real Adam audio and timestamps exist. No paid request was made.');
  }
  if(!existsSync(seriesMusic))throw Error('EP02_SERIES_MUSIC_MISSING: Place the already-used Episode 01 intro recording at '+seriesMusic+' or set V2_MUSIC_FILE. Never substitute procedural music. No render started.');
- node('prepare',...prepareArgs);
+ const existingEdit=path.join(out,'render-props.json');
+ const preserveEdit=!flag('--reprepare')&&!flag('--allow-scratch')&&existsSync(existingEdit)&&JSON.parse(await fs.readFile(existingEdit,'utf8')).audioApproved===true;
+ if(preserveEdit){node('style-preflight');run(process.execPath,['src/v2/episodes/in-this-town-02/tools/locked-edit-gate.mjs']);}
+ else node('prepare',...prepareArgs);
  node('director-preflight','--strict');
  // Show-dont-tell evidence: native masters require actual action movement;
  // low-resolution preview remains available to diagnose source gaps.
@@ -106,4 +116,4 @@ if(mode==='status'){
  }
  console.log('\nEP02 batch technical check complete. Read the generated EP02_CREATIVE_REVIEW.md and exact-file reports; human visual, narration and rights review are still required.');
  if(!ready.voiceApprovedForEpisode)console.warn('WARNING: This is a SILENT SCRATCH, not a publishable episode. Provide approved voice and rebuild before publication.');
-}else throw Error('Usage: node scripts/produce-box.mjs status | build [--voice WAV] [--words JSON] [--allow-scratch] | build-preview | check');
+}else throw Error('Usage: node scripts/produce-box.mjs review [--open] [--force] | doctor | status | build [--reprepare] [--voice WAV] [--words JSON] [--allow-scratch] | build-preview | check');

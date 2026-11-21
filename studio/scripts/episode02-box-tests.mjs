@@ -70,21 +70,18 @@ for(const identity of BOX_IDENTITY_ORDER){
   check(box.root.userData.identity===identity,identity+' identity metadata');
   // Four extra recessed cardboard lining panels (floor, back, left,
   // right) are physical depth cues, not duplicate exterior box shells.
-  // The Latte box now has 42 real, high-contrast stripes distributed over
-  // its four sides and hinged flaps. Old expectations for two tiny tape marks
-  // rejected the very geometry the user requested.
-  check(names.length===(identity==='latte'?55:13),
-   identity+' exact geometry count including full wraparound stripes');
+  check(names.length===(identity==='latte'?29:13),
+   identity+' exact expected panel count including four inset liners');
   check(names.filter(n=>n.endsWith('-inner')||
    n.endsWith('-floor-liner')).length===4,
    identity+' has exactly one floor liner and three inside wall liners');
-  check(names.filter(n=>n.includes('-flap')&&!n.includes('pivot')&&!n.includes('-stripe-')).length===4,
-   identity+' four real hinged box flaps');
-  const countStripes=part=>names.filter(n=>n.includes('-stripe-'+part)).length;
-  check(countStripes('front-')===(identity==='latte'?14:0),identity+' striped front and front flap');
-  check(countStripes('back-')===(identity==='latte'?14:0),identity+' striped back and back flap');
-  check(countStripes('left-')===(identity==='latte'?7:0),identity+' striped left side');
-  check(countStripes('right-')===(identity==='latte'?7:0),identity+' striped right side');
+  check(names.filter(n=>/(front|back|left|right)-flap$/.test(n)).length===4,identity+' four real flaps');
+  check(names.filter(n=>n.includes('-stripe-')).length===(identity==='latte'?16:0),identity+' visible all-face stripe identity');
+  // Approved box: three bands on each wall and four on the floor.
+  const countPrinted=part=>names.filter(n=>n.includes('-printed-stripe-'+part+'-')).length;
+  for(const part of ['front','back','left','right'])
+   check(countPrinted(part)===(identity==='latte'?3:0),identity+' printed '+part+' bands');
+  check(countPrinted('floor')===(identity==='latte'?4:0),identity+' printed floor bands');
   box.setOpenAmount(0);
   check(Math.abs(box.flaps.front.rotation.x)<1e-12,identity+' can close flaps');
   box.setOpenAmount(1);

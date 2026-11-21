@@ -13,6 +13,7 @@ const [lock,draft,scene,timeline,camera,boxes,behaviors,audio,finish]=await Prom
  fs.readFile(path.resolve('scripts/episode02-audio.py'),'utf8'),
  fs.readFile(path.resolve('scripts/episode02-finish.mjs'),'utf8')
 ]);
+const story=await load('storyDirection.ts'),worldStage=await load('worldStaging.ts'),directedSet=await load('directedSet.ts');
 const issues=[];
 const must=(id,passes,reason)=>{if(!passes)issues.push({id,reason});};
 must('DIRECTOR_LOCK_HAS_60_ACTION_BEATS',lock.shots.length===60&&lock.shots.every((b,i)=>
@@ -27,21 +28,20 @@ must('ESSIE_COMPLETE_BOX',!scene.includes('front.scale.y=enabled?.42')&&
  !scene.includes('box.flaps.front.visible=!enabled'),'Do not alter or remove Essie box front wall to make an easier portrait.');
 must('VISIBLE_CITY_MARKET',scene.includes('episode02-market-stalls')&&
  (timeline.includes("room='market'")||timeline.includes("n===29?'market'")),'A real small market with physical stalls must be shown, not a blank coordinate or storefront.');
-must('THREE_DISTINCT_ALLEYS',['episode02-search-alley-1','episode02-search-alley-2','episode02-search-alley-3']
- .every(id=>scene.includes(id))&&timeline.includes('searchAlleyIndex'),
- 'Show three visually different alley locations rather than one repeating camera angle.');
-must('EP01_HOUSE_ACTUALLY_USED',scene.includes('episode02-house-visible')&&
+must('THREE_DISTINCT_ALLEYS',scene.includes('createDirectedSet()')&&
+ ['episode02-long-service-alley','episode02-search-east','episode02-search-north','blue-service-sign','closed-service-shutter'].every(id=>directedSet.includes(id))&&story.includes('s.searchAlleyIndex'),
+ 'Three live alley sets must have unique landmarks, not merely unused old source names.');
+must('EP01_HOUSE_ACTUALLY_USED',scene.includes('stageEpisodeWorld(world,s,n)')&&worldStage.includes('episode02-house-visible')&&
  timeline.includes("room='house'")&&camera.includes("'house'"),
  'The full Episode 01 house must be visible and used for the missing-Essie home scene.');
 must('ESSIE_CAT_BEDS_VISIBLE',scene.includes('episode02-essie-cafe-bed')&&
  scene.includes('episode02-essie-home-bed'),
  'Use real Essie cat-bed models in both café and house, not only an empty floor mat.');
-must('SLEEP_BEAT_TARGETS_BED',timeline.includes('HOME.essieCafeBed')&&
- timeline.includes('HOME.essieHomeBed'),
+must('SLEEP_BEAT_TARGETS_BED',story.includes('s.essie.position=[...CAFE_BED]')&&scene.includes('CAFE_BED[0]')&&timeline.includes('HOME.essieHomeBed'),
  'Essie must physically reach her bed; missing-Essie POV must target her home bed.');
 must('MOUTH_DRAG_AND_RESCUE_ACTED',behaviors.includes("n===18")&&
- behaviors.includes("n===20")&&behaviors.includes("n===42"),
- 'Mocha must use real feline muzzle/floof contact outside, when extracting Essie, and when moving her box.');
+ behaviors.includes("n===20")&&behaviors.includes("n===59"),
+ 'Mocha must use real feline muzzle/floof contact outside, when extracting Essie, and when moving the shared box to the window.');
 must('TOWN_GATHERING_HAS_STOOL_AND_CROWD',scene.includes('episode02-town-stool')&&
  scene.includes('episode02-town-audience'),
  'Mocha announces the cure from a stool to a visibly LARGE gathering, not an explanatory board.');

@@ -1,3 +1,13 @@
+# Current Episode02 review workflow — November 21, 2026
+
+The creator requested full narrated review takes and a single reliable local command. For this active pass that supersedes older stills-before-full-preview rules below. From the existing Windows `studio/` run `npm.cmd run episode2:review -- --open`; `episode2:doctor` runs its readiness/source checks without rendering. The command preserves the current approved narration-aligned edit and existing mixed soundtrack, checks current source, resumes only matching intact segments, validates the encoded full movie, and opens that exact output. Its run report is `out/v2-episodes/in-this-town-02/EP02_REVIEW_RUN.json`.
+
+The current reliability task explicitly authorizes repairs to Episode02 workflow scripts and package aliases. Shared engine/rig/shader and Episode01 asset restrictions still apply. Do not launch cloud scene renders. Do not reprepare the approved edit or generate paid audio during review. Follow actual props/manifest timing rather than historical scratch timing. A coherent shot may exceed four seconds.
+
+`inthis:next` remains a draft planner. Producing a finished film from one creative prompt still requires an agent with local render execution and actual video inspection/correction. Code checks cannot approve acting, painted-silhouette clipping or sound. Review the full returned movie before claiming creative completion; native release and publication require their existing review/signoff.
+
+---
+
 # Latest user editorial rule — story-polish revision
 
 A coherent shot may last longer than four seconds. Do not insert a camera cut solely to enforce four seconds; preserve the approved narration and let the visible action determine framing/holds. For active Episode02 the latest user revision is recorded in STUDIO source `studio/src/v2/episodes/in-this-town-02/STORY_POLISH_REQUEST.md` and its updated PRODUCTION_DIRECTOR_LOCK.json. Earlier shot-specific guidance yields to that explicit revision. Native full-film rendering still follows actual local still/motion review.

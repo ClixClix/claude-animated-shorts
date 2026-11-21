@@ -5,6 +5,10 @@ description: Safely edit and produce What If Cats / In This Town scenes in the e
 
 # In This Town — Codex production skill
 
+## Latest active Episode02 override — November 21, 2026
+
+The creator explicitly chose full narrated video takes and authorized repository workflow reliability repairs. Use `npm.cmd run episode2:review -- --open` from the existing local studio, or `episode2:doctor` for checks only. This overrides historical PNG-first requirements for this review pass. Preserve the actual approved edit and `MASTER_With_Music.wav`; never silently prepare a scratch edit. Current source/format checks do not replace watching the returned movie. Shared engine, Episode01 assets, paid audio and publishing restrictions remain. See the current root AGENTS.md and scene `REPO_RELIABILITY.md`. Older dated phases below are history when they conflict with this override.
+
 ## Production mode — WINDOWS LOCAL FIRST (November 19, 2026)
 
 The creator explicitly switched back to local rendering. Use the latest actual V9 Windows studio scene and its approved local Adam narration/timing as authoritative. GitHub cloud render shots came from older scene source; **do not treat them as V9 approval**. Cloud video workflows are manual-only and must never be started unless the creator explicitly asks to resume cloud rendering.

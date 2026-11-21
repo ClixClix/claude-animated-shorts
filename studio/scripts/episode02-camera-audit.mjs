@@ -1,54 +1,6 @@
-import './lib/runtime.mjs';
-import fs from 'node:fs/promises';
+/** The current scene's shared real-mesh staging is the camera authority. */
+import {studioRoot} from './lib/runtime.mjs';
+import {spawnSync} from 'node:child_process';
 import path from 'node:path';
-import {pathToFileURL} from 'node:url';
-import {build} from 'esbuild';
-
-/** Offline camera review. Runs only during the single deferred batch QA.
- * This is a spatial test; full rendered frames and creative review remain essential.
- */
-const out=path.resolve('out/v2-episodes/in-this-town-02');
-await fs.mkdir(out,{recursive:true});
-const bundle=path.join(out,'EP02_CAMERA_AUDIT.bundle.mjs');
-await build({stdin:{
- contents:[
-  "export {stateAt} from './src/v2/episodes/in-this-town-02/timeline.ts';",
-  "export {directEpisodeCamera} from './src/v2/episodes/in-this-town-02/cameraDirector.ts';"
- ].join('\n'),resolveDir:process.cwd(),loader:'ts'
- },outfile:bundle,bundle:true,platform:'node',format:'esm',target:'node24',external:['three']});
-const {stateAt,directEpisodeCamera}=await import(pathToFileURL(bundle).href);
-// Inspect the REAL Adam-aligned shot manifest (including A/B sub-shots),
-// never the provisional 60-shot scratch edit. Prior gate missed cut boundaries.
-const manifest=JSON.parse(await fs.readFile(path.join(out,'EP02_SHOT_MANIFEST.json'),'utf8'));
-const shots=manifest.shots;
-const issues=[],samples=[];
-for(const shot of shots){
- const frames=[shot.start,Math.floor((shot.start+shot.end)/2),shot.end-1];
- for(const frame of frames){
-  const s=stateAt(frame,shots),c=directEpisodeCamera(s);
-  const p=c.framing;
-  const item={shot:shot.id,frame,region:c.region,camera:c.camera,target:c.target,
-    fov:c.fov,screenHalfExtentX:p.x,screenHalfExtentY:p.y,behind:p.behind};
-  samples.push(item);
-  if(p.behind||!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.x>.84||p.y>.81)
-   issues.push({...item,problem:'Unsafe portrait crop / camera behind tracked subject'});
-  // Normal café inserts must remain inside the playable room. The shared
-  // finale is a special window-side view: actual older Episode02 footage
-  // proved a 4.12m camera ray sees the café, while the 5.35m ray in
-  // cloud QA #44257023170 shows ONLY the opaque storefront facade in
-  // every shot59/60 frame. Preserve this evidence-based boundary.
-  if(['latte','essie','group'].includes(c.region)&&
-    (Math.abs(c.camera[0])>3.55||c.camera[2]<-3.77||c.camera[2]>3.78))
-   issues.push({...item,problem:'Camera beyond cafe solid wall'});
-  if(c.region==='shared'&&
-    (Math.abs(c.camera[0])>3.55||c.camera[2]<-3.77||c.camera[2]>4.25))
-   issues.push({...item,problem:'Shared-box camera behind opaque cafe facade (visually confirmed in 59-60)'});
-  if(c.region==='alley'&&c.camera[0]>-8.3&&c.camera[2]>-3.9&&c.camera[2]<4.15)
-   issues.push({...item,problem:'Camera intersecting west-side shop'});
- }
-}
-const result={shots:shots.length,samples:samples.length,issues,passed:issues.length===0,
- note:'Source-space checks only; camera/box occlusion and art quality require full native rendered visual review.'};
-await fs.writeFile(path.join(out,'EP02_CAMERA_AUDIT.json'),JSON.stringify(result,null,2)+'\n');
-console.log(JSON.stringify({shots:result.shots,samples:result.samples,issues:issues.length,passed:result.passed},null,2));
-if(issues.length)process.exitCode=1;
+const r=spawnSync(process.execPath,[path.join(studioRoot,'src/v2/episodes/in-this-town-02/tools/scene-visibility-test.mjs')],{cwd:studioRoot,stdio:'inherit'});
+if(r.error)throw r.error;process.exitCode=r.status??1;

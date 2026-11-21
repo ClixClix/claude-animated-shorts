@@ -1,3 +1,5 @@
+> **Current workflow (November 21, 2026):** For the existing Episode02 edit, run `npm.cmd run episode2:review -- --open` in the local studio. It checks the current source, renders/resumes the full live edit, reuses the existing soundtrack and validates/opens the exact updated review. `episode2:doctor` checks readiness without rendering. This replaces older Episode02 preview entry points below. One creative prompt for an arbitrary new film still requires a connected coding/render/vision correction agent; the draft planner alone does not implement that loop. See [AGENTS.md](AGENTS.md) and [reliability findings](studio/src/v2/episodes/in-this-town-02/REPO_RELIABILITY.md). Older command lists and fixed scratch-frame descriptions below are historical.
+
 # In This Town — future episode starter (one story prompt)
 
 **Audience: creator / next-episode coding agent.** Source: root AGENTS.md, ONE_PROMPT_IN_THIS_TOWN.md, and Episode 01 locked world/character/style modules. Do not create a parallel look, random underscore or new principal character rigs.

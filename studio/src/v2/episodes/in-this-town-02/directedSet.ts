@@ -26,8 +26,15 @@ export function createDirectedSet(){
  }
  box(alley,'alley-end-wall',[4.9,6.8,.30],[0,3.4,-11.35],brick);
  const light=new T.PointLight('#f4d4a0',30,15,2);light.position.set(1.6,4,-4.5);alley.add(light);
- const searchEast=alley.clone(true);searchEast.position.set(18,0,0);root.add(searchEast);
- const searchNorth=alley.clone(true);searchNorth.position.set(-18,0,-26);root.add(searchNorth);
+ const searchEast=alley.clone(true);searchEast.name='episode02-search-east';searchEast.position.set(18,0,0);root.add(searchEast);
+ box(searchEast,'blue-service-sign',[.08,.45,.85],[2.1,2.2,-1.5],mat('#3d6c83'));
+ box(searchEast,'stacked-market-crate',[.60,.50,.75],[-1.75,.25,-4.2],mat('#a67c50'));
+ box(searchEast,'stacked-market-crate-top',[.60,.50,.75],[-1.75,.75,-4.2],mat('#8b6948'));
+ const searchNorth=alley.clone(true);searchNorth.name='episode02-search-north';searchNorth.position.set(-18,0,-26);root.add(searchNorth);
+ box(searchNorth,'closed-service-shutter',[1.55,2.5,.08],[0,1.25,-11.14],mat('#52616a'));
+ box(searchNorth,'exposed-drain-pipe',[.11,3.4,.11],[2.10,1.70,-2.7],mat('#8b9694'));
+ const northGlass=glass.clone();northGlass.color.set('#a2b7bd');northGlass.emissive.set('#6d8598');materials.push(northGlass);
+ searchNorth.traverse(o=>{if(o instanceof T.Mesh&&o.name==='warm-service-window')o.material=northGlass;});
  const naps=FRIEND_NAPS.map(p=>{const b=createEpisodeBox('demo');b.root.position.set(p[0],0,p[2]);b.setOpenAmount(1);root.add(b.root);return b;});
  const plaza=new T.Group();plaza.name='episode02-town-square';root.add(plaza);
  box(plaza,'plaza-paving',[12,.16,7],[0,.07,8.8],paving);

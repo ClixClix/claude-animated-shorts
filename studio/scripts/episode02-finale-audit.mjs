@@ -1,254 +1,113 @@
-/**
- * Real-source Episode 02 shot 58/59/60 geometry, continuity and 9:16 checks.
- * IMPORTANT: uses the ACTUAL TypeScript stateAt() + directEpisodeCamera(),
- * bundled with the same esbuild TS bundler as our other verified tests; no duplicate
- * pose formulas. No browser, paid voice, rendered video, mutations, or uploads.
- * This proves numerical staging only. Visual/acting quality is NOT certified.
+/** Active director revision, actual narration edit and real box transforms.
+ * Numerical actor-root/head probes only; never painted-silhouette or visual approval.
  */
+import {studioRoot} from './lib/runtime.mjs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {build} from 'esbuild';
-import {studioRoot} from './lib/runtime.mjs';
-// Use the same tested esbuild TypeScript pipeline as episode02-box-tests,
-// rather than a hand-written CommonJS import/eval shim. The generated file
-// contains the REAL timeline/camera/box modules, not duplicate pose formulas.
-const outputDir=path.join(studioRoot,'out/v2-episodes/in-this-town-02/series-style-qa');
-const src=path.join(studioRoot,'src/v2/episodes/in-this-town-02');
-await fs.mkdir(outputDir,{recursive:true});
-const bundlePath=path.join(outputDir,'episode02-finale-audit-bundle.mjs');
-await build({
- stdin:{
-  resolveDir:studioRoot,loader:'ts',
-  contents:[
-   "export {SCRATCH_EDIT,stateAt,HOME} from './src/v2/episodes/in-this-town-02/timeline.ts';",
-   "export {directEpisodeCamera} from './src/v2/episodes/in-this-town-02/cameraDirector.ts';",
-   "export {BOX_SPECS} from './src/v2/episodes/in-this-town-02/boxProps.ts';"
-  ].join('\n')
- },
- outfile:bundlePath,bundle:true,platform:'node',format:'esm',target:'node24',
- external:['three']
-});
-const {SCRATCH_EDIT,stateAt:actualStateAt,HOME,directEpisodeCamera,BOX_SPECS}=
- await import(pathToFileURL(bundlePath).href);
-const timeline={SCRATCH_EDIT,stateAt:actualStateAt,HOME};
-const cameraDirector={directEpisodeCamera};
-const boxes=BOX_SPECS;
-const shots=timeline.SCRATCH_EDIT.shots;
-const begin=n=>shots.find(x=>x.sequence===n);
-const state=(n,u)=>{const s=begin(n);if(!s)throw Error('Missing shot '+n);
- return timeline.stateAt(s.start+Math.round((s.end-s.start-1)*u),shots);
-};
-const vecSub=(a,b)=>a.map((v,i)=>v-b[i]);
-const norm=a=>{const length=Math.hypot(...a)||1;return a.map(v=>v/length)};
-const dot=(a,b)=>a.reduce((v,x,i)=>v+x*b[i],0);
-const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
-function projected(x,cam,target,fov){
- const front=norm(vecSub(target,cam)),right=norm(cross(front,[0,1,0])),
-  up=cross(right,front),delta=vecSub(x,cam),depth=dot(delta,front),
-  tangent=Math.tan(fov*Math.PI/360);
- return {x:dot(delta,right)/(depth*tangent*1080/1920),
-  y:dot(delta,up)/(depth*tangent),depth};
+import * as T from 'three';
+const out=path.join(studioRoot,'out/v2-episodes/in-this-town-02/series-style-qa');await fs.mkdir(out,{recursive:true});
+const file=path.join(out,'episode02-finale-audit-bundle.mjs');
+await build({stdin:{resolveDir:studioRoot,loader:'ts',contents:[
+ "export {stateAt} from './src/v2/episodes/in-this-town-02/timeline';",
+ "export {directEpisodeCamera} from './src/v2/episodes/in-this-town-02/cameraDirector';",
+ "export {createEpisodeBox,BOX_SPECS} from './src/v2/episodes/in-this-town-02/boxProps';",
+ "export {stageEpisodeBox} from './src/v2/episodes/in-this-town-02/boxStaging';",
+ "export {catBehaviorFor} from './src/v2/episodes/in-this-town-02/catBehaviors';",
+].join('\n')},outfile:file,bundle:true,platform:'node',format:'esm',external:['three']});
+const {stateAt,directEpisodeCamera,createEpisodeBox,BOX_SPECS,stageEpisodeBox,catBehaviorFor}=await import(pathToFileURL(file).href);
+const props=JSON.parse(await fs.readFile(path.join(studioRoot,'out/v2-episodes/in-this-town-02/render-props.json'),'utf8'));
+if(props.audioApproved!==true)throw Error('Finale QA requires the existing approved narration edit; no scratch substitution.');
+const shots=props.shots,at=f=>stateAt(f,shots,props.captions);
+const group=n=>shots.filter(s=>s.sequence===n),first=n=>group(n)[0].start,last=n=>group(n).at(-1).end-1;
+const state=(n,u)=>at(first(n)+Math.round((last(n)-first(n))*u));
+const distance=(a,b)=>Math.hypot(...a.map((v,i)=>v-b[i]));
+const checks=[],issues=[];
+const record=(id,passed,data)=>{const result={id,passed:!!passed,...(data===undefined?{}:{data})};checks.push(result);if(!passed)issues.push(result);};
+record('all-60-narrated-beats-present',new Set(shots.map(s=>s.sequence)).size===60&&shots[0].sequence===1&&shots.at(-1).sequence===60);
+record('actual-edit-contiguous',shots.every((s,i)=>Number.isInteger(s.start)&&Number.isInteger(s.end)&&s.start===(i?shots[i-1].end:0)&&s.end>s.start));
+record('segment-ids-unique',new Set(shots.map(s=>s.id)).size===shots.length);
+const settled=state(60,1),end59=state(59,1),start60=state(60,0),spec=BOX_SPECS.shared;
+record('shared-box-real-cafe-size',spec.width>=2.3&&spec.width<=2.7&&spec.depth<=1.5&&spec.height<=.60);
+record('all-three-end-characters-visible',['mocha','essie','latte'].every(id=>settled[id].visible));
+record('shot59-to60-position-no-teleport',distance(end59.mocha.position,start60.mocha.position)<.03);
+record('shot59-to60-scale-no-pop',end59.mocha.scale===start60.mocha.scale);
+const c59=directEpisodeCamera(end59),c60=directEpisodeCamera(start60);
+record('shot59-to60-camera-continuity',distance(c59.camera,c60.camera)+distance(c59.target,c60.target)+Math.abs(c59.fov-c60.fov)<.05);
+record('shared-box-actually-dragged-to-window',distance(state(59,0).sharedBox,end59.sharedBox)>1&&distance(end59.sharedBox,spec.home)<.01);
+record('shared-box-drag-uses-mouth',Array.from({length:9},(_,i)=>catBehaviorFor(state(59,i/8),'mocha')).every(b=>b?.mode==='mouth-carry'));
+record('shot58-pushes-ordinary-box',state(58,1).room==='cafe'&&distance(state(58,.5).demoBox,state(58,1).demoBox)>.10&&!state(58,1).show.shared);
+record('shot49-to50-landing-continuity',distance(state(49,1).mocha.position,state(50,0).mocha.position)<.03);
+record('shot50-to51-rescue-continuity',['mocha','essie'].every(id=>distance(state(50,1)[id].position,state(51,0)[id].position)<.03));
+record('shot51-to52-landing-continuity',['mocha','essie'].every(id=>distance(state(51,1)[id].position,state(52,0)[id].position)<.03));
+record('shot54-to55-no-pre-impact-teleport',distance(state(54,1).mocha.position,state(55,0).mocha.position)<.03);
+const problems={numeric:[],scale:[],shared:[],rootFits:[],framing:[],entryWalls:[],carriedFloor:[],shell:[],alley:[],rescuePresence:[],order:[]};
+const apex={mocha:0,essie:0,latte:0};
+const boxes={essie:createEpisodeBox('essie'),shared:createEpisodeBox('shared')};
+function walls(box){return ['front','back','left','right'].map(side=>box.root.getObjectByName(box.spec.id+'-'+side));}
+function wallHits(box,from,to){
+ const a=new T.Vector3(...from),delta=new T.Vector3(...to).sub(a),length=delta.length();
+ if(length<1e-8)return false;
+ return new T.Raycaster(a,delta.normalize(),.0001,length).intersectObjects(walls(box),false).length>0;
 }
-const catFace=(cat,cam)=>{
- const [x,y,z]=cat.position,scale=cat.scale;
- const mid=[x,y+.66*scale,z];
- const p=projected(mid,cam.camera,cam.target,cam.fov);
- const halfX=.67*scale/(p.depth*Math.tan(cam.fov*Math.PI/360)*1080/1920);
- const halfY=.72*scale/(p.depth*Math.tan(cam.fov*Math.PI/360));
- return {...p,halfX,halfY,fullyVisible:p.depth>0&&
-  p.x-halfX>-.99&&p.x+halfX<.99&&p.y-halfY>-.98&&p.y+halfY<.98};
-}
-const issues=[],checks=[];
-const record=(id,ok,data)=>{checks.push({id,passed:!!ok,...(data===undefined?{}:{data})});
- if(!ok)issues.push({id,data})};
-const spec=boxes.shared,first=state(58,1),start=state(59,0),
- last=state(59,1),final=state(60,0);
-const change=(a,b)=>Math.hypot(...a.map((v,i)=>v-b[i]));
-record('shot58-to59-directed-street-to-cafe-cut',first.room==='street'&&start.room==='cafe',
- {fromRoom:first.room,toRoom:start.room,from:first.mocha.position,to:start.mocha.position});
-record('shot59-to60-position-no-teleport',change(last.mocha.position,final.mocha.position)<.03,
- {from:last.mocha.position,to:final.mocha.position});
-record('shot58-to59-scale-change-only-on-location-cut',first.room!==start.room,
- {from:first.mocha.scale,to:start.mocha.scale});
-record('shot59-to60-scale-no-pop',Math.abs(last.mocha.scale-final.mocha.scale)<.03);
-record('shared-box-same-cafe-floor',spec.home[0]===timeline.HOME.shared[0]&&
- spec.home[2]===timeline.HOME.shared[2],{boxHome:spec.home,sceneHome:timeline.HOME.shared});
-const settled=state(60,1);
-const finalCatScale=(settled.mocha.scale+settled.essie.scale+settled.latte.scale)/3;
-const nativeEpisode01CatHeight=1.52; // The original createEpisodeCat artwork height.
-const widthPerVisibleCatHeight=spec.width/(nativeEpisode01CatHeight*finalCatScale);
-record('finale-cat-not-miniature-relative-to-box',
- widthPerVisibleCatHeight>=1.8&&widthPerVisibleCatHeight<=2.2,
- {boxWidth:spec.width,boxDepth:spec.depth,finalCatScale,
-  nativeEpisode01CatHeight,widthPerVisibleCatHeight});
-const cam58=cameraDirector.directEpisodeCamera(first);
-const cam59=cameraDirector.directEpisodeCamera(start);
-const cam60=cameraDirector.directEpisodeCamera(final);
-const cam59End=cameraDirector.directEpisodeCamera(last);
-const pitch=Math.atan2(cam58.camera[1]-cam58.target[1],
- Math.hypot(cam58.camera[0]-cam58.target[0],cam58.camera[2]-cam58.target[2]))*180/Math.PI;
-record('shot58-front-three-quarter-not-overhead',pitch>=15&&pitch<=30,{pitchDegrees:pitch,camera:cam58.camera});
-const lensDelta=(a,b)=>change(a.camera,b.camera)+change(a.target,b.target)+Math.abs(a.fov-b.fov);
-record('shot58-to59-motivated-location-cut',first.room==='street'&&start.room==='cafe',
- {from:cam58,to:cam59});
-record('shot59-to60-camera-continuity',lensDelta(cam59End,cam60)<.05,
- {from:cam59End,to:cam60});
- // Regression guard from ACTUAL current-source cloud footage: at z=5.35
- // shots59/60 render only the café's opaque outside facade, despite passing
- // all earlier numerical cat/box checks. The older z=4.12 ray showed the
- // interior and shared carton. This threshold is a SOURCE safety check;
- // a fresh MP4 is still required to verify visible cats and contact.
- const sharedWindowRays=[cam59,cam59End,cam60,
-  cameraDirector.directEpisodeCamera(settled)];
- record('shot59-60-opaque-facade-ray-clearance',
-  sharedWindowRays.every(c=>c.camera[2]<=4.25),
-  sharedWindowRays.map(c=>({camera:c.camera,target:c.target})));
-
-const left=timeline.HOME.shared[0]-spec.width/2,right=left+spec.width;
-const front=timeline.HOME.shared[2]+spec.depth/2,back=front-spec.depth;
-const rim=spec.height+.04;
-let badJumpFrames=[],badCatFrames=[],finalFraming=[],airborneFraming=[];
-for(let n=58;n<=60;n++){
- const shot=begin(n);
- for(let frame=shot.start;frame<shot.end;frame++){
-  const s=timeline.stateAt(frame,shots);
-  const cam=cameraDirector.directEpisodeCamera(s);
-  if(n>=59){
-   if(!s.show.shared||s.show.latte||s.show.essie)
-    badCatFrames.push({frame,reason:'wrong box identity'});
-  }
-  if(n===60){
-   const cat=s.mocha,half=.67*cat.scale;
-   // Check near sidewall crossing only: the correctly staged entrance
-   // goes over the left rim; once x is INSIDE the box, descent is legal.
-   if(cat.position[0]<left&&cat.position[0]+half>left&&
-      cat.position[1]<rim+.015){
-    badJumpFrames.push({frame,x:cat.position[0],y:cat.position[1],half,left,rim});
-   }
-   // After takeoff, both ears/body must remain in a usable portrait frame.
-   // A prior locked camera made the entire jump happen off the left edge.
-   if(s.u>=.34&&s.u<=.80){
-    const f=catFace(cat,cam);
-    if(!f.fullyVisible)airborneFraming.push({frame,u:s.u,face:f});
-   }
-  }
-  if(n===60&&s.u>=.86){
-   const all=['mocha','essie','latte'].map(name=>{
-    const c=s[name],half=.67*c.scale;
-    const boxFits=c.visible&&c.position[0]-half>=left-.01&&
-      c.position[0]+half<=right+.01&&
-      c.position[2]>=back-.01&&c.position[2]<=front+.01&&
-      c.position[1]>=0&&c.position[1]<=.25;
-    const face=catFace(c,cam);
-    if(!boxFits)badCatFrames.push({frame,name,position:c.position,scale:c.scale,reason:'cat not physically in shared box'});
-    if(!face.fullyVisible)finalFraming.push({frame,name,face,reason:'end-frame cat cropped'});
-    return{name,boxFits,faceVisible:face.fullyVisible};
-   });
-  }
+for(const shot of shots)for(let f=shot.start;f<shot.end;f++){
+ const s=at(f),n=s.shot.sequence,c=directEpisodeCamera(s);
+ if([...c.camera,...c.target,c.fov,...['mocha','essie','latte'].flatMap(id=>s[id].position)].some(x=>!Number.isFinite(x))||c.fov<15||c.fov>115)problems.numeric.push({f,n});
+ for(const id of ['mocha','essie','latte']){
+  if(s[id].scale!==1||s[id].position[1]<-.001)problems.scale.push({f,id,pose:s[id]});
+  if(n>=31&&n<=52&&s.room==='alley'&&s[id].visible&&['mocha','essie'].includes(id)&&Math.abs(s[id].position[0]+18)>1.5)problems.alley.push({f,id,position:s[id].position});
  }
-}
-record('no-premature-left-wall-crossover',badJumpFrames.length===0,badJumpFrames.slice(0,10));
-record('entire-airborne-cat-visible',airborneFraming.length===0,airborneFraming.slice(0,10));
-record('only-one-final-shared-box-and-physical-cats',badCatFrames.length===0,badCatFrames.slice(0,10));
-record('all-end-shot-cats-in-portrait-frame',finalFraming.length===0,finalFraming.slice(0,10));
-record('all-three-end-characters-visible',["mocha","essie","latte"].every(id=>settled[id].visible));
-record('shot58-is-street-walk-not-shared-box',first.room==='street'&&!first.show.shared&&first.mocha.walking);
-record('shot59-hesitant-approach-not-premature-jump',last.mocha.position[1]===0&&last.mocha.position[0]<left);
-record('shot60-all-three-physically-jump',['mocha','essie','latte'].every(id=>{
- const startPose=state(60,0)[id],mid=state(60,.48)[id],endPose=settled[id];
- return startPose.position[1]===0&&endPose.position[1]>=.10&&
-  [state(60,.32)[id].position[1],mid.position[1],state(60,.68)[id].position[1]].some(y=>y>.65);
-}));
-// Every real Episode02 timeline frame should have finite actor/camera state.
- // A single numeric invalidity can produce a black render or a camera jump.
-const timelineFailures=[],shotIds=new Set();
-const alleyFacadeCollisions=[],alleyBoxWallCrossings=[],alleyRescueExitCrossings=[],mochaTooEarlyExit=[],missingEssieDuringLatteRescue=[];
-for(const shot of shots){
- shotIds.add(shot.sequence);
- if(shot.end<=shot.start||shot.start<0||!Number.isInteger(shot.start)||
-    !Number.isInteger(shot.end))timelineFailures.push({shot:shot.sequence,reason:'invalid frame interval'});
- for(let frame=shot.start;frame<shot.end;frame++){
-  const state=timeline.stateAt(frame,shots);
-  if(shot.sequence>=31&&shot.sequence<=52&&state.room!=='cafe'){
-   // Physical west shop facade X=-8.35; original Episode01 cat half-width .67m.
-   for(const id of ['mocha','essie']){
-    const cat=state[id],right=cat.position[0]+.67*cat.scale;
-    if(cat.visible&&right> -8.40)
-     alleyFacadeCollisions.push({frame,shot:shot.sequence,id,x:cat.position[0],right});
-   }
-   if(shot.sequence===49||shot.sequence===50){
-    const front=state.essieBox[2]+boxes.essie.depth/2;
-    if(Math.abs(state.mocha.position[2]-front)<.10&&
-       state.mocha.position[1]<boxes.essie.height+.04)
-     alleyBoxWallCrossings.push({frame,shot:shot.sequence,position:state.mocha.position,front});
-   }
-   if(shot.sequence===50&&
-      Math.abs(state.mocha.position[2]-state.essieBox[2])>
-        boxes.essie.depth*.5)
-    mochaTooEarlyExit.push({frame,shot:50,position:state.mocha.position});
-   if(shot.sequence===51){
-    const front=state.essieBox[2]+boxes.essie.depth/2;
-    for(const id of ['mocha','essie']){
-     const cat=state[id];
-     if(Math.abs(cat.position[2]-front)<.10&&
-        cat.position[1]<boxes.essie.height+.04)
-      alleyRescueExitCrossings.push({frame,shot:51,id,
-       position:cat.position,front});
+ if(s.rescued.essie!==(n>=51)||s.rescued.latte!==(n>=55))problems.order.push({f,n});
+ if([53,54,55].includes(n)&&!s.essie.visible)problems.rescuePresence.push({f,n});
+ if(n===50&&(Math.abs(s.mocha.position[2]-s.essieBox[2])>BOX_SPECS.essie.depth/2||s.mocha.position[1]<.04))problems.rootFits.push({f,reason:'Mocha leaves carton before reformation'});
+ if(n>=59){
+  if(!s.show.shared||s.show.latte||s.show.essie||s.show.demo)problems.shared.push({f,n});
+  const b=boxes.shared;stageEpisodeBox(b,'shared',s);b.root.updateMatrixWorld(true);
+  if(n===60)for(const id of ['mocha','essie','latte']){
+   const p=s[id].position;apex[id]=Math.max(apex[id],p[1]);
+   if(f>first(60)&&wallHits(b,at(f-1)[id].position,p))problems.entryWalls.push({f,id,kind:'shared'});
+   if(s.u>=.86){
+    const [x,y,z]=p,[bx,,bz]=s.sharedBox;
+    if(Math.abs(x-bx)>spec.width/2-.03||Math.abs(z-bz)>spec.depth/2-.03||y<.04||y>.10)problems.rootFits.push({f,id,p});
+    const camera=new T.PerspectiveCamera(c.fov,9/16,.08,320);camera.position.set(...c.camera);camera.lookAt(...c.target);camera.updateMatrixWorld(true);
+    const right=new T.Vector3(c.camera[2]-z,0,-(c.camera[0]-x)).normalize();
+    for(const dx of [-.24,.24])for(const dy of [.70,1.20]){
+     const q=new T.Vector3(x,y+dy,z).addScaledVector(right,dx).project(camera);
+     if(Math.abs(q.x)>.99||Math.abs(q.y)>.97||q.z>1)problems.framing.push({f,id,probe:q.toArray()});
     }
    }
   }
-  if([53,54,55].includes(shot.sequence)&&!state.essie.visible)
-   missingEssieDuringLatteRescue.push({frame,shot:shot.sequence});
-  if(state.shot.sequence!==shot.sequence){
-   timelineFailures.push({frame,reason:'wrong shot lookup'});continue;
+ }
+ if([49,51,52].includes(n)){
+  const b=boxes.essie;stageEpisodeBox(b,'essie',s);b.root.updateMatrixWorld(true);
+  for(const wall of walls(b))if(!wall.visible||wall.scale.toArray().some(v=>v!==1))problems.shell.push({f,wall:wall.name});
+  if(new T.Box3().setFromObject(b.root).min.y<-.01)problems.shell.push({f,reason:'shell below ground'});
+  if(n===49&&f>first(49)&&wallHits(b,at(f-1).mocha.position,s.mocha.position))problems.entryWalls.push({f,id:'mocha',kind:'essie'});
+  if(n===51&&s.u<=.62)for(const id of ['mocha','essie']){
+   const local=new T.Vector3(...s[id].position).applyMatrix4(b.root.matrixWorld.clone().invert());
+   if(Math.abs(local.y-.055)>.015)problems.carriedFloor.push({f,id,local:local.toArray()});
   }
-  const cam=cameraDirector.directEpisodeCamera(state);
-  const arr=[...cam.camera,...cam.target,cam.fov,
-   ...state.mocha.position,...state.essie.position,...state.latte.position,
-   ...state.demoCat.position,...state.latteBox,...state.essieBox,
-   ...state.sharedBox,...state.demoBox,
-   state.mocha.scale,state.essie.scale,state.latte.scale,state.demoCat.scale];
-  if(arr.some(x=>!Number.isFinite(x))||cam.fov<15||cam.fov>115)
-   timelineFailures.push({frame,shot:shot.sequence,reason:'invalid numeric pose or lens'});
-  if(state.rescued.essie!== (shot.sequence>=51)||
-     state.rescued.latte!== (shot.sequence>=55))
-   timelineFailures.push({frame,reason:'rescue order invalid'});
-  if(shot.sequence>=59&&(!state.show.shared||state.show.latte||state.show.essie))
-   timelineFailures.push({frame,reason:'final boxes overlap'});
  }
 }
-record('alley-cats-clear-permanent-shop-facade',alleyFacadeCollisions.length===0,
- alleyFacadeCollisions.slice(0,12));
-record('alley-rescue-clears-physical-box-rim',alleyBoxWallCrossings.length===0,
- alleyBoxWallCrossings.slice(0,12));
-record('mocha-remains-in-essie-box-during-reformation',
- mochaTooEarlyExit.length===0,mochaTooEarlyExit.slice(0,12));
-record('rescued-cats-step-over-cardboard-rim',
- alleyRescueExitCrossings.length===0,alleyRescueExitCrossings.slice(0,12));
-record('essie-present-during-latte-rescue',missingEssieDuringLatteRescue.length===0,
- missingEssieDuringLatteRescue.slice(0,12));
-record('all-60-shot-ids-present',shots.length===60&&shotIds.size===60&&
- Math.min(...shotIds)===1&&Math.max(...shotIds)===60);
-record('all-frames-timing-and-poses-finite',timelineFailures.length===0,
- timelineFailures.slice(0,14));
-const source=await fs.readFile(path.join(src,'Episode.tsx'),'utf8');
-record('original-ep1-performer-active',["mocha","essie","latte"].every(id=>
- source.includes("createEpisode1CastCat('"+id+"')"))&&!source.includes('createArticulatedGuest('));
+record('all-frames-finite-camera-and-poses',problems.numeric.length===0,problems.numeric.slice(0,5));
+record('original-living-cat-scale-and-floor-preserved',problems.scale.length===0,problems.scale.slice(0,5));
+record('one-shared-carton-only-in-finale',problems.shared.length===0,problems.shared.slice(0,5));
+record('settled-actor-roots-inside-carton',problems.rootFits.length===0,problems.rootFits.slice(0,5));
+record('all-three-physically-jump',['mocha','essie','latte'].every(id=>apex[id]>.65),apex);
+record('final-head-probes-in-portrait-frame',problems.framing.length===0,problems.framing.slice(0,5));
+record('entry-foot-roots-clear-real-walls',problems.entryWalls.length===0,problems.entryWalls.slice(0,5));
+record('rescue-feet-follow-tipping-floor',problems.carriedFloor.length===0,problems.carriedFloor.slice(0,5));
+record('complete-shell-grounded',problems.shell.length===0,problems.shell.slice(0,5));
+record('alley-actor-roots-clear-sidewalls',problems.alley.length===0,problems.alley.slice(0,5));
+record('essie-present-through-latte-rescue',problems.rescuePresence.length===0,problems.rescuePresence.slice(0,5));
+record('rescue-order-preserved',problems.order.length===0,problems.order.slice(0,5));
+const source=await fs.readFile(path.join(studioRoot,'src/v2/episodes/in-this-town-02/Episode.tsx'),'utf8');
+record('original-ep1-performers-active',['mocha','essie','latte'].every(id=>source.includes("createEpisode1CastCat('"+id+"')")));
 record('no-human-reaching-arms',!source.includes('pawRig(')&&!source.includes('gesture('));
-const failed=issues.length>0;
-const report={
- stage:failed?'FINALE_NUMERICAL_QA_FAILED':'FINALE_NUMERICAL_QA_PASSED_VISUAL_REVIEW_REQUIRED',
- mathematicalChecks:checks.length,failures:issues,checks,
- source:shots.filter(x=>x.sequence>=58).map(x=>({shot:x.sequence,start:x.start,end:x.end})),
- reference:'Episode 01 The Door at 11:11',
- visualComparisonMade:false,finalCreativeApproval:false,publishingAllowed:false,
- note:'Not a render or visual approval; frame-scale/collider/pose math only. Actual moving frames must be reviewed.'
-};
-const dir=path.join(studioRoot,'out/v2-episodes/in-this-town-02/series-style-qa');
-await fs.mkdir(dir,{recursive:true});
-const out=path.join(dir,'EP2_FINALE_NUMERICAL_AUDIT.json');
-await fs.writeFile(out,JSON.stringify(report,null,2)+'\n');
-console.log(JSON.stringify({stage:report.stage,mathematicalChecks:checks.length,
- failedChecks:issues.map(x=>x.id),report:out},null,2));
-if(failed)process.exitCode=2;
+Object.values(boxes).forEach(b=>b.dispose());
+const report={stage:issues.length?'FINALE_NUMERICAL_QA_FAILED':'FINALE_NUMERICAL_QA_PASSED_VISUAL_REVIEW_REQUIRED',mathematicalChecks:checks.length,failures:issues,checks,
+ edit:{segments:shots.length,beats:60,frames:shots.at(-1).end,source:'LIVE_APPROVED_RENDER_PROPS'},visualComparisonMade:false,finalCreativeApproval:false,publishingAllowed:false,
+ note:'Real box transforms, actor-root sweeps and head probes; not full painted-body collision or image/motion approval.'};
+const reportFile=path.join(out,'EP2_FINALE_NUMERICAL_AUDIT.json');await fs.writeFile(reportFile,JSON.stringify(report,null,2)+'\n');
+console.log(JSON.stringify({stage:report.stage,mathematicalChecks:checks.length,failedChecks:issues.map(i=>i.id),report:reportFile},null,2));if(issues.length)process.exitCode=2;

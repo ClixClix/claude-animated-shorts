@@ -46,7 +46,10 @@ for(const shot of props.shots.filter(s=>wanted.includes(s.sequence))){
    // A distant observer is intentionally outside the lens in 31/34; not in this queue.
    // Ears-only closeup in 50 is checked at the revealed ear level.
    const heights=id==='essie'&&n===50&&s.story.ears<.55?[1.22]:[.78,1.10];
-   const rays=heights.map(y=>{const p=new T.Vector3(actor.position[0],actor.position[1]+y,actor.position[2]),screen=p.clone().project(camera);const hit=blocked(camera.position,p,list);return {y,screen:screen.toArray().map(x=>+x.toFixed(3)),hit};});
+   const probes=heights.map(y=>({y,x:0}));
+   if([22,23].includes(n))for(const y of [.10,.40])for(const x of [-.18,0,.18])probes.push({y,x});
+   const right=new T.Vector3(camera.position.z-actor.position[2],0,-(camera.position.x-actor.position[0])).normalize();
+   const rays=probes.map(({y,x})=>{const p=new T.Vector3(actor.position[0],actor.position[1]+y,actor.position[2]).addScaledVector(right,x),screen=p.clone().project(camera);const hit=blocked(camera.position,p,list);return {y,x,screen:screen.toArray().map(x=>+x.toFixed(3)),hit};});
    checks+=rays.length;
    const leaving=n===7&&id==='mocha'&&s.u>.88;
    const bad=rays.filter(r=>r.hit||(!leaving&&(Math.abs(r.screen[0])>1||Math.abs(r.screen[1])>1||r.screen[2]>1)));
@@ -58,7 +61,7 @@ for(const shot of props.shots.filter(s=>wanted.includes(s.sequence))){
 const shot55=props.shots.find(s=>s.sequence===55),s55=m.stateAt(Math.round((shot55.start+shot55.end)/2),props.shots,props.captions);
 const list=stage(s55),knownBad=blocked(new T.Vector3(-1.9,1.5,5.65),new T.Vector3(...s55.latte.position).add(new T.Vector3(0,.9,0)),list);checks++;
 if(!knownBad)failures.push({id:'NEGATIVE_CONTROL_FAILED_TO_CATCH_OLD_FACADE'});
-const report={stage:failures.length?'NUMERICAL_VISIBILITY_FAILED':'NUMERICAL_VISIBILITY_PASSED__LOCAL_PNG_REVIEW_PENDING',checks,failures,samples,knownBadCameraHit:knownBad,visualApproval:false,method:'Actual Three.js world and hero box geometry; no renderer; canvas drawing stubbed; center/upper-face rays only, not painted silhouette or motion approval.'};
+const report={stage:failures.length?'NUMERICAL_VISIBILITY_FAILED':'NUMERICAL_VISIBILITY_PASSED__LOCAL_PNG_REVIEW_PENDING',checks,failures,samples,knownBadCameraHit:knownBad,visualApproval:false,method:'Actual Three.js world and hero box geometry; no renderer; canvas painting stubbed; face rays plus torso/paw rays in full-bed views. Not painted-silhouette or motion approval.'};
 await fs.writeFile(path.join(out,'SCENE_VISIBILITY_QA.json'),JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify({stage:report.stage,checks,failures:failures.slice(0,16),totalFailures:failures.length,knownBadCameraHit:knownBad},null,2));
 set.dispose();Object.values(boxes).forEach(b=>b.dispose());world.dispose();
