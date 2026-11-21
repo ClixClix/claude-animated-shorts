@@ -1,3 +1,7 @@
+## November21 actual final-video review update
+
+The native3737-frame user movie was inspected via62 shot midpoints and40 action samples. Read FINAL_REVIEW_NOV21.md. Use only tools/apply-final-review-polish.mjs to install this exact-current-source guarded repair; do not overwrite the PC scene from the older remote Episode.tsx. It targets face/flap intersections, the continuous longer street run and meow/cardboard-only Foley. Source gates pass; NEW SOURCE VISUAL_REVIEW_PENDING. tools/remix-restrained-audio.mjs can preview audio changes using the existing picture, with backups and encoded true-peak/video-hash checks. Narration/music and paid services are untouched. Review local changed-shot stills and moving clips before the next full build.
+
 # Episode 02 — Windows local-first rendering (November 19, 2026)
 
 ## November 20 review

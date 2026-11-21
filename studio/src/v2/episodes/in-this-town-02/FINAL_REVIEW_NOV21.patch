@@ -1,0 +1,154 @@
+--- before/Episode.tsx
++++ after/Episode.tsx
+@@ -1,3 +1,5 @@
++import {BOX_SPECS} from './boxProps';
++import {STREET_BOX_CENTERS} from './timeline';
+ import React,{useEffect,useMemo} from 'react';
+ import * as T from 'three';
+ import {AbsoluteFill,Composition,useCurrentFrame} from 'remotion';
+@@ -390,9 +392,7 @@
+  // hinged lids and paper-folds occur IN the shot, not in narration only.
+  // After the cure (shot 58), the same distinct boxes remain outside as
+  // Mocha passes by smiling at other cats. Both props are stable instances.
+- const streetCenters:[[number,number,number],[number,number,number]]=[
+-  [.45,.04,5.18],[-.82,.04,5.19]
+- ];
++ const streetCenters=STREET_BOX_CENTERS;
+  for(let i=0;i<streetBoxes.length;i++){
+   const b=streetBoxes[i];
+   const active=n===4||n===58;
+@@ -436,6 +436,19 @@
+   // Keep the same physical flap and original Episode01 scene assets.
+   if(s.shot.sequence>=58&&s.shot.sequence<=60)
+    boxes.shared.flaps.left.rotation.z=1.5*Math.PI;
++ // Full-video review: outward/upward front flaps crossed painted faces.
++ // Fold the SAME panels downward outside the carton, leaving floor clearance.
++ const foldFront=(kind:'latte'|'essie')=>{
++  const spec=BOX_SPECS[kind],length=spec.depth*.47;
++  const drop=Math.min(length,spec.height+.04-.07);
++  return Math.PI+Math.asin(drop/length);
++ };
++ if((n>=9&&n<=17)||(n>=54&&n<=55)){
++  const nudge=n===12?.18*Math.sin(Math.PI*ease(s.u)):n===10?.035*Math.sin(Math.PI*s.u):0;
++  boxes.latte.flaps.front.rotation.x=foldFront('latte')-nudge;
++ }
++ if((n>=18&&n<=23)||(n>=31&&n<=48))
++  boxes.essie.flaps.front.rotation.x=foldFront('essie');
+  // Drive the EXACT Episode 01 actor/cards from Episode 02's approved story
+  // timing. Their silhouettes, whiskers, tail and separate foot drawings never
+  // get replaced by the failed Episode 02 "oval body / stick legs" renderer.
+@@ -559,7 +572,7 @@
+  const walkB=6-wrap(s.t*.31,10);
+  const announcementTime=Math.max(0,(s.frame-3483)/30);
+  const streetSpots:V3[]=audienceOn?
+-  (n===4?[[.45,.02,5.18],[-.82,.02,5.19]]:
++  (n===4?STREET_BOX_CENTERS.map(p=>[p[0],.02,p[2]] as V3):
+    // Daytime cure announcement: shoppers walk near shops, not through the
+    // sign or the three leads. Night alley shots retain NO crowd.
+    [[-2.15+.11*announcementTime,.03,5.55],
+--- before/timeline.ts
++++ after/timeline.ts
+@@ -51,6 +51,7 @@
+   searchAlleyC:[-9.15,0,3.05] as V3,
+   demo:[1.8,0,5.35] as V3
+ };
++export const STREET_BOX_CENTERS:[V3,V3]=[[-3.20,.04,5.18],[-1.10,.04,5.19]];
+ const hidden=():ActorPose=>({position:[0,0,0],visible:false,walking:false,emotion:'neutral',headTurn:0,scale:1,morph:0,gazeY:0});
+ const actor=(position:V3,visible=true,emotion:ActorPose['emotion']='neutral',walking=false,morph=0):ActorPose=>({
+  position:[...position],visible,walking,emotion,headTurn:0,scale:1,morph,gazeY:0
+@@ -142,8 +143,8 @@
+   // V6: Mocha WALKING and witnessing TWO different complete jumps.
+   // The first lives in the first half, second in the second half.
+   mocha.visible=true;
+-  const progress=.52*ease(u/.46)+.48*ease((u-.50)/.46);
+-  mocha.position=mix([1.18,0,6.32],[-1.55,0,6.10],progress);
++  const progress=ease(u);
++  mocha.position=mix([-4.40,0,6.32],[.10,0,6.10],progress);
+   mocha.walking=true; // gait amplitude follows distance and settles at pauses
+   mocha.emotion='surprised';
+   mocha.headTurn=lerp(-.35,.38,ease((u-.42)/.18));
+@@ -153,7 +154,7 @@
+   room='street';heroBox='demo';
+   // Mocha approaches, regards the empty ordinary box, then SIDESTEPS it.
+   const approach=ease(u/.64),avoid=ease((u-.66)/.32);
+-  mocha.position=[lerp(-1.55,1.12,approach)+.15*avoid,
++  mocha.position=[lerp(.10,1.12,approach)+.15*avoid,
+    0,lerp(6.10,5.97,approach)+.57*avoid];
+   mocha.walking=true; // step amplitude follows actual distance
+   mocha.emotion='sad';
+--- before/cameraDirector.ts
++++ after/cameraDirector.ts
+@@ -1,3 +1,4 @@
++import {STREET_BOX_CENTERS} from './timeline';
+ import type {V3} from '../../cafe/config';
+ import type {State} from './timeline';
+ import {stateAt as sampleShotState,ease as easeTrack} from './timeline';
+@@ -41,7 +42,7 @@
+  };
+  if(n===46&&s.room==='cafe')return s.heroBox==='latte'?
+   [B('latte'),C('latte')]:[B('essie'),C('essie')];
+- if(n===4)return [B('demo'),C('mocha')]; // Tracking camera is handled explicitly below.
++ if(n===4)return [box('street-box-A',STREET_BOX_CENTERS[0],'demo'),box('street-box-B',STREET_BOX_CENTERS[1],'demo'),C('mocha')]; // Tracking camera is handled explicitly below.
+  if(n<=3)return n<=2?[B('demo'),C('demoCat')]:[B('demo'),C('demoCat')];
+  if(n===5)return [C('mocha'),B('demo')];
+  if(n===5||n===8||n===11||n===14||n===17||n===23||n===24||n===25||n===27||n===28||n===29||n===30||n===33||n===36||n===43||n===48)return [C('mocha')];
+@@ -519,28 +520,14 @@
+  }
+  // Shot04 now really contains THREE different physical cartons, TWO
+  // independent cat-to-box jumps, and Mocha's continuous walk as witness.
+- if(n===4){
+-  // Two quick purposeful coverage angles. The full jumps are the SUBJECT.
+-  // Deliberate editorial cut at 50%, not a camera whip across the storefront.
+-  const second=s.u>=.50;
+-  const x=second?-.82:.45;
+-  const aimX=second?(-.46+((s.mocha.position[0]-.10)-(-.46))*easeTrack((s.u-.73)/.27)):.81;
+-  const camera:V3=[aimX+.20,1.54,7.70];
+-  const target:V3=[aimX,.66,5.36];
+-  const fov=72;
++ if(n===4||n===5){
++  // One continuous run along multiple storefronts: no hidden midpoint cut
++  // and no camera reset when the ordinary-box beat starts.
++  const x=s.mocha.position[0]+.55;
++  const camera:V3=[x,1.80,9.20],target:V3=[x,.75,5.75],fov=78;
+   return {camera,target,fov,region:'town' as Region,
+    framing:projections(corners(focusSet(s)),target,camera,fov),
+-   shot:n,selectedIds:second?['mocha','street-box-B','cat-B']:['mocha','street-box-A','cat-A']};
+- }
+- if(n===5){
+-  // Follow Mocha's FACE and the box; never hold on the empty storefront.
+-  const x=s.mocha.position[0];
+-  const camera:V3=[x+.48,1.60,7.95];
+-  const target:V3=[x+.12,.73,5.75];
+-  const fov=75;
+-  return {camera,target,fov,region:'town' as Region,
+-   framing:projections(corners(focusSet(s)),target,camera,fov),
+-   shot:n,selectedIds:['mocha','ordinary-box']};
++   shot:n,selectedIds:n===4?['mocha','street-box-A','street-box-B']:['mocha','ordinary-box']};
+  }
+  // LOCK RESTING-CAT PERSPECTIVE: Episode 01 cats are illustrated,
+  // not full volumetric anatomy. Automatic fit and overhead cameras showed
+--- before/episode1Cast.ts
++++ after/episode1Cast.ts
+@@ -38,7 +38,7 @@
+  // Tie foot cycles to actual travel in the 2-second Shot 05 avoidance:
+  // previously the paws kept cycling at constant 2.6Hz while the body
+  // eased to a stop, creating visible skating and treadmill motion.
+- const travel=s.t*.44; // 1.4 Hz deliberate footfalls; no rapid vibration.
++ const travel=s.t*([4,5].includes(s.shot.sequence)?.68:.44); // 1.4 Hz deliberate footfalls; no rapid vibration.
+  const cycle=travel/.32*Math.PI*2;
+  const stepIntensity=moving?.65*clamp(length/.20):0; // Fade toward a planted stance as Mocha pauses; no flickering rig.
+  const camOffset=vec(actualCamera[0]-p[0],0,actualCamera[2]-p[2]);
+--- before/PAINTED_BOUNDS_CONTRACT.json
++++ after/PAINTED_BOUNDS_CONTRACT.json
+@@ -7,9 +7,9 @@
+     "src/v2/cats/drawCat.ts": "94215124d38e0e5e810105d15fde4468d9b83056ab6d57f4b0aa47443a0afb25",
+     "src/v2/cats/designs.ts": "1f6fd186f2aa0eefa15a1a97c507ef9ac105cf53d4f6b0bf30611f5f75375c1f",
+     "src/v2/cats/pose.ts": "883872d84ac89d14f03ac46f16914aa66968cb18be55bb0f1eadd8e0084dfb0e",
+-    "src/v2/episodes/in-this-town-02/episode1Cast.ts": "45d765b699c544d561e9b5e329fc2dd79e0574e04f286935edd0fe407533284f",
++    "src/v2/episodes/in-this-town-02/episode1Cast.ts": "16ddc34517587f02d399ce2f9657c8ae813e3c19d5a5dd5b0320dbc5c8fcc91c",
+     "src/v2/episodes/in-this-town-02/catBehaviors.ts": "d218f5b2b1e3cc1f44207908618e0141e55340b5ec3da992c702528b0d78b02f",
+-    "src/v2/episodes/in-this-town-02/timeline.ts": "33dcd587d2eb08eb3167ab8235788c1ccc8cb30a5a51e6bae3293abdad024260"
++    "src/v2/episodes/in-this-town-02/timeline.ts": "533c79909a281f0f98c442d253616547a9019c2f5cb5e7b132a4d280e5c2666c"
+   },
+   "measured": {
+     "mochaMoving": 0.5361454545454546,

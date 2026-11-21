@@ -1,0 +1,168 @@
+{
+  "policy": "MEOWS_AND_BOXES_ONLY",
+  "events": [
+    {
+      "beat": 4,
+      "sourceU": 0.65,
+      "kind": "cat-meow",
+      "gain": 0.1,
+      "tone": 1
+    },
+    {
+      "beat": 13,
+      "sourceU": 0.45,
+      "kind": "cat-meow",
+      "gain": 0.1,
+      "tone": 1.3
+    },
+    {
+      "beat": 17,
+      "sourceU": 0.42,
+      "kind": "cat-meow",
+      "gain": 0.1,
+      "tone": 1
+    },
+    {
+      "beat": 33,
+      "sourceU": 0.45,
+      "kind": "cat-meow",
+      "gain": 0.1,
+      "tone": 1
+    },
+    {
+      "beat": 51,
+      "sourceU": 0.93,
+      "kind": "cat-meow",
+      "gain": 0.1,
+      "tone": 1
+    },
+    {
+      "beat": 55,
+      "sourceU": 0.75,
+      "kind": "cat-meow",
+      "gain": 0.1,
+      "tone": 1.3
+    },
+    {
+      "beat": 2,
+      "sourceU": 0.8,
+      "kind": "box",
+      "gain": 0.14,
+      "duration": 0.25
+    },
+    {
+      "beat": 6,
+      "sourceU": 0.9,
+      "kind": "box",
+      "gain": 0.14,
+      "duration": 0.25
+    },
+    {
+      "beat": 12,
+      "sourceU": 0.35,
+      "kind": "box",
+      "gain": 0.14,
+      "duration": 0.25
+    },
+    {
+      "beat": 12,
+      "sourceU": 0.76,
+      "kind": "box",
+      "gain": 0.14,
+      "duration": 0.25
+    },
+    {
+      "beat": 19,
+      "sourceU": 0.94,
+      "kind": "box",
+      "gain": 0.14,
+      "duration": 0.25
+    },
+    {
+      "beat": 32,
+      "sourceU": 0.5,
+      "kind": "box",
+      "gain": 0.14,
+      "duration": 0.25
+    },
+    {
+      "beat": 35,
+      "sourceU": 0.94,
+      "kind": "box",
+      "gain": 0.14,
+      "duration": 0.25
+    },
+    {
+      "beat": 39,
+      "sourceU": 0.93,
+      "kind": "box",
+      "gain": 0.14,
+      "duration": 0.25
+    },
+    {
+      "beat": 42,
+      "sourceU": 0.6,
+      "kind": "box",
+      "gain": 0.14,
+      "duration": 0.25
+    },
+    {
+      "beat": 49,
+      "sourceU": 0.9,
+      "kind": "box",
+      "gain": 0.14,
+      "duration": 0.25
+    },
+    {
+      "beat": 51,
+      "sourceU": 0.42,
+      "kind": "box",
+      "gain": 0.16,
+      "duration": 0.25
+    },
+    {
+      "beat": 51,
+      "sourceU": 0.89,
+      "kind": "box",
+      "gain": 0.16,
+      "duration": 0.25
+    },
+    {
+      "beat": 54,
+      "sourceU": 0.65,
+      "kind": "box",
+      "gain": 0.14,
+      "duration": 0.25
+    },
+    {
+      "beat": 55,
+      "sourceU": 0.58,
+      "kind": "box",
+      "gain": 0.14,
+      "duration": 0.25
+    },
+    {
+      "beat": 60,
+      "sourceU": 0.56,
+      "kind": "box",
+      "gain": 0.14,
+      "duration": 0.25
+    },
+    {
+      "beat": 60,
+      "sourceU": 0.7,
+      "kind": "box",
+      "gain": 0.14,
+      "duration": 0.25
+    },
+    {
+      "beat": 60,
+      "sourceU": 0.84,
+      "kind": "box",
+      "gain": 0.14,
+      "duration": 0.25
+    }
+  ],
+  "narration": "preserve approved Adam stem",
+  "music": "preserve existing licensed intro-loop stem"
+}
